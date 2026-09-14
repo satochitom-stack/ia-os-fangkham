@@ -1,22 +1,24 @@
 import React from 'react';
 import {
   LayoutDashboard,
+  ShieldAlert,
   FileText,
   ClipboardCheck,
   FileSpreadsheet,
-  ShieldAlert,
+  ShieldCheck,
   Award,
   BookOpen,
-  FolderSync
+  CheckCircle2
 } from 'lucide-react';
 
 export default function Sidebar({ currentTab, setCurrentTab }) {
   const menuItems = [
     { id: 'dashboard', label: 'ภาพรวม & ปฏิทินงาน', icon: LayoutDashboard },
+    { id: 'audit-risk', label: 'การประเมินความเสี่ยง', icon: ShieldAlert },
     { id: 'planning', label: 'แผน & นโยบายตรวจ', icon: FileText },
     { id: 'execution', label: 'ปฏิบัติการตรวจ & กระดาษทำการ', icon: ClipboardCheck },
     { id: 'reporting', label: 'รายงาน & ติดตามผล', icon: FileSpreadsheet },
-    { id: 'control-risk', label: 'ควบคุมภายใน & บริหารความเสี่ยง', icon: ShieldAlert },
+    { id: 'control-risk', label: 'ควบคุมภายใน & บริหารความเสี่ยง', icon: ShieldCheck },
     { id: 'lpa', label: 'เตรียมรับประเมิน LPA', icon: Award },
     { id: 'knowledge', label: 'คลังระเบียบ & แบบฟอร์ม', icon: BookOpen },
   ];
@@ -54,11 +56,11 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
 
       <div className="p-4 border-t border-slate-800/80 bg-slate-950/40">
         <div className="flex items-center space-x-2 text-xs text-slate-400 dark:text-slate-500">
-          <FolderSync className="w-4 h-4 text-emerald-400" />
-          <span>เชื่อมต่อคลังข้อมูลท้องถิ่น</span>
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <span className="font-semibold text-slate-300">ระบบปฏิบัติงานตรวจสอบ</span>
         </div>
-        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 truncate" title="D:\งานตรวจสอบภายใน">
-          D:\งานตรวจสอบภายใน
+        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 truncate">
+          มาตรฐานกระทรวงการคลัง (IA-OS)
         </div>
       </div>
     </aside>

@@ -170,7 +170,7 @@ export default function DashboardView({
         {/* Card 4: High Risk Items */}
         <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/80 dark:border-slate-700 shadow-xs hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">ประเด็นความเสี่ยง (Risk)</span>
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">การประเมินความเสี่ยง</span>
             <div className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center">
               <AlertTriangle className="w-4 h-4" />
             </div>
@@ -180,12 +180,12 @@ export default function DashboardView({
             <span className="text-xs text-slate-500 dark:text-slate-400">กิจกรรมเสี่ยงสูง</span>
           </div>
           <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex justify-between items-center">
-            <span>{highRisks > 0 ? 'มีกิจกรรมที่ต้องเฝ้าระวัง' : 'ยังไม่มีกิจกรรมเสี่ยงสูง'}</span>
+            <span>เกณฑ์ SOFCK เพื่อจัดทำแผน</span>
             <button
-              onClick={() => setCurrentTab('planning')}
-              className="text-rose-600 dark:text-rose-400 font-medium hover:underline flex items-center cursor-pointer"
+              onClick={() => setCurrentTab('audit-risk')}
+              className="text-blue-600 dark:text-blue-400 font-medium hover:underline flex items-center cursor-pointer"
             >
-              ดู Heatmap <ChevronRight className="w-3 h-3" />
+              ประเมินความเสี่ยง <ChevronRight className="w-3 h-3" />
             </button>
           </div>
         </div>

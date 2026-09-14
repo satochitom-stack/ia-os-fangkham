@@ -11,6 +11,7 @@ import KnowledgeView from './components/KnowledgeView';
 import LoginView from './components/LoginView';
 import ChangePasswordModal from './components/ChangePasswordModal';
 import ProfileSettingsModal from './components/ProfileSettingsModal';
+import AuditRiskView, { defaultAuditUniverse } from './components/AuditRiskView';
 import { getSession, logout as authLogout } from './utils/auth';
 
 import {
@@ -187,6 +188,18 @@ export default function App() {
     return { '2568': initialAuditCharter };
   });
 
+  // Audit Universe Risk Assessment state isolated by fiscal year
+  const [auditUniverseByYear, setAuditUniverseByYear] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ia_audit_universe_by_year');
+      if (saved) return JSON.parse(saved);
+      return { '2568': defaultAuditUniverse };
+    } catch (e) {
+      console.error(e);
+      return { '2568': defaultAuditUniverse };
+    }
+  });
+
   const [knowledgeBase, setKnowledgeBase] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_knowledge_base');
@@ -225,7 +238,20 @@ export default function App() {
     localStorage.setItem('ia_audit_charter_by_year', JSON.stringify(auditCharterByYear));
   }, [auditCharterByYear]);
 
+  useEffect(() => {
+    localStorage.setItem('ia_audit_universe_by_year', JSON.stringify(auditUniverseByYear));
+  }, [auditUniverseByYear]);
+
   // Dynamic getters & setters for the currently selected fiscal year
+  const auditUniverse = auditUniverseByYear[selectedYear] || defaultAuditUniverse;
+  const setAuditUniverse = (updaterOrValue) => {
+    setAuditUniverseByYear((prev) => {
+      const current = prev[selectedYear] || defaultAuditUniverse;
+      const updated = typeof updaterOrValue === 'function' ? updaterOrValue(current) : updaterOrValue;
+      return { ...prev, [selectedYear]: updated };
+    });
+  };
+
   const annualPlans = annualPlansByYear[selectedYear] || [];
   const setAnnualPlans = (updaterOrValue) => {
     setAnnualPlansByYear((prev) => {
@@ -310,6 +336,7 @@ export default function App() {
     setInternalControlsByYear({ [selectedYear]: initialInternalControls });
     setLpaIndicatorsByYear({ [selectedYear]: initialLpaIndicators });
     setAuditCharterByYear({ [selectedYear]: initialAuditCharter });
+    setAuditUniverseByYear({ [selectedYear]: defaultAuditUniverse });
     setOrgProfile(initialOrgProfile);
     localStorage.removeItem('ia_annual_plans_by_year');
     localStorage.removeItem('ia_working_papers_by_year');
@@ -317,6 +344,7 @@ export default function App() {
     localStorage.removeItem('ia_internal_controls_by_year');
     localStorage.removeItem('ia_lpa_indicators_by_year');
     localStorage.removeItem('ia_audit_charter_by_year');
+    localStorage.removeItem('ia_audit_universe_by_year');
     localStorage.removeItem('ia_org_profile');
     localStorage.removeItem('ia_annual_plans');
     localStorage.removeItem('ia_working_papers');
@@ -328,11 +356,12 @@ export default function App() {
   // Export JSON Backup
   const handleExportBackup = () => {
     const data = {
-      version: '2.1',
+      version: '2.2',
       exportedAt: new Date().toISOString(),
       orgProfile,
       fiscalYears,
       selectedYear,
+      auditUniverseByYear,
       annualPlansByYear,
       workingPapersByYear,
       riskAssessmentsByYear,
@@ -353,6 +382,8 @@ export default function App() {
   const handleImportBackup = (data) => {
     if (data.orgProfile) setOrgProfile(data.orgProfile);
     if (data.fiscalYears) setFiscalYears(data.fiscalYears);
+    if (data.auditUniverseByYear) setAuditUniverseByYear(data.auditUniverseByYear);
+    else if (data.auditUniverse) setAuditUniverseByYear({ [selectedYear]: data.auditUniverse });
     if (data.annualPlansByYear) setAnnualPlansByYear(data.annualPlansByYear);
     else if (data.annualPlans) setAnnualPlansByYear({ [selectedYear]: data.annualPlans });
     if (data.workingPapersByYear) setWorkingPapersByYear(data.workingPapersByYear);
@@ -426,6 +457,19 @@ export default function App() {
                 setCurrentTab={setCurrentTab}
                 setSelectedWp={setSelectedWp}
                 onOpenSettings={() => setShowSettings(true)}
+              />
+            )}
+
+            {currentTab === 'audit-risk' && (
+              <AuditRiskView
+                key={`audit-risk-${selectedYear}`}
+                selectedYear={selectedYear}
+                orgProfile={orgProfile}
+                auditUniverse={auditUniverse}
+                setAuditUniverse={setAuditUniverse}
+                annualPlans={annualPlans}
+                setAnnualPlans={setAnnualPlans}
+                setCurrentTab={setCurrentTab}
               />
             )}
 
