@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   ShieldAlert,
   FileCheck,
@@ -13,7 +13,8 @@ import {
 export default function ControlRiskView({
   internalControls,
   riskAssessments,
-  orgProfile
+  orgProfile,
+  selectedYear = '2568'
 }) {
   const [activeTab, setActiveTab] = useState('pk4'); // 'pk1', 'pk4', 'pk5', 'bs'
 
@@ -189,7 +190,7 @@ export default function ControlRiskView({
           <div className="space-y-4 leading-relaxed">
             <p className="indent-8 text-justify">
               {orgProfile.name} ได้ประเมินผลการควบคุมภายในของหน่วยงานตามมาตรฐานและหลักเกณฑ์ปฏิบัติการควบคุมภายในสำหรับหน่วยงานของรัฐที่กระทรวงการคลังกำหนด
-              สำหรับปีงบประมาณสิ้นสุดวันที่ 30 กันยายน พ.ศ. {orgProfile.fiscalYear}
+              สำหรับปีงบประมาณสิ้นสุดวันที่ 30 กันยายน พ.ศ. {selectedYear}
             </p>
 
             <p className="indent-8 text-justify">
@@ -203,7 +204,7 @@ export default function ControlRiskView({
               <div>
                 <div className="font-bold">({orgProfile.approverName})</div>
                 <div className="text-xs text-slate-500 dark:text-slate-400">{orgProfile.approverPosition}</div>
-                <div className="text-xs text-slate-400 dark:text-slate-500 mt-1">วันที่ {internalControls.pk1.signDate}</div>
+                <div className="text-xs text-slate-400 dark:text-slate-500 mt-1">วันที่ {internalControls.pk1?.signDate || '-'}</div>
               </div>
             </div>
           </div>
@@ -215,10 +216,10 @@ export default function ControlRiskView({
         <div className="space-y-4">
           <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-xs">
             <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
-              ระบบบริหารจัดการความเสี่ยง (แบบ บส.1 - แบบ บส.5)
+              ระบบบริหารจัดการความเสี่ยง (แบบ บส.1 - แบบ บส.5) ประจำปีงบประมาณ พ.ศ. {selectedYear}
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              อ้างอิงจากโฟลเดอร์ <code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-blue-700 dark:text-blue-400">งานบริหารความเสี่ยง ปี 68</code> ของ อบต.ฝางคำ
+              การบริหารจัดการความเสี่ยงตามมาตรฐานกระทรวงการคลังและหลักเกณฑ์การควบคุมภายใน
             </p>
           </div>
 

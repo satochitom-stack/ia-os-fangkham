@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   FileText,
   AlertTriangle,
@@ -17,7 +17,8 @@ export default function PlanningView({
   setAnnualPlans,
   riskAssessments,
   setRiskAssessments,
-  orgProfile
+  orgProfile,
+  selectedYear = '2568'
 }) {
   const [activeTab, setActiveTab] = useState('plan'); // 'charter', 'risk', 'plan'
   const [selectedRiskFilter, setSelectedRiskFilter] = useState(null);
@@ -27,7 +28,7 @@ export default function PlanningView({
   const [newPlan, setNewPlan] = useState({
     title: '',
     department: 'กองคลัง',
-    quarter: 'ไตรมาส 3 (เม.ย. - มิ.ย. 68)',
+    quarter: `ไตรมาส 1 (ต.ค. - ธ.ค. ${selectedYear.slice(-2)})`,
     period: '',
     riskLevel: 'สูง',
     budget: 5000,
@@ -48,7 +49,8 @@ export default function PlanningView({
   const handleAddPlan = (e) => {
     e.preventDefault();
     if (!newPlan.title) return;
-    const planId = `PLAN-${orgProfile.fiscalYear.slice(-2)}-0${annualPlans.length + 1}`;
+    const yearSuffix = (selectedYear || orgProfile?.fiscalYear || '2568').slice(-2);
+    const planId = `PLAN-${yearSuffix}-0${annualPlans.length + 1}`;
     setAnnualPlans([
       ...annualPlans,
       {
@@ -63,7 +65,7 @@ export default function PlanningView({
     setNewPlan({
       title: '',
       department: 'กองคลัง',
-      quarter: 'ไตรมาส 3 (เม.ย. - มิ.ย. 68)',
+      quarter: `ไตรมาส 1 (ต.ค. - ธ.ค. ${yearSuffix})`,
       period: '',
       riskLevel: 'สูง',
       budget: 5000,
@@ -169,7 +171,7 @@ export default function PlanningView({
           <div className="bg-blue-50/70 dark:bg-blue-500/10 border border-blue-200/80 dark:border-blue-800/50 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-blue-900 dark:text-blue-200">
             <div>
               <span className="font-bold text-blue-950 dark:text-blue-100">
-                แผนการปฏิบัติงานตรวจสอบ ประจำปีงบประมาณ พ.ศ. {orgProfile.fiscalYear}
+                แผนการปฏิบัติงานตรวจสอบ ประจำปีงบประมาณ พ.ศ. {selectedYear}
               </span>
               <p className="text-blue-800/80 dark:text-blue-300 mt-0.5">
                 จัดทำขึ้นจากการประเมินความเสี่ยงของกิจกรรมสำคัญในองค์กร ได้รับความเห็นชอบจากปลัด อปท. และอนุมัติโดยนายก อปท.

@@ -17,14 +17,22 @@ import {
 import { exportWorkingPaperToExcel } from '../utils/exportExcel';
 
 export default function ExecutionView({
-  workingPapers,
+  workingPapers = [],
   setWorkingPapers,
   selectedWp,
   setSelectedWp,
-  orgProfile
+  orgProfile,
+  selectedYear = '2568'
 }) {
-  const currentWp = workingPapers.find((w) => w.id === selectedWp) || workingPapers[0];
-  const isSubsidyWp = currentWp.id.startsWith('WP-SUBSIDY');
+  const currentWp = workingPapers.find((w) => w.id === selectedWp) || workingPapers[0] || {
+    id: 'WP-EMPTY',
+    topic: 'ไม่มีกระดาษทำการ',
+    department: 'หน่วยรับตรวจ',
+    checklist: [],
+    samples: [],
+    finding: {}
+  };
+  const isSubsidyWp = currentWp.id?.startsWith('WP-SUBSIDY');
   const docNoLabel = isSubsidyWp ? 'เลขที่โครงการ / บันทึกข้อตกลง' : 'เลขที่เอกสาร / ฎีกา';
   const payeeLabel = isSubsidyWp ? 'หน่วยงาน / องค์กรที่ขอรับเงินอุดหนุน' : 'ผู้รับเงิน / คู่สัญญา';
   const amountLabel = isSubsidyWp ? 'วงเงินอุดหนุน (บาท)' : 'จำนวนเงิน (บาท)';
@@ -130,7 +138,7 @@ export default function ExecutionView({
             <span>•</span>
             <span className="flex items-center">
               <Calendar className="w-3.5 h-3.5 mr-1 text-slate-400 dark:text-slate-500" />
-              งวดตรวจสอบ: <strong className="ml-1 text-slate-700 dark:text-slate-300">{currentWp.auditPeriod}</strong>
+              งวดตรวจสอบ: <strong className="ml-1 text-slate-700 dark:text-slate-300">{currentWp.auditPeriod || `ปีงบประมาณ พ.ศ. ${selectedYear}`}</strong>
             </span>
             <span>•</span>
             <span className="flex items-center">

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FileSpreadsheet,
   Printer,
@@ -16,24 +16,40 @@ import {
 export default function ReportingView({
   orgProfile,
   annualPlans = [],
-  workingPapers = []
+  workingPapers = [],
+  selectedYear = '2568'
 }) {
   const [activeTab, setActiveTab] = useState('report'); // 'report', 'exit', 'followup'
   const [selectedWpId, setSelectedWpId] = useState(() => workingPapers[0]?.id || '');
 
-  // Persistent Follow-up state
-  const [followupItems, setFollowupItems] = useState(() => {
+  // Persistent Follow-up state isolated by fiscal year
+  const [followupByYear, setFollowupByYear] = useState(() => {
     try {
-      const saved = localStorage.getItem('ia_followup_items');
-      return saved ? JSON.parse(saved) : [];
+      const saved = localStorage.getItem('ia_followup_items_by_year');
+      if (saved) return JSON.parse(saved);
+      // Backwards compatibility for old un-scoped key
+      const old = localStorage.getItem('ia_followup_items');
+      return old ? { [selectedYear]: JSON.parse(old) } : {};
     } catch {
-      return [];
+      return {};
     }
   });
 
-  useEffect(() => {
-    localStorage.setItem('ia_followup_items', JSON.stringify(followupItems));
-  }, [followupItems]);
+  const followupItems = followupByYear[selectedYear] || [];
+
+  const setFollowupItems = (updaterOrValue) => {
+    setFollowupByYear((prev) => {
+      const currentList = prev[selectedYear] || [];
+      const updatedList = typeof updaterOrValue === 'function' ? updaterOrValue(currentList) : updaterOrValue;
+      const next = { ...prev, [selectedYear]: updatedList };
+      try {
+        localStorage.setItem('ia_followup_items_by_year', JSON.stringify(next));
+      } catch (e) {
+        console.error(e);
+      }
+      return next;
+    });
+  };
 
   const [showAddFollowup, setShowAddFollowup] = useState(false);
   const [newFollowup, setNewFollowup] = useState({
@@ -177,7 +193,7 @@ export default function ReportingView({
             <div className="flex justify-between items-baseline text-xs font-semibold text-slate-700 dark:text-slate-300">
               <div className="text-left">
                 <span>วันที่: </span>
-                <span className="font-normal">...... เดือน ...................... พ.ศ. {orgProfile.fiscalYear || '2568'}</span>
+                <span className="font-normal">...... เดือน ...................... พ.ศ. {selectedYear}</span>
               </div>
               <div className="text-left">
                 <span>เรื่อง: </span>
@@ -194,7 +210,7 @@ export default function ReportingView({
             <p className="indent-8 text-justify leading-relaxed">
               ตามที่หน่วยตรวจสอบภายใน {orgProfile.name} ได้ดำเนินการเข้าปฏิบัติงานตรวจสอบ{' '}
               <strong>{reportTitle}</strong> ของ <strong>{reportDept}</strong>{' '}
-              ตามแผนการตรวจสอบประจำปีงบประมาณ พ.ศ. {orgProfile.fiscalYear} บัดนี้ การปฏิบัติงานตรวจสอบได้เสร็จสิ้นแล้ว จึงขอรายงานผลการตรวจสอบดังต่อไปนี้
+              ตามแผนการตรวจสอบประจำปีงบประมาณ พ.ศ. {selectedYear} บัดนี้ การปฏิบัติงานตรวจสอบได้เสร็จสิ้นแล้ว จึงขอรายงานผลการตรวจสอบดังต่อไปนี้
             </p>
 
             {/* Objective & Scope */}

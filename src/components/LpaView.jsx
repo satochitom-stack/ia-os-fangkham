@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Award,
   CheckCircle2,
@@ -13,7 +13,8 @@ import {
 
 export default function LpaView({
   lpaIndicators,
-  orgProfile
+  orgProfile,
+  selectedYear = '2568'
 }) {
   const [checkedEvidence, setCheckedEvidence] = useState({});
   const [expandedId, setExpandedId] = useState(4); // Default expand Indicator 4 (Internal Audit)
@@ -36,13 +37,13 @@ export default function LpaView({
         <div>
           <div className="inline-flex items-center space-x-2 bg-emerald-500/30 border border-emerald-400/30 rounded-full px-3 py-1 text-xs font-medium text-emerald-100 mb-2">
             <Award className="w-3.5 h-3.5 text-emerald-300" />
-            <span>Local Performance Assessment (LPA) ประจำปี พ.ศ. {orgProfile.fiscalYear}</span>
+            <span>Local Performance Assessment (LPA) ประจำปี พ.ศ. {selectedYear}</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black tracking-tight">
             การประเมินประสิทธิภาพ อปท. ด้านที่ 1 การบริหารจัดการ
           </h2>
           <p className="text-xs sm:text-sm text-emerald-100/90 mt-1 max-w-2xl">
-            ระบบตรวจสอบความพร้อมเอกสารหลักฐานตัวชี้วัดที่ 1 - 5 อ้างอิงจากโฟลเดอร์ <code className="bg-emerald-950/60 px-1 py-0.5 rounded text-emerald-200">D:\งานตรวจสอบภายใน\LPA</code>
+            ระบบตรวจสอบความพร้อมเอกสารหลักฐานตัวชี้วัดที่ 1 - 5 เพื่อเตรียมรับการตรวจประเมินประสิทธิภาพของ อปท.
           </p>
         </div>
 

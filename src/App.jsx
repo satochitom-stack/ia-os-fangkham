@@ -84,88 +84,107 @@ export default function App() {
     }
   });
 
-  const [auditCharter, setAuditCharter] = useState(() => {
+  // Persistent States isolated by fiscal year
+  const [annualPlansByYear, setAnnualPlansByYear] = useState(() => {
     try {
-      const saved = localStorage.getItem('ia_audit_charter');
-      return saved ? JSON.parse(saved) : initialAuditCharter;
-    } catch {
-      return initialAuditCharter;
-    }
-  });
-
-  const [annualPlans, setAnnualPlans] = useState(() => {
-    try {
-      const saved = localStorage.getItem('ia_annual_plans');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        // If parsed contains legacy sample items from D:, purge and start blank
-        if (Array.isArray(parsed) && parsed.some((p) => p.title?.includes('ค่าเช่าบ้าน') || p.id === 'PLAN-68-01')) {
-          localStorage.removeItem('ia_annual_plans');
-          return [];
+      const saved = localStorage.getItem('ia_annual_plans_by_year');
+      if (saved) return JSON.parse(saved);
+      const old = localStorage.getItem('ia_annual_plans');
+      if (old) {
+        const parsed = JSON.parse(old);
+        if (Array.isArray(parsed)) {
+          if (parsed.some((p) => p.title?.includes('ค่าเช่าบ้าน') || p.id === 'PLAN-68-01')) {
+            return { '2568': [] };
+          }
+          return { '2568': parsed };
         }
-        return parsed;
       }
-      return initialAnnualPlans;
-    } catch {
-      return initialAnnualPlans;
+    } catch (e) {
+      console.error(e);
     }
+    return { '2568': [] };
   });
 
-  const [workingPapers, setWorkingPapers] = useState(() => {
+  const [workingPapersByYear, setWorkingPapersByYear] = useState(() => {
     try {
-      const saved = localStorage.getItem('ia_working_papers');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        // If parsed contains fake sample findings from D:, purge and use clean templates
-        if (
-          Array.isArray(parsed) &&
-          parsed.some((w) => w.finding?.condition?.includes('Maker') || w.samples?.length > 0)
-        ) {
-          localStorage.removeItem('ia_working_papers');
-          return initialWorkingPapers;
+      const saved = localStorage.getItem('ia_working_papers_by_year');
+      if (saved) return JSON.parse(saved);
+      const old = localStorage.getItem('ia_working_papers');
+      if (old) {
+        const parsed = JSON.parse(old);
+        if (Array.isArray(parsed)) {
+          if (parsed.some((w) => w.finding?.condition?.includes('Maker') || w.samples?.length > 0)) {
+            return { '2568': initialWorkingPapers };
+          }
+          return { '2568': parsed };
         }
-        return parsed;
       }
-      return initialWorkingPapers;
-    } catch {
-      return initialWorkingPapers;
+    } catch (e) {
+      console.error(e);
     }
+    return { '2568': initialWorkingPapers };
   });
 
-  const [riskAssessments, setRiskAssessments] = useState(() => {
+  const [riskAssessmentsByYear, setRiskAssessmentsByYear] = useState(() => {
     try {
-      const saved = localStorage.getItem('ia_risk_assessments');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        // If parsed contains legacy sample risks, purge and start blank
-        if (Array.isArray(parsed) && parsed.some((r) => r.activity?.includes('KTB') || r.id === 'RISK-01')) {
-          localStorage.removeItem('ia_risk_assessments');
-          return [];
+      const saved = localStorage.getItem('ia_risk_assessments_by_year');
+      if (saved) return JSON.parse(saved);
+      const old = localStorage.getItem('ia_risk_assessments');
+      if (old) {
+        const parsed = JSON.parse(old);
+        if (Array.isArray(parsed)) {
+          if (parsed.some((r) => r.activity?.includes('KTB') || r.id === 'RISK-01')) {
+            return { '2568': [] };
+          }
+          return { '2568': parsed };
         }
-        return parsed;
       }
-      return initialRiskAssessments;
-    } catch {
-      return initialRiskAssessments;
+    } catch (e) {
+      console.error(e);
     }
+    return { '2568': [] };
   });
 
-  const [internalControls, setInternalControls] = useState(() => {
+  const [internalControlsByYear, setInternalControlsByYear] = useState(() => {
     try {
-      const saved = localStorage.getItem('ia_internal_controls');
-      return saved ? JSON.parse(saved) : initialInternalControls;
-    } catch {
-      return initialInternalControls;
+      const saved = localStorage.getItem('ia_internal_controls_by_year');
+      if (saved) return JSON.parse(saved);
+      const old = localStorage.getItem('ia_internal_controls');
+      if (old) {
+        return { '2568': JSON.parse(old) };
+      }
+    } catch (e) {
+      console.error(e);
     }
+    return { '2568': initialInternalControls };
   });
 
-  const [lpaIndicators, setLpaIndicators] = useState(() => {
+  const [lpaIndicatorsByYear, setLpaIndicatorsByYear] = useState(() => {
     try {
-      const saved = localStorage.getItem('ia_lpa_indicators');
-      return saved ? JSON.parse(saved) : initialLpaIndicators;
-    } catch {
-      return initialLpaIndicators;
+      const saved = localStorage.getItem('ia_lpa_indicators_by_year');
+      if (saved) return JSON.parse(saved);
+      const old = localStorage.getItem('ia_lpa_indicators');
+      if (old) {
+        return { '2568': JSON.parse(old) };
+      }
+    } catch (e) {
+      console.error(e);
     }
+    return { '2568': initialLpaIndicators };
+  });
+
+  const [auditCharterByYear, setAuditCharterByYear] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ia_audit_charter_by_year');
+      if (saved) return JSON.parse(saved);
+      const old = localStorage.getItem('ia_audit_charter');
+      if (old) {
+        return { '2568': JSON.parse(old) };
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return { '2568': initialAuditCharter };
   });
 
   const [knowledgeBase, setKnowledgeBase] = useState(() => {
@@ -177,30 +196,89 @@ export default function App() {
     }
   });
 
-  // Save changes to localStorage
+  // Save year-scoped states to localStorage
   useEffect(() => {
     localStorage.setItem('ia_org_profile', JSON.stringify(orgProfile));
   }, [orgProfile]);
 
   useEffect(() => {
-    localStorage.setItem('ia_annual_plans', JSON.stringify(annualPlans));
-  }, [annualPlans]);
+    localStorage.setItem('ia_annual_plans_by_year', JSON.stringify(annualPlansByYear));
+  }, [annualPlansByYear]);
 
   useEffect(() => {
-    localStorage.setItem('ia_working_papers', JSON.stringify(workingPapers));
-  }, [workingPapers]);
+    localStorage.setItem('ia_working_papers_by_year', JSON.stringify(workingPapersByYear));
+  }, [workingPapersByYear]);
 
   useEffect(() => {
-    localStorage.setItem('ia_risk_assessments', JSON.stringify(riskAssessments));
-  }, [riskAssessments]);
+    localStorage.setItem('ia_risk_assessments_by_year', JSON.stringify(riskAssessmentsByYear));
+  }, [riskAssessmentsByYear]);
 
   useEffect(() => {
-    localStorage.setItem('ia_internal_controls', JSON.stringify(internalControls));
-  }, [internalControls]);
+    localStorage.setItem('ia_internal_controls_by_year', JSON.stringify(internalControlsByYear));
+  }, [internalControlsByYear]);
 
   useEffect(() => {
-    localStorage.setItem('ia_lpa_indicators', JSON.stringify(lpaIndicators));
-  }, [lpaIndicators]);
+    localStorage.setItem('ia_lpa_indicators_by_year', JSON.stringify(lpaIndicatorsByYear));
+  }, [lpaIndicatorsByYear]);
+
+  useEffect(() => {
+    localStorage.setItem('ia_audit_charter_by_year', JSON.stringify(auditCharterByYear));
+  }, [auditCharterByYear]);
+
+  // Dynamic getters & setters for the currently selected fiscal year
+  const annualPlans = annualPlansByYear[selectedYear] || [];
+  const setAnnualPlans = (updaterOrValue) => {
+    setAnnualPlansByYear((prev) => {
+      const current = prev[selectedYear] || [];
+      const updated = typeof updaterOrValue === 'function' ? updaterOrValue(current) : updaterOrValue;
+      return { ...prev, [selectedYear]: updated };
+    });
+  };
+
+  const workingPapers = workingPapersByYear[selectedYear] || initialWorkingPapers;
+  const setWorkingPapers = (updaterOrValue) => {
+    setWorkingPapersByYear((prev) => {
+      const current = prev[selectedYear] || initialWorkingPapers;
+      const updated = typeof updaterOrValue === 'function' ? updaterOrValue(current) : updaterOrValue;
+      return { ...prev, [selectedYear]: updated };
+    });
+  };
+
+  const riskAssessments = riskAssessmentsByYear[selectedYear] || [];
+  const setRiskAssessments = (updaterOrValue) => {
+    setRiskAssessmentsByYear((prev) => {
+      const current = prev[selectedYear] || [];
+      const updated = typeof updaterOrValue === 'function' ? updaterOrValue(current) : updaterOrValue;
+      return { ...prev, [selectedYear]: updated };
+    });
+  };
+
+  const internalControls = internalControlsByYear[selectedYear] || initialInternalControls;
+  const setInternalControls = (updaterOrValue) => {
+    setInternalControlsByYear((prev) => {
+      const current = prev[selectedYear] || initialInternalControls;
+      const updated = typeof updaterOrValue === 'function' ? updaterOrValue(current) : updaterOrValue;
+      return { ...prev, [selectedYear]: updated };
+    });
+  };
+
+  const lpaIndicators = lpaIndicatorsByYear[selectedYear] || initialLpaIndicators;
+  const setLpaIndicators = (updaterOrValue) => {
+    setLpaIndicatorsByYear((prev) => {
+      const current = prev[selectedYear] || initialLpaIndicators;
+      const updated = typeof updaterOrValue === 'function' ? updaterOrValue(current) : updaterOrValue;
+      return { ...prev, [selectedYear]: updated };
+    });
+  };
+
+  const auditCharter = auditCharterByYear[selectedYear] || initialAuditCharter;
+  const setAuditCharter = (updaterOrValue) => {
+    setAuditCharterByYear((prev) => {
+      const current = prev[selectedYear] || initialAuditCharter;
+      const updated = typeof updaterOrValue === 'function' ? updaterOrValue(current) : updaterOrValue;
+      return { ...prev, [selectedYear]: updated };
+    });
+  };
 
   // Actions
   const handleSaveProfile = (newProfile) => {
@@ -226,32 +304,41 @@ export default function App() {
 
   // Reset to clean blank state (clears all sample records completely)
   const handleResetData = () => {
-    setAnnualPlans([]);
-    setWorkingPapers(initialWorkingPapers);
-    setRiskAssessments([]);
-    setInternalControls(initialInternalControls);
-    setLpaIndicators(initialLpaIndicators);
+    setAnnualPlansByYear({ [selectedYear]: [] });
+    setWorkingPapersByYear({ [selectedYear]: initialWorkingPapers });
+    setRiskAssessmentsByYear({ [selectedYear]: [] });
+    setInternalControlsByYear({ [selectedYear]: initialInternalControls });
+    setLpaIndicatorsByYear({ [selectedYear]: initialLpaIndicators });
+    setAuditCharterByYear({ [selectedYear]: initialAuditCharter });
     setOrgProfile(initialOrgProfile);
+    localStorage.removeItem('ia_annual_plans_by_year');
+    localStorage.removeItem('ia_working_papers_by_year');
+    localStorage.removeItem('ia_risk_assessments_by_year');
+    localStorage.removeItem('ia_internal_controls_by_year');
+    localStorage.removeItem('ia_lpa_indicators_by_year');
+    localStorage.removeItem('ia_audit_charter_by_year');
+    localStorage.removeItem('ia_org_profile');
     localStorage.removeItem('ia_annual_plans');
     localStorage.removeItem('ia_working_papers');
     localStorage.removeItem('ia_risk_assessments');
     localStorage.removeItem('ia_internal_controls');
     localStorage.removeItem('ia_lpa_indicators');
-    localStorage.removeItem('ia_org_profile');
   };
 
   // Export JSON Backup
   const handleExportBackup = () => {
     const data = {
-      version: '2.0',
+      version: '2.1',
       exportedAt: new Date().toISOString(),
       orgProfile,
       fiscalYears,
-      annualPlans,
-      workingPapers,
-      riskAssessments,
-      internalControls,
-      lpaIndicators
+      selectedYear,
+      annualPlansByYear,
+      workingPapersByYear,
+      riskAssessmentsByYear,
+      internalControlsByYear,
+      lpaIndicatorsByYear,
+      auditCharterByYear
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -266,11 +353,18 @@ export default function App() {
   const handleImportBackup = (data) => {
     if (data.orgProfile) setOrgProfile(data.orgProfile);
     if (data.fiscalYears) setFiscalYears(data.fiscalYears);
-    if (data.annualPlans) setAnnualPlans(data.annualPlans);
-    if (data.workingPapers) setWorkingPapers(data.workingPapers);
-    if (data.riskAssessments) setRiskAssessments(data.riskAssessments);
-    if (data.internalControls) setInternalControls(data.internalControls);
-    if (data.lpaIndicators) setLpaIndicators(data.lpaIndicators);
+    if (data.annualPlansByYear) setAnnualPlansByYear(data.annualPlansByYear);
+    else if (data.annualPlans) setAnnualPlansByYear({ [selectedYear]: data.annualPlans });
+    if (data.workingPapersByYear) setWorkingPapersByYear(data.workingPapersByYear);
+    else if (data.workingPapers) setWorkingPapersByYear({ [selectedYear]: data.workingPapers });
+    if (data.riskAssessmentsByYear) setRiskAssessmentsByYear(data.riskAssessmentsByYear);
+    else if (data.riskAssessments) setRiskAssessmentsByYear({ [selectedYear]: data.riskAssessments });
+    if (data.internalControlsByYear) setInternalControlsByYear(data.internalControlsByYear);
+    else if (data.internalControls) setInternalControlsByYear({ [selectedYear]: data.internalControls });
+    if (data.lpaIndicatorsByYear) setLpaIndicatorsByYear(data.lpaIndicatorsByYear);
+    else if (data.lpaIndicators) setLpaIndicatorsByYear({ [selectedYear]: data.lpaIndicators });
+    if (data.auditCharterByYear) setAuditCharterByYear(data.auditCharterByYear);
+    else if (data.auditCharter) setAuditCharterByYear({ [selectedYear]: data.auditCharter });
   };
 
   if (!session) {
@@ -322,7 +416,9 @@ export default function App() {
           <div className="max-w-7xl mx-auto">
             {currentTab === 'dashboard' && (
               <DashboardView
+                key={`dashboard-${selectedYear}`}
                 orgProfile={orgProfile}
+                selectedYear={selectedYear}
                 annualPlans={annualPlans}
                 workingPapers={workingPapers}
                 lpaIndicators={lpaIndicators}
@@ -335,6 +431,8 @@ export default function App() {
 
             {currentTab === 'planning' && (
               <PlanningView
+                key={`planning-${selectedYear}`}
+                selectedYear={selectedYear}
                 auditCharter={auditCharter}
                 annualPlans={annualPlans}
                 setAnnualPlans={setAnnualPlans}
@@ -346,6 +444,8 @@ export default function App() {
 
             {currentTab === 'execution' && (
               <ExecutionView
+                key={`execution-${selectedYear}`}
+                selectedYear={selectedYear}
                 workingPapers={workingPapers}
                 setWorkingPapers={setWorkingPapers}
                 selectedWp={selectedWp}
@@ -356,6 +456,8 @@ export default function App() {
 
             {currentTab === 'reporting' && (
               <ReportingView
+                key={`reporting-${selectedYear}`}
+                selectedYear={selectedYear}
                 orgProfile={orgProfile}
                 annualPlans={annualPlans}
                 workingPapers={workingPapers}
@@ -364,6 +466,8 @@ export default function App() {
 
             {currentTab === 'control-risk' && (
               <ControlRiskView
+                key={`control-risk-${selectedYear}`}
+                selectedYear={selectedYear}
                 internalControls={internalControls}
                 riskAssessments={riskAssessments}
                 orgProfile={orgProfile}
@@ -372,6 +476,8 @@ export default function App() {
 
             {currentTab === 'lpa' && (
               <LpaView
+                key={`lpa-${selectedYear}`}
+                selectedYear={selectedYear}
                 lpaIndicators={lpaIndicators}
                 orgProfile={orgProfile}
               />
@@ -379,6 +485,8 @@ export default function App() {
 
             {currentTab === 'knowledge' && (
               <KnowledgeView
+                key={`knowledge-${selectedYear}`}
+                selectedYear={selectedYear}
                 knowledgeBase={knowledgeBase}
                 orgProfile={orgProfile}
               />

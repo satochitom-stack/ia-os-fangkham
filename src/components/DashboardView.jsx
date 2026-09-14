@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import {
   FileText,
   AlertTriangle,
@@ -18,6 +18,7 @@ import {
 
 export default function DashboardView({
   orgProfile,
+  selectedYear = '2568',
   annualPlans = [],
   workingPapers = [],
   lpaIndicators = [],
@@ -50,7 +51,7 @@ export default function DashboardView({
           <div>
             <div className="inline-flex items-center space-x-2 bg-blue-500/30 border border-blue-400/30 rounded-full px-3 py-1 text-xs font-medium text-blue-100 mb-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>ปีงบประมาณ พ.ศ. {orgProfile.fiscalYear || '2568'}</span>
+              <span>ปีงบประมาณ พ.ศ. {selectedYear}</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-black tracking-tight">
               ระบบงานตรวจสอบภายใน {orgDisplayName}
@@ -197,7 +198,7 @@ export default function DashboardView({
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
-                สถานะการปฏิบัติงานตามแผนตรวจสอบประจำปี {orgProfile.fiscalYear || '2568'}
+                สถานะการปฏิบัติงานตามแผนตรวจสอบประจำปี {selectedYear}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 ติดตามความก้าวหน้าโครงการตรวจสอบทั้ง 4 ไตรมาส
@@ -216,7 +217,7 @@ export default function DashboardView({
             <div className="text-center py-10 px-4 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl space-y-2">
               <CalendarDays className="w-8 h-8 text-slate-400 mx-auto" />
               <div className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                ยังไม่มีโครงการในแผนประจำปี {orgProfile.fiscalYear}
+                ยังไม่มีโครงการในแผนประจำปี {selectedYear}
               </div>
               <p className="text-xs text-slate-500 max-w-md mx-auto">
                 เริ่มต้นเพิ่มโครงการตรวจสอบจริงของ อปท. ของท่าน เพื่อกำหนดงวดเวลา งบประมาณ และติดตามความก้าวหน้า
