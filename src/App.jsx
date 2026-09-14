@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import DashboardView from './components/DashboardView';
@@ -43,26 +43,7 @@ export default function App() {
     localStorage.setItem('ia_dark_mode', darkMode ? '1' : '0');
   }, [darkMode]);
 
-  // Migration: Automatically purge old D:\ sample data from localStorage on first run of v2
-  useEffect(() => {
-    const cleanFlag = localStorage.getItem('ia_clean_v2');
-    if (!cleanFlag) {
-      // Remove old cached sample items
-      localStorage.removeItem('ia_annual_plans');
-      localStorage.removeItem('ia_working_papers');
-      localStorage.removeItem('ia_risk_assessments');
-      localStorage.removeItem('ia_internal_controls');
-      localStorage.removeItem('ia_lpa_indicators');
-      // If orgProfile contained previous sample names, clear it
-      const savedProfile = localStorage.getItem('ia_org_profile');
-      if (savedProfile && (savedProfile.includes('สุดารัตน์') || savedProfile.includes('ศุภมงคล'))) {
-        localStorage.removeItem('ia_org_profile');
-      }
-      localStorage.setItem('ia_clean_v2', 'true');
-    }
-  }, []);
-
-  // Fiscal Years Management
+  // Migration: Synchronously ensure sample data from D:\ drive is completely purged
   const [fiscalYears, setFiscalYears] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_fiscal_years');
@@ -81,14 +62,18 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState('dashboard');
   const [selectedWp, setSelectedWp] = useState('WP-KTB-01');
 
-  // Persistent States
+  // Persistent States - Cleaned of D:\ sample data
   const [orgProfile, setOrgProfile] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_org_profile');
       if (saved) {
         const parsed = JSON.parse(saved);
-        // If old sample name remains, return clean profile
-        if (parsed.auditorName?.includes('สุดารัตน์') || parsed.auditorName?.includes('ศุภมงคล')) {
+        if (
+          parsed.auditorName?.includes('สุดารัตน์') ||
+          parsed.auditorName?.includes('ศุภมงคล') ||
+          parsed.name?.includes('ฝางคำ')
+        ) {
+          localStorage.removeItem('ia_org_profile');
           return initialOrgProfile;
         }
         return parsed;
@@ -111,7 +96,16 @@ export default function App() {
   const [annualPlans, setAnnualPlans] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_annual_plans');
-      return saved ? JSON.parse(saved) : initialAnnualPlans;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // If parsed contains legacy sample items from D:, purge and start blank
+        if (Array.isArray(parsed) && parsed.some((p) => p.title?.includes('ค่าเช่าบ้าน') || p.id === 'PLAN-68-01')) {
+          localStorage.removeItem('ia_annual_plans');
+          return [];
+        }
+        return parsed;
+      }
+      return initialAnnualPlans;
     } catch {
       return initialAnnualPlans;
     }
@@ -120,7 +114,19 @@ export default function App() {
   const [workingPapers, setWorkingPapers] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_working_papers');
-      return saved ? JSON.parse(saved) : initialWorkingPapers;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // If parsed contains fake sample findings from D:, purge and use clean templates
+        if (
+          Array.isArray(parsed) &&
+          parsed.some((w) => w.finding?.condition?.includes('Maker') || w.samples?.length > 0)
+        ) {
+          localStorage.removeItem('ia_working_papers');
+          return initialWorkingPapers;
+        }
+        return parsed;
+      }
+      return initialWorkingPapers;
     } catch {
       return initialWorkingPapers;
     }
@@ -129,7 +135,16 @@ export default function App() {
   const [riskAssessments, setRiskAssessments] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_risk_assessments');
-      return saved ? JSON.parse(saved) : initialRiskAssessments;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // If parsed contains legacy sample risks, purge and start blank
+        if (Array.isArray(parsed) && parsed.some((r) => r.activity?.includes('KTB') || r.id === 'RISK-01')) {
+          localStorage.removeItem('ia_risk_assessments');
+          return [];
+        }
+        return parsed;
+      }
+      return initialRiskAssessments;
     } catch {
       return initialRiskAssessments;
     }

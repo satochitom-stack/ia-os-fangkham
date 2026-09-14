@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import {
   LayoutDashboard,
   FileText,
@@ -10,15 +10,15 @@ import {
   FolderSync
 } from 'lucide-react';
 
-export default function Sidebar({ currentTab, setCurrentTab, planCount }) {
+export default function Sidebar({ currentTab, setCurrentTab }) {
   const menuItems = [
-    { id: 'dashboard', label: 'ภาพรวม & ปฏิทินงาน', icon: LayoutDashboard, badge: 'สรุป' },
-    { id: 'planning', label: 'แผน & นโยบายตรวจ', icon: FileText, badge: `${planCount} แผน` },
-    { id: 'execution', label: 'ปฏิบัติการตรวจ & กระดาษทำการ', icon: ClipboardCheck, badge: 'สำคัญ', highlight: true },
-    { id: 'reporting', label: 'รายงาน & ติดตามผล', icon: FileSpreadsheet, badge: 'ปิดตรวจ' },
-    { id: 'control-risk', label: 'ควบคุมภายใน & บริหารความเสี่ยง', icon: ShieldAlert, badge: 'ปค./บส.' },
-    { id: 'lpa', label: 'เตรียมรับประเมิน LPA', icon: Award, badge: 'เต็ม 5' },
-    { id: 'knowledge', label: 'คลังระเบียบ & แบบฟอร์ม', icon: BookOpen, badge: 'ว./กม.' },
+    { id: 'dashboard', label: 'ภาพรวม & ปฏิทินงาน', icon: LayoutDashboard },
+    { id: 'planning', label: 'แผน & นโยบายตรวจ', icon: FileText },
+    { id: 'execution', label: 'ปฏิบัติการตรวจ & กระดาษทำการ', icon: ClipboardCheck },
+    { id: 'reporting', label: 'รายงาน & ติดตามผล', icon: FileSpreadsheet },
+    { id: 'control-risk', label: 'ควบคุมภายใน & บริหารความเสี่ยง', icon: ShieldAlert },
+    { id: 'lpa', label: 'เตรียมรับประเมิน LPA', icon: Award },
+    { id: 'knowledge', label: 'คลังระเบียบ & แบบฟอร์ม', icon: BookOpen },
   ];
 
   return (
@@ -37,7 +37,7 @@ export default function Sidebar({ currentTab, setCurrentTab, planCount }) {
             <button
               key={item.id}
               onClick={() => setCurrentTab(item.id)}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+              className={`w-full flex items-center px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                 isActive
                   ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30 font-semibold'
                   : 'text-slate-300 hover:bg-slate-800/70 hover:text-white'
@@ -47,19 +47,6 @@ export default function Sidebar({ currentTab, setCurrentTab, planCount }) {
                 <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400 dark:text-slate-500'}`} />
                 <span className="truncate text-left">{item.label}</span>
               </div>
-              {item.badge && (
-                <span
-                  className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
-                    isActive
-                      ? 'bg-blue-700/80 text-white'
-                      : item.highlight
-                      ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
-                      : 'bg-slate-800 text-slate-400 dark:text-slate-500'
-                  }`}
-                >
-                  {item.badge}
-                </span>
-              )}
             </button>
           );
         })}
