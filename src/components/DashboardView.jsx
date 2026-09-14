@@ -1,0 +1,340 @@
+﻿import React from 'react';
+import {
+  FileText,
+  AlertTriangle,
+  Award,
+  CheckCircle2,
+  Clock,
+  ArrowRight,
+  TrendingUp,
+  ClipboardList,
+  FolderOpen,
+  CalendarDays,
+  ChevronRight
+} from 'lucide-react';
+
+export default function DashboardView({
+  orgProfile,
+  annualPlans,
+  workingPapers,
+  lpaIndicators,
+  riskAssessments,
+  setCurrentTab,
+  setSelectedWp
+}) {
+  const completedPlans = annualPlans.filter((p) => p.status === 'completed').length;
+  const inProgressPlans = annualPlans.filter((p) => p.status === 'in_progress').length;
+  const pendingPlans = annualPlans.filter((p) => p.status === 'pending').length;
+
+  const totalLpaScore = lpaIndicators.reduce((acc, curr) => acc + curr.score, 0);
+  const maxLpaScore = lpaIndicators.reduce((acc, curr) => acc + curr.maxScore, 0);
+  const lpaPercent = Math.round((totalLpaScore / maxLpaScore) * 100);
+
+  const highRisks = riskAssessments.filter(
+    (r) => r.level === 'สูงมาก' || r.level === 'สูง'
+  ).length;
+
+  return (
+    <div className="space-y-6">
+      {/* Top Banner */}
+      <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-slate-900 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+        <div className="absolute right-0 top-0 w-96 h-96 bg-white/5 dark:bg-slate-900 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center space-x-2 bg-blue-500/30 border border-blue-400/30 rounded-full px-3 py-1 text-xs font-medium text-blue-100 mb-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>ปีงบประมาณ พ.ศ. {orgProfile.fiscalYear} ดำเนินการตามแผน</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight">
+              ยินดีต้อนรับสู่ระบบงานตรวจสอบภายใน {orgProfile.name}
+            </h2>
+            <p className="text-sm text-blue-100/90 mt-1 max-w-2xl">
+              ภารกิจตรวจสอบเพื่อสร้างความเชื่อมั่น ให้คำปรึกษาอย่างเป็นอิสระ และเตรียมความพร้อมรับการประเมิน LPA ประจำปี
+            </p>
+          </div>
+          <div className="flex items-center space-x-3 shrink-0">
+            <button
+              onClick={() => setCurrentTab('execution')}
+              className="bg-white dark:bg-slate-900 text-blue-800 dark:text-blue-300 hover:bg-blue-50 px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-all flex items-center space-x-2 cursor-pointer"
+            >
+              <ClipboardList className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <span>เปิดกระดาษทำการ</span>
+            </button>
+            <button
+              onClick={() => setCurrentTab('reporting')}
+              className="bg-blue-600/80 hover:bg-blue-600 border border-blue-400/30 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 cursor-pointer"
+            >
+              <FileText className="w-4 h-4" />
+              <span>สรุปรายงานผล</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 4 Stat Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Card 1: Plans */}
+        <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/80 dark:border-slate-700 shadow-xs hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">แผนตรวจสอบประจำปี</span>
+            <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+              <CalendarDays className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-3 flex items-baseline space-x-2">
+            <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">{annualPlans.length}</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">โครงการตามแผน</span>
+          </div>
+          <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400">
+            <span className="flex items-center text-emerald-600 dark:text-emerald-400 font-medium">
+              <CheckCircle2 className="w-3 h-3 mr-1" /> เสร็จสิ้น {completedPlans}
+            </span>
+            <span className="flex items-center text-amber-600 dark:text-amber-400 font-medium">
+              <Clock className="w-3 h-3 mr-1" /> ระหว่างตรวจ {inProgressPlans}
+            </span>
+            <span className="text-slate-400 dark:text-slate-500">รอตรวจ {pendingPlans}</span>
+          </div>
+        </div>
+
+        {/* Card 2: LPA Readiness */}
+        <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/80 dark:border-slate-700 shadow-xs hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">ความพร้อมรับตรวจ LPA</span>
+            <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <Award className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-3 flex items-baseline space-x-2">
+            <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{totalLpaScore}/{maxLpaScore}</span>
+            <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
+              {lpaPercent}% (ระดับดีมาก)
+            </span>
+          </div>
+          <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex justify-between items-center">
+            <span>ตัวชี้วัดด้านที่ 1 (ตัวชี้วัด 1-5)</span>
+            <button
+              onClick={() => setCurrentTab('lpa')}
+              className="text-blue-600 dark:text-blue-400 font-medium hover:underline flex items-center cursor-pointer"
+            >
+              ดูรายละเอียด <ChevronRight className="w-3 h-3" />
+            </button>
+          </div>
+        </div>
+
+        {/* Card 3: Internal Control */}
+        <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/80 dark:border-slate-700 shadow-xs hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">รายงานควบคุมภายใน</span>
+            <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+              <FileText className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-3 flex items-baseline space-x-2">
+            <span className="text-2xl font-bold text-indigo-700 dark:text-indigo-400">6 / 6</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">ส่วนราชการส่งครบ</span>
+          </div>
+          <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex justify-between items-center">
+            <span>จัดทำ ปค.4, ปค.5 ครบถ้วน</span>
+            <button
+              onClick={() => setCurrentTab('control-risk')}
+              className="text-blue-600 dark:text-blue-400 font-medium hover:underline flex items-center cursor-pointer"
+            >
+              ตรวจสอบ <ChevronRight className="w-3 h-3" />
+            </button>
+          </div>
+        </div>
+
+        {/* Card 4: High Risk Items */}
+        <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/80 dark:border-slate-700 shadow-xs hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">ประเด็นเสี่ยงสูง (Risk)</span>
+            <div className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+              <AlertTriangle className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-3 flex items-baseline space-x-2">
+            <span className="text-2xl font-bold text-rose-600 dark:text-rose-400">{highRisks}</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">กิจกรรมที่ต้องเฝ้าระวัง</span>
+          </div>
+          <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex justify-between items-center">
+            <span>KTB Online (คะแนน 16)</span>
+            <button
+              onClick={() => setCurrentTab('planning')}
+              className="text-rose-600 dark:text-rose-400 font-medium hover:underline flex items-center cursor-pointer"
+            >
+              ดู Heatmap <ChevronRight className="w-3 h-3" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Grid: Audit Projects & Quick Access */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left 2 Cols: Annual Audit Plan Progress */}
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/80 dark:border-slate-700 shadow-xs">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
+                สถานะการปฏิบัติงานตามแผนตรวจสอบประจำปี {orgProfile.fiscalYear}
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                ติดตามความก้าวหน้าโครงการตรวจสอบทั้ง 4 ไตรมาส
+              </p>
+            </div>
+            <button
+              onClick={() => setCurrentTab('planning')}
+              className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 flex items-center space-x-1 cursor-pointer"
+            >
+              <span>ดูแผนทั้งหมด</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            {annualPlans.map((plan) => {
+              const isCompleted = plan.status === 'completed';
+              const isInProgress = plan.status === 'in_progress';
+              return (
+                <div
+                  key={plan.id}
+                  className="p-4 rounded-xl border border-slate-200/70 dark:border-slate-700 hover:border-blue-300 hover:bg-slate-50/50 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                >
+                  <div className="space-y-1.5 flex-1">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
+                        {plan.id}
+                      </span>
+                      <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                        {plan.department}
+                      </span>
+                      <span
+                        className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                          plan.riskLevel === 'สูงมาก'
+                            ? 'bg-rose-100 dark:bg-rose-500/20 text-rose-800 dark:text-rose-300'
+                            : plan.riskLevel === 'สูง'
+                            ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300'
+                            : 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300'
+                        }`}
+                      >
+                        เสี่ยง{plan.riskLevel}
+                      </span>
+                    </div>
+                    <div className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-snug">
+                      {plan.title}
+                    </div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center space-x-3">
+                      <span>{plan.quarter}</span>
+                      <span>•</span>
+                      <span>{plan.period}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 shrink-0">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-24 bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${
+                            isCompleted
+                              ? 'bg-emerald-500'
+                              : isInProgress
+                              ? 'bg-blue-600'
+                              : 'bg-slate-300'
+                          }`}
+                          style={{ width: `${plan.progress}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300 w-8 text-right">
+                        {plan.progress}%
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setSelectedWp(
+                          plan.id === 'PLAN-68-01' ? 'WP-RENT-01' : 'WP-KTB-01'
+                        );
+                        setCurrentTab('execution');
+                      }}
+                      className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 hover:underline flex items-center space-x-1 cursor-pointer"
+                    >
+                      <span>เข้าตรวจ</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Right Col: Quick Working Papers & Reference Directives */}
+        <div className="space-y-4">
+          {/* Quick Access to Active Working Paper */}
+          <div className="bg-gradient-to-br from-slate-900 to-blue-950 text-white rounded-xl p-5 shadow-sm">
+            <div className="flex items-center space-x-2 text-xs font-semibold text-blue-300 mb-2">
+              <TrendingUp className="w-4 h-4 text-blue-400" />
+              <span>เรื่องตรวจสอบที่กำลังดำเนินการ</span>
+            </div>
+            <h4 className="text-base font-bold text-white leading-tight">
+              การตรวจสอบระบบ KTB Corporate Online (ม.ค. - ก.พ. 68)
+            </h4>
+            <p className="text-xs text-slate-300 mt-2 line-clamp-2">
+              ตรวจสอบสิทธิ Maker-Checker การควบคุมรหัสผ่าน และงบกระทบยอดเงินฝากธนาคาร
+            </p>
+            <div className="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between">
+              <span className="text-xs text-amber-300 font-medium">
+                พบ 1 ข้อสังเกตด้านความปลอดภัย
+              </span>
+              <button
+                onClick={() => {
+                  setSelectedWp('WP-KTB-01');
+                  setCurrentTab('execution');
+                }}
+                className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+              >
+                เปิดดู
+              </button>
+            </div>
+          </div>
+
+          {/* Key Directives Alert */}
+          <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/80 dark:border-slate-700 shadow-xs">
+            <div className="flex items-center space-x-2 text-xs font-bold text-slate-800 dark:text-slate-200 mb-3">
+              <FolderOpen className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <span>หนังสือสั่งการสำคัญ (อ้างอิง D:\)</span>
+            </div>
+            <div className="space-y-2.5">
+              <div
+                onClick={() => setCurrentTab('knowledge')}
+                className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-950 hover:bg-blue-50/70 border border-slate-200/60 dark:border-slate-700 transition-colors cursor-pointer"
+              >
+                <div className="text-xs font-bold text-slate-900 dark:text-slate-100">หนังสือ ว 119 (จัดงานประเพณี)</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
+                  หลักเกณฑ์การเบิกจ่ายงานเทศกาลและประเพณีท้องถิ่น
+                </div>
+              </div>
+              <div
+                onClick={() => setCurrentTab('knowledge')}
+                className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-950 hover:bg-blue-50/70 border border-slate-200/60 dark:border-slate-700 transition-colors cursor-pointer"
+              >
+                <div className="text-xs font-bold text-slate-900 dark:text-slate-100">หนังสือ ว 257 (หลักเกณฑ์ยืมเงิน)</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
+                  กำหนดส่งใช้เงินยืมภายใน 30 วันนับแต่วันสิ้นสุดโครงการ
+                </div>
+              </div>
+              <div
+                onClick={() => setCurrentTab('knowledge')}
+                className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-950 hover:bg-blue-50/70 border border-slate-200/60 dark:border-slate-700 transition-colors cursor-pointer"
+              >
+                <div className="text-xs font-bold text-slate-900 dark:text-slate-100">หนังสือ ว 11807 (เดินทางไปราชการ)</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
+                  วิธีปฏิบัติการเบิกค่าเดินทางฉบับปรับปรุง พ.ย. 67
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
