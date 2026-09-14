@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   ClipboardCheck,
   CheckCircle,
@@ -135,7 +135,7 @@ export default function ExecutionView({
             <span>•</span>
             <span className="flex items-center">
               <UserCheck className="w-3.5 h-3.5 mr-1 text-slate-400 dark:text-slate-500" />
-              ผู้ตรวจสอบ: <strong className="ml-1 text-slate-700 dark:text-slate-300">{currentWp.auditor}</strong>
+              ผู้ตรวจสอบ: <strong className="ml-1 text-slate-700 dark:text-slate-300">{orgProfile.auditorName || currentWp.auditor || 'ผู้ตรวจสอบภายใน'}</strong>
             </span>
           </div>
         </div>
