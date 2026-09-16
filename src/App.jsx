@@ -12,6 +12,8 @@ import LoginView from './components/LoginView';
 import ChangePasswordModal from './components/ChangePasswordModal';
 import ProfileSettingsModal from './components/ProfileSettingsModal';
 import AuditRiskView, { defaultAuditUniverse } from './components/AuditRiskView';
+import EngagementPlanView from './components/EngagementPlanView';
+import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
 import { getSession, logout as authLogout } from './utils/auth';
 
 import {
@@ -209,6 +211,18 @@ export default function App() {
     }
   });
 
+  // Audit Engagement Plans state (ว 614) isolated by fiscal year
+  const [engagementPlansByYear, setEngagementPlansByYear] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ia_engagement_plans_by_year');
+      if (saved) return JSON.parse(saved);
+      return { '2568': INITIAL_ENGAGEMENT_PLANS };
+    } catch (e) {
+      console.error(e);
+      return { '2568': INITIAL_ENGAGEMENT_PLANS };
+    }
+  });
+
   const [knowledgeBase, setKnowledgeBase] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_knowledge_base');
@@ -251,11 +265,24 @@ export default function App() {
     localStorage.setItem('ia_audit_universe_by_year', JSON.stringify(auditUniverseByYear));
   }, [auditUniverseByYear]);
 
+  useEffect(() => {
+    localStorage.setItem('ia_engagement_plans_by_year', JSON.stringify(engagementPlansByYear));
+  }, [engagementPlansByYear]);
+
   // Dynamic getters & setters for the currently selected fiscal year
   const auditUniverse = auditUniverseByYear[selectedYear] || defaultAuditUniverse;
   const setAuditUniverse = (updaterOrValue) => {
     setAuditUniverseByYear((prev) => {
       const current = prev[selectedYear] || defaultAuditUniverse;
+      const updated = typeof updaterOrValue === 'function' ? updaterOrValue(current) : updaterOrValue;
+      return { ...prev, [selectedYear]: updated };
+    });
+  };
+
+  const engagementPlans = engagementPlansByYear[selectedYear] || INITIAL_ENGAGEMENT_PLANS;
+  const setEngagementPlans = (updaterOrValue) => {
+    setEngagementPlansByYear((prev) => {
+      const current = prev[selectedYear] || INITIAL_ENGAGEMENT_PLANS;
       const updated = typeof updaterOrValue === 'function' ? updaterOrValue(current) : updaterOrValue;
       return { ...prev, [selectedYear]: updated };
     });
@@ -346,6 +373,7 @@ export default function App() {
     setLpaIndicatorsByYear({ [selectedYear]: initialLpaIndicators });
     setAuditCharterByYear({ [selectedYear]: initialAuditCharter });
     setAuditUniverseByYear({ [selectedYear]: defaultAuditUniverse });
+    setEngagementPlansByYear({ [selectedYear]: INITIAL_ENGAGEMENT_PLANS });
     setOrgProfile(initialOrgProfile);
     localStorage.removeItem('ia_annual_plans_by_year');
     localStorage.removeItem('ia_working_papers_by_year');
@@ -354,6 +382,7 @@ export default function App() {
     localStorage.removeItem('ia_lpa_indicators_by_year');
     localStorage.removeItem('ia_audit_charter_by_year');
     localStorage.removeItem('ia_audit_universe_by_year');
+    localStorage.removeItem('ia_engagement_plans_by_year');
     localStorage.removeItem('ia_org_profile');
     localStorage.removeItem('ia_annual_plans');
     localStorage.removeItem('ia_working_papers');
@@ -365,12 +394,13 @@ export default function App() {
   // Export JSON Backup
   const handleExportBackup = () => {
     const data = {
-      version: '2.2',
+      version: '2.3',
       exportedAt: new Date().toISOString(),
       orgProfile,
       fiscalYears,
       selectedYear,
       auditUniverseByYear,
+      engagementPlansByYear,
       annualPlansByYear,
       workingPapersByYear,
       riskAssessmentsByYear,
@@ -393,6 +423,8 @@ export default function App() {
     if (data.fiscalYears) setFiscalYears(data.fiscalYears);
     if (data.auditUniverseByYear) setAuditUniverseByYear(data.auditUniverseByYear);
     else if (data.auditUniverse) setAuditUniverseByYear({ [selectedYear]: data.auditUniverse });
+    if (data.engagementPlansByYear) setEngagementPlansByYear(data.engagementPlansByYear);
+    else if (data.engagementPlans) setEngagementPlansByYear({ [selectedYear]: data.engagementPlans });
     if (data.annualPlansByYear) setAnnualPlansByYear(data.annualPlansByYear);
     else if (data.annualPlans) setAnnualPlansByYear({ [selectedYear]: data.annualPlans });
     if (data.workingPapersByYear) setWorkingPapersByYear(data.workingPapersByYear);
@@ -492,6 +524,18 @@ export default function App() {
                 riskAssessments={riskAssessments}
                 setRiskAssessments={setRiskAssessments}
                 orgProfile={orgProfile}
+              />
+            )}
+
+            {currentTab === 'engagement-plan' && (
+              <EngagementPlanView
+                key={`engagement-plan-${selectedYear}`}
+                selectedYear={selectedYear}
+                orgProfile={orgProfile}
+                auditUniverse={auditUniverse}
+                annualPlans={annualPlans}
+                engagementPlans={engagementPlans}
+                setEngagementPlans={setEngagementPlans}
               />
             )}
 

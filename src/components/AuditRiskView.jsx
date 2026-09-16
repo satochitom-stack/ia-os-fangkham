@@ -1156,6 +1156,17 @@ export default function AuditRiskView({
               <span>โหลดข้อมูลจริง อบต.ฝางคำ (21 กิจกรรม)</span>
             </button>
 
+            {setCurrentTab && (
+              <button
+                onClick={() => setCurrentTab('engagement-plan')}
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer transition-all"
+                title="เปิดเมนูแผนปฏิบัติงานตรวจสอบตาม ว 614 พร้อม AI ผู้ช่วย"
+              >
+                <Sparkles className="w-4 h-4 text-slate-950" />
+                <span>แผนปฏิบัติงานตรวจ ว 614 (AI)</span>
+              </button>
+            )}
+
             <button
               onClick={() => {
                 setEditingItem(null);

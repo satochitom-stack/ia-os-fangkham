@@ -8,7 +8,8 @@ import {
   ShieldCheck,
   Award,
   BookOpen,
-  CheckCircle2
+  CheckCircle2,
+  Sparkles
 } from 'lucide-react';
 
 export default function Sidebar({ currentTab, setCurrentTab }) {
@@ -16,6 +17,7 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
     { id: 'dashboard', label: 'ภาพรวม & ปฏิทินงาน', icon: LayoutDashboard },
     { id: 'audit-risk', label: 'การประเมินความเสี่ยง', icon: ShieldAlert },
     { id: 'planning', label: 'แผน & นโยบายตรวจ', icon: FileText },
+    { id: 'engagement-plan', label: 'แผนปฏิบัติงานตรวจ (ว 614)', icon: Sparkles },
     { id: 'execution', label: 'ปฏิบัติการตรวจ & กระดาษทำการ', icon: ClipboardCheck },
     { id: 'reporting', label: 'รายงาน & ติดตามผล', icon: FileSpreadsheet },
     { id: 'control-risk', label: 'ควบคุมภายใน & บริหารความเสี่ยง', icon: ShieldCheck },
