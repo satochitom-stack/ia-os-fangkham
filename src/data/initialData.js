@@ -4,17 +4,17 @@
 export const initialFiscalYears = ['2567', '2568', '2569', '2570'];
 
 export const initialOrgProfile = {
-  name: 'องค์การบริหารส่วนตำบล...',
+  name: 'องค์การบริหารส่วนตำบลฝางคำ',
   agencyName: 'หน่วยตรวจสอบภายใน',
-  district: '',
-  province: '',
+  district: 'อำเภอกุดข้าวปุ้น',
+  province: 'จังหวัดอุบลราชธานี',
   fiscalYear: '2568',
-  auditorName: '',
-  auditorPosition: 'นักวิชาการตรวจสอบภายใน',
+  auditorName: 'นายศุภมงคล ธรรมพิทักษ์',
+  auditorPosition: 'นักวิชาการตรวจสอบภายในปฏิบัติการ',
   approverName: '',
-  approverPosition: 'นายกองค์การบริหารส่วนตำบล',
+  approverPosition: 'นายกองค์การบริหารส่วนตำบลฝางคำ',
   palatName: '',
-  palatPosition: 'ปลัดองค์การบริหารส่วนตำบล'
+  palatPosition: 'ปลัดองค์การบริหารส่วนตำบลฝางคำ'
 };
 
 export const initialAuditCharter = {

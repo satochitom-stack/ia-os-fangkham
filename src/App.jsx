@@ -69,15 +69,16 @@ export default function App() {
       const saved = localStorage.getItem('ia_org_profile');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (
-          parsed.auditorName?.includes('สุดารัตน์') ||
-          parsed.auditorName?.includes('ศุภมงคล') ||
-          parsed.name?.includes('ฝางคำ')
-        ) {
-          localStorage.removeItem('ia_org_profile');
-          return initialOrgProfile;
+        if (parsed.auditorName?.includes('สุดารัตน์') || !parsed.auditorName || parsed.name?.includes('...')) {
+          return {
+            ...initialOrgProfile,
+            ...parsed,
+            name: parsed.name && !parsed.name.includes('...') ? parsed.name : 'องค์การบริหารส่วนตำบลฝางคำ',
+            auditorName: parsed.auditorName && !parsed.auditorName.includes('สุดารัตน์') ? parsed.auditorName : 'นายศุภมงคล ธรรมพิทักษ์',
+            auditorPosition: parsed.auditorPosition || 'นักวิชาการตรวจสอบภายในปฏิบัติการ'
+          };
         }
-        return parsed;
+        return { ...initialOrgProfile, ...parsed };
       }
       return initialOrgProfile;
     } catch {
@@ -192,7 +193,15 @@ export default function App() {
   const [auditUniverseByYear, setAuditUniverseByYear] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_audit_universe_by_year');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Automatically upgrade to real Fang Kham SAO 21 activities
+        if (parsed['2568'] && (parsed['2568'].length < 21 || parsed['2568'][0]?.activity?.includes('การจัดเก็บภาษี'))) {
+          parsed['2568'] = defaultAuditUniverse;
+          localStorage.setItem('ia_audit_universe_by_year', JSON.stringify(parsed));
+        }
+        return parsed;
+      }
       return { '2568': defaultAuditUniverse };
     } catch (e) {
       console.error(e);
