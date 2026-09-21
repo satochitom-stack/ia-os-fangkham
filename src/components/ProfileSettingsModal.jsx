@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   X,
   Building2,
@@ -230,7 +230,7 @@ export default function ProfileSettingsModal({
                   </label>
                   <input
                     type="text"
-                    placeholder="เช่น นายประสิทธิ์ บริหารดี"
+                    placeholder="เช่น นายจรูญ ธรรมพิทักษ์"
                     value={profileForm.approverName}
                     onChange={(e) => setProfileForm({ ...profileForm, approverName: e.target.value })}
                     className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 outline-none"
@@ -242,7 +242,7 @@ export default function ProfileSettingsModal({
                   </label>
                   <input
                     type="text"
-                    placeholder="เช่น นายวิชัย สุจริตธรรม"
+                    placeholder="เช่น นายชาญชัย อักโข"
                     value={profileForm.palatName}
                     onChange={(e) => setProfileForm({ ...profileForm, palatName: e.target.value })}
                     className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 outline-none"

@@ -1,19 +1,19 @@
 // ฐานข้อมูลระบบงานตรวจสอบภายใน (อปท.) - Clean Template Version
 // โครงสร้างมาตรฐานตามระเบียบกระทรวงการคลัง และมาตรฐานการตรวจสอบภายในภาครัฐ
 
-export const initialFiscalYears = ['2567', '2568', '2569', '2570'];
+export const initialFiscalYears = ['2567', '2568'];
 
 export const initialOrgProfile = {
   name: 'องค์การบริหารส่วนตำบลฝางคำ',
   agencyName: 'หน่วยตรวจสอบภายใน',
-  district: 'อำเภอกุดข้าวปุ้น',
+  district: 'อำเภอสิรินธร',
   province: 'จังหวัดอุบลราชธานี',
   fiscalYear: '2568',
   auditorName: 'นายศุภมงคล ธรรมพิทักษ์',
   auditorPosition: 'นักวิชาการตรวจสอบภายในปฏิบัติการ',
-  approverName: '',
+  approverName: 'นายจรูญ ธรรมพิทักษ์',
   approverPosition: 'นายกองค์การบริหารส่วนตำบลฝางคำ',
-  palatName: '',
+  palatName: 'นายชาญชัย อักโข',
   palatPosition: 'ปลัดองค์การบริหารส่วนตำบลฝางคำ'
 };
 

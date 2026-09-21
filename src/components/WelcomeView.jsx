@@ -229,7 +229,7 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
               </p>
             </div>
             <div className="text-xs text-slate-500">
-              องค์การบริหารส่วนตำบลฝางคำ อำเภอกุดข้าวปุ้น จ.อุบลราชธานี
+              องค์การบริหารส่วนตำบลฝางคำ อำเภอสิรินธร จ.อุบลราชธานี
             </div>
           </div>
 
@@ -386,7 +386,7 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
           หน่วยตรวจสอบภายใน องค์การบริหารส่วนตำบลฝางคำ
         </p>
         <p>
-          อำเภอกุดข้าวปุ้น จังหวัดอุบลราชธานี | ผู้พัฒนา: นายศุภมงคล ธรรมพิทักษ์ (นักวิชาการตรวจสอบภายในปฏิบัติการ)
+          อำเภอสิรินธร จังหวัดอุบลราชธานี | ผู้พัฒนา: นายศุภมงคล ธรรมพิทักษ์ (นักวิชาการตรวจสอบภายในปฏิบัติการ)
         </p>
         <p className="text-[10px] text-slate-600 pt-2">
           IA-OS: Internal Audit Operating System for Local Administrative Organizations

@@ -60,7 +60,7 @@ export default function LoginView({ onLogin }) {
             ระบบปฏิบัติการตรวจสอบภายใน อปท. (IA-OS)
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
-            องค์การบริหารส่วนตำบลฝางคำ อำเภอกุดข้าวปุ้น จังหวัดอุบลราชธานี
+            องค์การบริหารส่วนตำบลฝางคำ อำเภอสิรินธร จังหวัดอุบลราชธานี
           </p>
           <div className="mt-2 inline-flex items-center space-x-1.5 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/80 px-2.5 py-0.5 rounded-full text-[11px] font-semibold text-blue-700 dark:text-blue-300">
             <Sparkles className="w-3 h-3" />

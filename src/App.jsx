@@ -59,7 +59,16 @@ export default function App() {
   const [fiscalYears, setFiscalYears] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_fiscal_years');
-      return saved ? JSON.parse(saved) : initialFiscalYears;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          if (parsed.length === 4 && parsed.includes('2569') && parsed.includes('2570')) {
+            return initialFiscalYears;
+          }
+          return parsed;
+        }
+      }
+      return initialFiscalYears;
     } catch {
       return initialFiscalYears;
     }
@@ -74,22 +83,22 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState('welcome');
   const [selectedWp, setSelectedWp] = useState('WP-KTB-01');
 
-  // Persistent States - Cleaned of D:\ sample data
+  // Persistent States - Cleaned of D:\ sample data and synced with real Fang Kham profile
   const [orgProfile, setOrgProfile] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_org_profile');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed.auditorName?.includes('สุดารัตน์') || !parsed.auditorName || parsed.name?.includes('...')) {
-          return {
-            ...initialOrgProfile,
-            ...parsed,
-            name: parsed.name && !parsed.name.includes('...') ? parsed.name : 'องค์การบริหารส่วนตำบลฝางคำ',
-            auditorName: parsed.auditorName && !parsed.auditorName.includes('สุดารัตน์') ? parsed.auditorName : 'นายศุภมงคล ธรรมพิทักษ์',
-            auditorPosition: parsed.auditorPosition || 'นักวิชาการตรวจสอบภายในปฏิบัติการ'
-          };
-        }
-        return { ...initialOrgProfile, ...parsed };
+        return {
+          ...initialOrgProfile,
+          ...parsed,
+          name: parsed.name && !parsed.name.includes('...') ? parsed.name : initialOrgProfile.name,
+          district: parsed.district && !parsed.district.includes('กุดข้าวปุ้น') ? parsed.district : initialOrgProfile.district,
+          approverName: parsed.approverName || initialOrgProfile.approverName,
+          palatName: parsed.palatName || initialOrgProfile.palatName,
+          auditorName: parsed.auditorName && !parsed.auditorName.includes('สุดารัตน์') ? parsed.auditorName : initialOrgProfile.auditorName,
+          auditorPosition: parsed.auditorPosition || initialOrgProfile.auditorPosition
+        };
       }
       return initialOrgProfile;
     } catch {
