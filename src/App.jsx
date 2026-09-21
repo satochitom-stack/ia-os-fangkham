@@ -62,7 +62,13 @@ export default function App() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          if (parsed.length === 4 && parsed.includes('2569') && parsed.includes('2570')) {
+          // If stored fiscal years contain 2567 or only 2568, migrate to default ['2569', '2570']
+          if (
+            parsed.includes('2567') ||
+            (parsed.length === 2 && parsed.includes('2567') && parsed.includes('2568')) ||
+            (parsed.length === 1 && parsed[0] === '2568') ||
+            (parsed.length === 4 && parsed.includes('2569') && parsed.includes('2570'))
+          ) {
             return initialFiscalYears;
           }
           return parsed;
@@ -79,7 +85,7 @@ export default function App() {
   }, [fiscalYears]);
 
   // Navigation & Fiscal Year State
-  const [selectedYear, setSelectedYear] = useState('2568');
+  const [selectedYear, setSelectedYear] = useState('2569');
   const [currentTab, setCurrentTab] = useState('welcome');
   const [selectedWp, setSelectedWp] = useState('WP-KTB-01');
 
@@ -97,7 +103,8 @@ export default function App() {
           approverName: parsed.approverName || initialOrgProfile.approverName,
           palatName: parsed.palatName || initialOrgProfile.palatName,
           auditorName: parsed.auditorName && !parsed.auditorName.includes('สุดารัตน์') ? parsed.auditorName : initialOrgProfile.auditorName,
-          auditorPosition: parsed.auditorPosition || initialOrgProfile.auditorPosition
+          auditorPosition: parsed.auditorPosition || initialOrgProfile.auditorPosition,
+          fiscalYear: parsed.fiscalYear && (parsed.fiscalYear === '2569' || parsed.fiscalYear === '2570') ? parsed.fiscalYear : initialOrgProfile.fiscalYear
         };
       }
       return initialOrgProfile;
@@ -110,103 +117,127 @@ export default function App() {
   const [annualPlansByYear, setAnnualPlansByYear] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_annual_plans_by_year');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (!parsed['2569'] && parsed['2568']) parsed['2569'] = parsed['2568'];
+        return parsed;
+      }
       const old = localStorage.getItem('ia_annual_plans');
       if (old) {
         const parsed = JSON.parse(old);
         if (Array.isArray(parsed)) {
           if (parsed.some((p) => p.title?.includes('ค่าเช่าบ้าน') || p.id === 'PLAN-68-01')) {
-            return { '2568': [] };
+            return { '2569': [] };
           }
-          return { '2568': parsed };
+          return { '2569': parsed };
         }
       }
     } catch (e) {
       console.error(e);
     }
-    return { '2568': [] };
+    return { '2569': [] };
   });
 
   const [workingPapersByYear, setWorkingPapersByYear] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_working_papers_by_year');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (!parsed['2569'] && parsed['2568']) parsed['2569'] = parsed['2568'];
+        return parsed;
+      }
       const old = localStorage.getItem('ia_working_papers');
       if (old) {
         const parsed = JSON.parse(old);
         if (Array.isArray(parsed)) {
           if (parsed.some((w) => w.finding?.condition?.includes('Maker') || w.samples?.length > 0)) {
-            return { '2568': initialWorkingPapers };
+            return { '2569': initialWorkingPapers };
           }
-          return { '2568': parsed };
+          return { '2569': parsed };
         }
       }
     } catch (e) {
       console.error(e);
     }
-    return { '2568': initialWorkingPapers };
+    return { '2569': initialWorkingPapers };
   });
 
   const [riskAssessmentsByYear, setRiskAssessmentsByYear] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_risk_assessments_by_year');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (!parsed['2569'] && parsed['2568']) parsed['2569'] = parsed['2568'];
+        return parsed;
+      }
       const old = localStorage.getItem('ia_risk_assessments');
       if (old) {
         const parsed = JSON.parse(old);
         if (Array.isArray(parsed)) {
           if (parsed.some((r) => r.activity?.includes('KTB') || r.id === 'RISK-01')) {
-            return { '2568': [] };
+            return { '2569': [] };
           }
-          return { '2568': parsed };
+          return { '2569': parsed };
         }
       }
     } catch (e) {
       console.error(e);
     }
-    return { '2568': [] };
+    return { '2569': [] };
   });
 
   const [internalControlsByYear, setInternalControlsByYear] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_internal_controls_by_year');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (!parsed['2569'] && parsed['2568']) parsed['2569'] = parsed['2568'];
+        return parsed;
+      }
       const old = localStorage.getItem('ia_internal_controls');
       if (old) {
-        return { '2568': JSON.parse(old) };
+        return { '2569': JSON.parse(old) };
       }
     } catch (e) {
       console.error(e);
     }
-    return { '2568': initialInternalControls };
+    return { '2569': initialInternalControls };
   });
 
   const [lpaIndicatorsByYear, setLpaIndicatorsByYear] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_lpa_indicators_by_year');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (!parsed['2569'] && parsed['2568']) parsed['2569'] = parsed['2568'];
+        return parsed;
+      }
       const old = localStorage.getItem('ia_lpa_indicators');
       if (old) {
-        return { '2568': JSON.parse(old) };
+        return { '2569': JSON.parse(old) };
       }
     } catch (e) {
       console.error(e);
     }
-    return { '2568': initialLpaIndicators };
+    return { '2569': initialLpaIndicators };
   });
 
   const [auditCharterByYear, setAuditCharterByYear] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_audit_charter_by_year');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (!parsed['2569'] && parsed['2568']) parsed['2569'] = parsed['2568'];
+        return parsed;
+      }
       const old = localStorage.getItem('ia_audit_charter');
       if (old) {
-        return { '2568': JSON.parse(old) };
+        return { '2569': JSON.parse(old) };
       }
     } catch (e) {
       console.error(e);
     }
-    return { '2568': initialAuditCharter };
+    return { '2569': initialAuditCharter };
   });
 
   // Audit Universe Risk Assessment state isolated by fiscal year
@@ -215,17 +246,20 @@ export default function App() {
       const saved = localStorage.getItem('ia_audit_universe_by_year');
       if (saved) {
         const parsed = JSON.parse(saved);
+        if (!parsed['2569']) {
+          parsed['2569'] = parsed['2568'] || defaultAuditUniverse;
+        }
         // Automatically upgrade to real Fang Kham SAO 21 activities
-        if (parsed['2568'] && (parsed['2568'].length < 21 || parsed['2568'][0]?.activity?.includes('การจัดเก็บภาษี'))) {
-          parsed['2568'] = defaultAuditUniverse;
+        if (parsed['2569'] && (parsed['2569'].length < 21 || parsed['2569'][0]?.activity?.includes('การจัดเก็บภาษี'))) {
+          parsed['2569'] = defaultAuditUniverse;
           localStorage.setItem('ia_audit_universe_by_year', JSON.stringify(parsed));
         }
         return parsed;
       }
-      return { '2568': defaultAuditUniverse };
+      return { '2569': defaultAuditUniverse, '2570': defaultAuditUniverse };
     } catch (e) {
       console.error(e);
-      return { '2568': defaultAuditUniverse };
+      return { '2569': defaultAuditUniverse, '2570': defaultAuditUniverse };
     }
   });
 
@@ -233,11 +267,17 @@ export default function App() {
   const [engagementPlansByYear, setEngagementPlansByYear] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_engagement_plans_by_year');
-      if (saved) return JSON.parse(saved);
-      return { '2568': INITIAL_ENGAGEMENT_PLANS };
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (!parsed['2569']) {
+          parsed['2569'] = parsed['2568'] || INITIAL_ENGAGEMENT_PLANS;
+        }
+        return parsed;
+      }
+      return { '2569': INITIAL_ENGAGEMENT_PLANS, '2570': INITIAL_ENGAGEMENT_PLANS };
     } catch (e) {
       console.error(e);
-      return { '2568': INITIAL_ENGAGEMENT_PLANS };
+      return { '2569': INITIAL_ENGAGEMENT_PLANS, '2570': INITIAL_ENGAGEMENT_PLANS };
     }
   });
 

@@ -20,7 +20,7 @@ export default function Header({
   orgProfile,
   selectedYear,
   setSelectedYear,
-  fiscalYears = ['2567', '2568', '2569', '2570'],
+  fiscalYears = ['2569', '2570'],
   darkMode,
   onToggleDarkMode,
   session,

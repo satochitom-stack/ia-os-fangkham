@@ -18,7 +18,7 @@ export default function PlanningView({
   riskAssessments,
   setRiskAssessments,
   orgProfile,
-  selectedYear = '2568'
+  selectedYear = '2569'
 }) {
   const [activeTab, setActiveTab] = useState('plan'); // 'charter', 'risk', 'plan'
   const [selectedRiskFilter, setSelectedRiskFilter] = useState(null);

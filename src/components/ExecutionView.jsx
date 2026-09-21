@@ -22,7 +22,7 @@ export default function ExecutionView({
   selectedWp,
   setSelectedWp,
   orgProfile,
-  selectedYear = '2568'
+  selectedYear = '2569'
 }) {
   const currentWp = workingPapers.find((w) => w.id === selectedWp) || workingPapers[0] || {
     id: 'WP-EMPTY',

@@ -18,7 +18,7 @@ import {
 
 export default function DashboardView({
   orgProfile,
-  selectedYear = '2568',
+  selectedYear = '2569',
   annualPlans = [],
   workingPapers = [],
   lpaIndicators = [],

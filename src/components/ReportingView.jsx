@@ -17,7 +17,7 @@ export default function ReportingView({
   orgProfile,
   annualPlans = [],
   workingPapers = [],
-  selectedYear = '2568'
+  selectedYear = '2569'
 }) {
   const [activeTab, setActiveTab] = useState('report'); // 'report', 'exit', 'followup'
   const [selectedWpId, setSelectedWpId] = useState(() => workingPapers[0]?.id || '');

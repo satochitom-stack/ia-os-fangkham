@@ -884,7 +884,7 @@ export const COMPARISON_TABLE_DATA = [
 ];
 
 export default function AuditRiskView({
-  selectedYear = '2568',
+  selectedYear = '2569',
   orgProfile = {},
   auditUniverse = [],
   setAuditUniverse,

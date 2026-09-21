@@ -14,7 +14,7 @@ import {
 export default function LpaView({
   lpaIndicators,
   orgProfile,
-  selectedYear = '2568'
+  selectedYear = '2569'
 }) {
   const [checkedEvidence, setCheckedEvidence] = useState({});
   const [expandedId, setExpandedId] = useState(4); // Default expand Indicator 4 (Internal Audit)

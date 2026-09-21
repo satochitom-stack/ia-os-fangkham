@@ -14,7 +14,7 @@ export default function ControlRiskView({
   internalControls,
   riskAssessments,
   orgProfile,
-  selectedYear = '2568'
+  selectedYear = '2569'
 }) {
   const [activeTab, setActiveTab] = useState('pk4'); // 'pk1', 'pk4', 'pk5', 'bs'
 
