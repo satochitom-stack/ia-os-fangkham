@@ -15,7 +15,7 @@ import AuditRiskView, { defaultAuditUniverse } from './components/AuditRiskView'
 import EngagementPlanView from './components/EngagementPlanView';
 import UserManagementView from './components/UserManagementView';
 import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
-import { getSession, logout as authLogout, switchSessionTo } from './utils/auth';
+import { getSession, logout as authLogout, switchSessionTo, autoRepairDataLinkages } from './utils/auth';
 
 import {
   initialOrgProfile,
@@ -28,6 +28,13 @@ import {
   initialLpaIndicators,
   initialKnowledgeBase
 } from './data/initialData';
+
+// Run auto-repair of department linkages and user accounts synchronously before state initialization
+try {
+  autoRepairDataLinkages();
+} catch (e) {
+  console.error(e);
+}
 
 export default function App() {
   // Authentication State (single-user, client-side session)
@@ -269,6 +276,21 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('ia_engagement_plans_by_year', JSON.stringify(engagementPlansByYear));
   }, [engagementPlansByYear]);
+
+  const reloadDataFromStorage = () => {
+    try {
+      const au = localStorage.getItem('ia_audit_universe_by_year');
+      if (au) setAuditUniverseByYear(JSON.parse(au));
+      const ap = localStorage.getItem('ia_annual_plans_by_year');
+      if (ap) setAnnualPlansByYear(JSON.parse(ap));
+      const ep = localStorage.getItem('ia_engagement_plans_by_year');
+      if (ep) setEngagementPlansByYear(JSON.parse(ep));
+      const wp = localStorage.getItem('ia_working_papers_by_year');
+      if (wp) setWorkingPapersByYear(JSON.parse(wp));
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   // Dynamic getters & setters for the currently selected fiscal year
   const auditUniverse = auditUniverseByYear[selectedYear] || defaultAuditUniverse;
@@ -634,6 +656,7 @@ export default function App() {
                 }}
                 onRefreshUser={() => {
                   setSession(getSession());
+                  reloadDataFromStorage();
                 }}
               />
             )}

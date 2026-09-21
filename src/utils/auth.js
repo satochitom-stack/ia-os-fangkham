@@ -68,31 +68,227 @@ export function addDepartment(name) {
   return depts;
 }
 
+export function cascadeDepartmentRenameToStorage(oldName, cleanNew) {
+  if (!oldName || !cleanNew || oldName.trim() === cleanNew.trim()) return;
+  const from = oldName.trim();
+  const to = cleanNew.trim();
+
+  // 1. ia_audit_universe_by_year
+  try {
+    const raw = localStorage.getItem('ia_audit_universe_by_year');
+    if (raw) {
+      const data = JSON.parse(raw);
+      let changed = false;
+      Object.keys(data).forEach((year) => {
+        if (Array.isArray(data[year])) {
+          data[year].forEach((act) => {
+            if (act.department === from) {
+              act.department = to;
+              changed = true;
+            }
+          });
+        }
+      });
+      if (changed) {
+        localStorage.setItem('ia_audit_universe_by_year', JSON.stringify(data));
+      }
+    }
+  } catch (e) {
+    console.error('Cascade error (audit universe):', e);
+  }
+
+  // 2. ia_annual_plans_by_year
+  try {
+    const raw = localStorage.getItem('ia_annual_plans_by_year');
+    if (raw) {
+      const data = JSON.parse(raw);
+      let changed = false;
+      Object.keys(data).forEach((year) => {
+        if (Array.isArray(data[year])) {
+          data[year].forEach((plan) => {
+            if (plan.department === from) {
+              plan.department = to;
+              changed = true;
+            }
+          });
+        }
+      });
+      if (changed) {
+        localStorage.setItem('ia_annual_plans_by_year', JSON.stringify(data));
+      }
+    }
+  } catch (e) {
+    console.error('Cascade error (annual plans):', e);
+  }
+
+  // 3. ia_engagement_plans_by_year
+  try {
+    const raw = localStorage.getItem('ia_engagement_plans_by_year');
+    if (raw) {
+      const data = JSON.parse(raw);
+      let changed = false;
+      Object.keys(data).forEach((year) => {
+        if (Array.isArray(data[year])) {
+          data[year].forEach((plan) => {
+            if (plan.department === from) {
+              plan.department = to;
+              changed = true;
+            }
+            if (plan.targetDepartment === from) {
+              plan.targetDepartment = to;
+              changed = true;
+            }
+          });
+        }
+      });
+      if (changed) {
+        localStorage.setItem('ia_engagement_plans_by_year', JSON.stringify(data));
+      }
+    }
+  } catch (e) {
+    console.error('Cascade error (engagement plans):', e);
+  }
+
+  // 4. ia_working_papers_by_year
+  try {
+    const raw = localStorage.getItem('ia_working_papers_by_year');
+    if (raw) {
+      const data = JSON.parse(raw);
+      let changed = false;
+      Object.keys(data).forEach((year) => {
+        if (Array.isArray(data[year])) {
+          data[year].forEach((wp) => {
+            if (wp.department === from) {
+              wp.department = to;
+              changed = true;
+            }
+          });
+        }
+      });
+      if (changed) {
+        localStorage.setItem('ia_working_papers_by_year', JSON.stringify(data));
+      }
+    }
+  } catch (e) {
+    console.error('Cascade error (working papers):', e);
+  }
+}
+
+export function autoRepairDataLinkages() {
+  try {
+    const depts = getDepartments();
+    const raw = localStorage.getItem(USERS_KEY);
+    if (!raw) return;
+    const users = JSON.parse(raw);
+    if (!Array.isArray(users) || users.length === 0) return;
+
+    let usersChanged = false;
+    users.forEach((u) => {
+      if (u.role !== 'admin') {
+        // Case 1: Specific mismatch for health user where department was renamed to กองสวัสดิการสังคม
+        if (u.username === 'health') {
+          if (u.department === 'กองสวัสดิการสังคม' && u.displayName !== 'กองสวัสดิการสังคม') {
+            u.displayName = 'กองสวัสดิการสังคม';
+            usersChanged = true;
+          }
+          if (u.position && u.position.includes('กองสาธารณสุข') && u.department === 'กองสวัสดิการสังคม') {
+            u.position = 'ผู้อำนวยการกองสวัสดิการสังคม / เจ้าหน้าที่';
+            usersChanged = true;
+          }
+          // Also cascade previous rename to storage collections
+          cascadeDepartmentRenameToStorage('กองสาธารณสุขและสิ่งแวดล้อม', 'กองสวัสดิการสังคม');
+        }
+
+        // Case 2: Generic mismatch: u.displayName was a default department name that was renamed to u.department
+        if (DEFAULT_DEPARTMENTS.includes(u.displayName) && u.department && u.displayName !== u.department) {
+          if (!depts.includes(u.displayName)) {
+            cascadeDepartmentRenameToStorage(u.displayName, u.department);
+            u.displayName = u.department;
+            usersChanged = true;
+          }
+        }
+      }
+    });
+
+    if (usersChanged) {
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+
+    // Also repair active session if it held the old display name
+    const currentSession = getSession();
+    if (currentSession && currentSession.role !== 'admin') {
+      const matched = users.find((u) => u.username.toLowerCase() === currentSession.username.toLowerCase());
+      if (matched && (currentSession.displayName !== matched.displayName || currentSession.department !== matched.department)) {
+        currentSession.displayName = matched.displayName;
+        currentSession.department = matched.department;
+        localStorage.setItem(SESSION_KEY, JSON.stringify(currentSession));
+      }
+    }
+  } catch (e) {
+    console.error('autoRepairDataLinkages error:', e);
+  }
+}
+
 export function updateDepartment(oldName, newName) {
+  const cleanOld = oldName.trim();
   const cleanNew = newName.trim();
   if (!cleanNew) throw new Error('กรุณาระบุชื่อสำนัก/กองใหม่');
   const depts = getDepartments();
-  const idx = depts.findIndex((d) => d.toLowerCase() === oldName.trim().toLowerCase());
+  const idx = depts.findIndex((d) => d.toLowerCase() === cleanOld.toLowerCase());
   if (idx === -1) throw new Error('ไม่พบสำนัก/กองเดิมในระบบ');
 
-  if (cleanNew.toLowerCase() !== oldName.trim().toLowerCase() && depts.some((d) => d.toLowerCase() === cleanNew.toLowerCase())) {
+  if (cleanNew.toLowerCase() !== cleanOld.toLowerCase() && depts.some((d) => d.toLowerCase() === cleanNew.toLowerCase())) {
     throw new Error(`ชื่อสำนัก/กอง "${cleanNew}" มีอยู่ในระบบแล้ว`);
   }
   depts[idx] = cleanNew;
   saveDepartments(depts);
 
-  // Update existing users belonging to oldName
+  // Update existing users belonging to oldName or displaying oldName
   const users = getUsers();
   let changed = false;
   users.forEach((u) => {
-    if (u.department === oldName) {
+    const isOldDept = u.department?.toLowerCase() === cleanOld.toLowerCase();
+    const isOldDisplay = u.displayName?.toLowerCase() === cleanOld.toLowerCase();
+
+    if (isOldDept || isOldDisplay) {
       u.department = cleanNew;
+      // Also update displayName if it was the department name or contains it
+      if (isOldDisplay || (u.displayName && u.displayName.includes(cleanOld))) {
+        u.displayName = u.displayName ? u.displayName.replaceAll(cleanOld, cleanNew) : cleanNew;
+      }
+      if (u.position && u.position.includes(cleanOld)) {
+        u.position = u.position.replaceAll(cleanOld, cleanNew);
+      }
       changed = true;
     }
   });
   if (changed) {
     saveUsers(users);
   }
+
+  // Update current session if matching
+  try {
+    const currentSession = getSession();
+    if (currentSession) {
+      let sessChanged = false;
+      if (currentSession.department?.toLowerCase() === cleanOld.toLowerCase()) {
+        currentSession.department = cleanNew;
+        sessChanged = true;
+      }
+      if (currentSession.displayName?.toLowerCase() === cleanOld.toLowerCase() || (currentSession.displayName && currentSession.displayName.includes(cleanOld))) {
+        currentSession.displayName = currentSession.displayName.replaceAll(cleanOld, cleanNew);
+        sessChanged = true;
+      }
+      if (sessChanged) {
+        localStorage.setItem(SESSION_KEY, JSON.stringify(currentSession));
+      }
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
+  // Cascade to audit universe, annual plans, engagement plans, working papers
+  cascadeDepartmentRenameToStorage(cleanOld, cleanNew);
 
   return depts;
 }
@@ -236,7 +432,24 @@ export function getUsers() {
     const raw = localStorage.getItem(USERS_KEY);
     if (raw) {
       const users = JSON.parse(raw);
-      if (Array.isArray(users) && users.length > 0) return users;
+      if (Array.isArray(users) && users.length > 0) {
+        let changed = false;
+        users.forEach((u) => {
+          if (u.role !== 'admin') {
+            if (u.username === 'health' && u.department === 'กองสวัสดิการสังคม' && u.displayName !== 'กองสวัสดิการสังคม') {
+              u.displayName = 'กองสวัสดิการสังคม';
+              if (u.position && u.position.includes('กองสาธารณสุข')) {
+                u.position = 'ผู้อำนวยการกองสวัสดิการสังคม / เจ้าหน้าที่';
+              }
+              changed = true;
+            }
+          }
+        });
+        if (changed) {
+          saveUsers(users);
+        }
+        return users;
+      }
     }
 
     // Auto-seed default users and check if there's an existing legacy single account

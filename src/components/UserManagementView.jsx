@@ -266,7 +266,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
       setDepartments(updated);
       setEditingDeptOldName(null);
       refreshList();
-      showToast(`เปลี่ยนชื่อกองเป็น "${clean}" สำเร็จ`);
+      showToast(`เปลี่ยนชื่อกองเป็น "${clean}" สำเร็จ (เชื่อมโยงและอัปเดตบัญชีผู้ใช้และข้อมูลทั้งหมดแล้ว)`);
     } catch (err) {
       showToast(`⚠️ ${err.message}`);
     }
@@ -981,11 +981,16 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                     <select
                       value={formDepartment}
                       onChange={(e) => {
-                        if (e.target.value === '__NEW__') {
+                        const val = e.target.value;
+                        if (val === '__NEW__') {
                           setIsCustomDept(true);
                           setCustomDeptName('');
                         } else {
-                          setFormDepartment(e.target.value);
+                          // Auto update displayName if it was empty, matched previous department or another department name
+                          if (!formDisplayName.trim() || formDisplayName === formDepartment || departments.includes(formDisplayName)) {
+                            setFormDisplayName(val);
+                          }
+                          setFormDepartment(val);
                         }
                       }}
                       className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-slate-800 dark:text-slate-200"
