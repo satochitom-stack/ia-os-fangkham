@@ -92,76 +92,110 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-cyan-500 selection:text-black">
-      {/* 1. Floating Top Navigation Bar */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-slate-950/75 backdrop-blur-md border-b border-slate-800/80 px-4 md:px-8 py-3.5 flex items-center justify-between transition-all">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20">
-            <Shield className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="text-sm font-black tracking-wider text-white flex items-center space-x-2">
-              <span>IA-OS</span>
-              <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-full border border-cyan-500/30">
-                อบต.ฝางคำ
+      {/* 1. Ultra-Futuristic Floating Glass Island Header */}
+      <div className="fixed top-3 sm:top-4 inset-x-0 z-50 px-3 sm:px-6 pointer-events-none">
+        <header className="max-w-6xl mx-auto pointer-events-auto rounded-2xl md:rounded-full bg-slate-950/75 backdrop-blur-2xl border border-cyan-500/25 shadow-[0_10px_35px_rgba(0,0,0,0.8),0_0_25px_rgba(6,182,212,0.15)] px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between transition-all relative overflow-hidden ring-1 ring-white/10">
+          {/* Subtle neon glow lines */}
+          <div className="absolute top-0 inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent pointer-events-none" />
+          <div className="absolute -bottom-6 left-1/4 w-32 h-12 bg-cyan-500/10 blur-xl pointer-events-none" />
+
+          {/* Brand & System Status */}
+          <div className="flex items-center space-x-3 sm:space-x-3.5">
+            <div
+              className="relative group cursor-pointer"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            >
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/30 group-hover:shadow-cyan-400/50 transition-all border border-cyan-400/30">
+                <Shield className="w-5 h-5 text-cyan-100" />
+              </div>
+              <span className="absolute -bottom-1 -right-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-slate-950"></span>
               </span>
             </div>
-            <div className="text-[11px] text-slate-400">
-              ระบบปฏิบัติการตรวจสอบภายในยุคดิจิทัล
+
+            <div>
+              <div className="text-sm sm:text-base font-black tracking-wider text-white flex items-center space-x-2">
+                <span className="bg-gradient-to-r from-white via-cyan-100 to-cyan-400 bg-clip-text text-transparent drop-shadow">
+                  IA-OS
+                </span>
+                <span className="text-[10px] font-semibold bg-cyan-950/80 text-cyan-300 px-2.5 py-0.5 rounded-full border border-cyan-500/30 tracking-wide">
+                  อบต.ฝางคำ
+                </span>
+              </div>
+              <div className="text-[10px] sm:text-[11px] text-slate-400 flex items-center space-x-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                <span>ระบบปฏิบัติการตรวจสอบภายในยุคดิจิทัล</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <nav className="hidden md:flex items-center space-x-6 text-xs font-medium text-slate-300">
-          <button
-            type="button"
-            onClick={scrollToExplore}
-            className="hover:text-cyan-400 transition-colors cursor-pointer"
-          >
-            ภาพรวมระบบ
-          </button>
-          <a
-            href="#departments"
-            className="hover:text-cyan-400 transition-colors cursor-pointer"
-          >
-            หน่วยรับตรวจ 6 กอง
-          </a>
-          <a
-            href="#modules"
-            className="hover:text-cyan-400 transition-colors cursor-pointer"
-          >
-            ฟังก์ชันการตรวจสอบ
-          </a>
-        </nav>
-
-        <div className="flex items-center space-x-2.5">
-          {session ? (
+          {/* Navigation Pill Links */}
+          <nav className="hidden lg:flex items-center space-x-1 bg-slate-900/70 p-1 rounded-full border border-slate-800/80 text-xs font-semibold text-slate-300 backdrop-blur-md">
             <button
               type="button"
-              onClick={onEnterDashboard}
-              className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-xs px-4 py-2 rounded-xl flex items-center space-x-2 shadow-lg shadow-cyan-500/25 transition-all cursor-pointer"
+              onClick={scrollToExplore}
+              className="px-4 py-1.5 rounded-full hover:text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-500/30 border border-transparent transition-all cursor-pointer flex items-center space-x-1.5"
             >
-              <span>ไปยังแดชบอร์ดงาน ({session.displayName || session.username})</span>
-              <ArrowRight className="w-4 h-4" />
+              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+              <span>ภาพรวมระบบ</span>
             </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setShowLoginModal(true)}
-              className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs px-4 py-2 rounded-xl flex items-center space-x-1.5 shadow-lg shadow-cyan-500/25 transition-all cursor-pointer"
+            <a
+              href="#departments"
+              className="px-4 py-1.5 rounded-full hover:text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-500/30 border border-transparent transition-all cursor-pointer flex items-center space-x-1.5"
             >
-              <LogIn className="w-4 h-4" />
-              <span>เข้าสู่ระบบ (Sign In)</span>
-            </button>
-          )}
-        </div>
-      </header>
+              <Building className="w-3.5 h-3.5 text-blue-400" />
+              <span>หน่วยรับตรวจ 6 กอง</span>
+            </a>
+            <a
+              href="#modules"
+              className="px-4 py-1.5 rounded-full hover:text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-500/30 border border-transparent transition-all cursor-pointer flex items-center space-x-1.5"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+              <span>ฟังก์ชันการตรวจสอบ</span>
+            </a>
+          </nav>
 
-      {/* 2. Futuristic Hero Canvas (Using user provided component) */}
+          {/* Action / Login CTA Button */}
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            {session ? (
+              <button
+                type="button"
+                onClick={onEnterDashboard}
+                className="relative group p-[1px] rounded-full overflow-hidden bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_28px_rgba(16,185,129,0.6)] transition-all cursor-pointer"
+              >
+                <div className="px-4 sm:px-5 py-2 rounded-full bg-slate-950/85 group-hover:bg-transparent text-white font-bold text-xs flex items-center space-x-2 transition-all">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="hidden sm:inline">ไปยังแดชบอร์ดงาน</span>
+                  <span className="text-cyan-300">({session.displayName || session.username})</span>
+                  <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
+                </div>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowLoginModal(true)}
+                className="relative group p-[1px] rounded-full overflow-hidden bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 shadow-[0_0_18px_rgba(6,182,212,0.35)] hover:shadow-[0_0_28px_rgba(6,182,212,0.6)] transition-all cursor-pointer"
+              >
+                <div className="px-4 sm:px-5 py-2 rounded-full bg-slate-950/90 group-hover:bg-gradient-to-r group-hover:from-cyan-500 group-hover:to-blue-600 text-cyan-300 group-hover:text-slate-950 font-bold text-xs flex items-center space-x-2 transition-all">
+                  <LogIn className="w-3.5 h-3.5 text-cyan-400 group-hover:text-slate-950 transition-colors" />
+                  <span>เข้าสู่ระบบ (Sign In)</span>
+                </div>
+              </button>
+            )}
+          </div>
+        </header>
+      </div>
+
+      {/* 2. Futuristic Hero Canvas */}
       <section className="relative w-full h-svh">
         <Html
-          title="BUILD YOUR DREAMS"
-          subtitle="AI-POWERED CREATIVITY FOR THE NEXT GENERATION."
-          buttonText="Scroll to explore"
+          badge="⚡ INTERNAL AUDIT OPERATING SYSTEM • อบต.ฝางคำ"
+          title="IA-OS FANG KHAM"
+          subtitle="ระบบปฏิบัติการตรวจสอบภายในยุคดิจิทัล องค์การบริหารส่วนตำบลฝางคำ"
+          subtext="วิเคราะห์ความเสี่ยง SOFCK • แผนปฏิบัติการ ว 614 • การควบคุมภายใน ปอ.1-ปค.5"
+          buttonText="สำรวจระบบงาน"
+          buttonSubtext="SCROLL TO EXPLORE"
           onExplore={scrollToExplore}
         />
       </section>

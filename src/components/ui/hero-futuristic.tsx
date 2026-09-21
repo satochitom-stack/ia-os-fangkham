@@ -20,7 +20,7 @@ const heroFuturisticStyles = `
   position: relative;
   overflow: hidden;
   background: #000;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: inherit;
   width: 100%;
   height: 100vh;
 }
@@ -60,30 +60,32 @@ const heroFuturisticStyles = `
   cursor: pointer;
   pointer-events: auto;
   opacity: 0;
-  background: #000;
-  border: 1.5px solid #fff;
+  background: rgba(10, 15, 30, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(6, 182, 212, 0.4);
   border-radius: 9999px;
   outline: none;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
   padding: 10px 24px;
   font-size: 0.95rem;
   font-weight: 700;
   text-align: center;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s, opacity 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  transition: all 0.25s ease;
   animation: 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) 2.2s forwards fadeInBtn;
   display: inline-flex;
   position: absolute;
   bottom: 35px;
   left: 50%;
   transform: translate(-50%);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.8), 0 0 20px rgba(6, 182, 212, 0.2);
 }
 .hero-futuristic .explore-btn:hover {
-  background: #fff;
-  color: #000;
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+  background: #06b6d4;
+  color: #020617;
+  border-color: #06b6d4;
+  box-shadow: 0 0 30px rgba(6, 182, 212, 0.6);
 }
 @keyframes fadeInBtn {
   0% { opacity: 0; transform: translate(-50%) translateY(30px) scale(0.98); }
@@ -363,16 +365,22 @@ const ThreeCanvasScene = () => {
 };
 
 export interface HeroFuturisticProps {
+  badge?: string;
   title?: string;
   subtitle?: string;
+  subtext?: string;
   buttonText?: string;
+  buttonSubtext?: string;
   onExplore?: () => void;
 }
 
 export const Html = ({
-  title = "BUILD YOUR DREAMS",
-  subtitle = "AI-POWERED CREATIVITY FOR THE NEXT GENERATION.",
-  buttonText = "Scroll to explore",
+  badge = "INTERNAL AUDIT OPERATING SYSTEM • อบต.ฝางคำ",
+  title = "IA-OS FANG KHAM",
+  subtitle = "ระบบปฏิบัติการตรวจสอบภายในยุคดิจิทัล องค์การบริหารส่วนตำบลฝางคำ",
+  subtext = "วิเคราะห์ความเสี่ยง SOFCK • แผนตรวจสอบ ว 614 • การควบคุมภายใน ปอ.1-ปค.5",
+  buttonText = "สำรวจระบบงาน",
+  buttonSubtext = "SCROLL TO EXPLORE",
   onExplore,
 }: HeroFuturisticProps) => {
   const titleWords = title.split(" ");
@@ -388,10 +396,10 @@ export const Html = ({
 
   useEffect(() => {
     if (visibleWords < titleWords.length) {
-      const timeout = setTimeout(() => setVisibleWords(visibleWords + 1), 600);
+      const timeout = setTimeout(() => setVisibleWords(visibleWords + 1), 500);
       return () => clearTimeout(timeout);
     } else {
-      const timeout = setTimeout(() => setSubtitleVisible(true), 800);
+      const timeout = setTimeout(() => setSubtitleVisible(true), 600);
       return () => clearTimeout(timeout);
     }
   }, [visibleWords, titleWords.length]);
@@ -404,12 +412,25 @@ export const Html = ({
         <ThreeCanvasScene />
 
         {/* Subtle background red glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* Typography Overlay */}
-        <div className="h-svh uppercase items-center w-full absolute z-40 pointer-events-none px-6 md:px-10 flex justify-center flex-col text-center">
-          <div className="text-3xl md:text-5xl xl:text-6xl 2xl:text-7xl font-black tracking-tight">
-            <div className="flex flex-wrap justify-center gap-x-2.5 sm:gap-x-4 overflow-hidden text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
+        <div className="h-svh items-center w-full absolute z-40 pointer-events-none px-4 sm:px-6 md:px-10 flex justify-center flex-col text-center">
+          {/* Futuristic Kicker Badge */}
+          {badge && (
+            <div
+              className={`mb-3 sm:mb-4 inline-flex items-center space-x-2 px-3.5 sm:px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-mono tracking-widest uppercase border border-cyan-500/30 bg-slate-950/80 text-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.25)] backdrop-blur-md transition-all duration-700 ${
+                subtitleVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]" />
+              <span>{badge}</span>
+            </div>
+          )}
+
+          {/* Glitch Animated Main Title */}
+          <div className="text-3xl sm:text-5xl md:text-6xl xl:text-7xl font-black tracking-tight uppercase">
+            <div className="flex flex-wrap justify-center gap-x-2 sm:gap-x-4 overflow-hidden text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
               {titleWords.map((word, index) => (
                 <div
                   key={index}
@@ -424,29 +445,50 @@ export const Html = ({
               ))}
             </div>
           </div>
-          <div className="text-xs sm:text-base md:text-xl xl:text-2xl mt-3 overflow-hidden text-white font-bold tracking-wide drop-shadow-[0_2px_15px_rgba(0,0,0,0.9)] max-w-2xl">
-            <div
-              className={subtitleVisible ? "fade-in-subtitle" : ""}
-              style={{
-                animationDelay: `${titleWords.length * 0.13 + 0.2 + subtitleDelay}s`,
-                opacity: subtitleVisible ? undefined : 0,
-              }}
-            >
-              {subtitle}
+
+          {/* Subtitle with glow */}
+          {subtitle && (
+            <div className="text-sm sm:text-lg md:text-xl xl:text-2xl mt-3 sm:mt-4 text-cyan-100 font-bold tracking-wide drop-shadow-[0_2px_15px_rgba(0,0,0,0.9)] max-w-3xl px-2">
+              <div
+                className={subtitleVisible ? "fade-in-subtitle" : ""}
+                style={{
+                  animationDelay: `${titleWords.length * 0.13 + 0.2 + subtitleDelay}s`,
+                  opacity: subtitleVisible ? undefined : 0,
+                }}
+              >
+                {subtitle}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Subtext description */}
+          {subtext && (
+            <div className="text-xs sm:text-sm md:text-base mt-2 text-slate-300 font-normal tracking-normal max-w-2xl px-3 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+              <div
+                className={subtitleVisible ? "fade-in-subtitle" : ""}
+                style={{
+                  animationDelay: `${titleWords.length * 0.13 + 0.35 + subtitleDelay}s`,
+                  opacity: subtitleVisible ? undefined : 0,
+                }}
+              >
+                {subtext}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Explore Pill Button */}
         <button
           type="button"
           onClick={onExplore}
-          className="explore-btn hover:bg-white hover:text-black transition-all cursor-pointer"
+          className="explore-btn hover:bg-cyan-400 hover:text-slate-950 hover:border-cyan-400 transition-all cursor-pointer group"
           style={{ animationDelay: "2.2s" }}
         >
           <div className="flex flex-col leading-tight items-center text-xs sm:text-sm">
-            <span>Scroll</span>
-            <span>to explore</span>
+            <span>{buttonText}</span>
+            <span className="text-[9px] sm:text-[10px] opacity-75 font-mono tracking-wider group-hover:text-slate-900">
+              {buttonSubtext}
+            </span>
           </div>
           <span className="explore-arrow">
             <svg
