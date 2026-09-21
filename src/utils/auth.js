@@ -27,6 +27,92 @@ export function setLastUsername(username) {
   }
 }
 
+export const DEFAULT_DEPARTMENTS = [
+  'หน่วยตรวจสอบภายใน',
+  'กองคลัง',
+  'สำนักปลัด',
+  'กองช่าง',
+  'กองการศึกษา',
+  'กองสาธารณสุขและสิ่งแวดล้อม',
+  'กองยุทธศาสตร์และงบประมาณ'
+];
+
+const DEPARTMENTS_KEY = 'ia_departments';
+
+export function getDepartments() {
+  try {
+    const raw = localStorage.getItem(DEPARTMENTS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return [...DEFAULT_DEPARTMENTS];
+}
+
+export function saveDepartments(departments) {
+  localStorage.setItem(DEPARTMENTS_KEY, JSON.stringify(departments));
+}
+
+export function addDepartment(name) {
+  const clean = name.trim();
+  if (!clean) throw new Error('กรุณาระบุชื่อสำนัก/กอง');
+  const depts = getDepartments();
+  if (depts.some((d) => d.toLowerCase() === clean.toLowerCase())) {
+    throw new Error(`สำนัก/กอง "${clean}" มีอยู่ในระบบแล้ว`);
+  }
+  depts.push(clean);
+  saveDepartments(depts);
+  return depts;
+}
+
+export function updateDepartment(oldName, newName) {
+  const cleanNew = newName.trim();
+  if (!cleanNew) throw new Error('กรุณาระบุชื่อสำนัก/กองใหม่');
+  const depts = getDepartments();
+  const idx = depts.findIndex((d) => d.toLowerCase() === oldName.trim().toLowerCase());
+  if (idx === -1) throw new Error('ไม่พบสำนัก/กองเดิมในระบบ');
+
+  if (cleanNew.toLowerCase() !== oldName.trim().toLowerCase() && depts.some((d) => d.toLowerCase() === cleanNew.toLowerCase())) {
+    throw new Error(`ชื่อสำนัก/กอง "${cleanNew}" มีอยู่ในระบบแล้ว`);
+  }
+  depts[idx] = cleanNew;
+  saveDepartments(depts);
+
+  // Update existing users belonging to oldName
+  const users = getUsers();
+  let changed = false;
+  users.forEach((u) => {
+    if (u.department === oldName) {
+      u.department = cleanNew;
+      changed = true;
+    }
+  });
+  if (changed) {
+    saveUsers(users);
+  }
+
+  return depts;
+}
+
+export function deleteDepartment(name) {
+  const clean = name.trim();
+  if (clean === 'หน่วยตรวจสอบภายใน') {
+    throw new Error('ไม่สามารถลบ "หน่วยตรวจสอบภายใน" ได้');
+  }
+  const users = getUsers();
+  const activeUsers = users.filter((u) => u.department === clean);
+  if (activeUsers.length > 0) {
+    throw new Error(`ไม่สามารถลบ "${clean}" ได้ เนื่องจากมีผู้ใช้งาน ${activeUsers.length} บัญชีสังกัดอยู่ (กรุณาย้ายสังกัดผู้ใช้ก่อน)`);
+  }
+  const depts = getDepartments();
+  const updated = depts.filter((d) => d.toLowerCase() !== clean.toLowerCase());
+  saveDepartments(updated);
+  return updated;
+}
+
 const DEFAULT_SESSION_MS = 24 * 60 * 60 * 1000; // 24 ชั่วโมง
 
 export const ALL_MENU_IDS = [
