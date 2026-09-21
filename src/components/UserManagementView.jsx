@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Users,
   ShieldCheck,
@@ -19,7 +19,8 @@ import {
   ArrowRight,
   HelpCircle,
   CheckSquare,
-  Square
+  Square,
+  Save
 } from 'lucide-react';
 import ConfirmModal from './ConfirmModal';
 import {
@@ -99,16 +100,45 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
     if (onRefreshUser) onRefreshUser();
   };
 
-  // Toggle permission for a user
+  // Pending permissions map { [username]: string[] } to prevent auto-saving on click
+  const [pendingPermissions, setPendingPermissions] = useState({});
+
+  // Check if there are unsaved permission changes
+  const hasUnsavedChanges = useMemo(() => {
+    return Object.keys(pendingPermissions).some((uname) => {
+      const target = users.find((u) => u.username.toLowerCase() === uname.toLowerCase());
+      if (!target) return false;
+      const orig = [...(target.permissions || [])].sort();
+      const curr = [...pendingPermissions[uname]].sort();
+      if (orig.length !== curr.length) return true;
+      return orig.some((val, i) => val !== curr[i]);
+    });
+  }, [pendingPermissions, users]);
+
+  const modifiedUsersCount = useMemo(() => {
+    return Object.keys(pendingPermissions).filter((uname) => {
+      const target = users.find((u) => u.username.toLowerCase() === uname.toLowerCase());
+      if (!target) return false;
+      const orig = [...(target.permissions || [])].sort();
+      const curr = [...pendingPermissions[uname]].sort();
+      if (orig.length !== curr.length) return true;
+      return orig.some((val, i) => val !== curr[i]);
+    }).length;
+  }, [pendingPermissions, users]);
+
+  // Toggle permission for a user (stages change, does not auto-save)
   const handleTogglePermission = (username, menuId) => {
-    const target = users.find((u) => u.username === username);
+    const target = users.find((u) => u.username.toLowerCase() === username.toLowerCase());
     if (!target) return;
     if (target.role === 'admin' && menuId === 'users') {
       showToast('⚠️ ไม่สามารถปิดสิทธิ์เมนูผู้ดูแลระบบของบัญชี ADMIN ได้');
       return;
     }
 
-    const currentPerms = target.permissions || [];
+    const currentPerms = pendingPermissions[target.username] !== undefined
+      ? pendingPermissions[target.username]
+      : (target.permissions || []);
+
     let updatedPerms = [];
     if (currentPerms.includes(menuId)) {
       updatedPerms = currentPerms.filter((id) => id !== menuId);
@@ -116,13 +146,17 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
       updatedPerms = [...currentPerms, menuId];
     }
 
-    updateUserPermissions(username, updatedPerms);
-    refreshList();
-    showToast(`อัปเดตสิทธิ์ของ "${target.displayName || username}" เรียบร้อยแล้ว`);
+    setPendingPermissions((prev) => ({
+      ...prev,
+      [target.username]: updatedPerms
+    }));
   };
 
-  // Quick Preset Permissions
+  // Quick Preset Permissions (also stages to pendingPermissions)
   const handleApplyPreset = (username, presetType) => {
+    const target = users.find((u) => u.username.toLowerCase() === username.toLowerCase());
+    if (!target) return;
+
     let perms = [];
     if (presetType === 'all') {
       perms = ALL_MENU_IDS.map((m) => m.id);
@@ -134,9 +168,40 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
       perms = ['dashboard', 'knowledge'];
     }
 
-    updateUserPermissions(username, perms);
-    refreshList();
-    showToast(`ใช้ชุดสิทธิ์มาตรฐานกับ "${username}" เรียบร้อยแล้ว`);
+    setPendingPermissions((prev) => ({
+      ...prev,
+      [target.username]: perms
+    }));
+    showToast(`ปรับชุดสิทธิ์ของ "${target.displayName || username}" แล้ว (กดปุ่ม "บันทึกการแก้ไขสิทธิ์" เพื่อยืนยัน)`);
+  };
+
+  // Save all pending permissions with confirmation
+  const handleSavePermissions = () => {
+    if (!hasUnsavedChanges) {
+      showToast('ไม่มีการเปลี่ยนแปลงสิทธิ์ที่ต้องบันทึก');
+      return;
+    }
+
+    openConfirmModal({
+      title: 'ยืนยันการบันทึกการกำหนดสิทธิ์',
+      message: `คุณต้องการบันทึกการกำหนดสิทธิ์การมองเห็นเมนูของ ${modifiedUsersCount} บัญชีกอง/ผู้ใช้งาน ตามที่แก้ไขใช่หรือไม่? การเปลี่ยนแปลงจะมีผลกับการเข้าใช้งานทันที`,
+      confirmText: 'ยืนยันและบันทึกสิทธิ์',
+      type: 'info',
+      onConfirm: () => {
+        Object.keys(pendingPermissions).forEach((uname) => {
+          updateUserPermissions(uname, pendingPermissions[uname]);
+        });
+        setPendingPermissions({});
+        refreshList();
+        showToast(`บันทึกการกำหนดสิทธิ์ของ ${modifiedUsersCount} บัญชีผู้ใช้เรียบร้อยแล้ว`);
+      }
+    });
+  };
+
+  // Discard pending permission changes
+  const handleCancelPermissions = () => {
+    setPendingPermissions({});
+    showToast('ยกเลิกการเปลี่ยนแปลงสิทธิ์ทั้งหมดแล้ว');
   };
 
   // Switch to preview view as this user
@@ -468,25 +533,78 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
       ========================================================================= */}
       {activeTab === 'matrix' && (
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="p-4 bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="p-4 bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div>
               <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center space-x-2">
                 <ShieldCheck className="w-4 h-4 text-blue-600" />
                 <span>ตารางกำหนดการมองเห็นเมนูของแต่ละกอง</span>
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                คลิกที่ช่อง Checkbox เพื่อเปิดหรือปิดสิทธิ์ของเมนูนั้นๆ ระบบจะบันทึกผลทันที
+                คลิกที่ช่อง Checkbox เพื่อเปิดหรือปิดสิทธิ์ของเมนูนั้นๆ แล้วกดปุ่ม <strong>"บันทึกการแก้ไขสิทธิ์"</strong> เพื่อยืนยัน
               </p>
             </div>
-            <div className="text-xs text-slate-500 flex items-center space-x-3">
-              <span className="flex items-center space-x-1">
-                <CheckSquare className="w-3.5 h-3.5 text-blue-600" /> = มองเห็นและใช้งานได้
-              </span>
-              <span className="flex items-center space-x-1">
-                <Square className="w-3.5 h-3.5 text-slate-400" /> = ซ่อนเมนูนี้
-              </span>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="text-xs text-slate-500 hidden xl:flex items-center space-x-3 mr-2">
+                <span className="flex items-center space-x-1">
+                  <CheckSquare className="w-3.5 h-3.5 text-blue-600" /> = มองเห็นและใช้งานได้
+                </span>
+                <span className="flex items-center space-x-1">
+                  <Square className="w-3.5 h-3.5 text-slate-400" /> = ซ่อนเมนูนี้
+                </span>
+              </div>
+
+              {hasUnsavedChanges && (
+                <button
+                  type="button"
+                  onClick={handleCancelPermissions}
+                  className="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold transition-all cursor-pointer"
+                >
+                  ยกเลิกการแก้ไข
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={handleSavePermissions}
+                disabled={!hasUnsavedChanges}
+                className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-2 shadow-md transition-all cursor-pointer ${
+                  hasUnsavedChanges
+                    ? 'bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-blue-500/25 ring-2 ring-blue-500/40 animate-pulse'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed shadow-none'
+                }`}
+              >
+                <Save className="w-4 h-4" />
+                <span>บันทึกการแก้ไขสิทธิ์ {hasUnsavedChanges ? `(${modifiedUsersCount} กอง)` : ''}</span>
+              </button>
             </div>
           </div>
+
+          {hasUnsavedChanges && (
+            <div className="bg-amber-50 dark:bg-amber-950/40 border-b border-amber-200 dark:border-amber-800/60 px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-amber-800 dark:text-amber-200">
+              <div className="flex items-center space-x-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping" />
+                <span className="font-bold">มีการแก้ไขสิทธิ์ของ {modifiedUsersCount} กองที่ยังไม่ได้บันทึก:</span>
+                <span className="text-slate-600 dark:text-slate-300">กรุณากดปุ่ม <strong>"บันทึกการแก้ไขสิทธิ์"</strong> เพื่อยืนยันและให้มีผลในระบบ</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={handleCancelPermissions}
+                  className="px-2.5 py-1 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white underline cursor-pointer"
+                >
+                  คืนค่าเดิม
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSavePermissions}
+                  className="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg shadow-sm cursor-pointer"
+                >
+                  ยืนยันบันทึก
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
@@ -507,14 +625,25 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {users.map((user) => {
                   const isAdmin = user.role === 'admin';
-                  const userPerms = user.permissions || [];
+                  const userPerms = pendingPermissions[user.username] !== undefined
+                    ? pendingPermissions[user.username]
+                    : (user.permissions || []);
                   const isCurrent = currentSession?.username.toLowerCase() === user.username.toLowerCase();
+                  
+                  const isUserModified = pendingPermissions[user.username] !== undefined && (() => {
+                    const orig = [...(user.permissions || [])].sort();
+                    const curr = [...pendingPermissions[user.username]].sort();
+                    if (orig.length !== curr.length) return true;
+                    return orig.some((val, idx) => val !== curr[idx]);
+                  })();
 
                   return (
                     <tr
                       key={user.username}
                       className={`hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors ${
-                        isCurrent ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
+                        isUserModified
+                          ? 'bg-amber-50/30 dark:bg-amber-950/20'
+                          : isCurrent ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
                       }`}
                     >
                       {/* User Info Column */}
@@ -530,11 +659,16 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                             {isAdmin ? '👑' : '🏢'}
                           </div>
                           <div className="min-w-0">
-                            <div className="font-bold text-slate-800 dark:text-slate-100 truncate">
-                              {user.displayName || user.username}
+                            <div className="font-bold text-slate-800 dark:text-slate-100 truncate flex items-center space-x-1">
+                              <span>{user.displayName || user.username}</span>
                               {isCurrent && (
-                                <span className="ml-1 text-[10px] bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-1 rounded font-normal">
+                                <span className="text-[10px] bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-1 rounded font-normal">
                                   คุณ
+                                </span>
+                              )}
+                              {isUserModified && (
+                                <span className="text-[9px] bg-amber-100 dark:bg-amber-900/80 text-amber-800 dark:text-amber-300 px-1 py-0.2 rounded font-medium">
+                                  รอการบันทึก
                                 </span>
                               )}
                             </div>
@@ -565,7 +699,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                                     ? 'bg-blue-600 text-white shadow-xs hover:bg-blue-700'
                                     : 'bg-slate-100 dark:bg-slate-800 text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                                 }`}
-                                title={`${hasPermission ? 'คลิกเพื่อปิดสิทธิ์' : 'คลิกเพื่อเปิดสิทธิ์'} เมนู ${menu.label}`}
+                                title={`${hasPermission ? 'คลิกเพื่อปิดสิทธิ์' : 'คลิกเพื่อเปิดสิทธิ์'} เมนู ${menu.label} (ต้องกดบันทึกเพื่อยืนยัน)`}
                               >
                                 {hasPermission ? '✓' : ''}
                               </button>
@@ -603,6 +737,34 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
               </tbody>
             </table>
           </div>
+
+          {/* Bottom Sticky Action Bar when there are unsaved changes */}
+          {hasUnsavedChanges && (
+            <div className="p-4 bg-slate-50 dark:bg-slate-850 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="flex items-center space-x-2 text-xs text-amber-600 dark:text-amber-400">
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping" />
+                <span className="font-bold">มีการแก้ไขสิทธิ์ของ {modifiedUsersCount} กองที่ยังไม่ได้บันทึก</span>
+                <span className="text-slate-500 dark:text-slate-400 hidden sm:inline">(คลิกปุ่มด้านขวาเพื่อยืนยันการบันทึก)</span>
+              </div>
+              <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                <button
+                  type="button"
+                  onClick={handleCancelPermissions}
+                  className="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold cursor-pointer"
+                >
+                  ยกเลิกการแก้ไข
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSavePermissions}
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-bold shadow-md shadow-blue-500/25 flex items-center space-x-2 cursor-pointer ring-2 ring-blue-500/30"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>ยืนยันบันทึกการแก้ไข ({modifiedUsersCount} กอง)</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
