@@ -198,18 +198,39 @@ export async function updateUser(username, updates) {
   const idx = users.findIndex((u) => u.username.toLowerCase() === username.toLowerCase());
   if (idx === -1) throw new Error('ไม่พบผู้ใช้งานนี้ในระบบ');
 
-  const user = { ...users[idx], ...updates };
-  if (updates.newPassword) {
+  const oldUsername = users[idx].username;
+  let targetUsername = oldUsername;
+
+  if (updates.newUsername) {
+    const cleanNew = updates.newUsername.trim().toLowerCase();
+    if (!cleanNew) {
+      throw new Error('ชื่อผู้ใช้ (Username) ต้องไม่เว้นว่าง');
+    }
+    if (!/^[a-zA-Z0-9_-]+$/.test(cleanNew)) {
+      throw new Error('ชื่อผู้ใช้ต้องเป็นตัวอักษรภาษาอังกฤษ ตัวเลข หรือขีดล่าง (_) เท่านั้น');
+    }
+    if (cleanNew !== oldUsername.toLowerCase()) {
+      if (users.some((u, i) => i !== idx && u.username.toLowerCase() === cleanNew)) {
+        throw new Error(`ชื่อผู้ใช้ "${updates.newUsername}" มีอยู่ในระบบแล้ว`);
+      }
+      targetUsername = cleanNew;
+    }
+  }
+
+  const { newUsername, newPassword, ...restUpdates } = updates;
+  const user = { ...users[idx], ...restUpdates, username: targetUsername };
+
+  if (newPassword) {
     user.salt = generateSalt();
-    user.hash = await hashPassword(updates.newPassword, user.salt);
-    user.passwordText = updates.newPassword;
+    user.hash = await hashPassword(newPassword, user.salt);
+    user.passwordText = newPassword;
   }
   users[idx] = user;
   saveUsers(users);
 
   // If updating currently logged in user, refresh session
   const currentSession = getSession();
-  if (currentSession?.username.toLowerCase() === username.toLowerCase()) {
+  if (currentSession?.username.toLowerCase() === oldUsername.toLowerCase()) {
     startSession(user, currentSession.remember);
   }
   return user;

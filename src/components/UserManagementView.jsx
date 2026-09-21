@@ -145,6 +145,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
     try {
       if (editingUser) {
         await updateUser(editingUser.username, {
+          newUsername: formUsername.trim(),
           displayName: formDisplayName,
           department: formDepartment,
           position: formPosition,
@@ -588,12 +589,16 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                   <input
                     type="text"
                     required
-                    disabled={!!editingUser}
                     value={formUsername}
                     onChange={(e) => setFormUsername(e.target.value)}
                     placeholder="เช่น finance, clerk..."
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-slate-800 dark:text-slate-200 font-mono disabled:opacity-50"
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-slate-800 dark:text-slate-200 font-mono focus:ring-2 focus:ring-blue-500 outline-none"
                   />
+                  {editingUser && (
+                    <span className="text-[10px] text-slate-400 mt-0.5 block">
+                      * สามารถเปลี่ยนชื่อล็อกอินได้
+                    </span>
+                  )}
                 </div>
 
                 <div>
