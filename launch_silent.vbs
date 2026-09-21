@@ -1,2 +1,5 @@
 Set WshShell = CreateObject("WScript.Shell")
-WshShell.Run "cmd /c """ & "C:\Users\Windows11\.gemini\antigravity\scratch\internal-audit-app\launch.bat" & """", 0, False
+Set FSO = CreateObject("Scripting.FileSystemObject")
+ScriptDir = FSO.GetParentFolderName(WScript.ScriptFullName)
+WshShell.Run "cmd /c """ & ScriptDir & "\launch.bat""", 0, False
+
