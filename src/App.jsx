@@ -71,7 +71,7 @@ export default function App() {
 
   // Navigation & Fiscal Year State
   const [selectedYear, setSelectedYear] = useState('2568');
-  const [currentTab, setCurrentTab] = useState('dashboard');
+  const [currentTab, setCurrentTab] = useState('welcome');
   const [selectedWp, setSelectedWp] = useState('WP-KTB-01');
 
   // Persistent States - Cleaned of D:\ sample data

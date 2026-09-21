@@ -1,29 +1,7 @@
 "use client";
 
-import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
-import { useAspect, useTexture } from "@react-three/drei";
-import { useMemo, useRef, useState, useEffect } from "react";
-import * as THREE from "three/webgpu";
-import { bloom } from "three/examples/jsm/tsl/display/BloomNode.js";
-import { Mesh } from "three";
-
-import {
-  abs,
-  blendScreen,
-  float,
-  mod,
-  mx_cell_noise_float,
-  oneMinus,
-  smoothstep,
-  texture,
-  uniform,
-  uv,
-  vec2,
-  vec3,
-  pass,
-  mix,
-  add,
-} from "three/tsl";
+import React, { useRef, useState, useEffect, Component } from "react";
+import * as THREE from "three";
 
 const TEXTUREMAP = {
   src: "https://cdn.21st.dev/assets/mirror/f5/f58ba468bf6d3a2c9627178a1837f0f899b37b5dd5e34a00a3e11671cc7a59dc.png",
@@ -38,7 +16,7 @@ const heroFuturisticStyles = `
   position: relative;
   overflow: hidden;
   background: #000;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: inherit;
 }
 .hero-futuristic .fade-in {
   opacity: 0;
@@ -83,8 +61,8 @@ const heroFuturisticStyles = `
   align-items: center;
   gap: 12px;
   padding: 12px 32px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 700;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s, opacity 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55);
   animation: 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) 2.2s forwards fadeInBtn;
   display: flex;
@@ -92,7 +70,7 @@ const heroFuturisticStyles = `
   bottom: 40px;
   left: 50%;
   transform: translate(-50%);
-  box-shadow: 0 2px 16px #00000014;
+  box-shadow: 0 4px 24px rgba(0, 255, 249, 0.25);
 }
 @keyframes fadeInBtn {
   0% { opacity: 0; transform: translate(-50%) translateY(30px) scale(0.98); }
@@ -113,157 +91,228 @@ const heroFuturisticStyles = `
 }
 `;
 
-extend(THREE as any);
+// Safe Error Boundary to prevent white/blank screen under all circumstances
+class HeroErrorBoundary extends Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(err: any) {
+    console.warn("HeroFuturistic fallback triggered:", err);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-slate-950 via-indigo-950/40 to-black flex items-center justify-center">
+          <div className="w-96 h-96 rounded-full bg-cyan-500/15 blur-3xl animate-pulse" />
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
-// Post Processing component
-const PostProcessing = ({
-  strength = 1,
-  threshold = 1,
-  fullScreenEffect = true,
-}: {
-  strength?: number;
-  threshold?: number;
-  fullScreenEffect?: boolean;
-}) => {
-  const { gl, scene, camera } = useThree();
-  const progressRef = useRef({ value: 0 });
-
-  const render = useMemo(() => {
-    const postProcessing = new THREE.PostProcessing(gl as any);
-    const scenePass = pass(scene, camera);
-    const scenePassColor = scenePass.getTextureNode("output");
-    const bloomPass = bloom(scenePassColor, strength, 0.5, threshold);
-
-    // Create the scanning effect uniform
-    const uScanProgress = uniform(0);
-    progressRef.current = uScanProgress;
-
-    // Create a red overlay that follows the scan line
-    const scanPos = float(uScanProgress.value);
-    const uvY = uv().y;
-    const scanWidth = float(0.05);
-    const scanLine = smoothstep(0, scanWidth, abs(uvY.sub(scanPos)));
-    const redOverlay = vec3(1, 0, 0).mul(oneMinus(scanLine)).mul(0.4);
-
-    // Mix the original scene with the red overlay
-    const withScanEffect = mix(
-      scenePassColor,
-      add(scenePassColor, redOverlay),
-      fullScreenEffect ? smoothstep(0.9, 1.0, oneMinus(scanLine)) : 1.0,
-    );
-
-    // Add bloom effect after scan effect
-    const final = withScanEffect.add(bloomPass);
-
-    postProcessing.outputNode = final;
-
-    return postProcessing;
-  }, [camera, gl, scene, strength, threshold, fullScreenEffect]);
-
-  useFrame(({ clock }) => {
-    // Animate the scan line from top to bottom
-    progressRef.current.value =
-      Math.sin(clock.getElapsedTime() * 0.5) * 0.5 + 0.5;
-    render.renderAsync();
-  }, 1);
-
-  return null;
-};
-
-const WIDTH = 300;
-const HEIGHT = 300;
-
-const Scene = () => {
-  const [rawMap, depthMap] = useTexture([TEXTUREMAP.src, DEPTHMAP.src]);
-
-  const meshRef = useRef<Mesh>(null);
-  const [visible, setVisible] = useState(false);
+// 3D Canvas Scene with Depth Parallax and Laser Scan
+const ThreeCanvasScene = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    // Показываем изображение после загрузки текстур
-    if (rawMap && depthMap) {
-      setVisible(true);
+    const container = containerRef.current;
+    const canvas = canvasRef.current;
+    if (!container || !canvas) return;
+
+    let renderer: THREE.WebGLRenderer | null = null;
+    let animId: number;
+    let isDisposed = false;
+
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance",
+      });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setSize(container.clientWidth, container.clientHeight);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        45,
+        container.clientWidth / container.clientHeight,
+        0.1,
+        100
+      );
+      camera.position.z = 2.4;
+
+      // Shaders for depth-displacement & scanline
+      const vertexShader = `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `;
+
+      const fragmentShader = `
+        uniform sampler2D u_texture;
+        uniform sampler2D u_depth;
+        uniform vec2 u_pointer;
+        uniform float u_time;
+        uniform float u_progress;
+        uniform float u_hasTexture;
+        varying vec2 vUv;
+
+        void main() {
+          vec2 pUv = vUv;
+          vec4 color = vec4(0.02, 0.04, 0.08, 1.0);
+
+          if (u_hasTexture > 0.5) {
+            vec4 depthMap = texture2D(u_depth, vUv);
+            float depth = depthMap.r;
+            vec2 offset = depth * u_pointer * 0.025;
+            color = texture2D(u_texture, vUv + offset);
+          } else {
+            // Procedural cyber core if external texture is loading or blocked
+            float d = length(vUv - 0.5);
+            float ring = sin(d * 40.0 - u_time * 3.0) * 0.5 + 0.5;
+            color = vec4(vec3(0.0, ring * 0.4, ring * 0.8), 1.0);
+          }
+
+          // Laser scan line
+          float scanDist = abs(vUv.y - u_progress);
+          float scanLine = smoothstep(0.04, 0.0, scanDist);
+          vec3 redScan = vec3(1.0, 0.05, 0.25) * scanLine * 0.7;
+
+          // Glowing grid overlay
+          vec2 grid = abs(fract(vUv * 80.0 - 0.5) - 0.5) / fwidth(vUv * 80.0);
+          float line = min(grid.x, grid.y);
+          float gridPattern = 1.0 - min(line, 1.0);
+          vec3 cyanGrid = vec3(0.0, 0.75, 1.0) * gridPattern * 0.06;
+
+          // Scanline wave glow
+          float wave = smoothstep(0.08, 0.0, scanDist);
+          vec3 waveColor = vec3(0.0, 0.9, 0.8) * wave * 0.2;
+
+          gl_FragColor = vec4(color.rgb + redScan + cyanGrid + waveColor, 1.0);
+        }
+      `;
+
+      const uniforms = {
+        u_texture: { value: new THREE.Texture() },
+        u_depth: { value: new THREE.Texture() },
+        u_pointer: { value: new THREE.Vector2(0, 0) },
+        u_time: { value: 0 },
+        u_progress: { value: 0 },
+        u_hasTexture: { value: 0 },
+      };
+
+      const material = new THREE.ShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms,
+        transparent: true,
+      });
+
+      const geometry = new THREE.PlaneGeometry(1.7, 1.7);
+      const mesh = new THREE.Mesh(geometry, material);
+      scene.add(mesh);
+
+      // Async Texture Loading
+      const loader = new THREE.TextureLoader();
+      loader.setCrossOrigin("anonymous");
+
+      loader.load(
+        TEXTUREMAP.src,
+        (tex) => {
+          if (isDisposed) return;
+          tex.minFilter = THREE.LinearFilter;
+          uniforms.u_texture.value = tex;
+          uniforms.u_hasTexture.value = 1.0;
+        },
+        undefined,
+        () => {
+          // If remote image fails, procedural shader renders gracefully
+          console.info("Using procedural visual aesthetic");
+        }
+      );
+
+      loader.load(
+        DEPTHMAP.src,
+        (tex) => {
+          if (isDisposed) return;
+          tex.minFilter = THREE.LinearFilter;
+          uniforms.u_depth.value = tex;
+        },
+        undefined,
+        () => {}
+      );
+
+      // Pointer tracking
+      const targetPointer = new THREE.Vector2(0, 0);
+      const handlePointerMove = (e: MouseEvent) => {
+        const rect = container.getBoundingClientRect();
+        targetPointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        targetPointer.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+      };
+      window.addEventListener("mousemove", handlePointerMove);
+
+      const handleResize = () => {
+        if (!container || !renderer || isDisposed) return;
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      };
+      window.addEventListener("resize", handleResize);
+
+      // Render Loop
+      const clock = new THREE.Clock();
+      const animate = () => {
+        if (isDisposed || !renderer) return;
+        animId = requestAnimationFrame(animate);
+
+        const elapsedTime = clock.getElapsedTime();
+        uniforms.u_time.value = elapsedTime;
+        uniforms.u_progress.value =
+          Math.sin(elapsedTime * 0.6) * 0.5 + 0.5;
+
+        // Smooth cursor lerp
+        uniforms.u_pointer.value.lerp(targetPointer, 0.08);
+
+        camera.position.x = uniforms.u_pointer.value.x * 0.04;
+        camera.position.y = uniforms.u_pointer.value.y * 0.04;
+        camera.lookAt(0, 0, 0);
+
+        renderer.render(scene, camera);
+      };
+      animate();
+
+      return () => {
+        isDisposed = true;
+        cancelAnimationFrame(animId);
+        window.removeEventListener("mousemove", handlePointerMove);
+        window.removeEventListener("resize", handleResize);
+        geometry.dispose();
+        material.dispose();
+        renderer?.dispose();
+      };
+    } catch (e) {
+      console.warn("WebGL initialization failed, falling back to CSS", e);
     }
-  }, [rawMap, depthMap]);
+  }, []);
 
-  const { material, uniforms } = useMemo(() => {
-    const uPointer = uniform(new THREE.Vector2(0));
-    const uProgress = uniform(0);
-
-    const strength = 0.01;
-
-    const tDepthMap = texture(depthMap);
-
-    const tMap = texture(
-      rawMap,
-      uv().add(tDepthMap.r.mul(uPointer).mul(strength)),
-    );
-
-    const aspect = float(WIDTH).div(HEIGHT);
-    const tUv = vec2(uv().x.mul(aspect), uv().y);
-
-    const tiling = vec2(120.0);
-    const tiledUv = mod(tUv.mul(tiling), 2.0).sub(1.0);
-
-    const brightness = mx_cell_noise_float(tUv.mul(tiling).div(2));
-
-    const dist = float(tiledUv.length());
-    const dot = float(smoothstep(0.5, 0.49, dist)).mul(brightness);
-
-    const depth = tDepthMap;
-
-    const flow = oneMinus(smoothstep(0, 0.02, abs(depth.sub(uProgress))));
-
-    const mask = dot.mul(flow).mul(vec3(10, 0, 0));
-
-    const final = blendScreen(tMap, mask);
-
-    const material = new THREE.MeshBasicNodeMaterial({
-      colorNode: final,
-      transparent: true,
-      opacity: 0,
-    });
-
-    return {
-      material,
-      uniforms: {
-        uPointer,
-        uProgress,
-      },
-    };
-  }, [rawMap, depthMap]);
-
-  const [w, h] = useAspect(WIDTH, HEIGHT);
-
-  useFrame(({ clock }) => {
-    uniforms.uProgress.value =
-      Math.sin(clock.getElapsedTime() * 0.5) * 0.5 + 0.5;
-    // Плавное появление
-    if (
-      meshRef.current &&
-      "material" in meshRef.current &&
-      meshRef.current.material
-    ) {
-      const mat = meshRef.current.material as any;
-      if ("opacity" in mat) {
-        mat.opacity = THREE.MathUtils.lerp(mat.opacity, visible ? 1 : 0, 0.07);
-      }
-    }
-  });
-
-  useFrame(({ pointer }) => {
-    uniforms.uPointer.value = pointer;
-  });
-
-  const scaleFactor = 0.4;
   return (
-    <mesh
-      ref={meshRef}
-      scale={[w * scaleFactor, h * scaleFactor, 1]}
-      material={material}
-    >
-      <planeGeometry />
-    </mesh>
+    <div ref={containerRef} className="absolute inset-0 w-full h-full pointer-events-none">
+      <canvas ref={canvasRef} className="w-full h-full block" />
+    </div>
   );
 };
 
@@ -285,37 +334,44 @@ export const Html = ({
   const [subtitleVisible, setSubtitleVisible] = useState(false);
   const [delays, setDelays] = useState<number[]>([]);
   const [subtitleDelay, setSubtitleDelay] = useState(0);
-  const [hasWebGPUError, setHasWebGPUError] = useState(false);
 
   useEffect(() => {
-    // Generate random glitch delays
+    // Client-side glitch delays
     setDelays(titleWords.map(() => Math.random() * 0.07));
     setSubtitleDelay(Math.random() * 0.1);
   }, [titleWords.length]);
 
   useEffect(() => {
     if (visibleWords < titleWords.length) {
-      const timeout = setTimeout(() => setVisibleWords(visibleWords + 1), 600);
+      const timeout = setTimeout(() => setVisibleWords(visibleWords + 1), 500);
       return () => clearTimeout(timeout);
     } else {
-      const timeout = setTimeout(() => setSubtitleVisible(true), 800);
+      const timeout = setTimeout(() => setSubtitleVisible(true), 700);
       return () => clearTimeout(timeout);
     }
   }, [visibleWords, titleWords.length]);
 
   return (
-    <>
+    <HeroErrorBoundary>
       <style>{heroFuturisticStyles}</style>
-      <div className="hero-futuristic h-svh relative select-none">
-        <div className="h-svh uppercase items-center w-full absolute z-60 pointer-events-none px-6 md:px-10 flex justify-center flex-col text-center">
-          <div className="text-3xl md:text-5xl xl:text-6xl 2xl:text-7xl font-extrabold tracking-tight">
-            <div className="flex flex-wrap justify-center gap-x-2 lg:gap-x-4 overflow-hidden text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.8)]">
+      <div className="hero-futuristic h-svh relative select-none w-full bg-black">
+        {/* Animated 3D Depth Canvas */}
+        <ThreeCanvasScene />
+
+        {/* Ambient Glow Orbs */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
+        <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+
+        {/* Typography Overlay */}
+        <div className="h-svh uppercase items-center w-full absolute z-40 pointer-events-none px-6 md:px-10 flex justify-center flex-col text-center">
+          <div className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl 2xl:text-7xl font-black tracking-tight">
+            <div className="flex flex-wrap justify-center gap-x-2.5 sm:gap-x-4 overflow-hidden text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.9)]">
               {titleWords.map((word, index) => (
                 <div
                   key={index}
                   className={index < visibleWords ? "fade-in" : ""}
                   style={{
-                    animationDelay: `${index * 0.13 + (delays[index] || 0)}s`,
+                    animationDelay: `${index * 0.12 + (delays[index] || 0)}s`,
                     opacity: index < visibleWords ? undefined : 0,
                   }}
                 >
@@ -324,11 +380,11 @@ export const Html = ({
               ))}
             </div>
           </div>
-          <div className="text-xs md:text-xl xl:text-2xl 2xl:text-3xl mt-3 overflow-hidden text-cyan-300 font-bold tracking-wide drop-shadow-[0_2px_12px_rgba(0,255,249,0.5)]">
+          <div className="text-xs sm:text-base md:text-xl xl:text-2xl mt-3 overflow-hidden text-cyan-300 font-bold tracking-wide drop-shadow-[0_2px_15px_rgba(0,255,249,0.6)] max-w-3xl">
             <div
               className={subtitleVisible ? "fade-in-subtitle" : ""}
               style={{
-                animationDelay: `${titleWords.length * 0.13 + 0.2 + subtitleDelay}s`,
+                animationDelay: `${titleWords.length * 0.12 + 0.2 + subtitleDelay}s`,
                 opacity: subtitleVisible ? undefined : 0,
               }}
             >
@@ -337,17 +393,18 @@ export const Html = ({
           </div>
         </div>
 
+        {/* Action Button */}
         <button
           type="button"
           onClick={onExplore}
-          className="explore-btn hover:bg-white hover:text-black transition-all cursor-pointer"
-          style={{ animationDelay: "2.2s" }}
+          className="explore-btn hover:bg-white hover:text-black transition-all cursor-pointer shadow-lg shadow-cyan-500/20"
+          style={{ animationDelay: "1.8s" }}
         >
-          {buttonText}
+          <span>{buttonText}</span>
           <span className="explore-arrow">
             <svg
-              width="22"
-              height="22"
+              width="20"
+              height="20"
               viewBox="0 0 22 22"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -356,45 +413,20 @@ export const Html = ({
               <path
                 d="M11 5V17"
                 stroke="currentColor"
-                strokeWidth="2"
+                strokeWidth="2.5"
                 strokeLinecap="round"
               />
               <path
                 d="M6 12L11 17L16 12"
                 stroke="currentColor"
-                strokeWidth="2"
+                strokeWidth="2.5"
                 strokeLinecap="round"
               />
             </svg>
           </span>
         </button>
-
-        {!hasWebGPUError ? (
-          <Canvas
-            flat
-            onError={() => setHasWebGPUError(true)}
-            gl={async (props) => {
-              try {
-                const renderer = new THREE.WebGPURenderer(props as any);
-                await renderer.init();
-                return renderer;
-              } catch (e) {
-                console.warn("WebGPU initialization failed, falling back to visual background", e);
-                setHasWebGPUError(true);
-                throw e;
-              }
-            }}
-          >
-            <PostProcessing fullScreenEffect={true} />
-            <Scene />
-          </Canvas>
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-b from-slate-950 via-indigo-950/40 to-black">
-            <div className="w-96 h-96 rounded-full bg-cyan-500/10 blur-3xl animate-pulse" />
-          </div>
-        )}
       </div>
-    </>
+    </HeroErrorBoundary>
   );
 };
 
