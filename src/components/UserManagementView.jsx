@@ -10,6 +10,7 @@ import {
   Edit3,
   CheckCircle2,
   AlertCircle,
+  AlertTriangle,
   Eye,
   Lock,
   Building,
@@ -20,6 +21,7 @@ import {
   CheckSquare,
   Square
 } from 'lucide-react';
+import ConfirmModal from './ConfirmModal';
 import {
   ALL_MENU_IDS,
   getUsers,
@@ -41,6 +43,29 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
   const [departments, setDepartments] = useState(() => getDepartments());
   const [activeTab, setActiveTab] = useState('matrix'); // 'matrix', 'accounts', 'departments'
   const [toastMessage, setToastMessage] = useState('');
+
+  // Confirm Modal State
+  const [confirmModalConfig, setConfirmModalConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    confirmText: 'ยืนยัน',
+    type: 'danger',
+    onConfirm: () => {}
+  });
+
+  const openConfirmModal = (config) => {
+    setConfirmModalConfig({
+      isOpen: true,
+      confirmText: 'ยืนยัน',
+      type: 'danger',
+      ...config
+    });
+  };
+
+  const closeConfirmModal = () => {
+    setConfirmModalConfig((prev) => ({ ...prev, isOpen: false }));
+  };
 
   // Modals
   const [showAddModal, setShowAddModal] = useState(false);
@@ -116,12 +141,18 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
 
   // Switch to preview view as this user
   const handleImpersonate = (username) => {
-    if (confirm(`คุณต้องการสลับมุมมองเข้าใช้งานในฐานะ "${username}" ใช่หรือไม่?\n(คุณสามารถคลิกสลับกลับมาเป็น ADMIN ได้ที่แถบด้านบน)`)) {
-      const sess = switchSessionTo(username);
-      if (sess && onSwitchSession) {
-        onSwitchSession(sess);
+    openConfirmModal({
+      title: 'สลับมุมมองเข้าใช้งาน',
+      message: `คุณต้องการสลับมุมมองเข้าใช้งานในฐานะ "${username}" ใช่หรือไม่? (คุณสามารถสลับกลับมาเป็น ADMIN ได้ที่แถบด้านบน)`,
+      confirmText: 'สลับมุมมอง',
+      type: 'info',
+      onConfirm: () => {
+        const sess = switchSessionTo(username);
+        if (sess && onSwitchSession) {
+          onSwitchSession(sess);
+        }
       }
-    }
+    });
   };
 
   // Open Edit User
@@ -242,44 +273,66 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
   };
 
   const handleDeleteDept = (dept) => {
-    if (confirm(`ยืนยันการลบสำนัก/กอง "${dept}" ออกจากระบบใช่หรือไม่?`)) {
-      try {
-        const updated = deleteDepartment(dept);
-        setDepartments(updated);
-        showToast(`ลบสำนัก/กอง "${dept}" สำเร็จ`);
-      } catch (err) {
-        alert(err.message);
+    openConfirmModal({
+      title: 'ยืนยันการลบสำนัก / กอง',
+      message: `คุณต้องการลบสำนัก/กอง "${dept}" ออกจากระบบใช่หรือไม่? ข้อมูลการตั้งค่าของกองนี้จะถูกนำออกจากระบบ`,
+      confirmText: 'ลบสำนัก/กองนี้',
+      type: 'danger',
+      onConfirm: () => {
+        try {
+          const updated = deleteDepartment(dept);
+          setDepartments(updated);
+          showToast(`ลบสำนัก/กอง "${dept}" สำเร็จ`);
+        } catch (err) {
+          showToast(`⚠️ ${err.message}`);
+        }
       }
-    }
+    });
   };
 
   const handleDelete = (username) => {
-    if (confirm(`ยืนยันการลบบัญชีผู้ใช้งาน "${username}" ใช่หรือไม่?`)) {
-      try {
-        deleteUser(username);
-        refreshList();
-        showToast(`ลบบัญชี "${username}" สำเร็จ`);
-      } catch (err) {
-        alert(err.message);
+    openConfirmModal({
+      title: 'ยืนยันการลบบัญชีผู้ใช้งาน',
+      message: `คุณต้องการลบบัญชีผู้ใช้งาน "${username}" ใช่หรือไม่? ข้อมูลและสิทธิ์การเข้าถึงทั้งหมดของบัญชีนี้จะถูกนำออกจากระบบ`,
+      confirmText: 'ลบบัญชีผู้ใช้นี้',
+      type: 'danger',
+      onConfirm: () => {
+        try {
+          deleteUser(username);
+          refreshList();
+          showToast(`ลบบัญชี "${username}" สำเร็จ`);
+        } catch (err) {
+          showToast(`⚠️ ${err.message}`);
+        }
       }
-    }
+    });
   };
 
   const handleResetDefaults = () => {
-    if (confirm('คุณต้องการรีเซ็ตบัญชีและสิทธิ์ทั้งหมดกลับเป็นค่าเริ่มต้น 6 กองหลัก ใช่หรือไม่?')) {
-      resetUsersToDefault();
-      refreshList();
-      showToast('รีเซ็ตข้อมูลผู้ใช้งานและสิทธิ์เป็นค่าเริ่มต้นแล้ว');
-    }
+    openConfirmModal({
+      title: 'รีเซ็ตบัญชีและสิทธิ์เป็นค่าเริ่มต้น',
+      message: 'คุณต้องการรีเซ็ตบัญชีผู้ใช้และสิทธิ์การมองเห็นเมนูทั้งหมดกลับเป็นค่าเริ่มต้นตามโครงสร้าง 6 กองหลัก ใช่หรือไม่?',
+      confirmText: 'รีเซ็ตเป็นค่าเริ่มต้น',
+      type: 'warning',
+      onConfirm: () => {
+        resetUsersToDefault();
+        refreshList();
+        showToast('รีเซ็ตข้อมูลผู้ใช้งานและสิทธิ์เป็นค่าเริ่มต้นแล้ว');
+      }
+    });
   };
 
   return (
     <div className="space-y-6">
-      {/* Toast */}
+      {/* Sleek Floating Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-2 border border-blue-500 animate-fade-in text-xs font-bold">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span>{toastMessage}</span>
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900/90 dark:bg-slate-950/90 text-white px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-md flex items-center space-x-3 border border-slate-700/60 dark:border-slate-800 text-xs font-bold animate-slide-up ring-1 ring-white/10">
+          {toastMessage.startsWith('⚠️') ? (
+            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+          ) : (
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          )}
+          <span className="tracking-wide">{toastMessage.replace(/^⚠️\s*/, '')}</span>
         </div>
       )}
 
@@ -1015,6 +1068,17 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
           </div>
         </div>
       )}
+
+      {/* Reusable Elegant Confirm Modal */}
+      <ConfirmModal
+        isOpen={confirmModalConfig.isOpen}
+        title={confirmModalConfig.title}
+        message={confirmModalConfig.message}
+        confirmText={confirmModalConfig.confirmText}
+        type={confirmModalConfig.type}
+        onConfirm={confirmModalConfig.onConfirm}
+        onClose={closeConfirmModal}
+      />
     </div>
   );
 }

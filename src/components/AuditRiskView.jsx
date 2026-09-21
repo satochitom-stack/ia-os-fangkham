@@ -29,8 +29,10 @@ import {
   Target,
   CheckSquare,
   FolderPlus,
-  Copy
+  Copy,
+  AlertTriangle
 } from 'lucide-react';
+import ConfirmModal from './ConfirmModal';
 
 // =========================================================================
 // 1. ข้อมูลการประเมินความเสี่ยงจริงของ องค์การบริหารส่วนตำบลฝางคำ (PDF ที่ 3)
@@ -905,6 +907,29 @@ export default function AuditRiskView({
   const [showCriteriaModal, setShowCriteriaModal] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
+  // Elegant Confirm Modal State
+  const [confirmModalConfig, setConfirmModalConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    confirmText: 'ยืนยัน',
+    type: 'danger',
+    onConfirm: () => {}
+  });
+
+  const openConfirm = (config) => {
+    setConfirmModalConfig({
+      isOpen: true,
+      confirmText: 'ยืนยัน',
+      type: 'danger',
+      ...config
+    });
+  };
+
+  const closeConfirm = () => {
+    setConfirmModalConfig((prev) => ({ ...prev, isOpen: false }));
+  };
+
   // Form State for Add / Edit
   const [formData, setFormData] = useState({
     department: 'กองคลัง',
@@ -997,17 +1022,23 @@ export default function AuditRiskView({
 
   // โหลดชุดข้อมูลจริงของ อบต.ฝางคำ (21 กิจกรรม)
   const handleLoadFangkhamDefaults = () => {
-    if (window.confirm('ท่านต้องการโหลดชุดข้อมูล "การประเมินความเสี่ยง องค์การบริหารส่วนตำบลฝางคำ (21 กิจกรรม)" หรือไม่?')) {
-      setAuditUniverse(fangkhamRealAuditUniverse);
-      showToast('โหลดข้อมูลการประเมินความเสี่ยง อบต.ฝางคำ เรียบร้อยแล้ว');
-    }
+    openConfirm({
+      title: 'โหลดชุดข้อมูลจริง อบต.ฝางคำ (21 กิจกรรม)',
+      message: 'ท่านต้องการโหลดชุดข้อมูล "การประเมินความเสี่ยง องค์การบริหารส่วนตำบลฝางคำ (21 กิจกรรม)" มาเป็นชุดข้อมูลตั้งต้นใช่หรือไม่? ข้อมูลกิจกรรมเดิมจะถูกแทนที่ด้วยชุดข้อมูล อบต.ฝางคำ',
+      confirmText: 'โหลดข้อมูล อบต.ฝางคำ',
+      type: 'info',
+      onConfirm: () => {
+        setAuditUniverse(fangkhamRealAuditUniverse);
+        showToast('โหลดข้อมูลการประเมินความเสี่ยง อบต.ฝางคำ เรียบร้อยแล้ว');
+      }
+    });
   };
 
   // นำเข้ากิจกรรมจากคลัง (Activity Catalog)
   const handleImportFromCatalog = (catItem, deptName) => {
     const exists = auditUniverse.some((a) => a.activity === catItem.name && a.department === deptName);
     if (exists) {
-      alert(`กิจกรรม "${catItem.name}" มีอยู่ในรายการประเมินความเสี่ยงแล้ว`);
+      showToast(`⚠️ กิจกรรม "${catItem.name}" มีอยู่ในรายการประเมินความเสี่ยงแล้ว`);
       return;
     }
 
@@ -1072,17 +1103,23 @@ export default function AuditRiskView({
 
   // ลบกิจกรรม
   const handleDeleteActivity = (id) => {
-    if (window.confirm('ท่านแน่ใจหรือไม่ว่าต้องการลบกิจกรรมนี้ออกจากการประเมินความเสี่ยง?')) {
-      setAuditUniverse(auditUniverse.filter((i) => i.id !== id));
-      showToast('ลบกิจกรรมเรียบร้อยแล้ว');
-    }
+    openConfirm({
+      title: 'ยืนยันการลบกิจกรรม',
+      message: 'ท่านแน่ใจหรือไม่ว่าต้องการลบกิจกรรมนี้ออกจากการประเมินความเสี่ยง?',
+      confirmText: 'ลบกิจกรรมนี้',
+      type: 'danger',
+      onConfirm: () => {
+        setAuditUniverse(auditUniverse.filter((i) => i.id !== id));
+        showToast('ลบกิจกรรมเรียบร้อยแล้ว');
+      }
+    });
   };
 
   // นำกิจกรรมที่มีความเสี่ยงสูง เข้าสู่แผนการตรวจสอบประจำปี (Push to Annual Plan)
   const handlePushToAnnualPlan = (item) => {
     const exists = annualPlans.some((p) => p.title === item.activity);
     if (exists) {
-      alert(`โครงการ/กิจกรรม "${item.activity}" มีอยู่ในแผนการตรวจสอบประจำปี ${selectedYear} แล้ว`);
+      showToast(`⚠️ โครงการ/กิจกรรม "${item.activity}" มีอยู่ในแผนการตรวจสอบประจำปี ${selectedYear} แล้ว`);
       return;
     }
 
@@ -1114,11 +1151,15 @@ export default function AuditRiskView({
 
   return (
     <div className="space-y-6">
-      {/* Toast Notification */}
+      {/* Sleek Floating Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-2 border border-blue-500 animate-fade-in text-xs font-bold">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span>{toastMessage}</span>
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900/90 dark:bg-slate-950/90 text-white px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-md flex items-center space-x-3 border border-slate-700/60 dark:border-slate-800 text-xs font-bold animate-slide-up ring-1 ring-white/10">
+          {toastMessage.startsWith('⚠️') ? (
+            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+          ) : (
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          )}
+          <span className="tracking-wide">{toastMessage.replace(/^⚠️\s*/, '')}</span>
         </div>
       )}
 
@@ -2219,6 +2260,17 @@ export default function AuditRiskView({
           </div>
         </div>
       )}
+
+      {/* Reusable Elegant Confirm Modal */}
+      <ConfirmModal
+        isOpen={confirmModalConfig.isOpen}
+        title={confirmModalConfig.title}
+        message={confirmModalConfig.message}
+        confirmText={confirmModalConfig.confirmText}
+        type={confirmModalConfig.type}
+        onConfirm={confirmModalConfig.onConfirm}
+        onClose={closeConfirm}
+      />
     </div>
   );
 }

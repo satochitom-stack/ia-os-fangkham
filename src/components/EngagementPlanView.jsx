@@ -27,6 +27,7 @@ import {
   INITIAL_ENGAGEMENT_PLANS,
   generateEngagementPlanWithAI
 } from '../data/engagementPlanTemplates';
+import ConfirmModal from './ConfirmModal';
 
 export default function EngagementPlanView({
   selectedYear = '2568',
@@ -92,6 +93,8 @@ export default function EngagementPlanView({
     }, 800);
   };
 
+  const [deletePlanId, setDeletePlanId] = useState(null);
+
   const handleSaveGeneratedPlan = () => {
     if (!generatedPreview) return;
     const updated = [generatedPreview, ...engagementPlans];
@@ -102,13 +105,17 @@ export default function EngagementPlanView({
   };
 
   const handleDeletePlan = (id) => {
-    if (confirm('คุณต้องการลบแผนปฏิบัติงานตรวจสอบนี้ใช่หรือไม่?')) {
-      const updated = engagementPlans.filter((p) => p.id !== id);
-      setEngagementPlans(updated);
-      if (selectedPlanId === id && updated.length > 0) {
-        setSelectedPlanId(updated[0].id);
-      }
+    setDeletePlanId(id);
+  };
+
+  const confirmDeletePlan = () => {
+    if (!deletePlanId) return;
+    const updated = engagementPlans.filter((p) => p.id !== deletePlanId);
+    setEngagementPlans(updated);
+    if (selectedPlanId === deletePlanId && updated.length > 0) {
+      setSelectedPlanId(updated[0].id);
     }
+    setDeletePlanId(null);
   };
 
   const handleAddStep = (e) => {
@@ -1133,6 +1140,16 @@ export default function EngagementPlanView({
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={!!deletePlanId}
+        title="ยืนยันการลบแผนปฏิบัติงานตรวจ"
+        message="คุณต้องการลบแผนปฏิบัติงานตรวจสอบ (ว 614) ฉบับนี้ใช่หรือไม่? วัตถุประสงค์ ขอบเขต และแนวการตรวจทั้งหมดของแผนนี้จะถูกนำออกจากระบบ"
+        confirmText="ลบแผนปฏิบัติงาน"
+        type="danger"
+        onConfirm={confirmDeletePlan}
+        onClose={() => setDeletePlanId(null)}
+      />
     </div>
   );
 }
