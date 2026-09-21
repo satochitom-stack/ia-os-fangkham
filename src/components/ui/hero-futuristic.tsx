@@ -132,7 +132,7 @@ class HeroErrorBoundary extends Component<
   }
 }
 
-// 3D Scene: Continuously Morphing Geometric Shapes (IA-OS Quantum Geometric Core)
+// 3D Scene: Topographic Metallic Silver Geometric Polyhedra with Red Laser Scan
 const ThreeCanvasScene = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -163,9 +163,10 @@ const ThreeCanvasScene = () => {
         0.1,
         100
       );
-      camera.position.z = 3.6;
+      // Sized properly to center behind typography without filling entire viewport
+      camera.position.z = 4.3;
 
-      // GLSL Vertex Shader: Mathematical Geometric Polyhedron Morphing
+      // GLSL Vertex Shader: Geometric Polyhedron Morphing + 3D Topographic Ridges
       const vertexShader = `
         uniform float u_time;
         uniform int u_shapeA;
@@ -173,28 +174,29 @@ const ThreeCanvasScene = () => {
         uniform float u_blend;
 
         varying vec3 vWorldPosition;
+        varying vec3 vLocalPosition;
         varying vec3 vUnitNormal;
         varying vec2 vUv;
 
-        // 1. Octahedron distance on sphere
+        // 1. Octahedron distance
         float getOctaDist(vec3 v) {
           return (abs(v.x) + abs(v.y) + abs(v.z)) * 0.72;
         }
 
-        // 2. Cube / Hexahedron distance on sphere
+        // 2. Cube / Hexahedron distance
         float getCubeDist(vec3 v) {
           return max(abs(v.x), max(abs(v.y), abs(v.z))) * 1.12;
         }
 
-        // 3. Dodecahedron distance on sphere (12 pentagonal faces)
+        // 3. Dodecahedron distance (12 pentagonal faces)
         float getDodecaDist(vec3 v) {
           const float phi = 1.61803398875;
-          const float invNorm = 0.52573111211; // 1.0 / sqrt(1 + phi^2)
+          const float invNorm = 0.52573111211;
           vec3 a = abs(v);
           return max(a.y + phi * a.z, max(a.x + phi * a.y, a.z + phi * a.x)) * invNorm * 0.95;
         }
 
-        // 4. Icosahedron distance on sphere (20 triangular faces)
+        // 4. Icosahedron distance (20 triangular faces)
         float getIcoDist(vec3 v) {
           const float phi = 1.61803398875;
           const float invPhi = 0.61803398875;
@@ -207,7 +209,7 @@ const ThreeCanvasScene = () => {
           return max(max(d1, d2), max(d3, d4)) * invSqrt3 * 0.92;
         }
 
-        // 5. Stellated Star Polyhedron (Merkaba / Quantum core)
+        // 5. Stellated Star Polyhedron
         float getStarDist(vec3 v) {
           vec3 a = abs(v);
           float d = pow(a.x, 0.65) + pow(a.y, 0.65) + pow(a.z, 0.65);
@@ -230,14 +232,19 @@ const ThreeCanvasScene = () => {
           vec3 posA = unitV / max(dA, 0.001);
           vec3 posB = unitV / max(dB, 0.001);
 
-          // Smooth cubic S-curve transition
           float s = smoothstep(0.0, 1.0, u_blend);
-          return mix(posA, posB, s) * 1.28;
+          vec3 morphed = mix(posA, posB, s) * 0.78; // Compact elegant scale
+
+          // Real 3D physical topographic contour ridges (ร่องรอยเส้นชั้นความสูงแบบ 3 มิติ)
+          float ridgeFreq = 36.0;
+          float ridgeDisplacement = sin(morphed.y * ridgeFreq + morphed.x * 3.0) * 0.025;
+          return morphed + unitV * ridgeDisplacement;
         }
 
         void main() {
           vUv = uv;
           vec3 morphed = morphVertex(position);
+          vLocalPosition = morphed;
           vUnitNormal = normalize(position);
 
           vec4 worldPos = modelMatrix * vec4(morphed, 1.0);
@@ -246,12 +253,13 @@ const ThreeCanvasScene = () => {
         }
       `;
 
-      // GLSL Fragment Shader: Faceted Metallic Obsidian + Red Laser Topo Scanner
+      // GLSL Fragment Shader: Metallic Silver / Platinum Chrome with Topographic Contour Grooves & Red Laser
       const fragmentShader = `
         uniform float u_time;
         uniform vec2 u_pointer;
 
         varying vec3 vWorldPosition;
+        varying vec3 vLocalPosition;
         varying vec3 vUnitNormal;
         varying vec2 vUv;
 
@@ -260,7 +268,7 @@ const ThreeCanvasScene = () => {
         }
 
         void main() {
-          // Sharp polygonal facet normal from screen derivatives
+          // Sharp polygonal facet normal via derivatives
           vec3 fdx = dFdx(vWorldPosition);
           vec3 fdy = dFdy(vWorldPosition);
           vec3 facetNormal = normalize(cross(fdx, fdy));
@@ -270,59 +278,66 @@ const ThreeCanvasScene = () => {
             facetNormal = -facetNormal;
           }
 
-          // Deep Titanium Obsidian base
-          vec3 baseColor = vec3(0.04, 0.06, 0.1);
+          // Topographic zebra contour grooves (เส้นร่องลายชั้นความสูงสีเงิน/ดำเงา)
+          float ridgeFreq = 36.0;
+          float ridgeWave = sin(vLocalPosition.y * ridgeFreq + vLocalPosition.x * 3.0);
+          float ridge = smoothstep(-0.25, 0.65, ridgeWave);
 
-          // Key Light 1: Cyan specular
-          vec3 light1Dir = normalize(vec3(1.5, 2.2, 2.0));
+          // Metallic Silver / Chrome Monochrome Palette (สีเงินเงางาม ตัดกับร่องเงาดำ)
+          vec3 grooveColor = vec3(0.07, 0.08, 0.10);       // ร่องลึกเงามืด
+          vec3 silverBase = vec3(0.72, 0.75, 0.80);        // ผิวเนื้อเงินแท้
+          vec3 silverHighlight = vec3(0.98, 0.99, 1.0);    // ไฮไลท์สะท้อนแสงสีเงินสว่าง
+
+          vec3 surfaceAlbedo = mix(grooveColor, silverBase, ridge);
+
+          // Key Light: Pure White/Silver Top-Right Studio Light
+          vec3 light1Dir = normalize(vec3(1.2, 2.0, 2.0));
           float diff1 = max(dot(facetNormal, light1Dir), 0.0);
           vec3 half1 = normalize(light1Dir + viewDir);
-          float spec1 = pow(max(dot(facetNormal, half1), 0.0), 36.0);
-          vec3 light1Color = vec3(0.0, 0.85, 1.0);
+          float spec1 = pow(max(dot(facetNormal, half1), 0.0), 38.0);
 
-          // Fill Light 2: Violet / Magenta
-          vec3 light2Dir = normalize(vec3(-2.0, -1.5, 1.5));
+          // Secondary Fill Light: Cool Silver-Blue Bottom-Left Light
+          vec3 light2Dir = normalize(vec3(-1.8, -1.2, 1.6));
           float diff2 = max(dot(facetNormal, light2Dir), 0.0);
           vec3 half2 = normalize(light2Dir + viewDir);
-          float spec2 = pow(max(dot(facetNormal, half2), 0.0), 28.0);
-          vec3 light2Color = vec3(0.7, 0.2, 0.95);
+          float spec2 = pow(max(dot(facetNormal, half2), 0.0), 24.0);
 
-          // Fresnel edge rim
-          float fresnel = pow(1.0 - max(dot(facetNormal, viewDir), 0.0), 2.8);
-          vec3 rimGlow = mix(vec3(0.0, 0.7, 1.0), vec3(0.2, 0.9, 1.0), 0.5 + 0.5 * sin(u_time * 0.5));
+          // Chrome Fresnel Edge Glow
+          float fresnel = pow(1.0 - max(dot(facetNormal, viewDir), 0.0), 2.4);
 
-          // Combine surface shading
-          vec3 surfaceColor = baseColor
-            + light1Color * (diff1 * 0.45 + spec1 * 0.75)
-            + light2Color * (diff2 * 0.25 + spec2 * 0.4)
-            + rimGlow * fresnel * 0.85;
+          // Combine lit metallic silver surface
+          vec3 litSilver = surfaceAlbedo * (0.35 + 0.65 * diff1)
+            + silverHighlight * (spec1 * 1.25 * (0.6 + 0.4 * ridge))
+            + vec3(0.7, 0.75, 0.82) * (diff2 * 0.35 + spec2 * 0.4)
+            + silverHighlight * fresnel * 0.65;
 
-          // Red laser contour slice wave (matching original IA-OS aesthetic)
-          float sliceHeight = sin(u_time * 0.7) * 0.9;
+          // Red Laser Scan Slice Wave (เส้นสแกนสีแดงสด ส่องสว่างชัดเจนบนผิวสีเงิน)
+          float sliceHeight = sin(u_time * 0.75) * 0.65;
           float sliceDist = abs(vWorldPosition.y - sliceHeight);
-          float laserEdge = 1.0 - smoothstep(0.0, 0.06, sliceDist);
+          float laserGlow = smoothstep(0.07, 0.0, sliceDist);
 
-          // Tech dot matrix along laser contour
-          vec2 grid = fract(vWorldPosition.xz * 14.0) * 2.0 - 1.0;
-          float dotDist = length(grid);
-          float dotMask = smoothstep(0.5, 0.42, dotDist);
-          float brightness = hash(floor(vWorldPosition.xz * 8.0));
-          float dots = dotMask * (0.5 + 0.5 * brightness);
+          // Tech Dot Matrix raster along the laser slice (จุดเมทริกซ์สแกนสีแดง)
+          vec2 dotGrid = fract(vWorldPosition.xz * 18.0) * 2.0 - 1.0;
+          float dotDist = length(dotGrid);
+          float dotMask = smoothstep(0.48, 0.42, dotDist);
+          float brightness = hash(floor(vWorldPosition.xz * 9.0));
+          float dots = dotMask * (0.6 + 0.4 * brightness);
 
-          vec3 redSlice = vec3(2.6, 0.08, 0.25) * dots * laserEdge * 2.0;
+          // Intense red laser beam
+          vec3 redSlice = vec3(5.0, 0.08, 0.22) * laserGlow * (0.4 + 1.8 * dots);
 
-          // Soft laser scan ambient line
-          float scanGlow = smoothstep(0.12, 0.0, sliceDist) * 0.35;
-          vec3 scanGlowColor = vec3(1.0, 0.05, 0.2) * scanGlow;
+          // Ambient horizontal laser scan aura
+          float scanAura = smoothstep(0.14, 0.0, sliceDist) * 0.4;
+          vec3 redScanAura = vec3(1.8, 0.05, 0.12) * scanAura;
 
-          vec3 finalColor = surfaceColor + redSlice + scanGlowColor;
+          vec3 finalColor = litSilver + redSlice + redScanAura;
 
-          gl_FragColor = vec4(finalColor, 0.96);
+          gl_FragColor = vec4(finalColor, 1.0);
         }
       `;
 
       // Geometry: Subdivided Icosahedron
-      const coreGeometry = new THREE.IcosahedronGeometry(1.0, 24);
+      const coreGeometry = new THREE.IcosahedronGeometry(1.0, 26);
 
       const uniforms = {
         u_time: { value: 0 },
@@ -332,72 +347,27 @@ const ThreeCanvasScene = () => {
         u_pointer: { value: new THREE.Vector2(0, 0) },
       };
 
-      // 1. Solid Faceted Morphing Core
+      // Solid Metallic Silver Topographic Core
       const coreMaterial = new THREE.ShaderMaterial({
         vertexShader,
         fragmentShader,
         uniforms,
-        transparent: true,
+        transparent: false,
         side: THREE.DoubleSide,
       });
       const coreMesh = new THREE.Mesh(coreGeometry, coreMaterial);
 
-      // 2. Glowing Holographic Wireframe Lattice (Slightly expanded)
-      const wireframeMaterial = new THREE.ShaderMaterial({
-        vertexShader,
-        fragmentShader: `
-          uniform float u_time;
-          varying vec3 vWorldPosition;
-          void main() {
-            float sliceHeight = sin(u_time * 0.7) * 0.9;
-            float sliceDist = abs(vWorldPosition.y - sliceHeight);
-            float laserPulse = smoothstep(0.1, 0.0, sliceDist);
-            vec3 neonColor = mix(vec3(0.02, 0.5, 0.8), vec3(1.0, 0.1, 0.3), laserPulse);
-            gl_FragColor = vec4(neonColor, 0.25 + laserPulse * 0.5);
-          }
-        `,
-        uniforms,
-        wireframe: true,
-        transparent: true,
-        depthWrite: false,
-      });
-      const wireframeMesh = new THREE.Mesh(coreGeometry, wireframeMaterial);
-      wireframeMesh.scale.setScalar(1.015);
-
-      // Group holding the morphing core
+      // Group holding the 3D core
       const coreGroup = new THREE.Group();
       coreGroup.add(coreMesh);
-      coreGroup.add(wireframeMesh);
       scene.add(coreGroup);
 
-      // 3. Gyroscopic Orbital Sci-Fi Rings
-      const ring1Geom = new THREE.TorusGeometry(1.65, 0.008, 16, 120);
-      const ring1Mat = new THREE.MeshBasicMaterial({
-        color: 0x00e5ff,
-        transparent: true,
-        opacity: 0.35,
-      });
-      const ring1 = new THREE.Mesh(ring1Geom, ring1Mat);
-      ring1.rotation.x = Math.PI / 3.5;
-      scene.add(ring1);
-
-      const ring2Geom = new THREE.TorusGeometry(1.88, 0.007, 16, 120);
-      const ring2Mat = new THREE.MeshBasicMaterial({
-        color: 0x38bdf8,
-        transparent: true,
-        opacity: 0.22,
-      });
-      const ring2 = new THREE.Mesh(ring2Geom, ring2Mat);
-      ring2.rotation.y = Math.PI / 4;
-      ring2.rotation.z = Math.PI / 6;
-      scene.add(ring2);
-
-      // 4. Subtle Floating Ambient Data Particles
-      const particleCount = 120;
+      // Subtle ambient data dust (minimal, monochrome silver/white)
+      const particleCount = 60;
       const particleGeom = new THREE.BufferGeometry();
       const particlePositions = new Float32Array(particleCount * 3);
       for (let i = 0; i < particleCount * 3; i += 3) {
-        const r = 1.8 + Math.random() * 1.5;
+        const r = 1.3 + Math.random() * 1.2;
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(Math.random() * 2 - 1);
         particlePositions[i] = r * Math.sin(phi) * Math.cos(theta);
@@ -409,10 +379,10 @@ const ThreeCanvasScene = () => {
         new THREE.BufferAttribute(particlePositions, 3)
       );
       const particleMat = new THREE.PointsMaterial({
-        color: 0x22d3ee,
-        size: 0.025,
+        color: 0xffffff,
+        size: 0.018,
         transparent: true,
-        opacity: 0.5,
+        opacity: 0.4,
       });
       const particles = new THREE.Points(particleGeom, particleMat);
       scene.add(particles);
@@ -439,7 +409,7 @@ const ThreeCanvasScene = () => {
       // Shape Morphing Sequencer
       // Cycle: 0:Icosahedron -> 1:Octahedron -> 2:Cube -> 3:Dodecahedron -> 4:Star -> 5:Sphere
       const TOTAL_SHAPES = 6;
-      const HOLD_TIME = 2.4; // seconds to hold each geometric shape
+      const HOLD_TIME = 2.5; // seconds to hold each geometric shape
       const MORPH_TIME = 1.6; // seconds to smoothly morph between shapes
       const CYCLE_TIME = HOLD_TIME + MORPH_TIME;
 
@@ -471,25 +441,16 @@ const ThreeCanvasScene = () => {
         uniforms.u_pointer.value.lerp(targetPointer, 0.06);
 
         // Core 3D Rotation + Mouse Parallax
-        coreGroup.rotation.y = elapsedTime * 0.22 + uniforms.u_pointer.value.x * 0.45;
-        coreGroup.rotation.x = Math.sin(elapsedTime * 0.15) * 0.2 - uniforms.u_pointer.value.y * 0.45;
-        coreGroup.rotation.z = elapsedTime * 0.08;
-
-        // Gyro rings counter-rotation
-        ring1.rotation.z = elapsedTime * 0.18;
-        ring1.rotation.x = Math.PI / 3.5 + uniforms.u_pointer.value.y * 0.2;
-        ring1.rotation.y = uniforms.u_pointer.value.x * 0.2;
-
-        ring2.rotation.y = -elapsedTime * 0.14;
-        ring2.rotation.x = uniforms.u_pointer.value.y * 0.15;
-        ring2.rotation.z = Math.PI / 6 + elapsedTime * 0.09;
+        coreGroup.rotation.y = elapsedTime * 0.20 + uniforms.u_pointer.value.x * 0.40;
+        coreGroup.rotation.x = Math.sin(elapsedTime * 0.12) * 0.15 - uniforms.u_pointer.value.y * 0.40;
+        coreGroup.rotation.z = elapsedTime * 0.06;
 
         // Subtle ambient particles rotation
-        particles.rotation.y = elapsedTime * 0.04;
+        particles.rotation.y = elapsedTime * 0.03;
 
-        // Subtle camera breathing
-        camera.position.x = uniforms.u_pointer.value.x * 0.08;
-        camera.position.y = uniforms.u_pointer.value.y * 0.08;
+        // Subtle camera breathing with cursor
+        camera.position.x = uniforms.u_pointer.value.x * 0.06;
+        camera.position.y = uniforms.u_pointer.value.y * 0.06;
         camera.lookAt(0, 0, 0);
 
         renderer.render(scene, camera);
@@ -502,13 +463,8 @@ const ThreeCanvasScene = () => {
         window.removeEventListener("mousemove", handlePointerMove);
         window.removeEventListener("resize", handleResize);
         coreGeometry.dispose();
-        ring1Geom.dispose();
-        ring2Geom.dispose();
         particleGeom.dispose();
         coreMaterial.dispose();
-        wireframeMaterial.dispose();
-        ring1Mat.dispose();
-        ring2Mat.dispose();
         particleMat.dispose();
         renderer?.dispose();
       };
