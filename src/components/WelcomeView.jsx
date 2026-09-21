@@ -190,8 +190,9 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
       {/* 2. Interactive 3D Spline Scene Hero */}
       <section className="relative w-full pt-24 sm:pt-28 pb-10 px-3 sm:px-6 max-w-7xl mx-auto flex items-center min-h-[90vh]">
         <SplineSceneBasic
-          badge="⚡ INTERNAL AUDIT OPERATING SYSTEM • อบต.ฝางคำ"
-          title="IA-OS FANG KHAM"
+          badge="IA-OS 24/7 Engine • 6 Departments Linked"
+          kicker="INTERNAL AUDIT OPERATING SYSTEM"
+          title="IA-OS Fang Kham Architecture"
           subtitle="ระบบปฏิบัติการตรวจสอบภายใน องค์การบริหารส่วนตำบลฝางคำ"
           buttonText="สำรวจระบบงาน"
           onExplore={scrollToExplore}
