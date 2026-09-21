@@ -125,7 +125,7 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
               </div>
               <div className="text-[10px] sm:text-[11px] text-slate-400 flex items-center space-x-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
-                <span>ระบบปฏิบัติการตรวจสอบภายในยุคดิจิทัล</span>
+                <span>ระบบปฏิบัติการตรวจสอบภายใน</span>
               </div>
             </div>
           </div>
@@ -192,8 +192,7 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
         <SplineSceneBasic
           badge="⚡ INTERNAL AUDIT OPERATING SYSTEM • อบต.ฝางคำ"
           title="IA-OS FANG KHAM"
-          subtitle="ระบบปฏิบัติการตรวจสอบภายในยุคดิจิทัล องค์การบริหารส่วนตำบลฝางคำ"
-          subtext="วิเคราะห์ความเสี่ยง SOFCK • แผนปฏิบัติการ ว 614 • การควบคุมภายใน ปอ.1-ปค.5"
+          subtitle="ระบบปฏิบัติการตรวจสอบภายใน องค์การบริหารส่วนตำบลฝางคำ"
           buttonText="สำรวจระบบงาน"
           onExplore={scrollToExplore}
           onLogin={scrollToLogin}
