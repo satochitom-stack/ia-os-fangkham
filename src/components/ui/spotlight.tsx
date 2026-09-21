@@ -12,9 +12,9 @@ type SpotlightProps = {
 
 export function Spotlight({
   className,
-  size = 360,
+  size = 460,
   fill = "white",
-  springOptions = { bounce: 0 },
+  springOptions = { damping: 25, stiffness: 850, mass: 0.08 },
 }: SpotlightProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -67,7 +67,7 @@ export function Spotlight({
     <motion.div
       ref={containerRef}
       className={cn(
-        'pointer-events-none absolute rounded-full blur-2xl transition-opacity duration-200',
+        'pointer-events-none absolute rounded-full blur-xl mix-blend-screen transition-opacity duration-150',
         isHovered ? 'opacity-100' : 'opacity-0',
         className
       )}
@@ -77,7 +77,7 @@ export function Spotlight({
         left: spotlightLeft,
         top: spotlightTop,
         background: fill === "white"
-          ? 'radial-gradient(circle at center, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.25) 35%, transparent 70%)'
+          ? 'radial-gradient(circle at center, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.85) 15%, rgba(255, 255, 255, 0.45) 40%, rgba(255, 255, 255, 0.12) 65%, transparent 75%)'
           : `radial-gradient(circle at center, ${fill}, transparent 75%)`,
       }}
     />
