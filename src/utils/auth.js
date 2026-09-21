@@ -415,7 +415,7 @@ export async function verifyLogin(username, password) {
   return null;
 }
 
-export function startSession(user, remember = true) {
+export function startSession(user, remember = true, isImpersonating = false) {
   const session = {
     username: user.username,
     displayName: user.displayName,
@@ -425,6 +425,7 @@ export function startSession(user, remember = true) {
     permissions: user.permissions || [],
     canManageUsers: !!user.canManageUsers,
     remember: !!remember,
+    isImpersonating: !!isImpersonating,
     expiresAt: remember ? null : Date.now() + DEFAULT_SESSION_MS,
     loginAt: Date.now()
   };
@@ -456,10 +457,10 @@ export function logout() {
 }
 
 // Quick switch session without needing password (useful for Admin previewing user views)
-export function switchSessionTo(username) {
+export function switchSessionTo(username, isImpersonating = true) {
   const user = getUserByUsername(username);
   if (!user) return null;
-  return startSession(user, true);
+  return startSession(user, true, isImpersonating);
 }
 
 // Backward compatibility helpers for ChangePasswordModal

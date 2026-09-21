@@ -475,24 +475,24 @@ export default function App() {
         onOpenUsersManagement={() => setCurrentTab('users')}
       />
 
-      {/* Impersonate / Department Preview Banner */}
-      {session?.role !== 'admin' && (
+      {/* Impersonate / Department Preview Banner (แสดงเฉพาะเมื่อ ADMIN กำลังกดทดสอบมุมมองเท่านั้น) */}
+      {session?.isImpersonating && (
         <div className="bg-gradient-to-r from-amber-400 via-amber-500 to-orange-400 text-slate-950 px-4 py-2 text-xs font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-sm z-20">
           <div className="flex items-center space-x-2">
-            <span>🏢 คุณกำลังเข้าสู่ระบบในมุมมอง: <strong>{session.displayName || session.username} ({session.department})</strong></span>
+            <span>👁️ <strong>โหมดทดสอบมุมมอง (Admin Preview):</strong> คุณกำลังดูหน้าจอในฐานะ {session.displayName || session.username} ({session.department})</span>
             <span className="text-[10px] bg-slate-950/20 px-2 py-0.5 rounded-full font-mono">
-              (แสดงเฉพาะเมนูที่ได้รับอนุญาต: {session.permissions?.length || 0} เมนู)
+              (แสดงเฉพาะ {session.permissions?.length || 0} เมนูที่ได้รับอนุญาต)
             </span>
           </div>
           <button
             onClick={() => {
-              const adminSess = switchSessionTo('admin');
+              const adminSess = switchSessionTo('admin', false);
               setSession(adminSess);
               setCurrentTab('users');
             }}
             className="bg-slate-950 hover:bg-slate-900 text-amber-300 border border-amber-300/40 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 self-start sm:self-auto shadow-sm"
           >
-            <span>👑 สลับกลับเป็น ADMIN (ผู้ตรวจสอบภายใน)</span>
+            <span>✕ ออกจากโหมดทดสอบ (กลับสู่ ADMIN)</span>
           </button>
         </div>
       )}
