@@ -1,13 +1,105 @@
-// ระบบยืนยันตัวตนแบบผู้ใช้คนเดียว (single-user local auth)
-// ทำงานฝั่ง client ล้วน ๆ โดยเก็บบัญชีผู้ใช้ (username + ค่าแฮชของรหัสผ่าน) ไว้ใน
-// LocalStorage ของเบราว์เซอร์เครื่องนี้เท่านั้น ไม่มีการส่งข้อมูลออกไปที่ใด
-// เหมาะสำหรับแอปที่ใช้งานคนเดียวบนเครื่องของตนเอง (ไม่ใช่ระบบรักษาความปลอดภัยระดับองค์กร)
+// ระบบยืนยันตัวตนและการจัดการสิทธิ์ผู้ใช้งานหลายระดับ (Multi-User Role-Based Access Control - RBAC)
+// รองรับบัญชี ADMIN (หน่วยตรวจสอบภายใน) และ USER (รายกอง/สำนัก)
+// จัดเก็บใน LocalStorage ปลอดภัย และพร้อมสำหรับการเชื่อมต่อ Cloud Database ต่อไป
 
-const ACCOUNT_KEY = 'ia_auth_account';
+const USERS_KEY = 'ia_auth_users';
 const SESSION_KEY = 'ia_auth_session';
+const OLD_ACCOUNT_KEY = 'ia_auth_account';
 
-// อายุ session เมื่อไม่ได้ติ๊ก "จดจำการเข้าสู่ระบบ"
-const DEFAULT_SESSION_MS = 12 * 60 * 60 * 1000; // 12 ชั่วโมง
+const DEFAULT_SESSION_MS = 24 * 60 * 60 * 1000; // 24 ชั่วโมง
+
+export const ALL_MENU_IDS = [
+  { id: 'dashboard', label: 'ภาพรวม & ปฏิทินงาน', icon: 'LayoutDashboard', desc: 'แดชบอร์ดสรุปและปฏิทินงานตรวจสอบ' },
+  { id: 'audit-risk', label: 'การประเมินความเสี่ยง', icon: 'ShieldAlert', desc: 'วิเคราะห์ SOFCK และจัดลำดับความเสี่ยง 21 กิจกรรม' },
+  { id: 'planning', label: 'แผน & นโยบายตรวจ', icon: 'FileText', desc: 'แผนการตรวจสอบประจำปีและกฎบัตร' },
+  { id: 'engagement-plan', label: 'แผนปฏิบัติงานตรวจ (ว 614)', icon: 'Sparkles', desc: 'แผนปฏิบัติงานรายกิจกรรมและแนวการตรวจด้วย AI' },
+  { id: 'execution', label: 'ปฏิบัติการตรวจ & กระดาษทำการ', icon: 'ClipboardCheck', desc: 'ลงมือตรวจจริง สุ่มตรวจ และบันทึกกระดาษทำการ' },
+  { id: 'reporting', label: 'รายงาน & ติดตามผล', icon: 'FileSpreadsheet', desc: 'รายงานผลการตรวจสอบและติดตามข้อเสนอแนะ' },
+  { id: 'control-risk', label: 'ควบคุมภายใน & บริหารความเสี่ยง', icon: 'ShieldCheck', desc: 'บันทึกแบบ ปอ.1, ปอ.2, ปอ.3, ปค.4, ปค.5 ของแต่ละกอง' },
+  { id: 'lpa', label: 'เตรียมรับประเมิน LPA', icon: 'Award', desc: 'เช็กลิสต์และหลักฐานเตรียมรับประเมิน LPA' },
+  { id: 'knowledge', label: 'คลังระเบียบ & แบบฟอร์ม', icon: 'BookOpen', desc: 'ดาวน์โหลดระเบียบ หนังสือสั่งการ และแบบฟอร์ม' },
+  { id: 'users', label: 'จัดการผู้ใช้งาน & กำหนดสิทธิ์', icon: 'Users', desc: 'จัดการบัญชีกองและกำหนดสิทธิ์การมองเห็นเมนู (ADMIN Only)' }
+];
+
+export const DEFAULT_INITIAL_USERS = [
+  {
+    username: 'admin',
+    displayName: 'นายศุภมงคล ธรรมพิทักษ์',
+    position: 'นักวิชาการตรวจสอบภายในปฏิบัติการ',
+    department: 'หน่วยตรวจสอบภายใน',
+    role: 'admin',
+    passwordText: 'admin123',
+    permissions: ALL_MENU_IDS.map((m) => m.id),
+    canManageUsers: true,
+    createdAt: Date.now()
+  },
+  {
+    username: 'finance',
+    displayName: 'กองคลัง',
+    position: 'ผู้อำนวยการกองคลัง / เจ้าหน้าที่กองคลัง',
+    department: 'กองคลัง',
+    role: 'user',
+    passwordText: '1234',
+    permissions: ['dashboard', 'control-risk', 'lpa', 'knowledge'],
+    canManageUsers: false,
+    createdAt: Date.now()
+  },
+  {
+    username: 'palat',
+    displayName: 'สำนักปลัด',
+    position: 'หัวหน้าสำนักปลัด / เจ้าหน้าที่สำนักปลัด',
+    department: 'สำนักปลัด',
+    role: 'user',
+    passwordText: '1234',
+    permissions: ['dashboard', 'control-risk', 'lpa', 'knowledge'],
+    canManageUsers: false,
+    createdAt: Date.now()
+  },
+  {
+    username: 'engineering',
+    displayName: 'กองช่าง',
+    position: 'ผู้อำนวยการกองช่าง / นายช่าง',
+    department: 'กองช่าง',
+    role: 'user',
+    passwordText: '1234',
+    permissions: ['dashboard', 'control-risk', 'knowledge'],
+    canManageUsers: false,
+    createdAt: Date.now()
+  },
+  {
+    username: 'education',
+    displayName: 'กองการศึกษา',
+    position: 'ผู้อำนวยการกองการศึกษา / นักวิชาการศึกษา',
+    department: 'กองการศึกษา',
+    role: 'user',
+    passwordText: '1234',
+    permissions: ['dashboard', 'control-risk', 'knowledge'],
+    canManageUsers: false,
+    createdAt: Date.now()
+  },
+  {
+    username: 'health',
+    displayName: 'กองสาธารณสุขและสิ่งแวดล้อม',
+    position: 'ผู้อำนวยการกองสาธารณสุขฯ',
+    department: 'กองสาธารณสุขและสิ่งแวดล้อม',
+    role: 'user',
+    passwordText: '1234',
+    permissions: ['dashboard', 'control-risk', 'knowledge'],
+    canManageUsers: false,
+    createdAt: Date.now()
+  },
+  {
+    username: 'strategy',
+    displayName: 'กองยุทธศาสตร์และงบประมาณ',
+    position: 'ผู้อำนวยการกองยุทธศาสตร์ฯ / นักวิเคราะห์ฯ',
+    department: 'กองยุทธศาสตร์และงบประมาณ',
+    role: 'user',
+    passwordText: '1234',
+    permissions: ['dashboard', 'control-risk', 'knowledge'],
+    canManageUsers: false,
+    createdAt: Date.now()
+  }
+];
 
 function toHex(buffer) {
   return Array.from(new Uint8Array(buffer))
@@ -28,65 +120,164 @@ export async function hashPassword(password, salt) {
   return toHex(digest);
 }
 
-export function getAccount() {
+// -------------------------------------------------------------
+// User Management Functions
+// -------------------------------------------------------------
+
+export function getUsers() {
   try {
-    const raw = localStorage.getItem(ACCOUNT_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
+    const raw = localStorage.getItem(USERS_KEY);
+    if (raw) {
+      const users = JSON.parse(raw);
+      if (Array.isArray(users) && users.length > 0) return users;
+    }
+
+    // Auto-seed default users and check if there's an existing legacy single account
+    const initialUsers = [...DEFAULT_INITIAL_USERS];
+    const oldAccountRaw = localStorage.getItem(OLD_ACCOUNT_KEY);
+    if (oldAccountRaw) {
+      try {
+        const old = JSON.parse(oldAccountRaw);
+        if (old?.username) {
+          const adminIdx = initialUsers.findIndex((u) => u.username === 'admin');
+          if (adminIdx !== -1) {
+            initialUsers[adminIdx].username = old.username;
+            initialUsers[adminIdx].salt = old.salt;
+            initialUsers[adminIdx].hash = old.hash;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    saveUsers(initialUsers);
+    return initialUsers;
+  } catch (e) {
+    console.error(e);
+    return DEFAULT_INITIAL_USERS;
   }
 }
 
-export function hasAccount() {
-  return !!getAccount();
+export function saveUsers(users) {
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
 }
 
-export async function createAccount(username, password) {
+export function getUserByUsername(username) {
+  const users = getUsers();
+  return users.find((u) => u.username.toLowerCase() === username.trim().toLowerCase()) || null;
+}
+
+export async function addUser({ username, displayName, position, department, role, password, permissions }) {
+  const users = getUsers();
+  const cleanUsername = username.trim().toLowerCase();
+  if (users.some((u) => u.username.toLowerCase() === cleanUsername)) {
+    throw new Error(`ชื่อผู้ใช้ "${username}" มีอยู่ในระบบแล้ว`);
+  }
   const salt = generateSalt();
   const hash = await hashPassword(password, salt);
-  const account = { username: username.trim(), salt, hash, createdAt: Date.now() };
-  localStorage.setItem(ACCOUNT_KEY, JSON.stringify(account));
-  return account;
-}
-
-export async function verifyLogin(username, password) {
-  const account = getAccount();
-  if (!account) return false;
-  if (account.username !== username.trim()) return false;
-  const hash = await hashPassword(password, account.salt);
-  return hash === account.hash;
-}
-
-export async function changeCredentials(currentPassword, newUsername, newPassword) {
-  const account = getAccount();
-  if (!account) throw new Error('ยังไม่มีบัญชีผู้ใช้ในระบบ');
-  const currentHash = await hashPassword(currentPassword, account.salt);
-  if (currentHash !== account.hash) {
-    throw new Error('รหัสผ่านปัจจุบันไม่ถูกต้อง');
-  }
-  const salt = generateSalt();
-  const hash = await hashPassword(newPassword, salt);
-  const updated = {
-    ...account,
-    username: (newUsername || account.username).trim(),
+  const newUser = {
+    username: cleanUsername,
+    displayName: displayName.trim(),
+    position: position?.trim() || '',
+    department: department?.trim() || 'หน่วยงานทั่วไป',
+    role: role || 'user',
     salt,
     hash,
-    updatedAt: Date.now(),
+    passwordText: password, // For easy admin viewing/recovery in local system
+    permissions: permissions || ['dashboard', 'control-risk', 'knowledge'],
+    canManageUsers: role === 'admin',
+    createdAt: Date.now()
   };
-  localStorage.setItem(ACCOUNT_KEY, JSON.stringify(updated));
-  // อัปเดตชื่อผู้ใช้ใน session ปัจจุบันด้วย (ถ้ามี)
-  const session = getSession();
-  if (session) {
-    startSession(updated.username, session.remember);
-  }
-  return updated;
+  users.push(newUser);
+  saveUsers(users);
+  return newUser;
 }
 
-export function startSession(username, remember) {
+export async function updateUser(username, updates) {
+  const users = getUsers();
+  const idx = users.findIndex((u) => u.username.toLowerCase() === username.toLowerCase());
+  if (idx === -1) throw new Error('ไม่พบผู้ใช้งานนี้ในระบบ');
+
+  const user = { ...users[idx], ...updates };
+  if (updates.newPassword) {
+    user.salt = generateSalt();
+    user.hash = await hashPassword(updates.newPassword, user.salt);
+    user.passwordText = updates.newPassword;
+  }
+  users[idx] = user;
+  saveUsers(users);
+
+  // If updating currently logged in user, refresh session
+  const currentSession = getSession();
+  if (currentSession?.username.toLowerCase() === username.toLowerCase()) {
+    startSession(user, currentSession.remember);
+  }
+  return user;
+}
+
+export function updateUserPermissions(username, permissions) {
+  const users = getUsers();
+  const idx = users.findIndex((u) => u.username.toLowerCase() === username.toLowerCase());
+  if (idx === -1) return null;
+  users[idx].permissions = permissions;
+  saveUsers(users);
+
+  const currentSession = getSession();
+  if (currentSession?.username.toLowerCase() === username.toLowerCase()) {
+    startSession(users[idx], currentSession.remember);
+  }
+  return users[idx];
+}
+
+export function deleteUser(username) {
+  const users = getUsers();
+  const target = users.find((u) => u.username.toLowerCase() === username.toLowerCase());
+  if (target?.role === 'admin' && users.filter((u) => u.role === 'admin').length <= 1) {
+    throw new Error('ไม่สามารถลบบัญชีผู้ดูแลระบบ (ADMIN) คนสุดท้ายได้');
+  }
+  const updated = users.filter((u) => u.username.toLowerCase() !== username.toLowerCase());
+  saveUsers(updated);
+}
+
+export function resetUsersToDefault() {
+  saveUsers(DEFAULT_INITIAL_USERS);
+  return DEFAULT_INITIAL_USERS;
+}
+
+// -------------------------------------------------------------
+// Authentication & Session
+// -------------------------------------------------------------
+
+export async function verifyLogin(username, password) {
+  const user = getUserByUsername(username);
+  if (!user) return null;
+
+  // Check hashed password if present
+  if (user.hash && user.salt) {
+    const hash = await hashPassword(password, user.salt);
+    if (hash === user.hash) return user;
+  }
+
+  // Check plaintext fallback (default initial seed passwords)
+  if (user.passwordText && user.passwordText === password) {
+    return user;
+  }
+
+  return null;
+}
+
+export function startSession(user, remember = true) {
   const session = {
-    username,
+    username: user.username,
+    displayName: user.displayName,
+    department: user.department,
+    position: user.position,
+    role: user.role || 'user',
+    permissions: user.permissions || [],
+    canManageUsers: !!user.canManageUsers,
     remember: !!remember,
     expiresAt: remember ? null : Date.now() + DEFAULT_SESSION_MS,
+    loginAt: Date.now()
   };
   localStorage.setItem(SESSION_KEY, JSON.stringify(session));
   return session;
@@ -114,3 +305,40 @@ export function isLoggedIn() {
 export function logout() {
   localStorage.removeItem(SESSION_KEY);
 }
+
+// Quick switch session without needing password (useful for Admin previewing user views)
+export function switchSessionTo(username) {
+  const user = getUserByUsername(username);
+  if (!user) return null;
+  return startSession(user, true);
+}
+
+// Backward compatibility helpers for ChangePasswordModal
+export function getAccount() {
+  const session = getSession();
+  if (session) {
+    return getUserByUsername(session.username);
+  }
+  const users = getUsers();
+  return users[0] || null;
+}
+
+export function hasAccount() {
+  return getUsers().length > 0;
+}
+
+export async function changeCredentials(currentPassword, newUsername, newPassword) {
+  const session = getSession();
+  const usernameToChange = session ? session.username : 'admin';
+  const user = getUserByUsername(usernameToChange);
+  if (!user) throw new Error('ไม่พบบัญชีผู้ใช้งานในระบบ');
+
+  const valid = await verifyLogin(user.username, currentPassword);
+  if (!valid) throw new Error('รหัสผ่านปัจจุบันไม่ถูกต้อง');
+
+  await updateUser(user.username, {
+    displayName: newUsername || user.displayName,
+    newPassword
+  });
+}
+

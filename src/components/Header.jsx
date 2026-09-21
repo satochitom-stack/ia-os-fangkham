@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Shield,
   Calendar,
@@ -10,7 +10,9 @@ import {
   ChevronDown,
   Settings,
   Plus,
-  UserCheck
+  UserCheck,
+  Users,
+  ShieldCheck
 } from 'lucide-react';
 
 export default function Header({
@@ -20,10 +22,11 @@ export default function Header({
   fiscalYears = ['2567', '2568', '2569', '2570'],
   darkMode,
   onToggleDarkMode,
-  username,
+  session,
   onLogout,
   onChangePassword,
-  onOpenSettings
+  onOpenSettings,
+  onOpenUsersManagement
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -38,8 +41,9 @@ export default function Header({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const auditorDisplay = orgProfile.auditorName?.trim() || 'ยังไม่ได้ระบุชื่อ';
-  const hasAuditorName = Boolean(orgProfile.auditorName?.trim());
+  const isAdmin = session?.role === 'admin';
+  const userTitle = session?.displayName || (isAdmin ? orgProfile?.auditorName : session?.username);
+  const departmentLabel = session?.department || (isAdmin ? 'หน่วยตรวจสอบภายใน' : 'ส่วนราชการ');
 
   return (
     <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-xs">
@@ -58,15 +62,26 @@ export default function Header({
                 <span className="bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/50 text-[11px] px-2 py-0.5 rounded-full font-semibold">
                   พ.ศ. {selectedYear}
                 </span>
+                {isAdmin ? (
+                  <span className="bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                    👑 ADMIN
+                  </span>
+                ) : (
+                  <span className="bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                    🏢 USER: {departmentLabel}
+                  </span>
+                )}
               </div>
               <button
-                onClick={onOpenSettings}
-                className="text-xs text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 flex items-center mt-0.5 transition-colors cursor-pointer text-left"
-                title="คลิกเพื่อแก้ไขข้อมูลหน่วยงานและผู้ตรวจสอบ"
+                onClick={isAdmin ? onOpenSettings : undefined}
+                className={`text-xs text-slate-500 dark:text-slate-400 flex items-center mt-0.5 transition-colors text-left ${
+                  isAdmin ? 'hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer' : 'cursor-default'
+                }`}
+                title={isAdmin ? 'คลิกเพื่อแก้ไขข้อมูลหน่วยงานและผู้ตรวจสอบ' : ''}
               >
                 <Building2 className="w-3.5 h-3.5 mr-1 text-slate-400 dark:text-slate-500 shrink-0" />
                 <span className="truncate max-w-[260px] sm:max-w-md">
-                  {orgProfile.name} • {orgProfile.agencyName} {orgProfile.district} {orgProfile.province}
+                  {orgProfile.name} • {orgProfile.district} {orgProfile.province}
                 </span>
               </button>
             </div>
@@ -91,14 +106,16 @@ export default function Header({
                   </option>
                 ))}
               </select>
-              <button
-                onClick={onOpenSettings}
-                title="เพิ่มหรือจัดการปีงบประมาณ"
-                className="ml-1 px-1.5 py-1 text-[11px] font-bold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700 rounded transition-colors flex items-center cursor-pointer"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span className="hidden md:inline ml-0.5">เพิ่มปี</span>
-              </button>
+              {isAdmin && (
+                <button
+                  onClick={onOpenSettings}
+                  title="เพิ่มหรือจัดการปีงบประมาณ"
+                  className="ml-1 px-1.5 py-1 text-[11px] font-bold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700 rounded transition-colors flex items-center cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline ml-0.5">เพิ่มปี</span>
+                </button>
+              )}
             </div>
 
             {/* Dark Mode Toggle */}
@@ -110,7 +127,7 @@ export default function Header({
               {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
 
-            {/* Auditor & Account Menu */}
+            {/* User Account Menu */}
             <div className="relative pl-1 border-l border-slate-200 dark:border-slate-700" ref={menuRef}>
               <button
                 onClick={() => setMenuOpen((v) => !v)}
@@ -118,49 +135,66 @@ export default function Header({
               >
                 <div
                   className={`w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center shadow-xs shrink-0 ${
-                    hasAuditorName
-                      ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400'
-                      : 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400'
+                    isAdmin
+                      ? 'bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-400'
+                      : 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400'
                   }`}
                 >
-                  <UserCheck className="w-4 h-4" />
+                  {isAdmin ? '👑' : '🏢'}
                 </div>
                 <div className="hidden md:block text-left max-w-[150px]">
                   <div className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
-                    {auditorDisplay}
+                    {userTitle}
                   </div>
                   <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
-                    {hasAuditorName ? orgProfile.auditorPosition : 'คลิกเพื่อตั้งชื่อผู้ตรวจ'}
+                    {departmentLabel}
                   </div>
                 </div>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 hidden md:block" />
               </button>
 
               {menuOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg overflow-hidden z-40 text-xs">
+                <div className="absolute right-0 mt-2 w-60 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg overflow-hidden z-40 text-xs">
                   <div className="px-3.5 py-2.5 border-b border-slate-100 dark:border-slate-800">
-                    <div className="font-bold text-slate-800 dark:text-slate-200">{auditorDisplay}</div>
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400">{orgProfile.auditorPosition}</div>
-                    <div className="text-[10px] text-blue-600 dark:text-blue-400 mt-0.5">ผู้ใช้งาน: {username}</div>
+                    <div className="font-bold text-slate-800 dark:text-slate-200 truncate">{userTitle}</div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">{departmentLabel}</div>
+                    <div className="text-[10px] text-blue-600 dark:text-blue-400 mt-0.5">
+                      ชื่อผู้ใช้: @{session?.username} • {isAdmin ? 'สิทธิ์ผู้ดูแลระบบ' : 'สิทธิ์ประจำกอง'}
+                    </div>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      setMenuOpen(false);
-                      onOpenSettings();
-                    }}
-                    className="w-full flex items-center space-x-2 px-3.5 py-2.5 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 cursor-pointer font-semibold"
-                  >
-                    <Settings className="w-3.5 h-3.5" />
-                    <span>เปลี่ยนชื่อผู้ตรวจ / ตั้งค่าระบบ</span>
-                  </button>
+                  {isAdmin && onOpenUsersManagement && (
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        onOpenUsersManagement();
+                      }}
+                      className="w-full flex items-center space-x-2 px-3.5 py-2.5 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 cursor-pointer font-bold border-b border-slate-100 dark:border-slate-800"
+                    >
+                      <Users className="w-3.5 h-3.5" />
+                      <span>จัดการผู้ใช้งาน & กำหนดสิทธิ์รายกอง</span>
+                    </button>
+                  )}
+
+                  {isAdmin && (
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        onOpenSettings();
+                      }}
+                      className="w-full flex items-center space-x-2 px-3.5 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer font-medium"
+                    >
+                      <Settings className="w-3.5 h-3.5" />
+                      <span>ตั้งค่าข้อมูล อบต. และผู้ตรวจ</span>
+                    </button>
+                  )}
 
                   <button
                     onClick={() => {
                       setMenuOpen(false);
                       onChangePassword();
                     }}
-                    className="w-full flex items-center space-x-2 px-3.5 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
+                    className="w-full flex items-center space-x-2 px-3.5 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer font-medium"
                   >
                     <KeyRound className="w-3.5 h-3.5" />
                     <span>เปลี่ยนรหัสผ่านเข้าสู่ระบบ</span>
@@ -171,10 +205,10 @@ export default function Header({
                       setMenuOpen(false);
                       onLogout();
                     }}
-                    className="w-full flex items-center space-x-2 px-3.5 py-2.5 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 cursor-pointer"
+                    className="w-full flex items-center space-x-2 px-3.5 py-2.5 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 cursor-pointer font-semibold border-t border-slate-100 dark:border-slate-800"
                   >
                     <LogOut className="w-3.5 h-3.5" />
-                    <span>ออกจากระบบ</span>
+                    <span>ออกจากระบบ / สลับบัญชี</span>
                   </button>
                 </div>
               )}

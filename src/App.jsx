@@ -13,8 +13,9 @@ import ChangePasswordModal from './components/ChangePasswordModal';
 import ProfileSettingsModal from './components/ProfileSettingsModal';
 import AuditRiskView, { defaultAuditUniverse } from './components/AuditRiskView';
 import EngagementPlanView from './components/EngagementPlanView';
+import UserManagementView from './components/UserManagementView';
 import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
-import { getSession, logout as authLogout } from './utils/auth';
+import { getSession, logout as authLogout, switchSessionTo } from './utils/auth';
 
 import {
   initialOrgProfile,
@@ -439,8 +440,18 @@ export default function App() {
     else if (data.auditCharter) setAuditCharterByYear({ [selectedYear]: data.auditCharter });
   };
 
+  // Route Guard: Ensure non-admin users only access allowed menu tabs
+  useEffect(() => {
+    if (!session) return;
+    if (session.role === 'admin') return;
+    const allowed = session.permissions || ['dashboard'];
+    if (!allowed.includes(currentTab)) {
+      setCurrentTab(allowed[0] || 'dashboard');
+    }
+  }, [session, currentTab]);
+
   if (!session) {
-    return <LoginView onLogin={(username) => setSession(getSession() || { username })} />;
+    return <LoginView onLogin={(sess) => setSession(sess || getSession())} />;
   }
 
   const handleLogout = () => {
@@ -457,11 +468,34 @@ export default function App() {
         fiscalYears={fiscalYears}
         darkMode={darkMode}
         onToggleDarkMode={() => setDarkMode((v) => !v)}
-        username={session.username}
+        session={session}
         onLogout={handleLogout}
         onChangePassword={() => setShowChangePassword(true)}
         onOpenSettings={() => setShowSettings(true)}
+        onOpenUsersManagement={() => setCurrentTab('users')}
       />
+
+      {/* Impersonate / Department Preview Banner */}
+      {session?.role !== 'admin' && (
+        <div className="bg-gradient-to-r from-amber-400 via-amber-500 to-orange-400 text-slate-950 px-4 py-2 text-xs font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-sm z-20">
+          <div className="flex items-center space-x-2">
+            <span>🏢 คุณกำลังเข้าสู่ระบบในมุมมอง: <strong>{session.displayName || session.username} ({session.department})</strong></span>
+            <span className="text-[10px] bg-slate-950/20 px-2 py-0.5 rounded-full font-mono">
+              (แสดงเฉพาะเมนูที่ได้รับอนุญาต: {session.permissions?.length || 0} เมนู)
+            </span>
+          </div>
+          <button
+            onClick={() => {
+              const adminSess = switchSessionTo('admin');
+              setSession(adminSess);
+              setCurrentTab('users');
+            }}
+            className="bg-slate-950 hover:bg-slate-900 text-amber-300 border border-amber-300/40 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 self-start sm:self-auto shadow-sm"
+          >
+            <span>👑 สลับกลับเป็น ADMIN (ผู้ตรวจสอบภายใน)</span>
+          </button>
+        </div>
+      )}
 
       {showChangePassword && (
         <ChangePasswordModal onClose={() => setShowChangePassword(false)} />
@@ -482,7 +516,7 @@ export default function App() {
       )}
 
       <div className="flex-1 flex overflow-hidden">
-        <Sidebar currentTab={currentTab} setCurrentTab={setCurrentTab} planCount={annualPlans.length} />
+        <Sidebar currentTab={currentTab} setCurrentTab={setCurrentTab} session={session} planCount={annualPlans.length} />
 
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50/70 dark:bg-slate-950">
           <div className="max-w-7xl mx-auto">
@@ -586,6 +620,21 @@ export default function App() {
                 selectedYear={selectedYear}
                 knowledgeBase={knowledgeBase}
                 orgProfile={orgProfile}
+              />
+            )}
+
+            {currentTab === 'users' && session?.role === 'admin' && (
+              <UserManagementView
+                currentSession={session}
+                onSwitchSession={(newSession) => {
+                  setSession(newSession);
+                  if (newSession.role !== 'admin') {
+                    setCurrentTab('dashboard');
+                  }
+                }}
+                onRefreshUser={() => {
+                  setSession(getSession());
+                }}
               />
             )}
           </div>

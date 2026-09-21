@@ -9,10 +9,11 @@ import {
   Award,
   BookOpen,
   CheckCircle2,
-  Sparkles
+  Sparkles,
+  Users
 } from 'lucide-react';
 
-export default function Sidebar({ currentTab, setCurrentTab }) {
+export default function Sidebar({ currentTab, setCurrentTab, session }) {
   const menuItems = [
     { id: 'dashboard', label: 'ภาพรวม & ปฏิทินงาน', icon: LayoutDashboard },
     { id: 'audit-risk', label: 'การประเมินความเสี่ยง', icon: ShieldAlert },
@@ -23,18 +24,38 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
     { id: 'control-risk', label: 'ควบคุมภายใน & บริหารความเสี่ยง', icon: ShieldCheck },
     { id: 'lpa', label: 'เตรียมรับประเมิน LPA', icon: Award },
     { id: 'knowledge', label: 'คลังระเบียบ & แบบฟอร์ม', icon: BookOpen },
+    { id: 'users', label: 'จัดการผู้ใช้งาน & กำหนดสิทธิ์', icon: Users, adminOnly: true }
   ];
+
+  const isAdmin = session?.role === 'admin';
+  const userPermissions = session?.permissions || [];
+
+  // กรองเมนูตามสิทธิ์ของผู้ใช้งาน
+  const visibleMenuItems = menuItems.filter((item) => {
+    if (isAdmin) return true;
+    if (item.adminOnly) return false;
+    return userPermissions.includes(item.id);
+  });
 
   return (
     <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 min-h-[calc(100vh-4rem)] border-r border-slate-800">
-      <div className="p-4 border-b border-slate-800/80">
+      <div className="p-4 border-b border-slate-800/80 flex items-center justify-between">
         <div className="text-xs font-semibold tracking-wider text-slate-400 dark:text-slate-500 uppercase">
           เมนูระบบตรวจสอบภายใน
         </div>
+        {isAdmin ? (
+          <span className="text-[10px] bg-indigo-950 border border-indigo-500/30 text-indigo-300 font-bold px-1.5 py-0.5 rounded">
+            ADMIN
+          </span>
+        ) : (
+          <span className="text-[10px] bg-emerald-950 border border-emerald-500/30 text-emerald-300 font-bold px-1.5 py-0.5 rounded">
+            USER
+          </span>
+        )}
       </div>
 
-      <nav className="flex-1 p-3 space-y-1.5">
-        {menuItems.map((item) => {
+      <nav className="flex-1 p-3 space-y-1.5 overflow-y-auto">
+        {visibleMenuItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentTab === item.id;
           return (
@@ -56,13 +77,27 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
         })}
       </nav>
 
-      <div className="p-4 border-t border-slate-800/80 bg-slate-950/40">
-        <div className="flex items-center space-x-2 text-xs text-slate-400 dark:text-slate-500">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-          <span className="font-semibold text-slate-300">ระบบปฏิบัติงานตรวจสอบ</span>
+      {/* User Info Card in Sidebar Bottom */}
+      <div className="p-3.5 border-t border-slate-800/80 bg-slate-950/60 space-y-1.5">
+        <div className="flex items-center space-x-2">
+          <div className="w-7 h-7 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-xs shrink-0">
+            {isAdmin ? '👑' : '🏢'}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-xs font-bold text-slate-200 truncate">
+              {session?.displayName || session?.username || 'ผู้ใช้งาน'}
+            </div>
+            <div className="text-[11px] text-slate-400 truncate">
+              {session?.department || 'สังกัดส่วนราชการ'}
+            </div>
+          </div>
         </div>
-        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 truncate">
-          มาตรฐานกระทรวงการคลัง (IA-OS)
+
+        <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-800/60">
+          <div className="flex items-center space-x-1">
+            <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+            <span>สิทธิ์: {isAdmin ? 'เต็มสิทธิ์ทุกเมนู' : `${visibleMenuItems.length} เมนู`}</span>
+          </div>
         </div>
       </div>
     </aside>
