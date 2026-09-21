@@ -159,10 +159,10 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
       {/* 2. Futuristic Hero Canvas (Using user provided component) */}
       <section className="relative w-full h-svh">
         <Html
-          title="IA-OS FANG KHAM"
-          subtitle="ระบบปฏิบัติการตรวจสอบภายใน อบต.ฝางคำ | Risk-Based Audit Operating System"
-          buttonText={session ? "เข้าสู่แดชบอร์ดการทำงาน →" : "เข้าสู่ระบบตรวจสอบภายใน (SIGN IN)"}
-          onExplore={scrollToLogin}
+          title="BUILD YOUR DREAMS"
+          subtitle="AI-POWERED CREATIVITY FOR THE NEXT GENERATION."
+          buttonText="Scroll to explore"
+          onExplore={scrollToExplore}
         />
       </section>
 

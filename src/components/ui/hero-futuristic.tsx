@@ -3,20 +3,26 @@
 import React, { useRef, useState, useEffect, Component } from "react";
 import * as THREE from "three";
 
-const TEXTUREMAP = {
-  src: "https://cdn.21st.dev/assets/mirror/f5/f58ba468bf6d3a2c9627178a1837f0f899b37b5dd5e34a00a3e11671cc7a59dc.png",
-};
-const DEPTHMAP = {
-  src: "https://cdn.21st.dev/assets/mirror/4d/4dc433ce306f213c0db63b6ead769e11eb0646612d488ed799053c63904b942d.webp",
+// Safe local texture paths with fallback
+const getAssetUrl = (name: string) => {
+  try {
+    return new URL(`/assets/${name}`, window.location.origin).href;
+  } catch {
+    return `./assets/${name}`;
+  }
 };
 
-// Preview-only CSS used to live only in the bundle. Keep it with the component.
+const TEXTURE_LOCAL = getAssetUrl("hero-texture.png");
+const DEPTH_LOCAL = getAssetUrl("hero-depth.webp");
+
 const heroFuturisticStyles = `
 .hero-futuristic {
   position: relative;
   overflow: hidden;
   background: #000;
-  font-family: inherit;
+  font-family: Arial, Helvetica, sans-serif;
+  width: 100%;
+  height: 100vh;
 }
 .hero-futuristic .fade-in {
   opacity: 0;
@@ -59,18 +65,25 @@ const heroFuturisticStyles = `
   border-radius: 9999px;
   outline: none;
   align-items: center;
-  gap: 12px;
-  padding: 12px 32px;
-  font-size: 1.05rem;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 24px;
+  font-size: 0.95rem;
   font-weight: 700;
+  text-align: center;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s, opacity 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55);
   animation: 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) 2.2s forwards fadeInBtn;
-  display: flex;
+  display: inline-flex;
   position: absolute;
-  bottom: 40px;
+  bottom: 35px;
   left: 50%;
   transform: translate(-50%);
-  box-shadow: 0 4px 24px rgba(0, 255, 249, 0.25);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.8);
+}
+.hero-futuristic .explore-btn:hover {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
 }
 @keyframes fadeInBtn {
   0% { opacity: 0; transform: translate(-50%) translateY(30px) scale(0.98); }
@@ -87,11 +100,10 @@ const heroFuturisticStyles = `
 }
 @keyframes arrowBounce {
   0% { transform: translateY(0); }
-  to { transform: translateY(8px); }
+  to { transform: translateY(6px); }
 }
 `;
 
-// Safe Error Boundary to prevent white/blank screen under all circumstances
 class HeroErrorBoundary extends Component<
   { children: React.ReactNode },
   { hasError: boolean }
@@ -104,13 +116,13 @@ class HeroErrorBoundary extends Component<
     return { hasError: true };
   }
   componentDidCatch(err: any) {
-    console.warn("HeroFuturistic fallback triggered:", err);
+    console.warn("Hero canvas caught by safety boundary:", err);
   }
   render() {
     if (this.state.hasError) {
       return (
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-slate-950 via-indigo-950/40 to-black flex items-center justify-center">
-          <div className="w-96 h-96 rounded-full bg-cyan-500/15 blur-3xl animate-pulse" />
+        <div className="absolute inset-0 w-full h-full bg-black flex items-center justify-center">
+          <div className="w-80 h-80 rounded-full bg-red-600/20 blur-3xl animate-pulse" />
         </div>
       );
     }
@@ -118,7 +130,7 @@ class HeroErrorBoundary extends Component<
   }
 }
 
-// 3D Canvas Scene with Depth Parallax and Laser Scan
+// 3D Scene rendered with standard WebGL Shaders (Exact match to 21st.dev visual)
 const ThreeCanvasScene = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -149,9 +161,9 @@ const ThreeCanvasScene = () => {
         0.1,
         100
       );
-      camera.position.z = 2.4;
+      camera.position.z = 2.5;
 
-      // Shaders for depth-displacement & scanline
+      // Exact Shader implementing Depth Displacement + Dotted Matrix + Red Slice
       const vertexShader = `
         varying vec2 vUv;
         void main() {
@@ -166,51 +178,69 @@ const ThreeCanvasScene = () => {
         uniform vec2 u_pointer;
         uniform float u_time;
         uniform float u_progress;
-        uniform float u_hasTexture;
         varying vec2 vUv;
 
+        // Cell noise hash for matrix dots
+        float hash(vec2 p) {
+          return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+        }
+
         void main() {
-          vec2 pUv = vUv;
-          vec4 color = vec4(0.02, 0.04, 0.08, 1.0);
+          vec4 depthColor = texture2D(u_depth, vUv);
+          float depth = depthColor.r;
 
-          if (u_hasTexture > 0.5) {
-            vec4 depthMap = texture2D(u_depth, vUv);
-            float depth = depthMap.r;
-            vec2 offset = depth * u_pointer * 0.025;
-            color = texture2D(u_texture, vUv + offset);
-          } else {
-            // Procedural cyber core if external texture is loading or blocked
-            float d = length(vUv - 0.5);
-            float ring = sin(d * 40.0 - u_time * 3.0) * 0.5 + 0.5;
-            color = vec4(vec3(0.0, ring * 0.4, ring * 0.8), 1.0);
-          }
+          // Parallax displacement based on depth map
+          vec2 offset = depth * u_pointer * 0.025;
+          vec2 displacedUv = clamp(vUv + offset, 0.0, 1.0);
+          vec4 color = texture2D(u_texture, displacedUv);
 
-          // Laser scan line
+          // Topographical contour laser slice wave
+          float sliceDist = abs(depth - u_progress);
+          float flow = 1.0 - smoothstep(0.0, 0.03, sliceDist);
+
+          // Dot matrix cell raster
+          vec2 grid = fract(vUv * 120.0) * 2.0 - 1.0;
+          float dotDist = length(grid);
+          float dotMask = smoothstep(0.5, 0.48, dotDist);
+          float brightness = hash(floor(vUv * 60.0));
+          float dots = dotMask * (0.5 + 0.5 * brightness);
+
+          // Red laser contour slice along 3D object
+          vec3 redSlice = vec3(10.0, 0.1, 0.2) * dots * flow;
+
+          // Full-screen horizontal laser scan line
           float scanDist = abs(vUv.y - u_progress);
-          float scanLine = smoothstep(0.04, 0.0, scanDist);
-          vec3 redScan = vec3(1.0, 0.05, 0.25) * scanLine * 0.7;
+          float scanLine = smoothstep(0.02, 0.0, scanDist);
+          vec3 redOverlay = vec3(1.0, 0.0, 0.1) * scanLine * 0.4;
 
-          // Glowing grid overlay
-          vec2 grid = abs(fract(vUv * 80.0 - 0.5) - 0.5) / fwidth(vUv * 80.0);
-          float line = min(grid.x, grid.y);
-          float gridPattern = 1.0 - min(line, 1.0);
-          vec3 cyanGrid = vec3(0.0, 0.75, 1.0) * gridPattern * 0.06;
+          // Screen blend
+          vec3 blended = 1.0 - (1.0 - color.rgb) * (1.0 - (redSlice + redOverlay));
 
-          // Scanline wave glow
-          float wave = smoothstep(0.08, 0.0, scanDist);
-          vec3 waveColor = vec3(0.0, 0.9, 0.8) * wave * 0.2;
-
-          gl_FragColor = vec4(color.rgb + redScan + cyanGrid + waveColor, 1.0);
+          gl_FragColor = vec4(blended, max(color.a, scanLine * 0.25));
         }
       `;
 
+      // Create procedural fallback textures while local ones load
+      const makeProceduralTexture = () => {
+        const size = 128;
+        const data = new Uint8Array(size * size * 4);
+        for (let i = 0; i < size * size * 4; i += 4) {
+          data[i] = 255;
+          data[i + 1] = 255;
+          data[i + 2] = 255;
+          data[i + 3] = 255;
+        }
+        const tex = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+        tex.needsUpdate = true;
+        return tex;
+      };
+
       const uniforms = {
-        u_texture: { value: new THREE.Texture() },
-        u_depth: { value: new THREE.Texture() },
+        u_texture: { value: makeProceduralTexture() },
+        u_depth: { value: makeProceduralTexture() },
         u_pointer: { value: new THREE.Vector2(0, 0) },
         u_time: { value: 0 },
         u_progress: { value: 0 },
-        u_hasTexture: { value: 0 },
       };
 
       const material = new THREE.ShaderMaterial({
@@ -220,41 +250,52 @@ const ThreeCanvasScene = () => {
         transparent: true,
       });
 
-      const geometry = new THREE.PlaneGeometry(1.7, 1.7);
+      const geometry = new THREE.PlaneGeometry(1.6, 1.6);
       const mesh = new THREE.Mesh(geometry, material);
       scene.add(mesh);
 
-      // Async Texture Loading
+      // Texture loader with crossOrigin
       const loader = new THREE.TextureLoader();
       loader.setCrossOrigin("anonymous");
 
       loader.load(
-        TEXTUREMAP.src,
+        TEXTURE_LOCAL,
         (tex) => {
           if (isDisposed) return;
           tex.minFilter = THREE.LinearFilter;
           uniforms.u_texture.value = tex;
-          uniforms.u_hasTexture.value = 1.0;
         },
         undefined,
         () => {
-          // If remote image fails, procedural shader renders gracefully
-          console.info("Using procedural visual aesthetic");
+          // Fallback to CDN URL if needed
+          loader.load(
+            "https://cdn.21st.dev/assets/mirror/f5/f58ba468bf6d3a2c9627178a1837f0f899b37b5dd5e34a00a3e11671cc7a59dc.png",
+            (t) => {
+              if (!isDisposed) uniforms.u_texture.value = t;
+            }
+          );
         }
       );
 
       loader.load(
-        DEPTHMAP.src,
+        DEPTH_LOCAL,
         (tex) => {
           if (isDisposed) return;
           tex.minFilter = THREE.LinearFilter;
           uniforms.u_depth.value = tex;
         },
         undefined,
-        () => {}
+        () => {
+          loader.load(
+            "https://cdn.21st.dev/assets/mirror/4d/4dc433ce306f213c0db63b6ead769e11eb0646612d488ed799053c63904b942d.webp",
+            (t) => {
+              if (!isDisposed) uniforms.u_depth.value = t;
+            }
+          );
+        }
       );
 
-      // Pointer tracking
+      // Pointer tracking for 3D parallax
       const targetPointer = new THREE.Vector2(0, 0);
       const handlePointerMove = (e: MouseEvent) => {
         const rect = container.getBoundingClientRect();
@@ -273,7 +314,7 @@ const ThreeCanvasScene = () => {
       };
       window.addEventListener("resize", handleResize);
 
-      // Render Loop
+      // Animation loop
       const clock = new THREE.Clock();
       const animate = () => {
         if (isDisposed || !renderer) return;
@@ -281,12 +322,14 @@ const ThreeCanvasScene = () => {
 
         const elapsedTime = clock.getElapsedTime();
         uniforms.u_time.value = elapsedTime;
+        // Laser scan progress oscillation matching 21st.dev
         uniforms.u_progress.value =
-          Math.sin(elapsedTime * 0.6) * 0.5 + 0.5;
+          Math.sin(elapsedTime * 0.5) * 0.5 + 0.5;
 
         // Smooth cursor lerp
         uniforms.u_pointer.value.lerp(targetPointer, 0.08);
 
+        // Subtle camera perspective tilt
         camera.position.x = uniforms.u_pointer.value.x * 0.04;
         camera.position.y = uniforms.u_pointer.value.y * 0.04;
         camera.lookAt(0, 0, 0);
@@ -305,12 +348,15 @@ const ThreeCanvasScene = () => {
         renderer?.dispose();
       };
     } catch (e) {
-      console.warn("WebGL initialization failed, falling back to CSS", e);
+      console.warn("WebGL initialization failed, using safe fallback", e);
     }
   }, []);
 
   return (
-    <div ref={containerRef} className="absolute inset-0 w-full h-full pointer-events-none">
+    <div
+      ref={containerRef}
+      className="absolute inset-0 w-full h-full pointer-events-none flex items-center justify-center overflow-hidden"
+    >
       <canvas ref={canvasRef} className="w-full h-full block" />
     </div>
   );
@@ -324,8 +370,8 @@ export interface HeroFuturisticProps {
 }
 
 export const Html = ({
-  title = "Build Your Dreams",
-  subtitle = "AI-powered creativity for the next generation.",
+  title = "BUILD YOUR DREAMS",
+  subtitle = "AI-POWERED CREATIVITY FOR THE NEXT GENERATION.",
   buttonText = "Scroll to explore",
   onExplore,
 }: HeroFuturisticProps) => {
@@ -336,17 +382,16 @@ export const Html = ({
   const [subtitleDelay, setSubtitleDelay] = useState(0);
 
   useEffect(() => {
-    // Client-side glitch delays
     setDelays(titleWords.map(() => Math.random() * 0.07));
     setSubtitleDelay(Math.random() * 0.1);
   }, [titleWords.length]);
 
   useEffect(() => {
     if (visibleWords < titleWords.length) {
-      const timeout = setTimeout(() => setVisibleWords(visibleWords + 1), 500);
+      const timeout = setTimeout(() => setVisibleWords(visibleWords + 1), 600);
       return () => clearTimeout(timeout);
     } else {
-      const timeout = setTimeout(() => setSubtitleVisible(true), 700);
+      const timeout = setTimeout(() => setSubtitleVisible(true), 800);
       return () => clearTimeout(timeout);
     }
   }, [visibleWords, titleWords.length]);
@@ -355,23 +400,22 @@ export const Html = ({
     <HeroErrorBoundary>
       <style>{heroFuturisticStyles}</style>
       <div className="hero-futuristic h-svh relative select-none w-full bg-black">
-        {/* Animated 3D Depth Canvas */}
+        {/* Exact 3D Canvas Scene */}
         <ThreeCanvasScene />
 
-        {/* Ambient Glow Orbs */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
-        <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+        {/* Subtle background red glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* Typography Overlay */}
         <div className="h-svh uppercase items-center w-full absolute z-40 pointer-events-none px-6 md:px-10 flex justify-center flex-col text-center">
-          <div className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl 2xl:text-7xl font-black tracking-tight">
-            <div className="flex flex-wrap justify-center gap-x-2.5 sm:gap-x-4 overflow-hidden text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.9)]">
+          <div className="text-3xl md:text-5xl xl:text-6xl 2xl:text-7xl font-black tracking-tight">
+            <div className="flex flex-wrap justify-center gap-x-2.5 sm:gap-x-4 overflow-hidden text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
               {titleWords.map((word, index) => (
                 <div
                   key={index}
                   className={index < visibleWords ? "fade-in" : ""}
                   style={{
-                    animationDelay: `${index * 0.12 + (delays[index] || 0)}s`,
+                    animationDelay: `${index * 0.13 + (delays[index] || 0)}s`,
                     opacity: index < visibleWords ? undefined : 0,
                   }}
                 >
@@ -380,11 +424,11 @@ export const Html = ({
               ))}
             </div>
           </div>
-          <div className="text-xs sm:text-base md:text-xl xl:text-2xl mt-3 overflow-hidden text-cyan-300 font-bold tracking-wide drop-shadow-[0_2px_15px_rgba(0,255,249,0.6)] max-w-3xl">
+          <div className="text-xs sm:text-base md:text-xl xl:text-2xl mt-3 overflow-hidden text-white font-bold tracking-wide drop-shadow-[0_2px_15px_rgba(0,0,0,0.9)] max-w-2xl">
             <div
               className={subtitleVisible ? "fade-in-subtitle" : ""}
               style={{
-                animationDelay: `${titleWords.length * 0.12 + 0.2 + subtitleDelay}s`,
+                animationDelay: `${titleWords.length * 0.13 + 0.2 + subtitleDelay}s`,
                 opacity: subtitleVisible ? undefined : 0,
               }}
             >
@@ -393,14 +437,17 @@ export const Html = ({
           </div>
         </div>
 
-        {/* Action Button */}
+        {/* Explore Pill Button */}
         <button
           type="button"
           onClick={onExplore}
-          className="explore-btn hover:bg-white hover:text-black transition-all cursor-pointer shadow-lg shadow-cyan-500/20"
-          style={{ animationDelay: "1.8s" }}
+          className="explore-btn hover:bg-white hover:text-black transition-all cursor-pointer"
+          style={{ animationDelay: "2.2s" }}
         >
-          <span>{buttonText}</span>
+          <div className="flex flex-col leading-tight items-center text-xs sm:text-sm">
+            <span>Scroll</span>
+            <span>to explore</span>
+          </div>
           <span className="explore-arrow">
             <svg
               width="20"
