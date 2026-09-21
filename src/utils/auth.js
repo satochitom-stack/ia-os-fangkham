@@ -5,6 +5,27 @@
 const USERS_KEY = 'ia_auth_users';
 const SESSION_KEY = 'ia_auth_session';
 const OLD_ACCOUNT_KEY = 'ia_auth_account';
+export const LAST_USERNAME_KEY = 'ia_last_username';
+
+export function getLastUsername() {
+  try {
+    const saved = localStorage.getItem(LAST_USERNAME_KEY);
+    if (saved && saved.trim()) return saved.trim();
+  } catch (e) {
+    console.error(e);
+  }
+  return 'admin';
+}
+
+export function setLastUsername(username) {
+  try {
+    if (username) {
+      localStorage.setItem(LAST_USERNAME_KEY, username.trim().toLowerCase());
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
 
 const DEFAULT_SESSION_MS = 24 * 60 * 60 * 1000; // 24 ชั่วโมง
 
@@ -233,6 +254,17 @@ export async function updateUser(username, updates) {
   if (currentSession?.username.toLowerCase() === oldUsername.toLowerCase()) {
     startSession(user, currentSession.remember);
   }
+
+  // If the renamed user was the last remembered username, update it to targetUsername
+  try {
+    const lastUser = localStorage.getItem(LAST_USERNAME_KEY);
+    if (lastUser && lastUser.toLowerCase() === oldUsername.toLowerCase()) {
+      localStorage.setItem(LAST_USERNAME_KEY, targetUsername);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
   return user;
 }
 
@@ -258,6 +290,16 @@ export function deleteUser(username) {
   }
   const updated = users.filter((u) => u.username.toLowerCase() !== username.toLowerCase());
   saveUsers(updated);
+
+  // If deleted user was the remembered username, clear it
+  try {
+    const lastUser = localStorage.getItem(LAST_USERNAME_KEY);
+    if (lastUser && lastUser.toLowerCase() === username.toLowerCase()) {
+      localStorage.removeItem(LAST_USERNAME_KEY);
+    }
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 export function resetUsersToDefault() {

@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Shield, User, Lock, Eye, EyeOff, LogIn, AlertCircle, Sparkles, Building, ChevronDown, ChevronUp } from 'lucide-react';
-import { verifyLogin, startSession, getUsers } from '../utils/auth';
+import { verifyLogin, startSession, getUsers, getLastUsername, setLastUsername } from '../utils/auth';
 
 export default function LoginView({ onLogin }) {
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('admin123');
+  const [username, setUsername] = useState(() => getLastUsername());
+  const [password, setPassword] = useState(''); // Never prefill password
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(true);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [showQuickLogin, setShowQuickLogin] = useState(true);
+  const passwordInputRef = useRef(null);
 
   const availableUsers = getUsers();
 
@@ -28,6 +29,7 @@ export default function LoginView({ onLogin }) {
         setBusy(false);
         return;
       }
+      setLastUsername(user.username);
       const session = startSession(user, remember);
       onLogin(session);
     } catch {
@@ -38,8 +40,12 @@ export default function LoginView({ onLogin }) {
 
   const handleQuickSelect = (u) => {
     setUsername(u.username);
-    setPassword(u.passwordText || '1234');
+    setPassword(''); // Do NOT remember or autofill password
     setError('');
+    setLastUsername(u.username);
+    setTimeout(() => {
+      passwordInputRef.current?.focus();
+    }, 50);
   };
 
   return (
@@ -103,6 +109,7 @@ export default function LoginView({ onLogin }) {
               <div className="relative">
                 <Lock className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
                 <input
+                  ref={passwordInputRef}
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
