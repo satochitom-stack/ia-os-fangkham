@@ -192,7 +192,7 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
         <SplineSceneBasic
           badge="IA-OS 24/7 Engine • 6 Departments Linked"
           kicker="INTERNAL AUDIT OPERATING SYSTEM"
-          title="IA-OS Fang Kham Architecture"
+          title="IA-OS Fang Kham"
           subtitle="ระบบปฏิบัติการตรวจสอบภายใน องค์การบริหารส่วนตำบลฝางคำ"
           buttonText="สำรวจระบบงาน"
           onExplore={scrollToExplore}

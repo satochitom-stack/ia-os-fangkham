@@ -19,7 +19,7 @@ export interface SplineSceneBasicProps {
 export function SplineSceneBasic({
   badge = "IA-OS 24/7 Engine • 6 Departments Linked",
   kicker = "INTERNAL AUDIT OPERATING SYSTEM",
-  title = "IA-OS Fang Kham Architecture",
+  title = "IA-OS Fang Kham",
   subtitle = "ระบบปฏิบัติการตรวจสอบภายใน องค์การบริหารส่วนตำบลฝางคำ",
   buttonText = "สำรวจระบบงาน",
   onExplore,
@@ -30,7 +30,8 @@ export function SplineSceneBasic({
     <Card className="w-full min-h-[540px] lg:h-[620px] bg-[#070b13] border border-white/[0.08] relative overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)] rounded-2xl sm:rounded-3xl">
       <Spotlight
         className="-top-40 left-0 md:left-60 md:-top-20"
-        fill="rgba(6, 182, 212, 0.15)"
+        fill="white"
+        size={380}
       />
       
       <div className="flex flex-col md:flex-row h-full">
@@ -56,7 +57,7 @@ export function SplineSceneBasic({
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.12]">
             IA-OS <br className="hidden sm:inline" />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-cyan-100 to-cyan-300">
-              Fang Kham Architecture
+              Fang Kham
             </span>
           </h1>
 
