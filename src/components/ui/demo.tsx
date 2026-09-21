@@ -31,7 +31,7 @@ export function SplineSceneBasic({
       <Spotlight
         className="-top-40 left-0 md:left-60 md:-top-20"
         fill="white"
-        size={480}
+        size={280}
       />
       
       <div className="flex flex-col md:flex-row h-full">

@@ -12,7 +12,7 @@ type SpotlightProps = {
 
 export function Spotlight({
   className,
-  size = 460,
+  size = 280,
   fill = "white",
   springOptions = { damping: 25, stiffness: 850, mass: 0.08 },
 }: SpotlightProps) {
