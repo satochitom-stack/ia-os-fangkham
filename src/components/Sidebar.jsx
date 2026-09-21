@@ -15,6 +15,7 @@ import {
 
 export default function Sidebar({ currentTab, setCurrentTab, session }) {
   const menuItems = [
+    { id: 'welcome', label: '🌟 หน้าแรก / หน้าต้อนรับ', icon: Sparkles, alwaysVisible: true },
     { id: 'dashboard', label: 'ภาพรวม & ปฏิทินงาน', icon: LayoutDashboard },
     { id: 'audit-risk', label: 'การประเมินความเสี่ยง', icon: ShieldAlert },
     { id: 'planning', label: 'แผน & นโยบายตรวจ', icon: FileText },
@@ -32,6 +33,7 @@ export default function Sidebar({ currentTab, setCurrentTab, session }) {
 
   // กรองเมนูตามสิทธิ์ของผู้ใช้งาน
   const visibleMenuItems = menuItems.filter((item) => {
+    if (item.alwaysVisible) return true;
     if (isAdmin) return true;
     if (item.adminOnly) return false;
     return userPermissions.includes(item.id);

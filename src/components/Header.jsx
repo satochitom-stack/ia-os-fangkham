@@ -12,7 +12,8 @@ import {
   Plus,
   UserCheck,
   Users,
-  ShieldCheck
+  ShieldCheck,
+  Sparkles
 } from 'lucide-react';
 
 export default function Header({
@@ -26,7 +27,8 @@ export default function Header({
   onLogout,
   onChangePassword,
   onOpenSettings,
-  onOpenUsersManagement
+  onOpenUsersManagement,
+  onOpenWelcome
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -118,6 +120,16 @@ export default function Header({
               )}
             </div>
 
+            {/* Welcome Page Button */}
+            <button
+              onClick={onOpenWelcome}
+              title="เปิดหน้าต้อนรับ / ภาพรวมระบบ (Welcome Page)"
+              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800/60 hover:bg-cyan-100 dark:hover:bg-cyan-900/60 transition-all text-xs font-semibold cursor-pointer shrink-0"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-cyan-500" />
+              <span className="hidden sm:inline">หน้าแรก / ต้อนรับ</span>
+            </button>
+
             {/* Dark Mode Toggle */}
             <button
               onClick={onToggleDarkMode}
@@ -175,6 +187,17 @@ export default function Header({
                       <span>จัดการผู้ใช้งาน & กำหนดสิทธิ์รายกอง</span>
                     </button>
                   )}
+
+                  <button
+                    onClick={() => {
+                      setMenuOpen(false);
+                      if (onOpenWelcome) onOpenWelcome();
+                    }}
+                    className="w-full flex items-center space-x-2 px-3.5 py-2 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-950/30 cursor-pointer font-medium border-b border-slate-100 dark:border-slate-800"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>🌟 หน้าต้อนรับ (Welcome Page)</span>
+                  </button>
 
                   {isAdmin && (
                     <button

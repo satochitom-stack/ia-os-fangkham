@@ -9,6 +9,7 @@ import ControlRiskView from './components/ControlRiskView';
 import LpaView from './components/LpaView';
 import KnowledgeView from './components/KnowledgeView';
 import LoginView from './components/LoginView';
+import WelcomeView from './components/WelcomeView';
 import ChangePasswordModal from './components/ChangePasswordModal';
 import ProfileSettingsModal from './components/ProfileSettingsModal';
 import AuditRiskView, { defaultAuditUniverse } from './components/AuditRiskView';
@@ -466,14 +467,33 @@ export default function App() {
   useEffect(() => {
     if (!session) return;
     if (session.role === 'admin') return;
-    const allowed = session.permissions || ['dashboard'];
+    const allowed = [...(session.permissions || ['dashboard']), 'welcome'];
     if (!allowed.includes(currentTab)) {
       setCurrentTab(allowed[0] || 'dashboard');
     }
   }, [session, currentTab]);
 
   if (!session) {
-    return <LoginView onLogin={(sess) => setSession(sess || getSession())} />;
+    return (
+      <WelcomeView
+        session={null}
+        onLogin={(sess) => {
+          setSession(sess || getSession());
+          setCurrentTab('dashboard');
+        }}
+        onEnterDashboard={() => setCurrentTab('dashboard')}
+      />
+    );
+  }
+
+  if (currentTab === 'welcome') {
+    return (
+      <WelcomeView
+        session={session}
+        onLogin={(sess) => setSession(sess || getSession())}
+        onEnterDashboard={() => setCurrentTab('dashboard')}
+      />
+    );
   }
 
   const handleLogout = () => {
@@ -495,6 +515,7 @@ export default function App() {
         onChangePassword={() => setShowChangePassword(true)}
         onOpenSettings={() => setShowSettings(true)}
         onOpenUsersManagement={() => setCurrentTab('users')}
+        onOpenWelcome={() => setCurrentTab('welcome')}
       />
 
       {/* Impersonate / Department Preview Banner (แสดงเฉพาะเมื่อ ADMIN กำลังกดทดสอบมุมมองเท่านั้น) */}
