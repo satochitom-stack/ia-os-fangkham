@@ -166,7 +166,7 @@ const ThreeCanvasScene = () => {
       // Sized properly to center behind typography without filling entire viewport
       camera.position.z = 4.3;
 
-      // GLSL Vertex Shader: Geometric Polyhedron Morphing + 3D Topographic Ridges
+      // GLSL Vertex Shader: Geometric Polyhedron Morphing with UV mapping
       const vertexShader = `
         uniform float u_time;
         uniform int u_shapeA;
@@ -175,7 +175,7 @@ const ThreeCanvasScene = () => {
 
         varying vec3 vWorldPosition;
         varying vec3 vLocalPosition;
-        varying vec3 vUnitNormal;
+        varying vec3 vNormal;
         varying vec2 vUv;
 
         // 1. Octahedron distance
@@ -233,19 +233,16 @@ const ThreeCanvasScene = () => {
           vec3 posB = unitV / max(dB, 0.001);
 
           float s = smoothstep(0.0, 1.0, u_blend);
-          vec3 morphed = mix(posA, posB, s) * 0.78; // Compact elegant scale
-
-          // Real 3D physical topographic contour ridges (ร่องรอยเส้นชั้นความสูงแบบ 3 มิติ)
-          float ridgeFreq = 36.0;
-          float ridgeDisplacement = sin(morphed.y * ridgeFreq + morphed.x * 3.0) * 0.025;
-          return morphed + unitV * ridgeDisplacement;
+          return mix(posA, posB, s) * 0.82; // Compact elegant scale
         }
 
         void main() {
-          vUv = uv;
           vec3 morphed = morphVertex(position);
           vLocalPosition = morphed;
-          vUnitNormal = normalize(position);
+          vNormal = normalize(position);
+
+          // Project UV coordinates for 21st.dev texture mapping
+          vUv = clamp(morphed.xy / 1.5 + 0.5, 0.0, 1.0);
 
           vec4 worldPos = modelMatrix * vec4(morphed, 1.0);
           vWorldPosition = worldPos.xyz;
@@ -253,106 +250,153 @@ const ThreeCanvasScene = () => {
         }
       `;
 
-      // GLSL Fragment Shader: Metallic Silver / Platinum Chrome with Topographic Contour Grooves & Red Laser
+      // GLSL Fragment Shader: Exact 21st.dev Texture + Depth Laser Flow + Dot Matrix + Red Scanline Overlay
       const fragmentShader = `
-        uniform float u_time;
+        uniform sampler2D u_texture;
+        uniform sampler2D u_depth;
         uniform vec2 u_pointer;
+        uniform float u_time;
+        uniform float u_progress;
 
         varying vec3 vWorldPosition;
         varying vec3 vLocalPosition;
-        varying vec3 vUnitNormal;
+        varying vec3 vNormal;
         varying vec2 vUv;
 
+        // Cell noise hash matching 21st.dev mx_cell_noise
         float hash(vec2 p) {
           return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
         }
 
         void main() {
-          // Sharp polygonal facet normal via derivatives
-          vec3 fdx = dFdx(vWorldPosition);
-          vec3 fdy = dFdy(vWorldPosition);
-          vec3 facetNormal = normalize(cross(fdx, fdy));
+          // 1. Sample Depth Map with pointer parallax (from 21st.dev)
+          vec4 depthTex = texture2D(u_depth, vUv);
+          float depth = depthTex.r;
 
+          float strength = 0.015;
+          vec2 displacedUv = clamp(vUv + depth * u_pointer * strength, 0.0, 1.0);
+          vec4 tMap = texture2D(u_texture, displacedUv);
+
+          // 2. Tiling = 120.0 Dot Matrix (exact formula from 21st.dev)
+          vec2 tiling = vec2(120.0);
+          vec2 tiledUv = mod(vUv * tiling, 2.0) - 1.0;
+          float dist = length(tiledUv);
+          float dotMask = smoothstep(0.5, 0.48, dist);
+          float brightness = hash(floor(vUv * 60.0));
+          float dot = dotMask * brightness;
+
+          // 3. Topographic Laser Flow slice: flow = oneMinus(smoothstep(0, 0.02, abs(depth.sub(uProgress))))
+          float flow = 1.0 - smoothstep(0.0, 0.022, abs(depth - u_progress));
+
+          // 4. Red Laser Mask: mask = dot.mul(flow).mul(vec3(10, 0, 0))
+          vec3 redMask = dot * flow * vec3(10.0, 0.0, 0.0);
+
+          // 5. Screen Blend: final = blendScreen(tMap, mask)
+          vec3 blended = 1.0 - (1.0 - tMap.rgb) * (1.0 - redMask);
+
+          // 6. Full-screen/Mesh Red Laser Scan Line overlay (from 21st.dev PostProcessing)
+          float scanWidth = 0.05;
+          float scanDist = abs(vUv.y - u_progress);
+          float scanLine = smoothstep(0.0, scanWidth, scanDist);
+          vec3 redOverlay = vec3(1.0, 0.0, 0.0) * (1.0 - scanLine) * 0.40;
+
+          // 7. Chrome Facet Specular Highlight (enhances 3D polyhedral reflection)
+          vec3 facetNormal = normalize(cross(dFdx(vWorldPosition), dFdy(vWorldPosition)));
           vec3 viewDir = normalize(cameraPosition - vWorldPosition);
-          if (dot(facetNormal, viewDir) < 0.0) {
-            facetNormal = -facetNormal;
+          if (dot(facetNormal, viewDir) < 0.0) facetNormal = -facetNormal;
+
+          vec3 lightDir = normalize(vec3(1.2, 1.8, 2.0));
+          vec3 halfDir = normalize(lightDir + viewDir);
+          float spec = pow(max(dot(facetNormal, halfDir), 0.0), 32.0);
+          vec3 specGleam = vec3(0.95, 0.98, 1.0) * spec * 0.35 * tMap.r;
+
+          vec3 finalColor = blended + specGleam + redOverlay;
+
+          // Clean alpha transparency around silhouette
+          float alpha = max(tMap.a, max(finalColor.r, max(finalColor.g, finalColor.b)));
+          if (alpha < 0.02 && redOverlay.r < 0.01) {
+            discard;
           }
 
-          // Topographic zebra contour grooves (เส้นร่องลายชั้นความสูงสีเงิน/ดำเงา)
-          float ridgeFreq = 36.0;
-          float ridgeWave = sin(vLocalPosition.y * ridgeFreq + vLocalPosition.x * 3.0);
-          float ridge = smoothstep(-0.25, 0.65, ridgeWave);
-
-          // Metallic Silver / Chrome Monochrome Palette (สีเงินเงางาม ตัดกับร่องเงาดำ)
-          vec3 grooveColor = vec3(0.07, 0.08, 0.10);       // ร่องลึกเงามืด
-          vec3 silverBase = vec3(0.72, 0.75, 0.80);        // ผิวเนื้อเงินแท้
-          vec3 silverHighlight = vec3(0.98, 0.99, 1.0);    // ไฮไลท์สะท้อนแสงสีเงินสว่าง
-
-          vec3 surfaceAlbedo = mix(grooveColor, silverBase, ridge);
-
-          // Key Light: Pure White/Silver Top-Right Studio Light
-          vec3 light1Dir = normalize(vec3(1.2, 2.0, 2.0));
-          float diff1 = max(dot(facetNormal, light1Dir), 0.0);
-          vec3 half1 = normalize(light1Dir + viewDir);
-          float spec1 = pow(max(dot(facetNormal, half1), 0.0), 38.0);
-
-          // Secondary Fill Light: Cool Silver-Blue Bottom-Left Light
-          vec3 light2Dir = normalize(vec3(-1.8, -1.2, 1.6));
-          float diff2 = max(dot(facetNormal, light2Dir), 0.0);
-          vec3 half2 = normalize(light2Dir + viewDir);
-          float spec2 = pow(max(dot(facetNormal, half2), 0.0), 24.0);
-
-          // Chrome Fresnel Edge Glow
-          float fresnel = pow(1.0 - max(dot(facetNormal, viewDir), 0.0), 2.4);
-
-          // Combine lit metallic silver surface
-          vec3 litSilver = surfaceAlbedo * (0.35 + 0.65 * diff1)
-            + silverHighlight * (spec1 * 1.25 * (0.6 + 0.4 * ridge))
-            + vec3(0.7, 0.75, 0.82) * (diff2 * 0.35 + spec2 * 0.4)
-            + silverHighlight * fresnel * 0.65;
-
-          // Red Laser Scan Slice Wave (เส้นสแกนสีแดงสด ส่องสว่างชัดเจนบนผิวสีเงิน)
-          float sliceHeight = sin(u_time * 0.75) * 0.65;
-          float sliceDist = abs(vWorldPosition.y - sliceHeight);
-          float laserGlow = smoothstep(0.07, 0.0, sliceDist);
-
-          // Tech Dot Matrix raster along the laser slice (จุดเมทริกซ์สแกนสีแดง)
-          vec2 dotGrid = fract(vWorldPosition.xz * 18.0) * 2.0 - 1.0;
-          float dotDist = length(dotGrid);
-          float dotMask = smoothstep(0.48, 0.42, dotDist);
-          float brightness = hash(floor(vWorldPosition.xz * 9.0));
-          float dots = dotMask * (0.6 + 0.4 * brightness);
-
-          // Intense red laser beam
-          vec3 redSlice = vec3(5.0, 0.08, 0.22) * laserGlow * (0.4 + 1.8 * dots);
-
-          // Ambient horizontal laser scan aura
-          float scanAura = smoothstep(0.14, 0.0, sliceDist) * 0.4;
-          vec3 redScanAura = vec3(1.8, 0.05, 0.12) * scanAura;
-
-          vec3 finalColor = litSilver + redSlice + redScanAura;
-
-          gl_FragColor = vec4(finalColor, 1.0);
+          gl_FragColor = vec4(finalColor, max(alpha, 0.95));
         }
       `;
 
-      // Geometry: Subdivided Icosahedron
-      const coreGeometry = new THREE.IcosahedronGeometry(1.0, 26);
+      // Procedural fallback textures while image loads
+      const makeFallbackTexture = () => {
+        const size = 128;
+        const data = new Uint8Array(size * size * 4);
+        for (let i = 0; i < size * size * 4; i += 4) {
+          data[i] = 200;
+          data[i + 1] = 200;
+          data[i + 2] = 200;
+          data[i + 3] = 255;
+        }
+        const tex = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+        tex.needsUpdate = true;
+        return tex;
+      };
 
       const uniforms = {
+        u_texture: { value: makeFallbackTexture() },
+        u_depth: { value: makeFallbackTexture() },
         u_time: { value: 0 },
+        u_progress: { value: 0 },
         u_shapeA: { value: 0 },
         u_shapeB: { value: 1 },
         u_blend: { value: 0 },
         u_pointer: { value: new THREE.Vector2(0, 0) },
       };
 
-      // Solid Metallic Silver Topographic Core
+      // Load 21st.dev exact textures (local first, CDN fallback)
+      const texLoader = new THREE.TextureLoader();
+      texLoader.setCrossOrigin("anonymous");
+
+      texLoader.load(
+        TEXTURE_LOCAL,
+        (tex) => {
+          if (isDisposed) return;
+          tex.minFilter = THREE.LinearFilter;
+          uniforms.u_texture.value = tex;
+        },
+        undefined,
+        () => {
+          texLoader.load(
+            "https://cdn.21st.dev/assets/mirror/f5/f58ba468bf6d3a2c9627178a1837f0f899b37b5dd5e34a00a3e11671cc7a59dc.png",
+            (t) => {
+              if (!isDisposed) uniforms.u_texture.value = t;
+            }
+          );
+        }
+      );
+
+      texLoader.load(
+        DEPTH_LOCAL,
+        (tex) => {
+          if (isDisposed) return;
+          tex.minFilter = THREE.LinearFilter;
+          uniforms.u_depth.value = tex;
+        },
+        undefined,
+        () => {
+          texLoader.load(
+            "https://cdn.21st.dev/assets/mirror/4d/4dc433ce306f213c0db63b6ead769e11eb0646612d488ed799053c63904b942d.webp",
+            (t) => {
+              if (!isDisposed) uniforms.u_depth.value = t;
+            }
+          );
+        }
+      );
+
+      // Geometry: Subdivided Icosahedron
+      const coreGeometry = new THREE.IcosahedronGeometry(1.0, 28);
+
+      // Material: 21st.dev Topographic Shader Material
       const coreMaterial = new THREE.ShaderMaterial({
         vertexShader,
         fragmentShader,
         uniforms,
-        transparent: false,
+        transparent: true,
         side: THREE.DoubleSide,
       });
       const coreMesh = new THREE.Mesh(coreGeometry, coreMaterial);
@@ -421,6 +465,8 @@ const ThreeCanvasScene = () => {
 
         const elapsedTime = clock.getElapsedTime();
         uniforms.u_time.value = elapsedTime;
+        // 21st.dev exact scan line frequency
+        uniforms.u_progress.value = Math.sin(elapsedTime * 0.5) * 0.5 + 0.5;
 
         // Calculate current morph progress & shape indices
         const cycleProgress = (elapsedTime % (TOTAL_SHAPES * CYCLE_TIME)) / CYCLE_TIME;
