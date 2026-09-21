@@ -33,7 +33,7 @@ export const DEFAULT_DEPARTMENTS = [
   'สำนักปลัด',
   'กองช่าง',
   'กองการศึกษา',
-  'กองสาธารณสุขและสิ่งแวดล้อม',
+  'กองสวัสดิการสังคม',
   'กองยุทธศาสตร์และงบประมาณ'
 ];
 
@@ -44,7 +44,18 @@ export function getDepartments() {
     const raw = localStorage.getItem(DEPARTMENTS_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        let changed = false;
+        const idx = parsed.indexOf('กองสาธารณสุขและสิ่งแวดล้อม');
+        if (idx !== -1) {
+          parsed[idx] = 'กองสวัสดิการสังคม';
+          changed = true;
+        }
+        if (changed) {
+          saveDepartments(parsed);
+        }
+        return parsed;
+      }
     }
   } catch (e) {
     console.error(e);
@@ -184,22 +195,33 @@ export function autoRepairDataLinkages() {
 
     let usersChanged = false;
     users.forEach((u) => {
-      if (u.role !== 'admin') {
-        // Case 1: Specific mismatch for health user where department was renamed to กองสวัสดิการสังคม
-        if (u.username === 'health') {
-          if (u.department === 'กองสวัสดิการสังคม' && u.displayName !== 'กองสวัสดิการสังคม') {
-            u.displayName = 'กองสวัสดิการสังคม';
-            usersChanged = true;
-          }
-          if (u.position && u.position.includes('กองสาธารณสุข') && u.department === 'กองสวัสดิการสังคม') {
-            u.position = 'ผู้อำนวยการกองสวัสดิการสังคม / เจ้าหน้าที่';
-            usersChanged = true;
-          }
-          // Also cascade previous rename to storage collections
-          cascadeDepartmentRenameToStorage('กองสาธารณสุขและสิ่งแวดล้อม', 'กองสวัสดิการสังคม');
+      // 1. Admin display name: change to หน่วยตรวจสอบฯ
+      if (u.role === 'admin' || u.username === 'admin') {
+        if (u.displayName === 'นายศุภมงคล ธรรมพิทักษ์' || !u.displayName) {
+          u.displayName = 'หน่วยตรวจสอบฯ';
+          usersChanged = true;
         }
+      }
 
-        // Case 2: Generic mismatch: u.displayName was a default department name that was renamed to u.department
+      // 2. Health -> กองสวัสดิการสังคม
+      if (u.username === 'health') {
+        if (u.department === 'กองสาธารณสุขและสิ่งแวดล้อม' || u.displayName === 'กองสาธารณสุขและสิ่งแวดล้อม' || (u.department === 'กองสวัสดิการสังคม' && u.displayName !== 'กองสวัสดิการสังคม')) {
+          u.department = 'กองสวัสดิการสังคม';
+          u.displayName = 'กองสวัสดิการสังคม';
+          u.position = 'ผู้อำนวยการกองสวัสดิการสังคม / เจ้าหน้าที่';
+          usersChanged = true;
+        }
+      }
+      if (u.department === 'กองสาธารณสุขและสิ่งแวดล้อม') {
+        u.department = 'กองสวัสดิการสังคม';
+        if (u.displayName === 'กองสาธารณสุขและสิ่งแวดล้อม') {
+          u.displayName = 'กองสวัสดิการสังคม';
+        }
+        usersChanged = true;
+      }
+
+      // 3. Generic department sync
+      if (u.role !== 'admin') {
         if (DEFAULT_DEPARTMENTS.includes(u.displayName) && u.department && u.displayName !== u.department) {
           if (!depts.includes(u.displayName)) {
             cascadeDepartmentRenameToStorage(u.displayName, u.department);
@@ -210,17 +232,31 @@ export function autoRepairDataLinkages() {
       }
     });
 
+    cascadeDepartmentRenameToStorage('กองสาธารณสุขและสิ่งแวดล้อม', 'กองสวัสดิการสังคม');
+
     if (usersChanged) {
       localStorage.setItem(USERS_KEY, JSON.stringify(users));
     }
 
-    // Also repair active session if it held the old display name
+    // Also repair active session
     const currentSession = getSession();
-    if (currentSession && currentSession.role !== 'admin') {
-      const matched = users.find((u) => u.username.toLowerCase() === currentSession.username.toLowerCase());
-      if (matched && (currentSession.displayName !== matched.displayName || currentSession.department !== matched.department)) {
-        currentSession.displayName = matched.displayName;
-        currentSession.department = matched.department;
+    if (currentSession) {
+      let sessChanged = false;
+      if (currentSession.username === 'admin' && (currentSession.displayName === 'นายศุภมงคล ธรรมพิทักษ์' || !currentSession.displayName)) {
+        currentSession.displayName = 'หน่วยตรวจสอบฯ';
+        sessChanged = true;
+      }
+      if (currentSession.username === 'health' || currentSession.department === 'กองสาธารณสุขและสิ่งแวดล้อม') {
+        if (currentSession.displayName === 'กองสาธารณสุขและสิ่งแวดล้อม') {
+          currentSession.displayName = 'กองสวัสดิการสังคม';
+          sessChanged = true;
+        }
+        if (currentSession.department === 'กองสาธารณสุขและสิ่งแวดล้อม') {
+          currentSession.department = 'กองสวัสดิการสังคม';
+          sessChanged = true;
+        }
+      }
+      if (sessChanged) {
         localStorage.setItem(SESSION_KEY, JSON.stringify(currentSession));
       }
     }
@@ -327,7 +363,7 @@ export const ALL_MENU_IDS = [
 export const DEFAULT_INITIAL_USERS = [
   {
     username: 'admin',
-    displayName: 'นายศุภมงคล ธรรมพิทักษ์',
+    displayName: 'หน่วยตรวจสอบฯ',
     position: 'นักวิชาการตรวจสอบภายในปฏิบัติการ',
     department: 'หน่วยตรวจสอบภายใน',
     role: 'admin',
@@ -382,9 +418,9 @@ export const DEFAULT_INITIAL_USERS = [
   },
   {
     username: 'health',
-    displayName: 'กองสาธารณสุขและสิ่งแวดล้อม',
-    position: 'ผู้อำนวยการกองสาธารณสุขฯ',
-    department: 'กองสาธารณสุขและสิ่งแวดล้อม',
+    displayName: 'กองสวัสดิการสังคม',
+    position: 'ผู้อำนวยการกองสวัสดิการสังคม / เจ้าหน้าที่',
+    department: 'กองสวัสดิการสังคม',
     role: 'user',
     passwordText: '1234',
     permissions: ['dashboard', 'control-risk', 'knowledge'],
@@ -435,14 +471,30 @@ export function getUsers() {
       if (Array.isArray(users) && users.length > 0) {
         let changed = false;
         users.forEach((u) => {
-          if (u.role !== 'admin') {
-            if (u.username === 'health' && u.department === 'กองสวัสดิการสังคม' && u.displayName !== 'กองสวัสดิการสังคม') {
+          // 1. Admin display name: change to หน่วยตรวจสอบฯ
+          if (u.role === 'admin' || u.username === 'admin') {
+            if (u.displayName === 'นายศุภมงคล ธรรมพิทักษ์' || !u.displayName) {
+              u.displayName = 'หน่วยตรวจสอบฯ';
+              changed = true;
+            }
+          }
+          // 2. Health -> กองสวัสดิการสังคม
+          if (u.username === 'health') {
+            if (u.department === 'กองสาธารณสุขและสิ่งแวดล้อม' || u.displayName === 'กองสาธารณสุขและสิ่งแวดล้อม' || (u.department === 'กองสวัสดิการสังคม' && u.displayName !== 'กองสวัสดิการสังคม')) {
               u.displayName = 'กองสวัสดิการสังคม';
-              if (u.position && u.position.includes('กองสาธารณสุข')) {
+              u.department = 'กองสวัสดิการสังคม';
+              if (!u.position || u.position.includes('กองสาธารณสุข')) {
                 u.position = 'ผู้อำนวยการกองสวัสดิการสังคม / เจ้าหน้าที่';
               }
               changed = true;
             }
+          }
+          if (u.department === 'กองสาธารณสุขและสิ่งแวดล้อม') {
+            u.department = 'กองสวัสดิการสังคม';
+            if (u.displayName === 'กองสาธารณสุขและสิ่งแวดล้อม') {
+              u.displayName = 'กองสวัสดิการสังคม';
+            }
+            changed = true;
           }
         });
         if (changed) {

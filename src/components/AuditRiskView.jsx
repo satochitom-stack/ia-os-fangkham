@@ -1449,8 +1449,7 @@ export default function AuditRiskView({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {/* แสดงแบบจัดกลุ่มตามสำนัก/กอง ตามรูปแบบเอกสารจริง อบต.ฝางคำ */}
-                  {['สำนักปลัด', 'กองคลัง', 'กองช่าง', 'กองการศึกษา', 'กองสาธารณสุขและสิ่งแวดล้อม', 'กองยุทธศาสตร์และงบประมาณ'].map((dept) => {
+                  {['สำนักปลัด', 'กองคลัง', 'กองช่าง', 'กองการศึกษา', 'กองสวัสดิการสังคม', 'กองสาธารณสุขและสิ่งแวดล้อม', 'กองยุทธศาสตร์และงบประมาณ'].map((dept) => {
                     const deptItems = filteredActivities.filter((a) => a.department === dept);
                     if (deptItems.length === 0) return null;
 
@@ -2058,7 +2057,7 @@ export default function AuditRiskView({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                {['สำนักปลัด', 'กองคลัง', 'กองช่าง', 'กองการศึกษา', 'กองสาธารณสุขและสิ่งแวดล้อม', 'กองยุทธศาสตร์และงบประมาณ'].map((dept) => {
+                {['สำนักปลัด', 'กองคลัง', 'กองช่าง', 'กองการศึกษา', 'กองสวัสดิการสังคม', 'กองสาธารณสุขและสิ่งแวดล้อม', 'กองยุทธศาสตร์และงบประมาณ'].map((dept) => {
                   const items = scoredActivities.filter((a) => a.department === dept);
                   if (items.length === 0) return null;
 

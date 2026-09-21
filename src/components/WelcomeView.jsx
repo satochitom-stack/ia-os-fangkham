@@ -495,21 +495,29 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
                 เลือกเข้าสู่ระบบด่วนตามกอง:
               </span>
               <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1">
-                {availableUsers.map((u) => (
-                  <button
-                    key={u.username}
-                    type="button"
-                    onClick={() => handleQuickSelect(u)}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
-                      username.toLowerCase() === u.username.toLowerCase()
-                        ? 'bg-cyan-500 text-slate-950 font-bold'
-                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                    }`}
-                  >
-                    {u.role === 'admin' ? '👑 ' : '🏢 '}
-                    {u.displayName || u.username}
-                  </button>
-                ))}
+                {availableUsers.map((u) => {
+                  let label = u.displayName || u.username;
+                  if (u.role === 'admin' && (label === 'นายศุภมงคล ธรรมพิทักษ์' || !label || label === 'admin')) {
+                    label = 'หน่วยตรวจสอบฯ';
+                  } else if (label === 'กองสาธารณสุขและสิ่งแวดล้อม') {
+                    label = 'กองสวัสดิการสังคม';
+                  }
+                  return (
+                    <button
+                      key={u.username}
+                      type="button"
+                      onClick={() => handleQuickSelect(u)}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
+                        username.toLowerCase() === u.username.toLowerCase()
+                          ? 'bg-cyan-500 text-slate-950 font-bold'
+                          : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                      }`}
+                    >
+                      {u.role === 'admin' ? '👑 ' : '🏢 '}
+                      {label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
