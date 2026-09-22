@@ -91,13 +91,18 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-cyan-500 selection:text-black">
-      {/* 1. Ultra-Futuristic Floating Glass Island Header */}
+    <div className="min-h-screen bg-gradient-to-b from-[#f4f7fb] via-[#f8fafc] to-[#edf2f7] text-slate-800 font-sans selection:bg-blue-600 selection:text-white relative overflow-hidden">
+      {/* Soft warm ambient background orbs */}
+      <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 -right-40 w-[600px] h-[600px] bg-indigo-300/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 -left-40 w-[500px] h-[500px] bg-sky-300/15 rounded-full blur-3xl pointer-events-none" />
+
+      {/* 1. Floating Glass Island Header */}
       <div className="fixed top-3 sm:top-4 inset-x-0 z-50 px-3 sm:px-6 pointer-events-none">
-        <header className="max-w-6xl mx-auto pointer-events-auto rounded-2xl md:rounded-full bg-slate-950/75 backdrop-blur-2xl border border-cyan-500/25 shadow-[0_10px_35px_rgba(0,0,0,0.8),0_0_25px_rgba(6,182,212,0.15)] px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between transition-all relative overflow-hidden ring-1 ring-white/10">
-          {/* Subtle neon glow lines */}
-          <div className="absolute top-0 inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent pointer-events-none" />
-          <div className="absolute -bottom-6 left-1/4 w-32 h-12 bg-cyan-500/10 blur-xl pointer-events-none" />
+        <header className="max-w-6xl mx-auto pointer-events-auto rounded-2xl md:rounded-full bg-white/85 backdrop-blur-xl border border-blue-100/80 shadow-[0_8px_30px_rgba(30,58,138,0.07)] px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between transition-all relative overflow-hidden ring-1 ring-blue-900/5">
+          {/* Subtle blue shimmer line */}
+          <div className="absolute top-0 inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-blue-400/40 to-transparent pointer-events-none" />
+          <div className="absolute -bottom-6 left-1/4 w-32 h-12 bg-blue-500/10 blur-xl pointer-events-none" />
 
           {/* Brand & System Status */}
           <div className="flex items-center space-x-3 sm:space-x-3.5">
@@ -105,53 +110,53 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
               className="relative group cursor-pointer"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/30 group-hover:shadow-cyan-400/50 transition-all border border-cyan-400/30">
-                <Shield className="w-5 h-5 text-cyan-100" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-600/25 group-hover:shadow-blue-500/40 transition-all border border-blue-400/30">
+                <Shield className="w-5 h-5 text-white" />
               </div>
               <span className="absolute -bottom-1 -right-1 flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-slate-950"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-white"></span>
               </span>
             </div>
 
             <div>
-              <div className="text-sm sm:text-base font-black tracking-wider text-white flex items-center space-x-2">
-                <span className="bg-gradient-to-r from-white via-cyan-100 to-cyan-400 bg-clip-text text-transparent drop-shadow">
+              <div className="text-sm sm:text-base font-black tracking-wider text-slate-900 flex items-center space-x-2">
+                <span className="bg-gradient-to-r from-slate-900 via-blue-950 to-blue-800 bg-clip-text text-transparent drop-shadow-xs">
                   IA-OS
                 </span>
-                <span className="text-[10px] font-semibold bg-cyan-950/80 text-cyan-300 px-2.5 py-0.5 rounded-full border border-cyan-500/30 tracking-wide">
+                <span className="text-[10px] font-semibold bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full border border-blue-200/80 tracking-wide">
                   อบต.ฝางคำ
                 </span>
               </div>
-              <div className="text-[10px] sm:text-[11px] text-slate-400 flex items-center space-x-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+              <div className="text-[10px] sm:text-[11px] text-slate-500 flex items-center space-x-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
                 <span>ระบบปฏิบัติการตรวจสอบภายใน</span>
               </div>
             </div>
           </div>
 
           {/* Navigation Pill Links */}
-          <nav className="hidden lg:flex items-center space-x-1 bg-slate-900/70 p-1 rounded-full border border-slate-800/80 text-xs font-semibold text-slate-300 backdrop-blur-md">
+          <nav className="hidden lg:flex items-center space-x-1 bg-slate-100/80 p-1 rounded-full border border-slate-200/70 text-xs font-semibold text-slate-600 backdrop-blur-md">
             <button
               type="button"
               onClick={scrollToExplore}
-              className="px-4 py-1.5 rounded-full hover:text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-500/30 border border-transparent transition-all cursor-pointer flex items-center space-x-1.5"
+              className="px-4 py-1.5 rounded-full hover:text-blue-700 hover:bg-white hover:shadow-xs border border-transparent transition-all cursor-pointer flex items-center space-x-1.5"
             >
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
               <span>ภาพรวมระบบ</span>
             </button>
             <a
               href="#departments"
-              className="px-4 py-1.5 rounded-full hover:text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-500/30 border border-transparent transition-all cursor-pointer flex items-center space-x-1.5"
+              className="px-4 py-1.5 rounded-full hover:text-blue-700 hover:bg-white hover:shadow-xs border border-transparent transition-all cursor-pointer flex items-center space-x-1.5"
             >
-              <Building className="w-3.5 h-3.5 text-blue-400" />
+              <Building className="w-3.5 h-3.5 text-indigo-600" />
               <span>หน่วยรับตรวจ 6 กอง</span>
             </a>
             <a
               href="#modules"
-              className="px-4 py-1.5 rounded-full hover:text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-500/30 border border-transparent transition-all cursor-pointer flex items-center space-x-1.5"
+              className="px-4 py-1.5 rounded-full hover:text-blue-700 hover:bg-white hover:shadow-xs border border-transparent transition-all cursor-pointer flex items-center space-x-1.5"
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
               <span>ฟังก์ชันการตรวจสอบ</span>
             </a>
           </nav>
@@ -162,12 +167,12 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
               <button
                 type="button"
                 onClick={onEnterDashboard}
-                className="relative group p-[1px] rounded-full overflow-hidden bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_28px_rgba(16,185,129,0.6)] transition-all cursor-pointer"
+                className="relative group p-[1px] rounded-full overflow-hidden bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 shadow-md shadow-emerald-600/20 hover:shadow-lg hover:shadow-emerald-600/30 transition-all cursor-pointer"
               >
-                <div className="px-4 sm:px-5 py-2 rounded-full bg-slate-950/85 group-hover:bg-transparent text-white font-bold text-xs flex items-center space-x-2 transition-all">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <div className="px-4 sm:px-5 py-2 rounded-full bg-white group-hover:bg-transparent text-slate-800 group-hover:text-white font-bold text-xs flex items-center space-x-2 transition-all">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="hidden sm:inline">ไปยังแดชบอร์ดงาน</span>
-                  <span className="text-cyan-300">({session.displayName || session.username})</span>
+                  <span className="text-blue-700 group-hover:text-white">({session.displayName || session.username})</span>
                   <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
                 </div>
               </button>
@@ -175,10 +180,10 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
               <button
                 type="button"
                 onClick={() => setShowLoginModal(true)}
-                className="relative group p-[1px] rounded-full overflow-hidden bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 shadow-[0_0_18px_rgba(6,182,212,0.35)] hover:shadow-[0_0_28px_rgba(6,182,212,0.6)] transition-all cursor-pointer"
+                className="relative group p-[1px] rounded-full overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 shadow-md shadow-blue-600/25 hover:shadow-lg hover:shadow-blue-600/35 transition-all cursor-pointer"
               >
-                <div className="px-4 sm:px-5 py-2 rounded-full bg-slate-950/90 group-hover:bg-gradient-to-r group-hover:from-cyan-500 group-hover:to-blue-600 text-cyan-300 group-hover:text-slate-950 font-bold text-xs flex items-center space-x-2 transition-all">
-                  <LogIn className="w-3.5 h-3.5 text-cyan-400 group-hover:text-slate-950 transition-colors" />
+                <div className="px-4 sm:px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs flex items-center space-x-2 transition-all">
+                  <LogIn className="w-3.5 h-3.5 text-blue-100" />
                   <span>เข้าสู่ระบบ (Sign In)</span>
                 </div>
               </button>
@@ -204,31 +209,31 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
       {/* 3. Quick Stats & System Pillars */}
       <section id="welcome-features" className="py-20 px-4 md:px-8 max-w-7xl mx-auto space-y-16">
         <div className="text-center space-y-3 max-w-3xl mx-auto">
-          <div className="inline-flex items-center space-x-2 bg-blue-950/60 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-semibold text-cyan-400">
-            <Sparkles className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center space-x-2 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full text-xs font-semibold text-blue-700 shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
             <span>Digital Internal Audit Transformation</span>
           </div>
-          <h2 className="text-2xl md:text-4xl font-black tracking-tight text-white">
+          <h2 className="text-2xl md:text-4xl font-black tracking-tight text-slate-900">
             ยกระดับงานตรวจสอบภายใน อบต.ฝางคำ สู่มาตรฐานสากล
           </h2>
-          <p className="text-xs md:text-sm text-slate-400 leading-relaxed">
+          <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
             ผสานการประเมินความเสี่ยงตามหลักสากล SOFCK Matrix, แผนการตรวจสอบประจำปี, แนวการตรวจด้วย AI ตามหนังสือ ว 614 และการประเมินการควบคุมภายใน ปอ.1 - ปค.5 ในที่เดียว
           </p>
         </div>
 
         {/* 4. Departments Grid (6 หน่วยรับตรวจ) */}
         <div id="departments" className="space-y-6 pt-4">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-2 border-b border-slate-800 pb-4">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-2 border-b border-slate-200 pb-4">
             <div>
-              <h3 className="text-lg md:text-xl font-bold text-white flex items-center space-x-2">
-                <Building className="w-5 h-5 text-cyan-400" />
+              <h3 className="text-lg md:text-xl font-bold text-slate-900 flex items-center space-x-2">
+                <Building className="w-5 h-5 text-blue-600" />
                 <span>โครงสร้างหน่วยรับตรวจและผู้ใช้งานรายกอง</span>
               </h3>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 กำหนดสิทธิ์การมองเห็นและการปฏิบัติงานแยกอิสระตามภารกิจของแต่ละกอง
               </p>
             </div>
-            <div className="text-xs text-slate-500">
+            <div className="text-xs text-slate-400">
               องค์การบริหารส่วนตำบลฝางคำ อำเภอสิรินธร จ.อุบลราชธานี
             </div>
           </div>
@@ -247,15 +252,15 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
                   }}
                   className={`p-5 rounded-2xl border transition-all cursor-pointer group hover:scale-[1.02] flex flex-col justify-between ${
                     isAudit
-                      ? 'bg-gradient-to-br from-indigo-950/60 to-slate-900 border-indigo-500/40 hover:border-cyan-400 shadow-lg shadow-indigo-950/40'
-                      : 'bg-slate-900/60 border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900'
+                      ? 'bg-gradient-to-br from-blue-50/80 via-indigo-50/40 to-white border-blue-200 hover:border-blue-400 shadow-sm shadow-blue-100/60'
+                      : 'bg-white border-slate-200/80 hover:border-blue-300 hover:bg-blue-50/30 hover:shadow-md shadow-xs'
                   }`}
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold ${
-                          isAudit ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-cyan-400'
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold shadow-xs ${
+                          isAudit ? 'bg-blue-600 text-white' : 'bg-slate-100 text-blue-600 group-hover:bg-blue-50'
                         }`}
                       >
                         {isAudit ? '👑' : '🏢'}
@@ -263,8 +268,8 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
                           isAudit
-                            ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
-                            : 'bg-slate-800 text-slate-400'
+                            ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                            : 'bg-slate-100 text-slate-600'
                         }`}
                       >
                         {isAudit ? 'ADMIN' : 'หน่วยรับตรวจ'}
@@ -272,16 +277,16 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
                     </div>
 
                     <div>
-                      <h4 className="font-bold text-sm text-white group-hover:text-cyan-300 transition-colors">
+                      <h4 className="font-bold text-sm text-slate-900 group-hover:text-blue-700 transition-colors">
                         {dept}
                       </h4>
-                      <p className="text-xs text-slate-400 mt-1 line-clamp-2">
+                      <p className="text-xs text-slate-500 mt-1 line-clamp-2">
                         {matchedUser?.position || 'บุคลากรและเจ้าหน้าที่ผู้รับผิดชอบงานประจำกอง'}
                       </p>
                     </div>
                   </div>
 
-                  <div className="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-cyan-400 group-hover:text-cyan-300">
+                  <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs text-blue-600 group-hover:text-blue-700">
                     <span className="font-medium">
                       {matchedUser ? `เข้าใช้งานในฐานะ @${matchedUser.username}` : 'คลิกเพื่อเข้าสู่ระบบ'}
                     </span>
@@ -296,51 +301,51 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
         {/* 5. Core System Modules */}
         <div id="modules" className="space-y-6 pt-10">
           <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <h3 className="text-lg md:text-2xl font-bold text-white">
+            <h3 className="text-lg md:text-2xl font-bold text-slate-900">
               ระบบงานอัจฉริยะครบวงจร (Audit Modules)
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               ขับเคลื่อนงานตรวจสอบภายในอย่างเป็นระบบ ตรงตามระเบียบกระทรวงการคลังและมาตรฐานสถ.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800/80 space-y-2.5">
-              <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200/80 space-y-2.5 shadow-xs hover:shadow-md hover:border-amber-200 transition-all">
+              <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 border border-amber-200/60 flex items-center justify-center">
                 <ShieldAlert className="w-5 h-5" />
               </div>
-              <h4 className="font-bold text-sm text-white">การประเมินความเสี่ยง SOFCK</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h4 className="font-bold text-sm text-slate-900">การประเมินความเสี่ยง SOFCK</h4>
+              <p className="text-xs text-slate-600 leading-relaxed">
                 จัดลำดับความเสี่ยง 21 กิจกรรม อบต.ฝางคำ ด้วยระบบ 5 ปัจจัย คำนวณความเสี่ยงสูง-กลาง-ต่ำอัตโนมัติ
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800/80 space-y-2.5">
-              <div className="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200/80 space-y-2.5 shadow-xs hover:shadow-md hover:border-blue-200 transition-all">
+              <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 border border-blue-200/60 flex items-center justify-center">
                 <Sparkles className="w-5 h-5" />
               </div>
-              <h4 className="font-bold text-sm text-white">แผนปฏิบัติงานตรวจ (ว 614)</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h4 className="font-bold text-sm text-slate-900">แผนปฏิบัติงานตรวจ (ว 614)</h4>
+              <p className="text-xs text-slate-600 leading-relaxed">
                 สร้างแผนรายกิจกรรมอัตโนมัติ พร้อมเทมเพลตและระบบผู้ช่วย AI ช่วยเขียนวัตถุประสงค์และแนวการตรวจ
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800/80 space-y-2.5">
-              <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200/80 space-y-2.5 shadow-xs hover:shadow-md hover:border-emerald-200 transition-all">
+              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/60 flex items-center justify-center">
                 <ClipboardCheck className="w-5 h-5" />
               </div>
-              <h4 className="font-bold text-sm text-white">กระดาษทำการตรวจ & LPA</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h4 className="font-bold text-sm text-slate-900">กระดาษทำการตรวจ & LPA</h4>
+              <p className="text-xs text-slate-600 leading-relaxed">
                 บันทึกการสุ่มตรวจ บันทึกผล และเตรียมหลักฐานประเมินประสิทธิภาพ อปท. (LPA) ครบทุกมิติ
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800/80 space-y-2.5">
-              <div className="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200/80 space-y-2.5 shadow-xs hover:shadow-md hover:border-indigo-200 transition-all">
+              <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200/60 flex items-center justify-center">
                 <ShieldCheck className="w-5 h-5" />
               </div>
-              <h4 className="font-bold text-sm text-white">การควบคุมภายใน ปอ.1 - ปค.5</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h4 className="font-bold text-sm text-slate-900">การควบคุมภายใน ปอ.1 - ปค.5</h4>
+              <p className="text-xs text-slate-600 leading-relaxed">
                 ให้แต่ละกองเข้ามาจัดทำและบันทึกรายงานการควบคุมภายในประจำปีได้อย่างถูกต้องตามมาตรฐาน
               </p>
             </div>
@@ -348,12 +353,12 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
         </div>
 
         {/* 6. Call to Action Banner */}
-        <div className="p-8 md:p-12 rounded-3xl bg-gradient-to-r from-blue-900/40 via-indigo-950/60 to-slate-900 border border-cyan-500/30 text-center space-y-5 relative overflow-hidden shadow-2xl">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="p-8 md:p-12 rounded-3xl bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 border border-blue-400/20 text-white text-center space-y-5 relative overflow-hidden shadow-xl shadow-blue-900/10">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
           <h3 className="text-xl md:text-3xl font-extrabold text-white">
             พร้อมเริ่มต้นปฏิบัติงานตรวจสอบภายในแล้วหรือยัง?
           </h3>
-          <p className="text-xs md:text-sm text-slate-300 max-w-xl mx-auto">
+          <p className="text-xs md:text-sm text-blue-100 max-w-xl mx-auto">
             เข้าสู่ระบบด้วยชื่อผู้ใช้งานประจำกองของท่าน หรือติดต่อผู้ดูแลระบบ (หน่วยตรวจสอบภายใน) เพื่อเปิดสิทธิ์การใช้งาน
           </p>
           <div>
@@ -361,7 +366,7 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
               <button
                 type="button"
                 onClick={onEnterDashboard}
-                className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm px-6 py-3 rounded-2xl inline-flex items-center space-x-2 shadow-xl shadow-cyan-500/25 transition-all cursor-pointer"
+                className="bg-white hover:bg-blue-50 text-blue-950 font-bold text-sm px-6 py-3 rounded-2xl inline-flex items-center space-x-2 shadow-lg shadow-black/10 transition-all cursor-pointer"
               >
                 <span>กลับสู่หน้าทำงาน (Dashboard)</span>
                 <ArrowRight className="w-4 h-4" />
@@ -370,9 +375,9 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
               <button
                 type="button"
                 onClick={() => setShowLoginModal(true)}
-                className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm px-6 py-3 rounded-2xl inline-flex items-center space-x-2 shadow-xl shadow-cyan-500/25 transition-all cursor-pointer"
+                className="bg-white hover:bg-blue-50 text-blue-950 font-bold text-sm px-6 py-3 rounded-2xl inline-flex items-center space-x-2 shadow-lg shadow-black/10 transition-all cursor-pointer"
               >
-                <LogIn className="w-4 h-4" />
+                <LogIn className="w-4 h-4 text-blue-700" />
                 <span>เข้าสู่ระบบตรวจสอบภายในทันที</span>
               </button>
             )}
@@ -381,14 +386,14 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
       </section>
 
       {/* 7. Footer */}
-      <footer className="border-t border-slate-900 py-8 px-4 text-center text-xs text-slate-500 space-y-1">
-        <p className="font-semibold text-slate-400">
+      <footer className="border-t border-slate-200/80 py-8 px-4 text-center text-xs text-slate-500 space-y-1 bg-white/40">
+        <p className="font-semibold text-slate-700">
           หน่วยตรวจสอบภายใน องค์การบริหารส่วนตำบลฝางคำ
         </p>
         <p>
           อำเภอสิรินธร จังหวัดอุบลราชธานี | ผู้พัฒนา: นายศุภมงคล ธรรมพิทักษ์ (นักวิชาการตรวจสอบภายในปฏิบัติการ)
         </p>
-        <p className="text-[10px] text-slate-600 pt-2">
+        <p className="text-[10px] text-slate-400 pt-2">
           IA-OS: Internal Audit Operating System for Local Administrative Organizations
         </p>
       </footer>
@@ -397,57 +402,57 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
           LOGIN MODAL
       ========================================================================= */}
       {showLoginModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-          <div className="bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl max-w-md w-full p-6 md:p-8 space-y-5 relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white border border-slate-200 rounded-3xl shadow-2xl max-w-md w-full p-6 md:p-8 space-y-5 relative text-slate-900">
             <button
               type="button"
               onClick={() => setShowLoginModal(false)}
-              className="absolute top-5 right-5 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-all cursor-pointer"
+              className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition-all cursor-pointer"
             >
               ✕
             </button>
 
             <div className="text-center space-y-1">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-400 mx-auto flex items-center justify-center text-white shadow-lg shadow-cyan-500/20 mb-2">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-600 mx-auto flex items-center justify-center text-white shadow-md shadow-blue-500/20 mb-2">
                 <Shield className="w-6 h-6" />
               </div>
-              <h3 className="text-base font-bold text-white">เข้าสู่ระบบ IA-OS ฝางคำ</h3>
-              <p className="text-xs text-slate-400">
+              <h3 className="text-base font-bold text-slate-900">เข้าสู่ระบบ IA-OS ฝางคำ</h3>
+              <p className="text-xs text-slate-500">
                 เลือกหรือกรอกชื่อผู้ใช้ของกองท่านเพื่อเข้าปฏิบัติงาน
               </p>
             </div>
 
             {error && (
-              <div className="p-3 rounded-xl bg-rose-950/60 border border-rose-800 text-rose-300 text-xs flex items-center space-x-2">
-                <AlertCircle className="w-4 h-4 shrink-0" />
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
                 <span>{error}</span>
               </div>
             )}
 
             <form onSubmit={handleLoginSubmit} className="space-y-3.5 text-xs">
               <div>
-                <label className="block font-semibold text-slate-300 mb-1">
+                <label className="block font-semibold text-slate-700 mb-1">
                   ชื่อผู้ใช้งาน (Username):
                 </label>
                 <div className="relative">
-                  <User className="w-4 h-4 absolute left-3 top-2.5 text-slate-500" />
+                  <User className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
                   <input
                     type="text"
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="เช่น admin, finance, palat..."
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-300 mb-1">
+                <label className="block font-semibold text-slate-700 mb-1">
                   รหัสผ่าน (Password):
                 </label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 absolute left-3 top-2.5 text-slate-500" />
+                  <Lock className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
                   <input
                     ref={passwordInputRef}
                     type={showPassword ? 'text' : 'password'}
@@ -455,12 +460,12 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="กรอกรหัสผ่าน (เช่น 1234 หรือ admin123)"
-                    className="w-full pl-9 pr-10 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-200 cursor-pointer"
+                    className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-700 cursor-pointer"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -468,12 +473,12 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
               </div>
 
               <div className="flex items-center justify-between pt-1">
-                <label className="flex items-center space-x-2 cursor-pointer select-none text-slate-400 text-[11px]">
+                <label className="flex items-center space-x-2 cursor-pointer select-none text-slate-500 text-[11px]">
                   <input
                     type="checkbox"
                     checked={remember}
                     onChange={(e) => setRemember(e.target.checked)}
-                    className="rounded text-cyan-500 focus:ring-cyan-500 bg-slate-800 border-slate-700"
+                    className="rounded text-blue-600 focus:ring-blue-500 bg-slate-100 border-slate-300"
                   />
                   <span>จดจำชื่อผู้ใช้งานในเครื่องนี้</span>
                 </label>
@@ -482,7 +487,7 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
               <button
                 type="submit"
                 disabled={busy}
-                className="w-full mt-2 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50"
+                className="w-full mt-2 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold py-2.5 rounded-xl shadow-md shadow-blue-600/25 transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50"
               >
                 <LogIn className="w-4 h-4" />
                 <span>{busy ? 'กำลังตรวจสอบ...' : 'เข้าสู่ระบบ'}</span>
@@ -490,8 +495,8 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
             </form>
 
             {/* Quick account selector chips */}
-            <div className="pt-3 border-t border-slate-800 space-y-2 text-xs">
-              <span className="text-[11px] text-slate-400 block font-medium">
+            <div className="pt-3 border-t border-slate-100 space-y-2 text-xs">
+              <span className="text-[11px] text-slate-500 block font-medium">
                 เลือกเข้าสู่ระบบด่วนตามกอง:
               </span>
               <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1">
@@ -509,8 +514,8 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
                       onClick={() => handleQuickSelect(u)}
                       className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
                         username.toLowerCase() === u.username.toLowerCase()
-                          ? 'bg-cyan-500 text-slate-950 font-bold'
-                          : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                          ? 'bg-blue-600 text-white font-bold shadow-xs'
+                          : 'bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-700'
                       }`}
                     >
                       {u.role === 'admin' ? '👑 ' : '🏢 '}

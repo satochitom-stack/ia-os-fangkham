@@ -45,11 +45,11 @@ export default function App() {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
-  // Dark Mode State
+  // Dark Mode State (Default to false for warm white-blue theme)
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('ia_dark_mode');
     if (saved !== null) return saved === '1';
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return false;
   });
 
   useEffect(() => {

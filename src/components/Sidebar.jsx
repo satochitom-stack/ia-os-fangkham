@@ -42,17 +42,17 @@ export default function Sidebar({ currentTab, setCurrentTab, session }) {
   });
 
   return (
-    <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 min-h-[calc(100vh-4rem)] border-r border-slate-800">
-      <div className="p-4 border-b border-slate-800/80 flex items-center justify-between">
-        <div className="text-xs font-semibold tracking-wider text-slate-400 dark:text-slate-500 uppercase">
+    <aside className="w-64 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 flex flex-col shrink-0 min-h-[calc(100vh-4rem)] border-r border-slate-200/80 dark:border-slate-800 transition-colors">
+      <div className="p-4 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+        <div className="text-xs font-semibold tracking-wider text-slate-500 dark:text-slate-400 uppercase">
           เมนูระบบตรวจสอบภายใน
         </div>
         {isAdmin ? (
-          <span className="text-[10px] bg-indigo-950 border border-indigo-500/30 text-indigo-300 font-bold px-1.5 py-0.5 rounded">
+          <span className="text-[10px] bg-blue-50 dark:bg-indigo-950 border border-blue-200 dark:border-indigo-500/30 text-blue-700 dark:text-indigo-300 font-bold px-1.5 py-0.5 rounded">
             ADMIN
           </span>
         ) : (
-          <span className="text-[10px] bg-emerald-950 border border-emerald-500/30 text-emerald-300 font-bold px-1.5 py-0.5 rounded">
+          <span className="text-[10px] bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-bold px-1.5 py-0.5 rounded">
             USER
           </span>
         )}
@@ -68,8 +68,8 @@ export default function Sidebar({ currentTab, setCurrentTab, session }) {
               onClick={() => setCurrentTab(item.id)}
               className={`w-full flex items-center px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                 isActive
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30 font-semibold'
-                  : 'text-slate-300 hover:bg-slate-800/70 hover:text-white'
+                  ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white shadow-md shadow-blue-600/25 font-semibold'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-blue-50/80 dark:hover:bg-slate-800/70 hover:text-blue-700 dark:hover:text-white'
               }`}
             >
               <div className="flex items-center space-x-3">
@@ -82,24 +82,24 @@ export default function Sidebar({ currentTab, setCurrentTab, session }) {
       </nav>
 
       {/* User Info Card in Sidebar Bottom */}
-      <div className="p-3.5 border-t border-slate-800/80 bg-slate-950/60 space-y-1.5">
+      <div className="p-3.5 border-t border-slate-200/80 dark:border-slate-800/80 bg-slate-50/80 dark:bg-slate-950/60 space-y-1.5">
         <div className="flex items-center space-x-2">
-          <div className="w-7 h-7 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-xs shrink-0">
+          <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-600/20 text-blue-700 dark:text-blue-400 flex items-center justify-center font-bold text-xs shrink-0">
             {isAdmin ? '👑' : '🏢'}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-xs font-bold text-slate-200 truncate">
+            <div className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
               {session?.displayName || session?.username || 'ผู้ใช้งาน'}
             </div>
-            <div className="text-[11px] text-slate-400 truncate">
+            <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
               {session?.department || 'สังกัดส่วนราชการ'}
             </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-800/60">
+        <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
           <div className="flex items-center space-x-1">
-            <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+            <CheckCircle2 className="w-3 h-3 text-emerald-500 dark:text-emerald-400" />
             <span>สิทธิ์: {isAdmin ? 'เต็มสิทธิ์ทุกเมนู' : `${visibleMenuItems.length} เมนู`}</span>
           </div>
         </div>
