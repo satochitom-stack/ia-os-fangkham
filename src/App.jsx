@@ -5,7 +5,8 @@ import DashboardView from './components/DashboardView';
 import PlanningView from './components/PlanningView';
 import ExecutionView from './components/ExecutionView';
 import ReportingView from './components/ReportingView';
-import ControlRiskView from './components/ControlRiskView';
+import InternalControlView from './components/InternalControlView';
+import RiskManagementView from './components/RiskManagementView';
 import LpaView from './components/LpaView';
 import KnowledgeView from './components/KnowledgeView';
 import LoginView from './components/LoginView';
@@ -26,6 +27,7 @@ import {
   initialWorkingPapers,
   initialRiskAssessments,
   initialInternalControls,
+  initialRiskManagement,
   initialLpaIndicators,
   initialKnowledgeBase
 } from './data/initialData';
@@ -204,6 +206,20 @@ export default function App() {
     return { '2569': initialInternalControls };
   });
 
+  const [riskManagementByYear, setRiskManagementByYear] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ia_risk_management_by_year');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (!parsed['2569'] && parsed['2568']) parsed['2569'] = parsed['2568'];
+        return parsed;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return { '2569': initialRiskManagement, '2570': initialRiskManagement };
+  });
+
   const [lpaIndicatorsByYear, setLpaIndicatorsByYear] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_lpa_indicators_by_year');
@@ -312,6 +328,10 @@ export default function App() {
   }, [internalControlsByYear]);
 
   useEffect(() => {
+    localStorage.setItem('ia_risk_management_by_year', JSON.stringify(riskManagementByYear));
+  }, [riskManagementByYear]);
+
+  useEffect(() => {
     localStorage.setItem('ia_lpa_indicators_by_year', JSON.stringify(lpaIndicatorsByYear));
   }, [lpaIndicatorsByYear]);
 
@@ -337,6 +357,8 @@ export default function App() {
       if (ep) setEngagementPlansByYear(JSON.parse(ep));
       const wp = localStorage.getItem('ia_working_papers_by_year');
       if (wp) setWorkingPapersByYear(JSON.parse(wp));
+      const rm = localStorage.getItem('ia_risk_management_by_year');
+      if (rm) setRiskManagementByYear(JSON.parse(rm));
     } catch (e) {
       console.error(e);
     }
@@ -397,6 +419,15 @@ export default function App() {
     });
   };
 
+  const riskManagement = riskManagementByYear[selectedYear] || initialRiskManagement;
+  const setRiskManagement = (updaterOrValue) => {
+    setRiskManagementByYear((prev) => {
+      const current = prev[selectedYear] || initialRiskManagement;
+      const updated = typeof updaterOrValue === 'function' ? updaterOrValue(current) : updaterOrValue;
+      return { ...prev, [selectedYear]: updated };
+    });
+  };
+
   const lpaIndicators = lpaIndicatorsByYear[selectedYear] || initialLpaIndicators;
   const setLpaIndicators = (updaterOrValue) => {
     setLpaIndicatorsByYear((prev) => {
@@ -443,6 +474,7 @@ export default function App() {
     setWorkingPapersByYear({ [selectedYear]: initialWorkingPapers });
     setRiskAssessmentsByYear({ [selectedYear]: [] });
     setInternalControlsByYear({ [selectedYear]: initialInternalControls });
+    setRiskManagementByYear({ [selectedYear]: initialRiskManagement });
     setLpaIndicatorsByYear({ [selectedYear]: initialLpaIndicators });
     setAuditCharterByYear({ [selectedYear]: initialAuditCharter });
     setAuditUniverseByYear({ [selectedYear]: defaultAuditUniverse });
@@ -452,6 +484,7 @@ export default function App() {
     localStorage.removeItem('ia_working_papers_by_year');
     localStorage.removeItem('ia_risk_assessments_by_year');
     localStorage.removeItem('ia_internal_controls_by_year');
+    localStorage.removeItem('ia_risk_management_by_year');
     localStorage.removeItem('ia_lpa_indicators_by_year');
     localStorage.removeItem('ia_audit_charter_by_year');
     localStorage.removeItem('ia_audit_universe_by_year');
@@ -461,6 +494,7 @@ export default function App() {
     localStorage.removeItem('ia_working_papers');
     localStorage.removeItem('ia_risk_assessments');
     localStorage.removeItem('ia_internal_controls');
+    localStorage.removeItem('ia_risk_management');
     localStorage.removeItem('ia_lpa_indicators');
   };
 
@@ -478,6 +512,7 @@ export default function App() {
       workingPapersByYear,
       riskAssessmentsByYear,
       internalControlsByYear,
+      riskManagementByYear,
       lpaIndicatorsByYear,
       auditCharterByYear
     };
@@ -506,6 +541,8 @@ export default function App() {
     else if (data.riskAssessments) setRiskAssessmentsByYear({ [selectedYear]: data.riskAssessments });
     if (data.internalControlsByYear) setInternalControlsByYear(data.internalControlsByYear);
     else if (data.internalControls) setInternalControlsByYear({ [selectedYear]: data.internalControls });
+    if (data.riskManagementByYear) setRiskManagementByYear(data.riskManagementByYear);
+    else if (data.riskManagement) setRiskManagementByYear({ [selectedYear]: data.riskManagement });
     if (data.lpaIndicatorsByYear) setLpaIndicatorsByYear(data.lpaIndicatorsByYear);
     else if (data.lpaIndicators) setLpaIndicatorsByYear({ [selectedYear]: data.lpaIndicators });
     if (data.auditCharterByYear) setAuditCharterByYear(data.auditCharterByYear);
@@ -687,12 +724,22 @@ export default function App() {
               />
             )}
 
-            {currentTab === 'control-risk' && (
-              <ControlRiskView
-                key={`control-risk-${selectedYear}`}
+            {(currentTab === 'internal-control' || currentTab === 'control-risk') && (
+              <InternalControlView
+                key={`internal-control-${selectedYear}`}
                 selectedYear={selectedYear}
                 internalControls={internalControls}
-                riskAssessments={riskAssessments}
+                setInternalControls={setInternalControls}
+                orgProfile={orgProfile}
+              />
+            )}
+
+            {currentTab === 'risk-management' && (
+              <RiskManagementView
+                key={`risk-management-${selectedYear}`}
+                selectedYear={selectedYear}
+                riskManagement={riskManagement}
+                setRiskManagement={setRiskManagement}
                 orgProfile={orgProfile}
               />
             )}

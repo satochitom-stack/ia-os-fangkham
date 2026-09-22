@@ -230,6 +230,15 @@ export function autoRepairDataLinkages() {
           }
         }
       }
+
+      // 4. Migrate 'control-risk' to 'internal-control' and 'risk-management'
+      if (Array.isArray(u.permissions) && u.permissions.includes('control-risk')) {
+        const set = new Set(u.permissions.filter((p) => p !== 'control-risk'));
+        set.add('internal-control');
+        set.add('risk-management');
+        u.permissions = Array.from(set);
+        usersChanged = true;
+      }
     });
 
     cascadeDepartmentRenameToStorage('กองสาธารณสุขและสิ่งแวดล้อม', 'กองสวัสดิการสังคม');
@@ -255,6 +264,13 @@ export function autoRepairDataLinkages() {
           currentSession.department = 'กองสวัสดิการสังคม';
           sessChanged = true;
         }
+      }
+      if (Array.isArray(currentSession.permissions) && currentSession.permissions.includes('control-risk')) {
+        const set = new Set(currentSession.permissions.filter((p) => p !== 'control-risk'));
+        set.add('internal-control');
+        set.add('risk-management');
+        currentSession.permissions = Array.from(set);
+        sessChanged = true;
       }
       if (sessChanged) {
         localStorage.setItem(SESSION_KEY, JSON.stringify(currentSession));
@@ -354,7 +370,8 @@ export const ALL_MENU_IDS = [
   { id: 'engagement-plan', label: 'แผนปฏิบัติงานตรวจ (ว 614)', icon: 'Sparkles', desc: 'แผนปฏิบัติงานรายกิจกรรมและแนวการตรวจด้วย AI' },
   { id: 'execution', label: 'ปฏิบัติการตรวจ & กระดาษทำการ', icon: 'ClipboardCheck', desc: 'ลงมือตรวจจริง สุ่มตรวจ และบันทึกกระดาษทำการ' },
   { id: 'reporting', label: 'รายงาน & ติดตามผล', icon: 'FileSpreadsheet', desc: 'รายงานผลการตรวจสอบและติดตามข้อเสนอแนะ' },
-  { id: 'control-risk', label: 'ควบคุมภายใน & บริหารความเสี่ยง', icon: 'ShieldCheck', desc: 'บันทึกแบบ ปอ.1, ปอ.2, ปอ.3, ปค.4, ปค.5 ของแต่ละกอง' },
+  { id: 'internal-control', label: 'การควบคุมภายใน', icon: 'ShieldCheck', desc: 'บันทึกแบบ ปค.1, ปค.4, ปค.5 ตามหลักเกณฑ์ กค. พ.ศ. 2561 ของแต่ละกอง' },
+  { id: 'risk-management', label: 'การบริหารความเสี่ยง', icon: 'AlertTriangle', desc: 'บันทึกแบบ บส.1 - บส.5 และ Matrix ระดับความเสี่ยง 5x5 ของแต่ละกอง' },
   { id: 'lpa', label: 'เตรียมรับประเมิน LPA', icon: 'Award', desc: 'เช็กลิสต์และหลักฐานเตรียมรับประเมิน LPA' },
   { id: 'knowledge', label: 'คลังระเบียบ & แบบฟอร์ม', icon: 'BookOpen', desc: 'ดาวน์โหลดระเบียบ หนังสือสั่งการ และแบบฟอร์ม' },
   { id: 'users', label: 'จัดการผู้ใช้งาน & กำหนดสิทธิ์', icon: 'Users', desc: 'จัดการบัญชีกองและกำหนดสิทธิ์การมองเห็นเมนู (ADMIN Only)' }
@@ -379,7 +396,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองคลัง',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dashboard', 'control-risk', 'lpa', 'knowledge'],
+    permissions: ['dashboard', 'internal-control', 'risk-management', 'lpa', 'knowledge'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -390,7 +407,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'สำนักปลัด',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dashboard', 'control-risk', 'lpa', 'knowledge'],
+    permissions: ['dashboard', 'internal-control', 'risk-management', 'lpa', 'knowledge'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -401,7 +418,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองช่าง',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dashboard', 'control-risk', 'knowledge'],
+    permissions: ['dashboard', 'internal-control', 'risk-management', 'knowledge'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -412,7 +429,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองการศึกษา',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dashboard', 'control-risk', 'knowledge'],
+    permissions: ['dashboard', 'internal-control', 'risk-management', 'knowledge'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -423,7 +440,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองสวัสดิการสังคม',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dashboard', 'control-risk', 'knowledge'],
+    permissions: ['dashboard', 'internal-control', 'risk-management', 'knowledge'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -434,7 +451,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองยุทธศาสตร์และงบประมาณ',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dashboard', 'control-risk', 'knowledge'],
+    permissions: ['dashboard', 'internal-control', 'risk-management', 'knowledge'],
     canManageUsers: false,
     createdAt: Date.now()
   }
@@ -556,7 +573,7 @@ export async function addUser({ username, displayName, position, department, rol
     salt,
     hash,
     passwordText: password, // For easy admin viewing/recovery in local system
-    permissions: permissions || ['dashboard', 'control-risk', 'knowledge'],
+    permissions: permissions || ['dashboard', 'internal-control', 'risk-management', 'knowledge'],
     canManageUsers: role === 'admin',
     createdAt: Date.now()
   };

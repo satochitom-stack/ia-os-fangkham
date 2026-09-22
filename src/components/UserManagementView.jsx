@@ -81,7 +81,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
   const [formPosition, setFormPosition] = useState('');
   const [formRole, setFormRole] = useState('user');
   const [formPassword, setFormPassword] = useState('');
-  const [formPermissions, setFormPermissions] = useState(['dashboard', 'control-risk', 'knowledge']);
+  const [formPermissions, setFormPermissions] = useState(['dashboard', 'internal-control', 'risk-management', 'knowledge']);
   const [formError, setFormError] = useState('');
 
   // Department Tab States
@@ -161,9 +161,9 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
     if (presetType === 'all') {
       perms = ALL_MENU_IDS.map((m) => m.id);
     } else if (presetType === 'control_only') {
-      perms = ['dashboard', 'control-risk', 'knowledge'];
+      perms = ['dashboard', 'internal-control', 'risk-management', 'knowledge'];
     } else if (presetType === 'control_lpa') {
-      perms = ['dashboard', 'control-risk', 'lpa', 'knowledge'];
+      perms = ['dashboard', 'internal-control', 'risk-management', 'lpa', 'knowledge'];
     } else if (presetType === 'read_only') {
       perms = ['dashboard', 'knowledge'];
     }
@@ -247,7 +247,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
     setFormPosition('');
     setFormRole('user');
     setFormPassword('');
-    setFormPermissions(['dashboard', 'control-risk', 'knowledge']);
+    setFormPermissions(['dashboard', 'internal-control', 'risk-management', 'knowledge']);
     setFormError('');
     setShowAddModal(true);
   };

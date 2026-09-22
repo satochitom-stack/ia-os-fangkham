@@ -6,6 +6,7 @@ import {
   ClipboardCheck,
   FileSpreadsheet,
   ShieldCheck,
+  AlertTriangle,
   Award,
   BookOpen,
   CheckCircle2,
@@ -22,7 +23,8 @@ export default function Sidebar({ currentTab, setCurrentTab, session }) {
     { id: 'engagement-plan', label: 'แผนปฏิบัติงานตรวจ (ว 614)', icon: Sparkles },
     { id: 'execution', label: 'ปฏิบัติการตรวจ & กระดาษทำการ', icon: ClipboardCheck },
     { id: 'reporting', label: 'รายงาน & ติดตามผล', icon: FileSpreadsheet },
-    { id: 'control-risk', label: 'ควบคุมภายใน & บริหารความเสี่ยง', icon: ShieldCheck },
+    { id: 'internal-control', label: 'การควบคุมภายใน', icon: ShieldCheck },
+    { id: 'risk-management', label: 'การบริหารความเสี่ยง', icon: AlertTriangle },
     { id: 'lpa', label: 'เตรียมรับประเมิน LPA', icon: Award },
     { id: 'knowledge', label: 'คลังระเบียบ & แบบฟอร์ม', icon: BookOpen },
     { id: 'users', label: 'จัดการผู้ใช้งาน & กำหนดสิทธิ์', icon: Users, adminOnly: true }
