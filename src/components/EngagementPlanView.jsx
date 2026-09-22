@@ -483,7 +483,7 @@ export default function EngagementPlanView({
                 <option value="สำนักปลัด">สำนักปลัด</option>
                 <option value="กองช่าง">กองช่าง</option>
                 <option value="กองการศึกษา">กองการศึกษา</option>
-                <option value="กองสาธารณสุขและสิ่งแวดล้อม">กองสาธารณสุขและสิ่งแวดล้อม</option>
+                <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
                 <option value="กองยุทธศาสตร์และงบประมาณ">กองยุทธศาสตร์และงบประมาณ</option>
               </select>
             </div>

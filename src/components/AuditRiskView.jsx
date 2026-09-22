@@ -1164,24 +1164,23 @@ export default function AuditRiskView({
       )}
 
       {/* Top Banner with Official Reference to Fang Kham SAO */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs relative overflow-hidden">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center space-x-1.5 bg-blue-500/20 border border-blue-400/30 rounded-full px-3 py-0.5 text-xs font-medium text-blue-200">
-                <Building className="w-3.5 h-3.5 text-blue-300" />
+              <span className="inline-flex items-center space-x-1.5 bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900/60 rounded-full px-3 py-0.5 text-xs font-semibold text-blue-700 dark:text-blue-300">
+                <Building className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                 <span>การประเมินความเสี่ยง องค์การบริหารส่วนตำบลฝางคำ</span>
               </span>
-              <span className="inline-flex items-center space-x-1 bg-emerald-500/20 border border-emerald-400/30 rounded-full px-2.5 py-0.5 text-xs font-medium text-emerald-200">
-                <Award className="w-3 h-3 text-emerald-300" />
-                <span>ผู้ประเมิน: นายศุภมงคล ธรรมพิทักษ์ (นวก.ตรวจสอบภายในปฏิบัติการ)</span>
+              <span className="inline-flex items-center space-x-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full px-2.5 py-0.5 text-xs font-medium text-slate-700 dark:text-slate-300">
+                <Award className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                <span>ผู้ประเมิน: {orgProfile?.auditorName || 'หน่วยตรวจสอบภายใน'}</span>
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
               ตารางกิจกรรมที่จะนำมาประเมินความเสี่ยง ประจำปีงบประมาณ พ.ศ. {selectedYear}
             </h2>
-            <p className="text-xs sm:text-sm text-blue-100/90 max-w-3xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
               วิเคราะห์กิจกรรมในจักรวาลการตรวจสอบ (Audit Universe) ของ อบต.ฝางคำ ตามกรอบปัจจัยเสี่ยง 5 มิติ (SOFCK)
               เพื่อจัดลำดับความเสี่ยงและคัดเลือกกิจกรรมความเสี่ยงสูงบรรจุเข้าสู่แผนการตรวจสอบประจำปี
             </p>
@@ -1190,21 +1189,21 @@ export default function AuditRiskView({
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
               onClick={handleLoadFangkhamDefaults}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer transition-all"
+              className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer transition-all"
               title="โหลดชุดข้อมูล 21 กิจกรรมจริงตามตารางของ อบต.ฝางคำ"
             >
-              <Sparkles className="w-4 h-4 text-amber-300" />
-              <span>โหลดข้อมูลจริง อบต.ฝางคำ (21 กิจกรรม)</span>
+              <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <span>โหลดข้อมูล อบต.ฝางคำ (21 กิจกรรม)</span>
             </button>
 
             {setCurrentTab && (
               <button
                 onClick={() => setCurrentTab('engagement-plan')}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer transition-all"
+                className="bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer transition-all"
                 title="เปิดเมนูแผนปฏิบัติงานตรวจสอบตาม ว 614 พร้อม AI ผู้ช่วย"
               >
-                <Sparkles className="w-4 h-4 text-slate-950" />
-                <span>แผนปฏิบัติงานตรวจ ว 614 (AI)</span>
+                <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <span>แผนปฏิบัติงานตรวจ ว 614</span>
               </button>
             )}
 
@@ -1228,7 +1227,7 @@ export default function AuditRiskView({
                 });
                 setShowAddModal(true);
               }}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer transition-all"
+              className="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer transition-all"
             >
               <Plus className="w-4 h-4" />
               <span>+ เพิ่มกิจกรรม</span>
@@ -1239,9 +1238,9 @@ export default function AuditRiskView({
                 setActiveSubTab('report');
                 setTimeout(() => window.print(), 200);
               }}
-              className="no-print bg-white/10 hover:bg-white/20 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl border border-white/20 shadow-xs flex items-center space-x-1.5 cursor-pointer transition-all"
+              className="no-print bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer transition-all"
             >
-              <Printer className="w-4 h-4 text-slate-300" />
+              <Printer className="w-4 h-4 text-slate-500" />
               <span>พิมพ์แบบประเมินความเสี่ยง</span>
             </button>
           </div>
@@ -1250,13 +1249,13 @@ export default function AuditRiskView({
 
       {/* KPI Stats Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-800 shadow-xs">
+        <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-xs">
           <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400">กิจกรรมที่ประเมินทั้งหมด</div>
           <div className="text-2xl font-black text-slate-900 dark:text-slate-100 mt-1">{totalActivities}</div>
           <div className="text-[10px] text-slate-400 mt-0.5">ในจักรวาลการตรวจสอบ (Audit Universe)</div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-rose-200/80 dark:border-rose-900/50 shadow-xs">
+        <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-rose-200/70 dark:border-rose-900/40 shadow-xs">
           <div className="text-[11px] font-bold text-rose-600 dark:text-rose-400 flex items-center">
             <span className="w-2 h-2 rounded-full bg-rose-500 mr-1.5"></span>
             ความเสี่ยงสูง (2.4 - 3.0)
@@ -1265,97 +1264,48 @@ export default function AuditRiskView({
           <div className="text-[10px] text-rose-500/80 mt-0.5">ต้องบรรจุในแผนประจำปี (เช่น งานบัญชี e-LAAS)</div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-yellow-200/80 dark:border-yellow-900/50 shadow-xs">
-          <div className="text-[11px] font-bold text-yellow-600 dark:text-yellow-400 flex items-center">
-            <span className="w-2 h-2 rounded-full bg-yellow-500 mr-1.5"></span>
+        <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-amber-200/70 dark:border-amber-900/40 shadow-xs">
+          <div className="text-[11px] font-bold text-amber-600 dark:text-amber-400 flex items-center">
+            <span className="w-2 h-2 rounded-full bg-amber-500 mr-1.5"></span>
             ความเสี่ยงปานกลาง (1.6 - 2.2)
           </div>
-          <div className="text-2xl font-black text-yellow-600 dark:text-yellow-400 mt-1">{mediumCount}</div>
-          <div className="text-[10px] text-yellow-500/80 mt-0.5">แผนระยะยาว / รอบหมุนเวียน 2-3 ปี</div>
+          <div className="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">{mediumCount}</div>
+          <div className="text-[10px] text-amber-600/80 mt-0.5">แผนระยะยาว / รอบหมุนเวียน 2-3 ปี</div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-emerald-200/80 dark:border-emerald-900/50 shadow-xs">
+        <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-emerald-200/70 dark:border-emerald-900/40 shadow-xs">
           <div className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center">
             <span className="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span>
             ความเสี่ยงต่ำ (1.0 - 1.4)
           </div>
           <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">{lowCount}</div>
-          <div className="text-[10px] text-emerald-500/80 mt-0.5">เฝ้าระวัง / ใช้ระบบควบคุมภายในปกติ</div>
+          <div className="text-[10px] text-emerald-600/80 mt-0.5">เฝ้าระวัง / ใช้ระบบควบคุมภายในปกติ</div>
         </div>
       </div>
 
       {/* Sub Tabs Selector */}
-      <div className="flex border-b border-slate-200 dark:border-slate-800 space-x-2 sm:space-x-4 overflow-x-auto text-xs font-bold scrollbar-none">
-        <button
-          onClick={() => setActiveSubTab('fangkham-matrix')}
-          className={`pb-3 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-            activeSubTab === 'fangkham-matrix'
-              ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
-          }`}
-        >
-          ตารางกิจกรรมที่จะนำมาประเมินความเสี่ยง (อบต.ฝางคำ)
-        </button>
-        <button
-          onClick={() => setActiveSubTab('ranking')}
-          className={`pb-3 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-            activeSubTab === 'ranking'
-              ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
-          }`}
-        >
-          การจัดลำดับคะแนน & คัดเลือกเข้าแผนประจำปี
-        </button>
-        <button
-          onClick={() => setActiveSubTab('catalog')}
-          className={`pb-3 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-            activeSubTab === 'catalog'
-              ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
-          }`}
-        >
-          คลังโครงสร้างกิจกรรม อปท. (Activity Template Catalog)
-        </button>
-        <button
-          onClick={() => setActiveSubTab('risk-desc')}
-          className={`pb-3 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-            activeSubTab === 'risk-desc'
-              ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
-          }`}
-        >
-          ตารางคำอธิบายความเสี่ยง 8 มิติ (ภาคผนวก 2)
-        </button>
-        <button
-          onClick={() => setActiveSubTab('criteria-guide')}
-          className={`pb-3 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-            activeSubTab === 'criteria-guide'
-              ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
-          }`}
-        >
-          คู่มือเกณฑ์ 22 ปัจจัยเสี่ยง (ภาคผนวก 4)
-        </button>
-        <button
-          onClick={() => setActiveSubTab('comparison')}
-          className={`pb-3 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-            activeSubTab === 'comparison'
-              ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
-          }`}
-        >
-          ตารางเปรียบเทียบ (ควบคุมภายใน VS ตรวจสอบภายใน)
-        </button>
-        <button
-          onClick={() => setActiveSubTab('report')}
-          className={`pb-3 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-            activeSubTab === 'report'
-              ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
-          }`}
-        >
-          แบบฟอร์มการประเมินความเสี่ยงพร้อมพิมพ์ (Official Form)
-        </button>
+      <div className="bg-slate-100/80 dark:bg-slate-900 p-1.5 rounded-xl border border-slate-200/80 dark:border-slate-800 flex space-x-1 overflow-x-auto text-xs font-bold scrollbar-none">
+        {[
+          { id: 'fangkham-matrix', label: 'ตารางกิจกรรมที่จะนำมาประเมินความเสี่ยง (อบต.ฝางคำ)' },
+          { id: 'ranking', label: 'การจัดลำดับคะแนน & คัดเลือกเข้าแผนประจำปี' },
+          { id: 'catalog', label: 'คลังโครงสร้างกิจกรรม อปท. (Activity Catalog)' },
+          { id: 'risk-desc', label: 'ตารางคำอธิบายความเสี่ยง 8 มิติ (ภาคผนวก 2)' },
+          { id: 'criteria-guide', label: 'คู่มือเกณฑ์ 22 ปัจจัยเสี่ยง (ภาคผนวก 4)' },
+          { id: 'comparison', label: 'ตารางเปรียบเทียบ (ควบคุมภายใน VS ตรวจสอบภายใน)' },
+          { id: 'report', label: 'แบบฟอร์มการประเมินความเสี่ยงพร้อมพิมพ์ (Official Form)' }
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveSubTab(tab.id)}
+            className={`px-3 py-2 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+              activeSubTab === tab.id
+                ? 'bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-300 shadow-xs font-bold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {/* =========================================================================
@@ -1387,7 +1337,7 @@ export default function AuditRiskView({
                 <option value="กองคลัง">กองคลัง</option>
                 <option value="กองช่าง">กองช่าง</option>
                 <option value="กองการศึกษา">กองการศึกษา</option>
-                <option value="กองสาธารณสุขและสิ่งแวดล้อม">กองสาธารณสุขและสิ่งแวดล้อม</option>
+                <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
                 <option value="กองยุทธศาสตร์และงบประมาณ">กองยุทธศาสตร์และงบประมาณ</option>
               </select>
 
@@ -1564,7 +1514,7 @@ export default function AuditRiskView({
             <div className="p-6 bg-slate-50/50 dark:bg-slate-950/50 border-t border-slate-200 dark:border-slate-800 flex justify-end">
               <div className="text-center text-xs space-y-2">
                 <div className="text-slate-400">ลงชื่อ............................................................</div>
-                <div className="font-bold text-slate-800 dark:text-slate-200">(นายศุภมงคล ธรรมพิทักษ์)</div>
+                <div className="font-bold text-slate-800 dark:text-slate-200">({orgProfile?.auditorName || 'หน่วยตรวจสอบภายใน'})</div>
                 <div className="text-slate-500">นักวิชาการตรวจสอบภายในปฏิบัติการ</div>
                 <div className="text-[10px] text-slate-400">ผู้ประเมินความเสี่ยง องค์การบริหารส่วนตำบลฝางคำ</div>
               </div>
@@ -2097,8 +2047,8 @@ export default function AuditRiskView({
             <div className="text-center text-xs space-y-4 pr-6">
               <div>ลงชื่อ....................................................................</div>
               <div>
-                <div className="font-bold">({orgProfile.auditorName || 'นายศุภมงคล ธรรมพิทักษ์'})</div>
-                <div className="text-slate-500">{orgProfile.auditorPosition || 'นักวิชาการตรวจสอบภายในปฏิบัติการ'}</div>
+                <div className="font-bold">({orgProfile?.auditorName || 'หน่วยตรวจสอบภายใน'})</div>
+                <div className="text-slate-500">{orgProfile?.auditorPosition || 'นักวิชาการตรวจสอบภายในปฏิบัติการ'}</div>
                 <div className="text-[10px] text-slate-400">ผู้ประเมินความเสี่ยง</div>
               </div>
             </div>
@@ -2136,7 +2086,7 @@ export default function AuditRiskView({
                   <option value="กองคลัง">กองคลัง</option>
                   <option value="กองช่าง">กองช่าง</option>
                   <option value="กองการศึกษา">กองการศึกษา</option>
-                  <option value="กองสาธารณสุขและสิ่งแวดล้อม">กองสาธารณสุขและสิ่งแวดล้อม</option>
+                  <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
                   <option value="กองยุทธศาสตร์และงบประมาณ">กองยุทธศาสตร์และงบประมาณ</option>
                 </select>
               </div>

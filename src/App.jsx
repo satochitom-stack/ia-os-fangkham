@@ -16,7 +16,6 @@ import ProfileSettingsModal from './components/ProfileSettingsModal';
 import AuditRiskView, { defaultAuditUniverse } from './components/AuditRiskView';
 import EngagementPlanView from './components/EngagementPlanView';
 import UserManagementView from './components/UserManagementView';
-import ChangelogModal from './components/ChangelogModal';
 import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
 import { getSession, logout as authLogout, switchSessionTo, autoRepairDataLinkages } from './utils/auth';
 
@@ -45,7 +44,6 @@ export default function App() {
   const [session, setSession] = useState(() => getSession());
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [showChangelog, setShowChangelog] = useState(false);
 
   // Dark Mode State (Default to false for warm white-blue theme)
   const [darkMode, setDarkMode] = useState(() => {
@@ -610,7 +608,6 @@ export default function App() {
         onOpenSettings={() => setShowSettings(true)}
         onOpenUsersManagement={() => setCurrentTab('users')}
         onOpenWelcome={() => setCurrentTab('welcome')}
-        onOpenChangelog={() => setShowChangelog(true)}
       />
 
       {/* Impersonate / Department Preview Banner (แสดงเฉพาะเมื่อ ADMIN กำลังกดทดสอบมุมมองเท่านั้น) */}
@@ -650,13 +647,6 @@ export default function App() {
           onExportBackup={handleExportBackup}
           onImportBackup={handleImportBackup}
           onClose={() => setShowSettings(false)}
-        />
-      )}
-
-      {showChangelog && (
-        <ChangelogModal
-          isOpen={showChangelog}
-          onClose={() => setShowChangelog(false)}
         />
       )}
 

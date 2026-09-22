@@ -33,26 +33,26 @@ export default function LpaView({
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-emerald-700 via-teal-800 to-slate-900 rounded-2xl p-6 text-white shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center space-x-2 bg-emerald-500/30 border border-emerald-400/30 rounded-full px-3 py-1 text-xs font-medium text-emerald-100 mb-2">
-            <Award className="w-3.5 h-3.5 text-emerald-300" />
+      <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-1.5">
+          <div className="inline-flex items-center space-x-2 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-900/60 rounded-full px-3 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+            <Award className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>Local Performance Assessment (LPA) ประจำปี พ.ศ. {selectedYear}</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
             การประเมินประสิทธิภาพ อปท. ด้านที่ 1 การบริหารจัดการ
           </h2>
-          <p className="text-xs sm:text-sm text-emerald-100/90 mt-1 max-w-2xl">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
             ระบบตรวจสอบความพร้อมเอกสารหลักฐานตัวชี้วัดที่ 1 - 5 เพื่อเตรียมรับการตรวจประเมินประสิทธิภาพของ อปท.
           </p>
         </div>
 
-        <div className="bg-white/10 dark:bg-slate-900 backdrop-blur-md rounded-xl p-4 border border-white/20 text-center shrink-0">
-          <div className="text-xs font-semibold text-emerald-200">คะแนนประเมินตนเอง</div>
-          <div className="text-3xl font-black text-white mt-1">
+        <div className="bg-emerald-50/70 dark:bg-emerald-950/40 rounded-xl p-4 border border-emerald-200/80 dark:border-emerald-900/50 text-center shrink-0">
+          <div className="text-xs font-bold text-emerald-800 dark:text-emerald-300">คะแนนประเมินตนเอง</div>
+          <div className="text-3xl font-black text-emerald-700 dark:text-emerald-300 mt-1">
             {totalScore} / {maxScore}
           </div>
-          <div className="text-[11px] font-bold text-emerald-300 mt-0.5">
+          <div className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
             ระดับยอดเยี่ยม (100%)
           </div>
         </div>

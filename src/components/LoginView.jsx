@@ -184,7 +184,11 @@ export default function LoginView({ onLogin }) {
                     >
                       <div className="flex items-center space-x-1">
                         <span>{isAdmin ? '👑' : '🏢'}</span>
-                        <span className="truncate font-bold">{u.displayName || u.username}</span>
+                        <span className="truncate font-bold">
+                          {isAdmin && (u.displayName === 'นายศุภมงคล ธรรมพิทักษ์' || !u.displayName || u.displayName === 'admin')
+                            ? 'หน่วยตรวจสอบฯ'
+                            : (u.displayName === 'กองสาธารณสุขและสิ่งแวดล้อม' ? 'กองสวัสดิการสังคม' : (u.displayName || u.username))}
+                        </span>
                       </div>
                       <div className="text-[10px] text-slate-400 font-mono mt-0.5">
                         @{u.username}

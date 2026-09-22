@@ -9,7 +9,7 @@ export const initialOrgProfile = {
   district: 'อำเภอสิรินธร',
   province: 'จังหวัดอุบลราชธานี',
   fiscalYear: '2569',
-  auditorName: 'นายศุภมงคล ธรรมพิทักษ์',
+  auditorName: 'หน่วยตรวจสอบภายใน',
   auditorPosition: 'นักวิชาการตรวจสอบภายในปฏิบัติการ',
   approverName: 'นายจรูญ ธรรมพิทักษ์',
   approverPosition: 'นายกองค์การบริหารส่วนตำบลฝางคำ',

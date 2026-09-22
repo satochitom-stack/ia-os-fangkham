@@ -13,8 +13,7 @@ import {
   UserCheck,
   Users,
   ShieldCheck,
-  Sparkles,
-  History
+  Sparkles
 } from 'lucide-react';
 
 export default function Header({
@@ -29,8 +28,7 @@ export default function Header({
   onChangePassword,
   onOpenSettings,
   onOpenUsersManagement,
-  onOpenWelcome,
-  onOpenChangelog
+  onOpenWelcome
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -199,17 +197,6 @@ export default function Header({
                   >
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>🌟 หน้าต้อนรับ (Welcome Page)</span>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setMenuOpen(false);
-                      if (onOpenChangelog) onOpenChangelog();
-                    }}
-                    className="w-full flex items-center space-x-2 px-3.5 py-2 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 cursor-pointer font-medium border-b border-slate-100 dark:border-slate-800"
-                  >
-                    <History className="w-3.5 h-3.5" />
-                    <span>ประวัติการปรับปรุงระบบ (v2.4.0)</span>
                   </button>
 
                   {isAdmin && (

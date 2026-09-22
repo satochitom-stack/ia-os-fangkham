@@ -20,16 +20,13 @@ import {
   ArrowRight,
   ExternalLink,
   Users,
-  ChevronDown,
-  History
+  ChevronDown
 } from 'lucide-react';
 import { SplineSceneBasic } from './ui/demo';
 import { verifyLogin, startSession, getUsers, getLastUsername, setLastUsername, getDepartments } from '../utils/auth';
-import ChangelogModal from './ChangelogModal';
 
 export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showChangelogModal, setShowChangelogModal] = useState(false);
   const [username, setUsername] = useState(() => getLastUsername());
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -166,16 +163,6 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
 
           {/* Action / Login CTA Button */}
           <div className="flex items-center space-x-2 sm:space-x-3">
-            <button
-              type="button"
-              onClick={() => setShowChangelogModal(true)}
-              title="ประวัติการปรับปรุงระบบ (Release Notes)"
-              className="px-3 py-1.5 rounded-full text-slate-300 hover:text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-500/30 border border-slate-800 transition-all cursor-pointer flex items-center space-x-1.5 text-xs font-medium"
-            >
-              <History className="w-3.5 h-3.5 text-cyan-400" />
-              <span className="hidden sm:inline">ประวัติอัปเดต</span>
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-cyan-950 text-cyan-300 border border-cyan-500/30">v2.4</span>
-            </button>
             {session ? (
               <button
                 type="button"
@@ -404,21 +391,11 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
           หน่วยตรวจสอบภายใน องค์การบริหารส่วนตำบลฝางคำ
         </p>
         <p>
-          อำเภอสิรินธร จังหวัดอุบลราชธานี | ผู้พัฒนา: นายศุภมงคล ธรรมพิทักษ์ (นักวิชาการตรวจสอบภายในปฏิบัติการ)
+          อำเภอสิรินธร จังหวัดอุบลราชธานี | พัฒนาและดูแลระบบโดย: หน่วยตรวจสอบภายใน องค์การบริหารส่วนตำบลฝางคำ
         </p>
         <p className="text-[10px] text-slate-400 pt-2">
           IA-OS: Internal Audit Operating System for Local Administrative Organizations
         </p>
-        <div className="pt-3">
-          <button
-            type="button"
-            onClick={() => setShowChangelogModal(true)}
-            className="inline-flex items-center space-x-1.5 text-slate-400 hover:text-cyan-300 text-xs font-medium transition-colors cursor-pointer bg-slate-950/80 hover:bg-slate-900 border border-slate-800/80 px-3.5 py-1.5 rounded-full shadow-xs"
-          >
-            <History className="w-3.5 h-3.5 text-cyan-400" />
-            <span>ประวัติการปรับปรุงระบบ (Release Notes v2.4.0 • อัปเดต 22 ก.ย. 2569)</span>
-          </button>
-        </div>
       </footer>
 
       {/* =========================================================================
@@ -551,12 +528,6 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
           </div>
         </div>
       )}
-
-      {/* CHANGELOG MODAL */}
-      <ChangelogModal
-        isOpen={showChangelogModal}
-        onClose={() => setShowChangelogModal(false)}
-      />
     </div>
   );
 }
