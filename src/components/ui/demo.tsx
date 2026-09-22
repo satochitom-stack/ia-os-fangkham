@@ -29,9 +29,8 @@ export function SplineSceneBasic({
   return (
     <Card className="w-full min-h-[540px] lg:h-[620px] bg-[#070b13] border border-white/[0.08] relative overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)] rounded-2xl sm:rounded-3xl">
       <Spotlight
-        className="-top-40 left-0 md:left-60 md:-top-20"
         fill="white"
-        size={280}
+        size={340}
       />
       
       <div className="flex flex-col md:flex-row h-full">
