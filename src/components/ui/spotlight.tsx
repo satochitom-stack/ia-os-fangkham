@@ -1,30 +1,22 @@
 'use client';
 import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { motion, useSpring, useTransform, SpringOptions } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 type SpotlightProps = {
   className?: string;
   size?: number;
   fill?: string;
-  springOptions?: SpringOptions;
 };
 
 export function Spotlight({
   className,
   size = 280,
   fill = "white",
-  springOptions = { damping: 25, stiffness: 850, mass: 0.08 },
 }: SpotlightProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
   const [parentElement, setParentElement] = useState<HTMLElement | null>(null);
-
-  const mouseX = useSpring(0, springOptions);
-  const mouseY = useSpring(0, springOptions);
-
-  const spotlightLeft = useTransform(mouseX, (x) => `${x - size / 2}px`);
-  const spotlightTop = useTransform(mouseY, (y) => `${y - size / 2}px`);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -41,10 +33,12 @@ export function Spotlight({
     (event: MouseEvent) => {
       if (!parentElement) return;
       const { left, top } = parentElement.getBoundingClientRect();
-      mouseX.set(event.clientX - left);
-      mouseY.set(event.clientY - top);
+      setPos({
+        x: event.clientX - left,
+        y: event.clientY - top,
+      });
     },
-    [mouseX, mouseY, parentElement]
+    [parentElement]
   );
 
   useEffect(() => {
@@ -64,18 +58,18 @@ export function Spotlight({
   }, [parentElement, handleMouseMove]);
 
   return (
-    <motion.div
+    <div
       ref={containerRef}
       className={cn(
-        'pointer-events-none absolute rounded-full blur-xl mix-blend-screen transition-opacity duration-150',
+        'pointer-events-none absolute rounded-full blur-xl mix-blend-screen transition-opacity duration-200 ease-out',
         isHovered ? 'opacity-100' : 'opacity-0',
         className
       )}
       style={{
         width: size,
         height: size,
-        left: spotlightLeft,
-        top: spotlightTop,
+        transform: `translate3d(${pos.x - size / 2}px, ${pos.y - size / 2}px, 0)`,
+        transition: 'transform 0.08s ease-out, opacity 0.2s ease',
         background: fill === "white"
           ? 'radial-gradient(circle at center, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.85) 15%, rgba(255, 255, 255, 0.45) 40%, rgba(255, 255, 255, 0.12) 65%, transparent 75%)'
           : `radial-gradient(circle at center, ${fill}, transparent 75%)`,
@@ -83,3 +77,4 @@ export function Spotlight({
     />
   );
 }
+
