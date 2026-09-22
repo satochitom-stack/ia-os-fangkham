@@ -1424,7 +1424,7 @@ export default function AuditRiskView({
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400">
-                <thead className="bg-slate-100/80 dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-800">
+                <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80">
                   <tr>
                     <th className="px-3 py-3 w-12 text-center">ที่</th>
                     <th className="px-4 py-3 min-w-[240px]">กิจกรรม</th>
@@ -1986,16 +1986,16 @@ export default function AuditRiskView({
               </p>
             </div>
 
-            <div className="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-xl">
+            <div className="overflow-x-auto border border-slate-200/80 dark:border-slate-800 rounded-2xl overflow-hidden">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-100 dark:bg-slate-950 font-bold text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-800">
+                <thead className="bg-slate-50/90 dark:bg-slate-800/80 font-bold text-slate-700 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700/80">
                   <tr>
                     <th className="p-3.5 w-1/4">ประเด็นเปรียบเทียบ</th>
-                    <th className="p-3.5 w-3/8 text-slate-700 dark:text-slate-300 bg-blue-50/40 dark:bg-blue-950/20">
+                    <th className="p-3.5 w-3/8 text-slate-700 dark:text-slate-200 bg-blue-50/50 dark:bg-blue-950/20">
                       1. การประเมินความเสี่ยงเพื่อจัดวางระบบการควบคุมภายใน<br />
                       <span className="text-[11px] font-normal text-slate-500">(ดำเนินการโดยฝ่ายบริหาร/หน่วยรับตรวจ)</span>
                     </th>
-                    <th className="p-3.5 w-3/8 text-slate-700 dark:text-slate-300 bg-indigo-50/40 dark:bg-indigo-950/20">
+                    <th className="p-3.5 w-3/8 text-slate-700 dark:text-slate-200 bg-indigo-50/50 dark:bg-indigo-950/20">
                       2. การประเมินความเสี่ยงเพื่อวางแผนการตรวจสอบภายใน<br />
                       <span className="text-[11px] font-normal text-slate-500">(ดำเนินการโดยผู้ตรวจสอบภายใน)</span>
                     </th>

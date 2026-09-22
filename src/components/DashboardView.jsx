@@ -45,8 +45,8 @@ export default function DashboardView({
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-slate-900 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-white/5 dark:bg-slate-900 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+      <div className="bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-900 rounded-2xl p-6 text-white shadow-md border border-blue-600/30 relative overflow-hidden">
+        <div className="absolute right-0 top-0 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center space-x-2 bg-blue-500/30 border border-blue-400/30 rounded-full px-3 py-1 text-xs font-medium text-blue-100 mb-2">
@@ -78,9 +78,9 @@ export default function DashboardView({
             )}
             <button
               onClick={() => setCurrentTab('execution')}
-              className="bg-white dark:bg-slate-900 text-blue-800 dark:text-blue-300 hover:bg-blue-50 px-3.5 py-2 rounded-xl text-xs font-bold shadow-md transition-all flex items-center space-x-1.5 cursor-pointer"
+              className="bg-white text-blue-800 hover:bg-blue-50 px-3.5 py-2 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center space-x-1.5 cursor-pointer"
             >
-              <ClipboardList className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <ClipboardList className="w-4 h-4 text-blue-600" />
               <span>เปิดกระดาษทำการ</span>
             </button>
             <button
@@ -214,19 +214,21 @@ export default function DashboardView({
           </div>
 
           {annualPlans.length === 0 ? (
-            <div className="text-center py-10 px-4 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl space-y-2">
-              <CalendarDays className="w-8 h-8 text-slate-400 mx-auto" />
-              <div className="text-sm font-bold text-slate-700 dark:text-slate-300">
+            <div className="text-center py-10 px-6 bg-slate-50/70 dark:bg-slate-800/40 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-blue-100/70 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto">
+                <CalendarDays className="w-6 h-6" />
+              </div>
+              <div className="text-sm font-bold text-slate-800 dark:text-slate-200">
                 ยังไม่มีโครงการในแผนประจำปี {selectedYear}
               </div>
-              <p className="text-xs text-slate-500 max-w-md mx-auto">
+              <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
                 เริ่มต้นเพิ่มโครงการตรวจสอบจริงของ อปท. ของท่าน เพื่อกำหนดงวดเวลา งบประมาณ และติดตามความก้าวหน้า
               </p>
               <button
                 onClick={() => setCurrentTab('planning')}
-                className="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 rounded-xl inline-flex items-center space-x-1.5 cursor-pointer shadow-xs"
+                className="mt-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl inline-flex items-center space-x-2 cursor-pointer shadow-md shadow-blue-500/20 transition-all"
               >
-                <Plus className="w-3.5 h-3.5" />
+                <Plus className="w-4 h-4" />
                 <span>เพิ่มโครงการตรวจสอบตามแผน</span>
               </button>
             </div>
@@ -238,14 +240,14 @@ export default function DashboardView({
                 return (
                   <div
                     key={plan.id}
-                    className="p-4 rounded-xl border border-slate-200/70 dark:border-slate-700 hover:border-blue-300 hover:bg-slate-50/50 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                    className="p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 hover:border-blue-300 hover:bg-blue-50/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                   >
                     <div className="space-y-1.5 flex-1">
                       <div className="flex items-center space-x-2">
-                        <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
+                        <span className="text-xs font-mono font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
                           {plan.id}
                         </span>
-                        <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                        <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
                           {plan.department}
                         </span>
                         <span
@@ -314,64 +316,88 @@ export default function DashboardView({
         {/* Right Col: Quick Working Papers & Reference Directives */}
         <div className="space-y-4">
           {/* Quick Access to Working Paper */}
-          <div className="bg-gradient-to-br from-slate-900 to-blue-950 text-white rounded-xl p-5 shadow-sm">
-            <div className="flex items-center space-x-2 text-xs font-semibold text-blue-300 mb-2">
-              <TrendingUp className="w-4 h-4 text-blue-400" />
-              <span>กระดาษทำการตรวจสอบมาตรฐาน ({workingPapers.length} เรื่อง)</span>
-            </div>
-            <h4 className="text-base font-bold text-white leading-tight">
-              {workingPapers[0]?.topic || 'ระบบตรวจสอบภายใน'}
-            </h4>
-            <p className="text-xs text-slate-300 mt-2 line-clamp-2">
-              พร้อมเกณฑ์ตรวจสอบตามระเบียบกระทรวงมหาดไทย ระบบสุ่มตรวจฎีกา และส่งออก Excel
-            </p>
-            <div className="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between">
-              <span className="text-xs text-blue-200">
-                {workingPapers[0]?.department}
-              </span>
-              <button
-                onClick={() => {
-                  setSelectedWp(workingPapers[0]?.id || 'WP-KTB-01');
-                  setCurrentTab('execution');
-                }}
-                className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
-              >
-                เปิดกระดาษทำการ
-              </button>
+          <div className="bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900 text-white rounded-2xl p-5 shadow-md border border-blue-600/30 relative overflow-hidden">
+            <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div className="relative z-10">
+              <div className="flex items-center space-x-2 text-xs font-semibold text-blue-200 mb-2">
+                <div className="w-6 h-6 rounded-lg bg-blue-500/40 flex items-center justify-center">
+                  <TrendingUp className="w-3.5 h-3.5 text-blue-200" />
+                </div>
+                <span>กระดาษทำการตรวจสอบมาตรฐาน ({workingPapers.length} เรื่อง)</span>
+              </div>
+              <h4 className="text-base font-bold text-white leading-tight">
+                {workingPapers[0]?.topic || 'ระบบตรวจสอบภายใน'}
+              </h4>
+              <p className="text-xs text-blue-100/80 mt-2 line-clamp-2 leading-relaxed">
+                พร้อมเกณฑ์ตรวจสอบตามระเบียบกระทรวงมหาดไทย ระบบสุ่มตรวจฎีกา และส่งออก Excel
+              </p>
+              <div className="mt-4 pt-4 border-t border-blue-600/40 flex items-center justify-between">
+                <span className="text-xs text-blue-200 font-medium">
+                  {workingPapers[0]?.department}
+                </span>
+                <button
+                  onClick={() => {
+                    setSelectedWp(workingPapers[0]?.id || 'WP-KTB-01');
+                    setCurrentTab('execution');
+                  }}
+                  className="bg-white hover:bg-blue-50 text-blue-900 text-xs font-bold px-3.5 py-1.5 rounded-xl shadow-xs transition-all cursor-pointer"
+                >
+                  เปิดกระดาษทำการ
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Key Directives Alert */}
-          <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/80 dark:border-slate-700 shadow-xs">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-xs">
             <div className="flex items-center space-x-2 text-xs font-bold text-slate-800 dark:text-slate-200 mb-3">
-              <FolderOpen className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <div className="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
+                <FolderOpen className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+              </div>
               <span>หนังสือสั่งการและระเบียบมาตรฐาน</span>
             </div>
             <div className="space-y-2.5">
               <div
                 onClick={() => setCurrentTab('knowledge')}
-                className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-blue-50/70 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-700 transition-colors cursor-pointer"
+                className="p-3 rounded-xl bg-slate-50/80 hover:bg-blue-50/70 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-slate-200/70 hover:border-blue-300 dark:border-slate-700 dark:hover:border-blue-500/40 transition-all shadow-2xs cursor-pointer group"
               >
-                <div className="text-xs font-bold text-slate-900 dark:text-slate-100">หนังสือ ว 119 (จัดงานประเพณี)</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
+                    หนังสือ ว 119 (จัดงานประเพณี)
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 transition-colors" />
+                </div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">
                   หลักเกณฑ์การเบิกจ่ายงานเทศกาลและประเพณีท้องถิ่น
                 </div>
               </div>
+
               <div
                 onClick={() => setCurrentTab('knowledge')}
-                className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-blue-50/70 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-700 transition-colors cursor-pointer"
+                className="p-3 rounded-xl bg-slate-50/80 hover:bg-blue-50/70 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-slate-200/70 hover:border-blue-300 dark:border-slate-700 dark:hover:border-blue-500/40 transition-all shadow-2xs cursor-pointer group"
               >
-                <div className="text-xs font-bold text-slate-900 dark:text-slate-100">หนังสือ ว 257 (หลักเกณฑ์ยืมเงิน)</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
+                    หนังสือ ว 257 (หลักเกณฑ์ยืมเงิน)
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 transition-colors" />
+                </div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">
                   กำหนดส่งใช้เงินยืมภายใน 30 วันนับแต่วันสิ้นสุดโครงการ
                 </div>
               </div>
+
               <div
                 onClick={() => setCurrentTab('knowledge')}
-                className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-blue-50/70 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-700 transition-colors cursor-pointer"
+                className="p-3 rounded-xl bg-slate-50/80 hover:bg-blue-50/70 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-slate-200/70 hover:border-blue-300 dark:border-slate-700 dark:hover:border-blue-500/40 transition-all shadow-2xs cursor-pointer group"
               >
-                <div className="text-xs font-bold text-slate-900 dark:text-slate-100">หนังสือ ว 11807 (เดินทางไปราชการ)</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
+                    หนังสือ ว 11807 (เดินทางไปราชการ)
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 transition-colors" />
+                </div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">
                   วิธีปฏิบัติการเบิกค่าเดินทางฉบับปรับปรุง พ.ย. 67
                 </div>
               </div>

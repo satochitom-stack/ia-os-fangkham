@@ -94,15 +94,15 @@ export default function InternalControlView({
       </div>
 
       {/* Tab Selector */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-700 pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
             onClick={() => setActiveTab('pk4')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'pk4'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-blue-50/60 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700'
             }`}
           >
             แบบ ปค.4: รายงานประเมินผลระดับกอง ({pk4List.length})
@@ -112,8 +112,8 @@ export default function InternalControlView({
             onClick={() => setActiveTab('pk5')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'pk5'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-blue-50/60 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700'
             }`}
           >
             แบบ ปค.5: รายงานติดตามการปรับปรุง ({pk5List.length})
@@ -123,8 +123,8 @@ export default function InternalControlView({
             onClick={() => setActiveTab('pk1')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'pk1'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-blue-50/60 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700'
             }`}
           >
             แบบ ปค.1: หนังสือรับรองระดับ อปท.
@@ -160,17 +160,17 @@ export default function InternalControlView({
             </div>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400">
-                <thead className="bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-700">
+                <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80">
                   <tr>
-                    <th className="px-4 py-3 w-40">ส่วนราชการ</th>
-                    <th className="px-4 py-3 w-56">กระบวนการปฏิบัติงานที่ประเมิน</th>
-                    <th className="px-4 py-3">ผลการประเมินการควบคุมภายใน</th>
-                    <th className="px-4 py-3 text-center w-28">ความเสี่ยงที่ยังมีอยู่</th>
-                    <th className="px-4 py-3">แผนการปรับปรุงการควบคุมภายใน</th>
-                    {setInternalControls && <th className="px-3 py-3 text-center w-16 no-print">จัดการ</th>}
+                    <th className="px-4 py-3.5 w-40">ส่วนราชการ</th>
+                    <th className="px-4 py-3.5 w-56">กระบวนการปฏิบัติงานที่ประเมิน</th>
+                    <th className="px-4 py-3.5">ผลการประเมินการควบคุมภายใน</th>
+                    <th className="px-4 py-3.5 text-center w-28">ความเสี่ยงที่ยังมีอยู่</th>
+                    <th className="px-4 py-3.5">แผนการปรับปรุงการควบคุมภายใน</th>
+                    {setInternalControls && <th className="px-3 py-3.5 text-center w-16 no-print">จัดการ</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -182,7 +182,7 @@ export default function InternalControlView({
                     </tr>
                   ) : (
                     pk4List.map((item, idx) => (
-                      <tr key={item.id || idx} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40">
+                      <tr key={item.id || idx} className="hover:bg-blue-50/40 dark:hover:bg-slate-800/50 transition-colors">
                         <td className="px-4 py-3 font-bold text-slate-900 dark:text-slate-100 align-top">
                           <span className="inline-flex items-center space-x-1.5">
                             <Building className="w-3.5 h-3.5 text-blue-500 shrink-0" />

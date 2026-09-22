@@ -186,24 +186,24 @@ export default function PlanningView({
             </button>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400">
-                <thead className="bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-700">
+                <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80">
                   <tr>
-                    <th className="px-4 py-3">รหัส</th>
-                    <th className="px-4 py-3">ชื่อเรื่อง / กิจกรรมที่ตรวจสอบ</th>
-                    <th className="px-4 py-3">หน่วยรับตรวจ</th>
-                    <th className="px-4 py-3">ระยะเวลาดำเนินการ</th>
-                    <th className="px-4 py-3 text-center">ระดับความเสี่ยง</th>
-                    <th className="px-4 py-3 text-right">งบประมาณ (บาท)</th>
-                    <th className="px-4 py-3 text-center">ความก้าวหน้า</th>
-                    <th className="px-4 py-3 text-center">สถานะ</th>
+                    <th className="px-4 py-3.5">รหัส</th>
+                    <th className="px-4 py-3.5">ชื่อเรื่อง / กิจกรรมที่ตรวจสอบ</th>
+                    <th className="px-4 py-3.5">หน่วยรับตรวจ</th>
+                    <th className="px-4 py-3.5">ระยะเวลาดำเนินการ</th>
+                    <th className="px-4 py-3.5 text-center">ระดับความเสี่ยง</th>
+                    <th className="px-4 py-3.5 text-right">งบประมาณ (บาท)</th>
+                    <th className="px-4 py-3.5 text-center">ความก้าวหน้า</th>
+                    <th className="px-4 py-3.5 text-center">สถานะ</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {annualPlans.map((p) => (
-                    <tr key={p.id} className="hover:bg-slate-50/70">
+                    <tr key={p.id} className="hover:bg-blue-50/40 dark:hover:bg-slate-800/50 transition-colors">
                       <td className="px-4 py-3 font-mono font-bold text-slate-800 dark:text-slate-200">{p.id}</td>
                       <td className="px-4 py-3 font-semibold text-slate-900 dark:text-slate-100 max-w-xs">{p.title}</td>
                       <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{p.department}</td>

@@ -321,9 +321,9 @@ export default function EngagementPlanView({
           </div>
 
           {/* Table of Engagement Plans */}
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-xs">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-800">
+              <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80 text-xs">
                 <tr>
                   <th className="py-3.5 px-4 w-32">รหัสแผน</th>
                   <th className="py-3.5 px-4">ชื่อเรื่อง / กิจกรรมตรวจสอบ</th>
@@ -345,7 +345,7 @@ export default function EngagementPlanView({
                   filteredPlans.map((plan) => (
                     <tr
                       key={plan.id}
-                      className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors cursor-pointer"
+                      className="hover:bg-blue-50/40 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
                       onClick={() => {
                         setSelectedPlanId(plan.id);
                         setActiveTab('detail');
@@ -793,9 +793,9 @@ export default function EngagementPlanView({
               </span>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto border border-slate-200/80 dark:border-slate-800 rounded-2xl overflow-hidden">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-100/70 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-800">
+                <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80">
                   <tr>
                     <th className="py-3 px-3 w-16 text-center">ขั้นที่</th>
                     <th className="py-3 px-4 w-52">หัวข้อการตรวจสอบ</th>
@@ -807,7 +807,7 @@ export default function EngagementPlanView({
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {selectedPlan.auditProgram?.map((item) => (
-                    <tr key={item.step} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+                    <tr key={item.step} className="hover:bg-blue-50/40 dark:hover:bg-slate-800/50 transition-colors">
                       <td className="py-3 px-3 text-center font-bold text-slate-700 dark:text-slate-300">
                         {item.step}
                       </td>

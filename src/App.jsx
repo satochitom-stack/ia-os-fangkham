@@ -47,6 +47,12 @@ export default function App() {
 
   // Dark Mode State (Default to false for warm white-blue theme)
   const [darkMode, setDarkMode] = useState(() => {
+    // Migration: ensure user resets to the new warm white-blue theme by default
+    if (localStorage.getItem('ia_theme_white_blue_v2') !== '1') {
+      localStorage.setItem('ia_theme_white_blue_v2', '1');
+      localStorage.setItem('ia_dark_mode', '0');
+      return false;
+    }
     const saved = localStorage.getItem('ia_dark_mode');
     if (saved !== null) return saved === '1';
     return false;

@@ -291,7 +291,7 @@ export default function ExecutionView({
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400">
-            <thead className="bg-slate-100/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-700">
+            <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80">
               <tr>
                 <th className="px-4 py-2.5">ลำดับ</th>
                 <th className="px-4 py-2.5">{docNoLabel}</th>
@@ -304,7 +304,7 @@ export default function ExecutionView({
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {currentWp.samples?.map((s, idx) => (
-                <tr key={s.id} className="hover:bg-slate-50/60">
+                <tr key={s.id} className="hover:bg-blue-50/40 dark:hover:bg-slate-800/50 transition-colors">
                   <td className="px-4 py-2.5 font-bold text-slate-400 dark:text-slate-500">{idx + 1}</td>
                   <td className="px-4 py-2.5 font-mono font-bold text-slate-900 dark:text-slate-100">{s.docNo}</td>
                   <td className="px-4 py-2.5">{s.date}</td>
