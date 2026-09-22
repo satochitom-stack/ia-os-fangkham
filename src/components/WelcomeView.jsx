@@ -22,7 +22,7 @@ import {
   Users,
   ChevronDown
 } from 'lucide-react';
-import { SplineSceneBasic } from './ui/demo';
+import Html from './ui/hero-futuristic';
 import { verifyLogin, startSession, getUsers, getLastUsername, setLastUsername, getDepartments } from '../utils/auth';
 
 export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
@@ -187,17 +187,16 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
         </header>
       </div>
 
-      {/* 2. Interactive 3D Spline Scene Hero */}
-      <section className="relative w-full pt-24 sm:pt-28 pb-10 px-3 sm:px-6 max-w-7xl mx-auto flex items-center min-h-[90vh]">
-        <SplineSceneBasic
-          badge="IA-OS 24/7 Engine • 6 Departments Linked"
-          kicker="INTERNAL AUDIT OPERATING SYSTEM"
-          title="IA-OS Fang Kham"
-          subtitle="ระบบปฏิบัติการตรวจสอบภายใน องค์การบริหารส่วนตำบลฝางคำ"
+      {/* 2. Futuristic Hero Canvas */}
+      <section className="relative w-full h-svh">
+        <Html
+          badge="⚡ INTERNAL AUDIT OPERATING SYSTEM • อบต.ฝางคำ"
+          title="IA-OS FANG KHAM"
+          subtitle="ระบบปฏิบัติการตรวจสอบภายในยุคดิจิทัล องค์การบริหารส่วนตำบลฝางคำ"
+          subtext="วิเคราะห์ความเสี่ยง SOFCK • แผนปฏิบัติการ ว 614 • การควบคุมภายใน ปอ.1-ปค.5"
           buttonText="สำรวจระบบงาน"
+          buttonSubtext="SCROLL TO EXPLORE"
           onExplore={scrollToExplore}
-          onLogin={scrollToLogin}
-          session={session}
         />
       </section>
 
