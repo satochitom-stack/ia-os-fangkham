@@ -243,6 +243,14 @@ export function autoRepairDataLinkages() {
         u.permissions = Array.from(set);
         usersChanged = true;
       }
+
+      // 5. Ensure admin has audit-toolkits permission
+      if (u.role === 'admin' || u.username === 'admin') {
+        if (!u.permissions?.includes('audit-toolkits')) {
+          u.permissions = [...(u.permissions || []), 'audit-toolkits'];
+          usersChanged = true;
+        }
+      }
     });
 
     cascadeDepartmentRenameToStorage('กองสาธารณสุขและสิ่งแวดล้อม', 'กองสวัสดิการสังคม');
@@ -385,6 +393,7 @@ export const ALL_MENU_IDS = [
   { id: 'planning', label: 'แผน & นโยบายตรวจ', icon: 'FileText', desc: 'แผนการตรวจสอบประจำปีและกฎบัตร' },
   { id: 'engagement-plan', label: 'แผนปฏิบัติงานตรวจ (ว 614)', icon: 'Sparkles', desc: 'แผนปฏิบัติงานรายกิจกรรมและแนวการตรวจด้วย AI' },
   { id: 'execution', label: 'ปฏิบัติการตรวจ & กระดาษทำการ', icon: 'ClipboardCheck', desc: 'ลงมือตรวจจริง สุ่มตรวจ และบันทึกกระดาษทำการ' },
+  { id: 'audit-toolkits', label: 'เครื่องมือช่วยตรวจเชิงเทคนิค (ปี 70)', icon: 'Wrench', desc: 'เครื่องมือคำนวณราคากลาง Factor F, ค่าปรับ, ค่าธรรมเนียมอาคาร และข้อบัญญัติ' },
   { id: 'reporting', label: 'รายงาน & ติดตามผล', icon: 'FileSpreadsheet', desc: 'รายงานผลการตรวจสอบและติดตามข้อเสนอแนะ' },
   { id: 'internal-control', label: 'การควบคุมภายใน', icon: 'ShieldCheck', desc: 'บันทึกแบบ ปค.1, ปค.4, ปค.5 ตามหลักเกณฑ์ กค. พ.ศ. 2561 ของแต่ละกอง' },
   { id: 'risk-management', label: 'การบริหารความเสี่ยง', icon: 'AlertTriangle', desc: 'บันทึกแบบ บส.1 - บส.5 และ Matrix ระดับความเสี่ยง 5x5 ของแต่ละกอง' },

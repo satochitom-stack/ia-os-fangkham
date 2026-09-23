@@ -13,7 +13,8 @@ import {
   ChevronRight,
   Plus,
   Settings,
-  UserCheck
+  UserCheck,
+  Wrench
 } from 'lucide-react';
 
 export default function DashboardView({
@@ -343,6 +344,34 @@ export default function DashboardView({
                   className="bg-white hover:bg-blue-50 text-blue-900 text-xs font-bold px-3.5 py-1.5 rounded-xl shadow-xs transition-all cursor-pointer"
                 >
                   เปิดกระดาษทำการ
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Access to Technical Audit Toolkits */}
+          <div className="bg-gradient-to-br from-indigo-700 via-blue-800 to-slate-900 text-white rounded-2xl p-5 shadow-md border border-indigo-500/30 relative overflow-hidden">
+            <div className="relative z-10 space-y-2">
+              <div className="flex items-center space-x-2 text-xs font-semibold text-indigo-200">
+                <Wrench className="w-3.5 h-3.5 text-amber-300" />
+                <span>เสาหลักที่ 2: เครื่องมือช่วยตรวจเชิงเทคนิค</span>
+              </div>
+              <h4 className="text-sm font-bold text-white leading-tight">
+                เครื่องมือคำนวณราคากลาง & ค่าปรับจัดซื้อจัดจ้าง
+              </h4>
+              <p className="text-[11px] text-indigo-100/80 leading-relaxed">
+                4 โมดูลเฉพาะทางสำหรับปี 2570: Factor F, ค่าปรับ, ข้อบัญญัติ, และค่าธรรมเนียมอาคาร
+              </p>
+              <div className="pt-2 flex items-center justify-between">
+                <span className="text-[10px] bg-indigo-500/40 text-indigo-200 px-2 py-0.5 rounded-full font-bold">
+                  4 เครื่องมือพร้อมใช้
+                </span>
+                <button
+                  onClick={() => setCurrentTab('audit-toolkits')}
+                  className="bg-white hover:bg-indigo-50 text-indigo-900 text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs transition-all cursor-pointer flex items-center space-x-1"
+                >
+                  <span>เปิดเครื่องมือ</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>

@@ -16,6 +16,7 @@ import ProfileSettingsModal from './components/ProfileSettingsModal';
 import AuditRiskView, { defaultAuditUniverse } from './components/AuditRiskView';
 import EngagementPlanView from './components/EngagementPlanView';
 import UserManagementView from './components/UserManagementView';
+import TechnicalToolkitsView from './components/TechnicalToolkitsView';
 import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
 import { getSession, logout as authLogout, switchSessionTo, autoRepairDataLinkages } from './utils/auth';
 
@@ -97,6 +98,7 @@ export default function App() {
   const [selectedYear, setSelectedYear] = useState('2569');
   const [currentTab, setCurrentTab] = useState('welcome');
   const [selectedWp, setSelectedWp] = useState('WP-KTB-01');
+  const [activeToolkitTab, setActiveToolkitTab] = useState('factor-f');
 
   // Persistent States - Cleaned of D:\ sample data and synced with real Fang Kham profile
   const [orgProfile, setOrgProfile] = useState(() => {
@@ -651,7 +653,14 @@ export default function App() {
       )}
 
       <div className="flex-1 flex overflow-hidden">
-        <Sidebar currentTab={currentTab} setCurrentTab={setCurrentTab} session={session} planCount={annualPlans.length} />
+        <Sidebar
+          currentTab={currentTab}
+          setCurrentTab={setCurrentTab}
+          session={session}
+          planCount={annualPlans.length}
+          activeToolkitTab={activeToolkitTab}
+          setActiveToolkitTab={setActiveToolkitTab}
+        />
 
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50/70 dark:bg-slate-950">
           <div className="max-w-7xl mx-auto">
@@ -717,6 +726,18 @@ export default function App() {
                 selectedWp={selectedWp}
                 setSelectedWp={setSelectedWp}
                 orgProfile={orgProfile}
+              />
+            )}
+
+            {currentTab === 'audit-toolkits' && (
+              <TechnicalToolkitsView
+                key={`toolkits-${selectedYear}`}
+                selectedYear={selectedYear}
+                workingPapers={workingPapers}
+                setWorkingPapers={setWorkingPapers}
+                setSelectedWp={setSelectedWp}
+                setCurrentTab={setCurrentTab}
+                initialTool={activeToolkitTab}
               />
             )}
 
