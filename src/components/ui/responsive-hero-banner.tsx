@@ -245,32 +245,6 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             ))}
           </nav>
 
-          {/* Right: CTA Button */}
-          <div className="hidden sm:flex items-center">
-            <button
-              type="button"
-              onClick={onCtaClick}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-bold text-xs sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 shadow-md shadow-blue-600/25 hover:shadow-lg hover:shadow-blue-600/35 hover:scale-[1.03] active:scale-[0.98] transition-all cursor-pointer group"
-            >
-              <span>{session ? "ไปยังแดชบอร์ดงาน" : ctaButtonText}</span>
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                width="16" 
-                height="16" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2.5" 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                className="h-3.5 w-3.5 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
-              >
-                <path d="M7 7h10v10" />
-                <path d="M7 17 17 7" />
-              </svg>
-            </button>
-          </div>
-
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -301,22 +275,12 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
                 {link.label}
               </a>
             ))}
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                if (onCtaClick) onCtaClick();
-              }}
-              className="w-full mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-md"
-            >
-              <span>{session ? "ไปยังแดชบอร์ดงาน" : ctaButtonText}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
           </div>
         )}
       </header>
 
-      {/* 4. Hero Center Body (Title, Badge, CTA Buttons) */}
-      <div className="z-10 relative my-auto py-8 sm:py-12 lg:py-14 px-6">
+      {/* 4. Hero Center Body (Title & Welcome Badge) */}
+      <div className="z-10 relative my-auto py-10 sm:py-16 lg:py-20 px-6">
         <div className="max-w-5xl mx-auto text-center">
           {/* Frosted Glass Welcome Badge */}
           <div className="mb-6 sm:mb-8 inline-flex items-center gap-2 sm:gap-2.5 rounded-full bg-white/90 px-3.5 sm:px-4 py-1.5 border border-blue-200/80 shadow-xs backdrop-blur-md animate-fade-slide-in-1 hover:border-blue-300 transition-all">
@@ -330,7 +294,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
           </div>
 
           {/* Main Title - Majestic, executive scale with perfect hierarchy */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4rem] font-black text-slate-900 tracking-tight leading-[1.14] animate-fade-slide-in-2 font-['Prompt',sans-serif]">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4.25rem] font-black text-slate-900 tracking-tight leading-[1.14] animate-fade-slide-in-2 font-['Prompt',sans-serif]">
             <span className="block drop-shadow-xs">
               {title}
             </span>
@@ -345,13 +309,18 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
               {description}
             </p>
           )}
+        </div>
+      </div>
 
-          {/* Dual Action Buttons */}
-          <div className="flex flex-col sm:flex-row mt-8 sm:mt-10 lg:mt-12 gap-3.5 sm:gap-4 items-center justify-center animate-fade-slide-in-3">
+      {/* 5. Bottom Action Buttons & Connected Departments */}
+      <div className="z-10 relative pb-7 sm:pb-8 px-6">
+        <div className="max-w-5xl mx-auto">
+          {/* Dual Action Buttons positioned directly above partners section */}
+          <div className="flex flex-col sm:flex-row mb-6 sm:mb-8 gap-3 sm:gap-4 items-center justify-center animate-fade-slide-in-3">
             <button
               type="button"
               onClick={onPrimaryClick}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold text-sm sm:text-base py-3.5 sm:py-4 px-8 sm:px-9 shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold text-sm sm:text-base py-3 sm:py-3.5 px-8 sm:px-9 shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
             >
               <span>⚡</span>
               <span>{session ? "เปิดแดชบอร์ดงานตรวจสอบ" : primaryButtonText}</span>
@@ -361,18 +330,14 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             <button
               type="button"
               onClick={onSecondaryClick}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white/95 hover:bg-white text-slate-700 hover:text-blue-700 font-bold text-sm sm:text-base py-3.5 sm:py-4 px-7 sm:px-8 border border-slate-200/90 shadow-xs hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white/95 hover:bg-white text-slate-700 hover:text-blue-700 font-bold text-sm sm:text-base py-3 sm:py-3.5 px-7 sm:px-8 border border-slate-200/90 shadow-xs hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer"
             >
               <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 fill-blue-600" />
               <span>{secondaryButtonText}</span>
             </button>
           </div>
-        </div>
-      </div>
 
-      {/* 5. Bottom Connected Departments (6 หน่วยรับตรวจ) */}
-      <div className="z-10 relative pb-7 sm:pb-8 px-6">
-        <div className="max-w-5xl mx-auto pt-5 border-t border-slate-200/80">
+          <div className="pt-4 sm:pt-5 border-t border-slate-200/80">
           <p className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center animate-fade-slide-in-1">
             {partnersTitle}
           </p>
@@ -404,7 +369,8 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
   );
 };
 
