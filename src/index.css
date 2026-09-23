@@ -95,7 +95,7 @@ html.dark body {
 .animate-draw-beam {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-  animation: drawBeam 1.4s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+  animation: drawBeam 2.8s cubic-bezier(0.25, 0.9, 0.3, 1) forwards;
 }
 
 .animate-beam-pulse {

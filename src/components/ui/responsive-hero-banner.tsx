@@ -95,7 +95,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/95 via-white/80 to-blue-50/70" />
       <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-blue-900/5 rounded-3xl sm:rounded-[2.5rem]" />
 
-      {/* 2. Dynamic Electric Royal Blue & Cyan Cutting Light Beam (เส้นแสงโค้งผ่าน ภายใน และ ฝางคำ พร้อมเอฟเฟกลากลงมาจากด้านบน) */}
+      {/* 2. Dynamic Electric Royal Blue & Cyan Cutting Light Beam (เส้นแสงโค้งตามรูปวาด ผ่าน ภายใน และ ฝางคำ) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
         <svg 
           viewBox="0 0 1440 900" 
@@ -105,20 +105,20 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
           preserveAspectRatio="none"
         >
           <defs>
-            {/* Main beam gradient from top to bottom */}
-            <linearGradient id="beamGradient" x1="780" y1="-20" x2="1260" y2="920" gradientUnits="userSpaceOnUse">
+            {/* Main beam gradient flowing along path from top-left to bottom-right */}
+            <linearGradient id="beamGradient" x1="450" y1="-10" x2="1220" y2="920" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="#0284c7" stopOpacity="0" />
-              <stop offset="15%" stopColor="#0284c7" stopOpacity="0.85" />
-              <stop offset="45%" stopColor="#0ea5e9" stopOpacity="1" />
+              <stop offset="12%" stopColor="#0284c7" stopOpacity="0.85" />
+              <stop offset="42%" stopColor="#0ea5e9" stopOpacity="1" />
               <stop offset="65%" stopColor="#38bdf8" stopOpacity="0.95" />
-              <stop offset="90%" stopColor="#2563eb" stopOpacity="0.8" />
+              <stop offset="88%" stopColor="#2563eb" stopOpacity="0.8" />
               <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
             </linearGradient>
 
             {/* Core laser white-cyan hot gradient */}
-            <linearGradient id="coreGradient" x1="780" y1="-20" x2="1260" y2="920" gradientUnits="userSpaceOnUse">
+            <linearGradient id="coreGradient" x1="450" y1="-10" x2="1220" y2="920" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="#38bdf8" stopOpacity="0" />
-              <stop offset="20%" stopColor="#bae6fd" stopOpacity="0.9" />
+              <stop offset="18%" stopColor="#bae6fd" stopOpacity="0.9" />
               <stop offset="45%" stopColor="#ffffff" stopOpacity="1" />
               <stop offset="70%" stopColor="#e0f2fe" stopOpacity="0.95" />
               <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
@@ -143,16 +143,16 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             </filter>
           </defs>
 
-          {/* Soft radiant aura behind text intersection */}
-          <circle cx="935" cy="370" r="130" fill="url(#textBacklight)" />
-          <circle cx="985" cy="440" r="120" fill="url(#textBacklight)" />
+          {/* Soft radiant aura behind text intersection at ภายใน and ฝางคำ */}
+          <circle cx="890" cy="350" r="140" fill="url(#textBacklight)" />
+          <circle cx="990" cy="460" r="140" fill="url(#textBacklight)" />
 
-          {/* Sweeping curve passing through 'ภายใน' (935, 370) and 'ฝางคำ' (980, 440) */}
+          {/* Sweeping curve matching user drawing: Starts top-left (450, -10), arcs through 'ภายใน' (890, 350) and 'ฝางคำ' (990, 460), exiting bottom-right (1220, 920) */}
           {/* Layer 1: Wide atmospheric blue dispersion aura */}
           <path 
-            d="M 780 -20 C 830 140, 895 250, 935 370 C 970 440, 1000 500, 1040 570 C 1100 680, 1170 790, 1260 920" 
+            d="M 450 -10 C 580 110, 760 240, 890 350 C 930 385, 960 420, 990 460 C 1060 560, 1140 720, 1220 920" 
             stroke="#0284c7" 
-            strokeWidth="92" 
+            strokeWidth="94" 
             strokeOpacity="0.22"
             filter="url(#glowWide)"
             pathLength="1000"
@@ -161,9 +161,9 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
 
           {/* Layer 2: Medium vibrant cyan/royal beam body */}
           <path 
-            d="M 780 -20 C 830 140, 895 250, 935 370 C 970 440, 1000 500, 1040 570 C 1100 680, 1170 790, 1260 920" 
+            d="M 450 -10 C 580 110, 760 240, 890 350 C 930 385, 960 420, 990 460 C 1060 560, 1140 720, 1220 920" 
             stroke="url(#beamGradient)" 
-            strokeWidth="24" 
+            strokeWidth="25" 
             strokeOpacity="0.82"
             filter="url(#glowMed)"
             pathLength="1000"
@@ -172,9 +172,9 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
 
           {/* Layer 3: Neon electric line */}
           <path 
-            d="M 780 -20 C 830 140, 895 250, 935 370 C 970 440, 1000 500, 1040 570 C 1100 680, 1170 790, 1260 920" 
+            d="M 450 -10 C 580 110, 760 240, 890 350 C 930 385, 960 420, 990 460 C 1060 560, 1140 720, 1220 920" 
             stroke="url(#beamGradient)" 
-            strokeWidth="8" 
+            strokeWidth="8.5" 
             strokeOpacity="0.95"
             filter="url(#glowSharp)"
             pathLength="1000"
@@ -183,9 +183,9 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
 
           {/* Layer 4: Razor-sharp white-hot laser core */}
           <path 
-            d="M 780 -20 C 830 140, 895 250, 935 370 C 970 440, 1000 500, 1040 570 C 1100 680, 1170 790, 1260 920" 
+            d="M 450 -10 C 580 110, 760 240, 890 350 C 930 385, 960 420, 990 460 C 1060 560, 1140 720, 1220 920" 
             stroke="url(#coreGradient)" 
-            strokeWidth="3" 
+            strokeWidth="3.2" 
             strokeOpacity="1"
             pathLength="1000"
             className="animate-draw-beam"
