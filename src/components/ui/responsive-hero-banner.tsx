@@ -95,90 +95,101 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/95 via-white/80 to-blue-50/70" />
       <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-blue-900/5 rounded-3xl sm:rounded-[2.5rem]" />
 
-      {/* 2. Dynamic Electric Royal Blue & Cyan Cutting Light Beam (เส้นแสงที่ตัดลงมาสีฟ้า) */}
+      {/* 2. Dynamic Electric Royal Blue & Cyan Cutting Light Beam (เส้นแสงโค้งผ่าน ภายใน และ ฝางคำ พร้อมเอฟเฟกลากลงมาจากด้านบน) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
         <svg 
           viewBox="0 0 1440 900" 
           fill="none" 
           xmlns="http://www.w3.org/2000/svg" 
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover animate-beam-pulse"
           preserveAspectRatio="none"
         >
           <defs>
-            {/* Main beam gradient */}
-            <linearGradient id="beamGradient" x1="1260" y1="920" x2="160" y2="100" gradientUnits="userSpaceOnUse">
+            {/* Main beam gradient from top to bottom */}
+            <linearGradient id="beamGradient" x1="780" y1="-20" x2="1260" y2="920" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="#0284c7" stopOpacity="0" />
-              <stop offset="25%" stopColor="#0284c7" stopOpacity="0.85" />
-              <stop offset="50%" stopColor="#0ea5e9" stopOpacity="1" />
-              <stop offset="75%" stopColor="#38bdf8" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#2563eb" stopOpacity="0" />
+              <stop offset="15%" stopColor="#0284c7" stopOpacity="0.85" />
+              <stop offset="45%" stopColor="#0ea5e9" stopOpacity="1" />
+              <stop offset="65%" stopColor="#38bdf8" stopOpacity="0.95" />
+              <stop offset="90%" stopColor="#2563eb" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
             </linearGradient>
 
             {/* Core laser white-cyan hot gradient */}
-            <linearGradient id="coreGradient" x1="1260" y1="920" x2="160" y2="100" gradientUnits="userSpaceOnUse">
+            <linearGradient id="coreGradient" x1="780" y1="-20" x2="1260" y2="920" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="#38bdf8" stopOpacity="0" />
-              <stop offset="25%" stopColor="#bae6fd" stopOpacity="0.95" />
-              <stop offset="50%" stopColor="#ffffff" stopOpacity="1" />
-              <stop offset="75%" stopColor="#e0f2fe" stopOpacity="0.9" />
+              <stop offset="20%" stopColor="#bae6fd" stopOpacity="0.9" />
+              <stop offset="45%" stopColor="#ffffff" stopOpacity="1" />
+              <stop offset="70%" stopColor="#e0f2fe" stopOpacity="0.95" />
               <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
             </linearGradient>
 
-            {/* Radiant lens glow */}
-            <radialGradient id="focalGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.5" />
-              <stop offset="40%" stopColor="#0284c7" stopOpacity="0.18" />
+            {/* Radiant lens glow around ภายใน and ฝางคำ */}
+            <radialGradient id="textBacklight" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.32" />
+              <stop offset="50%" stopColor="#0284c7" stopOpacity="0.1" />
               <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
             </radialGradient>
 
             {/* Laser blur filters */}
             <filter id="glowWide" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="32" result="blurWide" />
+              <feGaussianBlur stdDeviation="34" result="blurWide" />
             </filter>
             <filter id="glowMed" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="10" result="blurMed" />
+              <feGaussianBlur stdDeviation="12" result="blurMed" />
             </filter>
             <filter id="glowSharp" x="-20%" y="-20%" width="140%" height="140%">
               <feGaussianBlur stdDeviation="2.5" result="blurSharp" />
             </filter>
           </defs>
 
+          {/* Soft radiant aura behind text intersection */}
+          <circle cx="935" cy="370" r="130" fill="url(#textBacklight)" />
+          <circle cx="985" cy="440" r="120" fill="url(#textBacklight)" />
+
+          {/* Sweeping curve passing through 'ภายใน' (935, 370) and 'ฝางคำ' (980, 440) */}
           {/* Layer 1: Wide atmospheric blue dispersion aura */}
           <path 
-            d="M 1260 920 C 1040 680, 680 340, 160 100" 
+            d="M 780 -20 C 830 140, 895 250, 935 370 C 970 440, 1000 500, 1040 570 C 1100 680, 1170 790, 1260 920" 
             stroke="#0284c7" 
-            strokeWidth="96" 
-            strokeOpacity="0.25"
+            strokeWidth="92" 
+            strokeOpacity="0.22"
             filter="url(#glowWide)"
+            pathLength="1000"
+            className="animate-draw-beam"
           />
 
           {/* Layer 2: Medium vibrant cyan/royal beam body */}
           <path 
-            d="M 1260 920 C 1040 680, 680 340, 160 100" 
+            d="M 780 -20 C 830 140, 895 250, 935 370 C 970 440, 1000 500, 1040 570 C 1100 680, 1170 790, 1260 920" 
             stroke="url(#beamGradient)" 
-            strokeWidth="26" 
-            strokeOpacity="0.85"
+            strokeWidth="24" 
+            strokeOpacity="0.82"
             filter="url(#glowMed)"
+            pathLength="1000"
+            className="animate-draw-beam"
           />
 
           {/* Layer 3: Neon electric line */}
           <path 
-            d="M 1260 920 C 1040 680, 680 340, 160 100" 
+            d="M 780 -20 C 830 140, 895 250, 935 370 C 970 440, 1000 500, 1040 570 C 1100 680, 1170 790, 1260 920" 
             stroke="url(#beamGradient)" 
-            strokeWidth="9" 
+            strokeWidth="8" 
             strokeOpacity="0.95"
             filter="url(#glowSharp)"
+            pathLength="1000"
+            className="animate-draw-beam"
           />
 
           {/* Layer 4: Razor-sharp white-hot laser core */}
           <path 
-            d="M 1260 920 C 1040 680, 680 340, 160 100" 
+            d="M 780 -20 C 830 140, 895 250, 935 370 C 970 440, 1000 500, 1040 570 C 1100 680, 1170 790, 1260 920" 
             stroke="url(#coreGradient)" 
             strokeWidth="3" 
             strokeOpacity="1"
+            pathLength="1000"
+            className="animate-draw-beam"
           />
-
-          {/* Focal radiant glare on the beam intersection */}
-          <circle cx="940" cy="580" r="160" fill="url(#focalGlow)" />
         </svg>
       </div>
 

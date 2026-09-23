@@ -69,4 +69,38 @@ html.dark body {
   opacity: 0;
 }
 
+@keyframes drawBeam {
+  0% {
+    stroke-dashoffset: 1000;
+    opacity: 0.1;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes beamGlowPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6)) drop-shadow(0 0 22px rgba(2, 132, 199, 0.35));
+  }
+  50% {
+    filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.95)) drop-shadow(0 0 38px rgba(2, 132, 199, 0.6));
+  }
+}
+
+.animate-draw-beam {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawBeam 1.4s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+}
+
+.animate-beam-pulse {
+  animation: beamGlowPulse 3.5s ease-in-out infinite;
+}
+
+
 
