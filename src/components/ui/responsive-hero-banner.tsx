@@ -105,54 +105,56 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
           preserveAspectRatio="none"
         >
           <defs>
-            {/* Main beam gradient flowing along path from top-left to bottom-right */}
-            <linearGradient id="beamGradient" x1="430" y1="-20" x2="1260" y2="920" gradientUnits="userSpaceOnUse">
+            {/* Main beam gradient flowing along path from top-left (low slope) to bottom-right (deep plunge) */}
+            <linearGradient id="beamGradient" x1="-50" y1="140" x2="1420" y2="940" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="#0284c7" stopOpacity="0" />
-              <stop offset="12%" stopColor="#0284c7" stopOpacity="0.85" />
-              <stop offset="42%" stopColor="#0ea5e9" stopOpacity="1" />
-              <stop offset="65%" stopColor="#38bdf8" stopOpacity="0.95" />
-              <stop offset="88%" stopColor="#2563eb" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
+              <stop offset="8%" stopColor="#0284c7" stopOpacity="0.4" />
+              <stop offset="35%" stopColor="#0ea5e9" stopOpacity="0.85" />
+              <stop offset="58%" stopColor="#38bdf8" stopOpacity="1" />
+              <stop offset="78%" stopColor="#2563eb" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#0284c7" stopOpacity="0.1" />
             </linearGradient>
 
             {/* Core laser white-cyan hot gradient */}
-            <linearGradient id="coreGradient" x1="430" y1="-20" x2="1260" y2="920" gradientUnits="userSpaceOnUse">
+            <linearGradient id="coreGradient" x1="-50" y1="140" x2="1420" y2="940" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="#38bdf8" stopOpacity="0" />
-              <stop offset="18%" stopColor="#bae6fd" stopOpacity="0.9" />
-              <stop offset="45%" stopColor="#ffffff" stopOpacity="1" />
-              <stop offset="70%" stopColor="#e0f2fe" stopOpacity="0.95" />
-              <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
+              <stop offset="15%" stopColor="#bae6fd" stopOpacity="0.5" />
+              <stop offset="48%" stopColor="#ffffff" stopOpacity="1" />
+              <stop offset="68%" stopColor="#e0f2fe" stopOpacity="0.95" />
+              <stop offset="90%" stopColor="#38bdf8" stopOpacity="0.7" />
+              <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
             </linearGradient>
 
             {/* Radiant lens glow around ภายใน and ฝางคำ */}
             <radialGradient id="textBacklight" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.32" />
-              <stop offset="50%" stopColor="#0284c7" stopOpacity="0.1" />
+              <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.35" />
+              <stop offset="50%" stopColor="#0284c7" stopOpacity="0.12" />
               <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
             </radialGradient>
 
             {/* Laser blur filters */}
             <filter id="glowWide" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="34" result="blurWide" />
+              <feGaussianBlur stdDeviation="36" result="blurWide" />
             </filter>
             <filter id="glowMed" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="12" result="blurMed" />
+              <feGaussianBlur stdDeviation="13" result="blurMed" />
             </filter>
             <filter id="glowSharp" x="-20%" y="-20%" width="140%" height="140%">
               <feGaussianBlur stdDeviation="2.5" result="blurSharp" />
             </filter>
           </defs>
 
-          {/* Soft radiant aura behind text intersection at ภายใน and ฝางคำ */}
-          <circle cx="885" cy="350" r="140" fill="url(#textBacklight)" />
-          <circle cx="965" cy="440" r="140" fill="url(#textBacklight)" />
+          {/* Soft radiant aura behind text intersection at ภายใน and ฝางคำ matching Omi reference */}
+          <circle cx="870" cy="365" r="160" fill="url(#textBacklight)" />
+          <circle cx="950" cy="425" r="160" fill="url(#textBacklight)" />
+          <ellipse cx="910" cy="395" rx="220" ry="75" fill="url(#textBacklight)" transform="rotate(30 910 395)" />
 
-          {/* Smooth circular arc beam: M 430 -20 C 796 201, 1086 529, 1260 920 smoothly curving across ภายใน and ฝางคำ */}
+          {/* Planetary horizon arc matching reference: Starts far left (-50, 140) with gentle slope, smoothly curves over and accelerates through ภายใน and ฝางคำ, exiting bottom-right (1420, 940) */}
           {/* Layer 1: Wide atmospheric blue dispersion aura */}
           <path 
-            d="M 430 -20 C 796 201, 1086 529, 1260 920" 
+            d="M -50 140 C 540 100, 1120 400, 1420 940" 
             stroke="#0284c7" 
-            strokeWidth="94" 
+            strokeWidth="98" 
             strokeOpacity="0.22"
             filter="url(#glowWide)"
             pathLength="1000"
@@ -161,10 +163,10 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
 
           {/* Layer 2: Medium vibrant cyan/royal beam body */}
           <path 
-            d="M 430 -20 C 796 201, 1086 529, 1260 920" 
+            d="M -50 140 C 540 100, 1120 400, 1420 940" 
             stroke="url(#beamGradient)" 
-            strokeWidth="25" 
-            strokeOpacity="0.82"
+            strokeWidth="26" 
+            strokeOpacity="0.85"
             filter="url(#glowMed)"
             pathLength="1000"
             className="animate-draw-beam"
@@ -172,9 +174,9 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
 
           {/* Layer 3: Neon electric line */}
           <path 
-            d="M 430 -20 C 796 201, 1086 529, 1260 920" 
+            d="M -50 140 C 540 100, 1120 400, 1420 940" 
             stroke="url(#beamGradient)" 
-            strokeWidth="8.5" 
+            strokeWidth="9" 
             strokeOpacity="0.95"
             filter="url(#glowSharp)"
             pathLength="1000"
@@ -183,9 +185,9 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
 
           {/* Layer 4: Razor-sharp white-hot laser core */}
           <path 
-            d="M 430 -20 C 796 201, 1086 529, 1260 920" 
+            d="M -50 140 C 540 100, 1120 400, 1420 940" 
             stroke="url(#coreGradient)" 
-            strokeWidth="3.2" 
+            strokeWidth="3.4" 
             strokeOpacity="1"
             pathLength="1000"
             className="animate-draw-beam"
