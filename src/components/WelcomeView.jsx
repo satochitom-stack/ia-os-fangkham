@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Shield,
   LogIn,
@@ -33,8 +33,17 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
   const [remember, setRemember] = useState(true);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const passwordInputRef = useRef(null);
   const loginSectionRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 150);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const availableUsers = getUsers();
   const departments = getDepartments();
@@ -120,9 +129,11 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
       <div className="absolute top-1/3 -right-40 w-[600px] h-[600px] bg-indigo-300/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 -left-40 w-[500px] h-[500px] bg-sky-300/15 rounded-full blur-3xl pointer-events-none" />
 
-      {/* 1. Floating Glass Island Header */}
-      <div className="fixed top-3 sm:top-4 inset-x-0 z-50 px-3 sm:px-6 pointer-events-none">
-        <header className="max-w-6xl mx-auto pointer-events-auto rounded-2xl md:rounded-full bg-white/85 backdrop-blur-xl border border-blue-100/80 shadow-[0_8px_30px_rgba(30,58,138,0.07)] px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between transition-all relative overflow-hidden ring-1 ring-blue-900/5">
+      {/* 1. Floating Glass Island Header (Appears smoothly when scrolling down) */}
+      <div className={`fixed top-3 sm:top-4 inset-x-0 z-50 px-3 sm:px-6 transition-all duration-300 ${
+        scrolled ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-6 pointer-events-none'
+      }`}>
+        <header className="max-w-6xl mx-auto pointer-events-auto rounded-2xl md:rounded-full bg-white/90 backdrop-blur-xl border border-blue-100/80 shadow-[0_8px_30px_rgba(30,58,138,0.12)] px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between transition-all relative overflow-hidden ring-1 ring-blue-900/5">
           {/* Subtle blue shimmer line */}
           <div className="absolute top-0 inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-blue-400/40 to-transparent pointer-events-none" />
           <div className="absolute -bottom-6 left-1/4 w-32 h-12 bg-blue-500/10 blur-xl pointer-events-none" />
@@ -215,10 +226,9 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
         </header>
       </div>
 
-      {/* 2. Responsive Hero Banner (Modern Soft Warm White & Royal Blue) */}
-      <section className="relative w-full pt-20 sm:pt-24 pb-6 px-3 sm:px-6 max-w-7xl mx-auto">
+      {/* 2. Responsive Hero Banner (Option B: Royal Blue & Cyber Cyan Cosmic Beam) */}
+      <section className="relative w-full pt-3 sm:pt-4 pb-6 px-3 sm:px-6 max-w-7xl mx-auto">
         <ResponsiveHeroBanner
-          hideHeader={true}
           session={session}
           onPrimaryClick={scrollToLogin}
           onSecondaryClick={scrollToExplore}

@@ -8,11 +8,10 @@ import {
   LogIn, 
   Menu, 
   X, 
-  LayoutDashboard, 
   Building2, 
-  FileCheck2, 
-  ChevronRight,
-  ShieldCheck
+  Play,
+  CheckCircle2,
+  ExternalLink
 } from 'lucide-react';
 
 export interface NavLink {
@@ -49,20 +48,19 @@ export interface ResponsiveHeroBannerProps {
   partnersTitle?: string;
   partners?: Partner[];
   session?: any;
-  hideHeader?: boolean;
 }
 
 export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   logoText = "IA-OS",
   subLogoText = "อบต.ฝางคำ",
-  backgroundImageUrl = "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=80",
+  backgroundImageUrl = "/hero-bg.jpg",
   navLinks = [
-    { label: "ภาพรวมระบบ", href: "#overview", isActive: true },
+    { label: "ภาพรวมระบบ", href: "#welcome-features", isActive: true },
     { label: "หน่วยรับตรวจ 6 กอง", href: "#departments" },
     { label: "ฟังก์ชันการตรวจสอบ", href: "#modules" },
-    { label: "คลังระเบียบและมาตรฐาน", href: "#standards" }
+    { label: "คลังระเบียบ ว 614", href: "#standards" }
   ],
-  ctaButtonText = "เข้าสู่ระบบ",
+  ctaButtonText = "เข้าสู่ระบบ (Sign In)",
   onCtaClick,
   badgeLabel = "IA-OS 2569",
   badgeText = "ระบบปฏิบัติการตรวจสอบภายใน อปท. ยุคดิจิทัล",
@@ -73,208 +71,235 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   onPrimaryClick,
   secondaryButtonText = "สำรวจฟังก์ชันระบบ",
   onSecondaryClick,
-  partnersTitle = "โครงสร้าง 6 หน่วยรับตรวจที่เชื่อมโยงในระบบ (Connected Departments)",
+  partnersTitle = "โครงสร้าง 6 หน่วยรับตรวจที่เชื่อมโยงในระบบ (CONNECTED DEPARTMENTS)",
   partners = [
     { name: "สำนักปลัด", label: "งานบริหารทั่วไปและนโยบาย" },
     { name: "กองคลัง", label: "งานการเงิน พัสดุ และบัญชี" },
     { name: "กองช่าง", label: "งานโยธาและโครงการก่อสร้าง" },
     { name: "กองการศึกษา", label: "ศูนย์พัฒนาเด็กเล็กและการศึกษา" },
     { name: "กองสวัสดิการสังคม", label: "เบี้ยยังชีพและการพัฒนาชุมชน" },
-    { name: "กองสาธารณสุขฯ", label: "สิ่งแวดล้อมและสุขาภิบาล" }
+    { name: "กองยุทธศาสตร์ฯ", label: "แผนงานและงบประมาณ" }
   ],
-  session,
-  hideHeader = false
+  session
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <section className="w-full isolate min-h-[90vh] lg:min-h-[92vh] overflow-hidden relative rounded-3xl border border-blue-200/70 shadow-[0_20px_60px_-15px_rgba(30,58,138,0.1)] bg-white">
-      {/* Background image with soft warm light overlay */}
+    <section className="w-full isolate min-h-[92vh] lg:min-h-screen overflow-hidden relative rounded-3xl sm:rounded-[2.5rem] border border-blue-500/20 shadow-[0_25px_70px_-15px_rgba(2,6,23,0.7)] bg-[#030712] text-white flex flex-col justify-between">
+      {/* 1. Cinematic Background with Royal Blue & Cyan Hue Rotation */}
       <img
         src={backgroundImageUrl}
-        alt="IA-OS Fang Kham Background"
-        className="w-full h-full object-cover absolute inset-0 opacity-25 filter blur-[1px] scale-105 transition-transform duration-1000"
+        alt="IA-OS Cosmic Background"
+        className="w-full h-full object-cover absolute inset-0 pointer-events-none select-none scale-105"
+        style={{
+          filter: 'hue-rotate(185deg) saturate(1.4) brightness(1.08) contrast(1.05)'
+        }}
       />
-      {/* Soft warm white and sky-blue gradient layers */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-blue-50/80 to-[#f8fafc]" />
-      
-      {/* Ambient background light orbs */}
-      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-blue-300/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-20 left-10 w-[450px] h-[450px] bg-indigo-200/20 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Header bar within Hero */}
-      {!hideHeader && (
-        <header className="z-20 relative pt-4 px-4 sm:px-8">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center space-x-3 bg-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-2xl border border-blue-100 shadow-xs">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white shadow-sm shadow-blue-500/30">
-                <Shield className="w-5 h-5" />
+      {/* Subtle overlay vignettes for depth & text contrast */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-[#020617]/70" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#020617]/60 via-transparent to-transparent" />
+      <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10 rounded-3xl sm:rounded-[2.5rem]" />
+
+      {/* Ambient glowing orbs in cyan and royal sapphire */}
+      <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-[400px] h-[400px] bg-cyan-400/10 rounded-full blur-3xl pointer-events-none" />
+
+      {/* 2. Embedded Glassmorphic Header (Exactly like Image 1) */}
+      <header className="z-20 relative pt-5 sm:pt-6 px-4 sm:px-8">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          {/* Left: Modern High-Tech Government Logo */}
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 border border-white/20">
+              <Shield className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="font-black text-base sm:text-lg tracking-wider text-white drop-shadow-sm font-['Plus_Jakarta_Sans',sans-serif]">
+                  {logoText}
+                </span>
+                <span className="text-[10px] font-bold bg-blue-500/20 text-cyan-300 border border-blue-400/30 px-2 py-0.5 rounded-full">
+                  {subLogoText}
+                </span>
               </div>
-              <div>
-                <div className="flex items-center space-x-1.5">
-                  <span className="font-black text-sm text-slate-900 tracking-tight">{logoText}</span>
-                  <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">
-                    {subLogoText}
-                  </span>
-                </div>
-                <p className="text-[10px] text-slate-500 font-medium">ระบบปฏิบัติการตรวจสอบภายใน</p>
+              <div className="flex items-center space-x-1.5 text-[10px] text-slate-300">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="font-medium">ระบบราชการดิจิทัล 24/7</span>
               </div>
             </div>
+          </div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-1.5 rounded-full bg-white/85 px-2 py-1.5 border border-slate-200/80 shadow-xs backdrop-blur-md">
-              {navLinks.map((link, index) => (
-                <a
-                  key={index}
-                  href={link.href}
-                  onClick={(e) => {
-                    if (link.onClick) {
-                      e.preventDefault();
-                      link.onClick();
-                    }
-                  }}
-                  className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
-                    link.isActive
-                      ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200/60 shadow-2xs'
-                      : 'text-slate-600 hover:text-blue-700 hover:bg-slate-50'
-                  }`}
-                >
-                  {link.label}
-                </a>
-              ))}
-              
-              <button
-                onClick={onCtaClick}
-                className="ml-1 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 px-4 py-1.5 text-xs font-bold text-white shadow-sm transition-all cursor-pointer"
+          {/* Center: Frosted Glass Capsule Navigation Pill */}
+          <nav className="hidden md:flex items-center gap-1 rounded-full bg-white/10 px-2 py-1.5 ring-1 ring-white/15 backdrop-blur-xl shadow-lg">
+            {navLinks.map((link, index) => (
+              <a
+                key={index}
+                href={link.href}
+                onClick={(e) => {
+                  if (link.onClick) {
+                    e.preventDefault();
+                    link.onClick();
+                  }
+                }}
+                className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
+                  link.isActive
+                    ? 'bg-white/20 text-white font-bold shadow-xs border border-white/20'
+                    : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}
               >
-                <span>{session ? "ไปยังแดชบอร์ด" : ctaButtonText}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </nav>
+                {link.label}
+              </a>
+            ))}
+          </nav>
 
-            {/* Mobile Menu Toggle */}
+          {/* Right: Crisp White Pill CTA Button (Reserve Seat style from Image 1) */}
+          <div className="hidden sm:flex items-center">
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/90 border border-slate-200 shadow-xs text-slate-700"
-              aria-expanded={mobileMenuOpen}
-              aria-label="Toggle menu"
+              type="button"
+              onClick={onCtaClick}
+              className="inline-flex items-center gap-2 rounded-full bg-white hover:bg-blue-50 text-slate-900 font-bold text-xs sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 shadow-md shadow-white/10 hover:shadow-cyan-400/25 hover:scale-[1.03] active:scale-[0.98] transition-all cursor-pointer group"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              <span>{session ? "ไปยังแดชบอร์ดงาน" : ctaButtonText}</span>
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="16" 
+                height="16" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2.5" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className="h-3.5 w-3.5 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+              >
+                <path d="M7 7h10v10" />
+                <path d="M7 17 17 7" />
+              </svg>
             </button>
           </div>
 
-          {/* Mobile Dropdown */}
-          {mobileMenuOpen && (
-            <div className="md:hidden mt-3 p-4 bg-white/95 backdrop-blur-md border border-slate-200 rounded-2xl shadow-lg space-y-2">
-              {navLinks.map((link, index) => (
-                <a
-                  key={index}
-                  href={link.href}
-                  onClick={(e) => {
-                    setMobileMenuOpen(false);
-                    if (link.onClick) {
-                      e.preventDefault();
-                      link.onClick();
-                    }
-                  }}
-                  className="block px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 rounded-xl"
-                >
-                  {link.label}
-                </a>
-              ))}
-              <button
-                onClick={() => {
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20 backdrop-blur-md text-white"
+            aria-expanded={mobileMenuOpen}
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+
+        {/* Mobile Dropdown */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-3 p-4 bg-slate-900/95 backdrop-blur-xl border border-white/15 rounded-2xl shadow-2xl space-y-2">
+            {navLinks.map((link, index) => (
+              <a
+                key={index}
+                href={link.href}
+                onClick={(e) => {
                   setMobileMenuOpen(false);
-                  if (onCtaClick) onCtaClick();
+                  if (link.onClick) {
+                    e.preventDefault();
+                    link.onClick();
+                  }
                 }}
-                className="w-full mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-xs"
+                className="block px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-white/10 hover:text-white rounded-xl"
               >
-                <span>{session ? "ไปยังแดชบอร์ดงาน" : ctaButtonText}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          )}
-        </header>
-      )}
+                {link.label}
+              </a>
+            ))}
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onCtaClick) onCtaClick();
+              }}
+              className="w-full mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-xs font-bold text-slate-900 shadow-md"
+            >
+              <span>{session ? "ไปยังแดชบอร์ดงาน" : ctaButtonText}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+      </header>
 
-      {/* Hero Body */}
-      <div className="z-10 relative">
-        <div className={`max-w-7xl mx-auto px-6 pb-16 ${hideHeader ? 'pt-8 sm:pt-12 lg:pt-14' : 'pt-14 sm:pt-20 lg:pt-24'}`}>
-          <div className="mx-auto max-w-3xl text-center">
-            {/* 1. Badge */}
-            <div className="mb-6 inline-flex items-center gap-2.5 rounded-full bg-white/90 px-3 py-1.5 border border-blue-200/80 shadow-xs backdrop-blur-md animate-fade-slide-in-1">
-              <span className="inline-flex items-center text-[11px] font-bold text-white bg-blue-600 rounded-full py-0.5 px-2.5 shadow-2xs">
-                {badgeLabel}
-              </span>
-              <span className="text-xs font-semibold text-slate-700">
-                {badgeText}
-              </span>
-            </div>
-
-            {/* 2. Main Title */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.2] animate-fade-slide-in-2">
-              {title}
-              <br className="hidden sm:block" />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700">
-                {titleLine2}
-              </span>
-            </h1>
-
-            {/* 3. Description */}
-            <p className="mt-6 text-sm sm:text-base text-slate-600 font-normal leading-relaxed max-w-2xl mx-auto animate-fade-slide-in-3">
-              {description}
-            </p>
-
-            {/* 4. Action Buttons */}
-            <div className="flex flex-col sm:flex-row mt-9 gap-3 items-center justify-center animate-fade-slide-in-4">
-              <button
-                type="button"
-                onClick={onPrimaryClick}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold text-sm py-3.5 px-7 shadow-md shadow-blue-600/25 hover:shadow-lg hover:shadow-blue-600/35 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
-              >
-                <span>⚡</span>
-                <span>{session ? "เปิดแดชบอร์ดงานตรวจสอบ" : primaryButtonText}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-
-              <button
-                type="button"
-                onClick={onSecondaryClick}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-blue-700 font-bold text-sm py-3.5 px-6 border border-slate-200/80 shadow-xs hover:border-blue-300 transition-all cursor-pointer"
-              >
-                <Sparkles className="w-4 h-4 text-blue-600" />
-                <span>{secondaryButtonText}</span>
-              </button>
-            </div>
+      {/* 3. Hero Center Body (Title, Badge, Description, CTA Buttons) */}
+      <div className="z-10 relative my-auto py-12 sm:py-16 lg:py-20 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          {/* Frosted Glass Badge */}
+          <div className="mb-6 inline-flex items-center gap-2.5 rounded-full bg-white/10 px-3.5 py-1.5 ring-1 ring-white/20 backdrop-blur-xl shadow-lg animate-fade-slide-in-1">
+            <span className="inline-flex items-center text-[11px] font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-500 rounded-full py-0.5 px-2.5 shadow-xs font-['Chakra_Petch',sans-serif]">
+              {badgeLabel}
+            </span>
+            <span className="text-xs sm:text-sm font-medium text-white/95">
+              {badgeText}
+            </span>
           </div>
 
-          {/* 5. Department Partners Grid */}
-          <div className="mx-auto mt-16 max-w-5xl pt-8 border-t border-slate-200/80">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider text-center animate-fade-slide-in-1">
-              {partnersTitle}
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 mt-6 gap-3 animate-fade-slide-in-2">
-              {partners.map((partner, index) => (
-                <div
-                  key={index}
-                  onClick={partner.onClick}
-                  className="bg-white/80 hover:bg-blue-50/70 border border-slate-200/70 hover:border-blue-300/80 rounded-2xl p-3 text-center transition-all shadow-2xs hover:shadow-xs cursor-pointer group"
-                >
-                  <div className="w-8 h-8 rounded-xl bg-blue-50 group-hover:bg-blue-100/80 text-blue-600 flex items-center justify-center mx-auto mb-1.5 transition-colors">
-                    <Building2 className="w-4 h-4" />
-                  </div>
-                  <div className="text-xs font-bold text-slate-800 group-hover:text-blue-700 transition-colors">
-                    {partner.name}
-                  </div>
-                  {partner.label && (
-                    <div className="text-[10px] text-slate-500 line-clamp-1 mt-0.5">
-                      {partner.label}
-                    </div>
-                  )}
+          {/* Main Title - Modern, Futuristic, Dignified (No Broken Lines) */}
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.15] animate-fade-slide-in-2 font-['Prompt',sans-serif]">
+            <span className="block drop-shadow-[0_4px_24px_rgba(0,0,0,0.8)]">
+              {title}
+            </span>
+            <span className="block bg-gradient-to-r from-white via-blue-100 to-cyan-300 bg-clip-text text-transparent drop-shadow-[0_2px_20px_rgba(56,189,248,0.5)] mt-1 sm:mt-2">
+              {titleLine2}
+            </span>
+          </h1>
+
+          {/* Subtitle / Description */}
+          <p className="mt-6 text-sm sm:text-base lg:text-lg text-slate-200/90 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow-sm animate-fade-slide-in-3">
+            {description}
+          </p>
+
+          {/* Dual Action Buttons */}
+          <div className="flex flex-col sm:flex-row mt-8 sm:mt-10 gap-3 sm:gap-4 items-center justify-center animate-fade-slide-in-4">
+            <button
+              type="button"
+              onClick={onPrimaryClick}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-sm py-3.5 px-8 shadow-lg shadow-blue-600/35 hover:shadow-cyan-400/30 hover:scale-[1.03] active:scale-[0.98] transition-all cursor-pointer ring-1 ring-white/20"
+            >
+              <span>⚡</span>
+              <span>{session ? "เปิดแดชบอร์ดงานตรวจสอบ" : primaryButtonText}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+
+            <button
+              type="button"
+              onClick={onSecondaryClick}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white/10 hover:bg-white/20 text-white font-medium text-sm py-3.5 px-6 ring-1 ring-white/20 backdrop-blur-md hover:ring-white/30 transition-all cursor-pointer"
+            >
+              <Play className="w-3.5 h-3.5 text-cyan-300 fill-cyan-300" />
+              <span>{secondaryButtonText}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. Bottom Connected Departments (Matching Image 1's Partner Grid) */}
+      <div className="z-10 relative pb-8 sm:pb-10 px-6">
+        <div className="max-w-5xl mx-auto pt-6 border-t border-white/10">
+          <p className="text-[11px] sm:text-xs font-semibold text-slate-300/80 uppercase tracking-widest text-center animate-fade-slide-in-1">
+            {partnersTitle}
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 mt-4 gap-2.5 sm:gap-3 animate-fade-slide-in-2">
+            {partners.map((partner, index) => (
+              <div
+                key={index}
+                onClick={partner.onClick}
+                className="bg-white/5 hover:bg-white/15 border border-white/10 hover:border-cyan-400/50 rounded-2xl p-2.5 sm:p-3 text-center transition-all backdrop-blur-md cursor-pointer group shadow-xs hover:shadow-cyan-500/20"
+              >
+                <div className="w-7 h-7 rounded-xl bg-blue-500/20 group-hover:bg-cyan-500/30 text-cyan-300 flex items-center justify-center mx-auto mb-1 transition-colors">
+                  <Building2 className="w-3.5 h-3.5" />
                 </div>
-              ))}
-            </div>
+                <div className="text-xs font-bold text-white group-hover:text-cyan-300 transition-colors">
+                  {partner.name}
+                </div>
+                {partner.label && (
+                  <div className="text-[9px] text-slate-300/70 line-clamp-1 mt-0.5">
+                    {partner.label}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </div>
