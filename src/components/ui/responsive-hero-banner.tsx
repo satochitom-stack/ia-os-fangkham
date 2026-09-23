@@ -60,11 +60,11 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   ],
   ctaButtonText = "เข้าสู่ระบบ (Sign In)",
   onCtaClick,
-  badgeLabel = "IA-OS 2569",
-  badgeText = "ระบบปฏิบัติการตรวจสอบภายใน อปท. ยุคดิจิทัล",
+  badgeLabel = "✨ Welcome",
+  badgeText = "Next-Gen Digital Governance & Internal Audit Platform",
   title = "ระบบงานตรวจสอบภายใน",
   titleLine2 = "องค์การบริหารส่วนตำบลฝางคำ",
-  description = "ยกระดับการปฏิบัติงานตรวจสอบภายในสู่มาตรฐานสากล เชื่อมโยงหน่วยรับตรวจ ประเมินความเสี่ยง SOFCK จัดทำแนวการตรวจตามหนังสือสั่งการ ว 614 และรายงานการควบคุมภายใน ปอ.1 - ปค.5 อย่างครบวงจร",
+  description = "",
   primaryButtonText = "เข้าสู่ระบบงาน (Sign In)",
   onPrimaryClick,
   secondaryButtonText = "สำรวจฟังก์ชันระบบ",
@@ -315,52 +315,55 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
         )}
       </header>
 
-      {/* 4. Hero Center Body (Title, Badge, Description, CTA Buttons) */}
-      <div className="z-10 relative my-auto py-10 sm:py-14 lg:py-16 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Frosted Glass Badge */}
-          <div className="mb-6 inline-flex items-center gap-2.5 rounded-full bg-white/90 px-3.5 py-1.5 border border-blue-200/80 shadow-xs backdrop-blur-md animate-fade-slide-in-1">
-            <span className="inline-flex items-center text-[11px] font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full py-0.5 px-2.5 shadow-2xs font-['Chakra_Petch',sans-serif]">
+      {/* 4. Hero Center Body (Title, Badge, CTA Buttons) */}
+      <div className="z-10 relative my-auto py-8 sm:py-12 lg:py-14 px-6">
+        <div className="max-w-5xl mx-auto text-center">
+          {/* Frosted Glass Welcome Badge */}
+          <div className="mb-6 sm:mb-8 inline-flex items-center gap-2 sm:gap-2.5 rounded-full bg-white/90 px-3.5 sm:px-4 py-1.5 border border-blue-200/80 shadow-xs backdrop-blur-md animate-fade-slide-in-1 hover:border-blue-300 transition-all">
+            <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-white bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 rounded-full py-0.5 px-2.5 sm:px-3 shadow-2xs font-['Plus_Jakarta_Sans',sans-serif] tracking-wider uppercase">
+              <Sparkles className="w-3 h-3 text-cyan-200 animate-pulse" />
               {badgeLabel}
             </span>
-            <span className="text-xs sm:text-sm font-semibold text-slate-700">
+            <span className="text-xs sm:text-sm font-semibold text-slate-700 font-['Plus_Jakarta_Sans','Prompt',sans-serif] tracking-wide">
               {badgeText}
             </span>
           </div>
 
-          {/* Main Title - No awkward wrapping, guaranteed 2 balanced lines */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.18] animate-fade-slide-in-2 font-['Prompt',sans-serif]">
+          {/* Main Title - Majestic, executive scale with perfect hierarchy */}
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4rem] font-black text-slate-900 tracking-tight leading-[1.14] animate-fade-slide-in-2 font-['Prompt',sans-serif]">
             <span className="block drop-shadow-xs">
               {title}
             </span>
-            <span className="inline-block whitespace-nowrap bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 bg-clip-text text-transparent drop-shadow-xs mt-1 sm:mt-2">
+            <span className="inline-block whitespace-nowrap bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 bg-clip-text text-transparent drop-shadow-xs mt-2 sm:mt-3">
               {titleLine2}
             </span>
           </h1>
 
-          {/* Subtitle / Description */}
-          <p className="mt-6 text-sm sm:text-base lg:text-lg text-slate-600 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow-2xs animate-fade-slide-in-3">
-            {description}
-          </p>
+          {/* Subtitle / Description (Only displayed if provided) */}
+          {description && (
+            <p className="mt-6 text-sm sm:text-base lg:text-lg text-slate-600 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow-2xs animate-fade-slide-in-3">
+              {description}
+            </p>
+          )}
 
           {/* Dual Action Buttons */}
-          <div className="flex flex-col sm:flex-row mt-8 sm:mt-10 gap-3 sm:gap-4 items-center justify-center animate-fade-slide-in-4">
+          <div className="flex flex-col sm:flex-row mt-8 sm:mt-10 lg:mt-12 gap-3.5 sm:gap-4 items-center justify-center animate-fade-slide-in-3">
             <button
               type="button"
               onClick={onPrimaryClick}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold text-sm py-3.5 px-8 shadow-md shadow-blue-600/30 hover:shadow-lg hover:shadow-blue-600/40 hover:scale-[1.03] active:scale-[0.98] transition-all cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold text-sm sm:text-base py-3.5 sm:py-4 px-8 sm:px-9 shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
             >
               <span>⚡</span>
               <span>{session ? "เปิดแดชบอร์ดงานตรวจสอบ" : primaryButtonText}</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
             <button
               type="button"
               onClick={onSecondaryClick}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white/95 hover:bg-white text-slate-700 hover:text-blue-700 font-bold text-sm py-3.5 px-6 border border-slate-200/80 shadow-xs hover:border-blue-300 transition-all cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white/95 hover:bg-white text-slate-700 hover:text-blue-700 font-bold text-sm sm:text-base py-3.5 sm:py-4 px-7 sm:px-8 border border-slate-200/90 shadow-xs hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer"
             >
-              <Play className="w-3.5 h-3.5 text-blue-600 fill-blue-600" />
+              <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 fill-blue-600" />
               <span>{secondaryButtonText}</span>
             </button>
           </div>

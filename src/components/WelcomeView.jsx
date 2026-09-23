@@ -256,8 +256,10 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
           onSecondaryClick={scrollToExplore}
           onCtaClick={scrollToLogin}
           partners={heroPartners}
+          badgeLabel="✨ Welcome"
+          badgeText="Next-Gen Digital Governance & Internal Audit Platform"
+          description=""
           partnersTitle={`โครงสร้าง ${auditeeDepartments.length} หน่วยรับตรวจที่เชื่อมโยงในระบบ (CONNECTED DEPARTMENTS)`}
-          description={`ยกระดับการปฏิบัติงานตรวจสอบภายในสู่มาตรฐานสากล เชื่อมโยง ${auditeeDepartments.length} หน่วยรับตรวจ ประเมินความเสี่ยง SOFCK จัดทำแนวการตรวจตามหนังสือสั่งการ ว 614 และรายงานการควบคุมภายใน ปอ.1 - ปค.5 อย่างครบวงจร`}
           navLinks={[
             { label: "ภาพรวมระบบ", href: "#welcome-features", isActive: true },
             { label: `หน่วยรับตรวจ ${auditeeDepartments.length} หน่วย`, href: "#departments" },
