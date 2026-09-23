@@ -144,14 +144,14 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
           </defs>
 
           {/* Soft radiant aura behind text intersection at ภายใน and ฝางคำ matching Omi reference */}
-          <circle cx="870" cy="365" r="160" fill="url(#textBacklight)" />
-          <circle cx="950" cy="425" r="160" fill="url(#textBacklight)" />
-          <ellipse cx="910" cy="395" rx="220" ry="75" fill="url(#textBacklight)" transform="rotate(30 910 395)" />
+          <circle cx="850" cy="335" r="160" fill="url(#textBacklight)" />
+          <circle cx="930" cy="395" r="160" fill="url(#textBacklight)" />
+          <ellipse cx="890" cy="365" rx="220" ry="75" fill="url(#textBacklight)" transform="rotate(30 890 365)" />
 
-          {/* Planetary horizon arc matching reference: Starts far left (-50, 140) with gentle slope, smoothly curves over and accelerates through ภายใน and ฝางคำ, exiting bottom-right (1420, 940) */}
+          {/* Planetary horizon arc matching reference: Starts far left (-50, 100) with gentle slope, smoothly curves over and accelerates through ภายใน and ฝางคำ, exiting bottom-right (1420, 900) */}
           {/* Layer 1: Wide atmospheric blue dispersion aura */}
           <path 
-            d="M -50 140 C 540 100, 1120 400, 1420 940" 
+            d="M -50 100 C 540 60, 1120 360, 1420 900" 
             stroke="#0284c7" 
             strokeWidth="98" 
             strokeOpacity="0.22"
@@ -162,7 +162,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
 
           {/* Layer 2: Medium vibrant cyan/royal beam body */}
           <path 
-            d="M -50 140 C 540 100, 1120 400, 1420 940" 
+            d="M -50 100 C 540 60, 1120 360, 1420 900" 
             stroke="url(#beamGradient)" 
             strokeWidth="26" 
             strokeOpacity="0.85"
@@ -173,7 +173,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
 
           {/* Layer 3: Neon electric line */}
           <path 
-            d="M -50 140 C 540 100, 1120 400, 1420 940" 
+            d="M -50 100 C 540 60, 1120 360, 1420 900" 
             stroke="url(#beamGradient)" 
             strokeWidth="9" 
             strokeOpacity="0.95"
@@ -184,7 +184,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
 
           {/* Layer 4: Razor-sharp white-hot laser core */}
           <path 
-            d="M -50 140 C 540 100, 1120 400, 1420 940" 
+            d="M -50 100 C 540 60, 1120 360, 1420 900" 
             stroke="url(#coreGradient)" 
             strokeWidth="3.4" 
             strokeOpacity="1"
@@ -280,7 +280,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
       </header>
 
       {/* 4. Hero Center Body (Title & Welcome Badge) */}
-      <div className="z-10 relative my-auto py-10 sm:py-16 lg:py-20 px-6">
+      <div className="z-10 relative my-auto -mt-6 sm:-mt-10 md:-mt-14 py-4 sm:py-6 px-6">
         <div className="max-w-5xl mx-auto text-center">
           {/* Frosted Glass Welcome Badge */}
           <div className="mb-6 sm:mb-8 inline-flex items-center gap-2 sm:gap-2.5 rounded-full bg-white/90 px-3.5 sm:px-4 py-1.5 border border-blue-200/80 shadow-xs backdrop-blur-md animate-fade-slide-in-1 hover:border-blue-300 transition-all">
