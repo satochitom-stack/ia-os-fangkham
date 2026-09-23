@@ -27,10 +27,15 @@ export function SplineSceneBasic({
   session,
 }: SplineSceneBasicProps) {
   return (
-    <Card className="w-full min-h-[540px] lg:h-[620px] bg-gradient-to-br from-[#081836] via-[#0d2754] to-[#07142b] border border-blue-400/25 relative overflow-hidden shadow-[0_20px_50px_rgba(15,23,42,0.18)] rounded-2xl sm:rounded-3xl ring-1 ring-blue-500/20">
+    <Card className="w-full min-h-[540px] lg:h-[620px] bg-gradient-to-br from-[#0d3068] via-[#164a94] to-[#0a2452] border border-blue-300/35 relative overflow-hidden shadow-[0_25px_60px_-15px_rgba(26,69,153,0.32),0_0_0_1px_rgba(96,165,250,0.2)] rounded-2xl sm:rounded-3xl ring-1 ring-blue-400/25">
+      {/* Ambient background glows for seamless integration with warm white theme */}
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[480px] h-[480px] bg-gradient-to-br from-blue-400/25 via-sky-400/15 to-transparent rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -left-12 -top-12 w-80 h-80 bg-indigo-400/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute left-1/3 -bottom-16 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
+
       <Spotlight
-        fill="rgba(56, 189, 248, 0.4)"
-        size={360}
+        fill="rgba(147, 197, 253, 0.45)"
+        size={380}
       />
       
       <div className="flex flex-col md:flex-row h-full">
@@ -38,7 +43,7 @@ export function SplineSceneBasic({
         <div className="flex-1 p-6 sm:p-10 md:p-12 lg:p-14 relative z-10 flex flex-col justify-center">
           {/* 1. Top Pill Badge */}
           {badge && (
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-mono text-blue-100 bg-blue-950/80 border border-blue-400/30 w-fit mb-4 shadow-sm">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-mono text-blue-100 bg-blue-900/60 border border-blue-300/40 w-fit mb-4 shadow-sm backdrop-blur-md">
               <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
               <span>{badge}</span>
             </div>
