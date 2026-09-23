@@ -747,6 +747,7 @@ export default function App() {
                 riskManagement={riskManagement}
                 setRiskManagement={setRiskManagement}
                 orgProfile={orgProfile}
+                session={session}
               />
             )}
 
