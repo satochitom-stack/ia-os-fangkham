@@ -22,7 +22,7 @@ import {
   Users,
   ChevronDown
 } from 'lucide-react';
-import { SplineSceneBasic } from './ui/demo';
+import { ResponsiveHeroBanner } from './ui/responsive-hero-banner';
 import { verifyLogin, startSession, getUsers, getLastUsername, setLastUsername, getDepartments } from '../utils/auth';
 
 export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
@@ -38,6 +38,29 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
 
   const availableUsers = getUsers();
   const departments = getDepartments();
+
+  const heroPartners = [
+    { name: 'สำนักปลัด', label: 'งานบริหารทั่วไปและนโยบาย' },
+    { name: 'กองคลัง', label: 'งานการเงิน พัสดุ และบัญชี' },
+    { name: 'กองช่าง', label: 'งานโยธาและโครงการก่อสร้าง' },
+    { name: 'กองการศึกษา', label: 'ศูนย์พัฒนาเด็กเล็กและการศึกษา' },
+    { name: 'กองสวัสดิการสังคม', label: 'เบี้ยยังชีพและการพัฒนาชุมชน' },
+    { name: 'กองยุทธศาสตร์ฯ', label: 'แผนงานและงบประมาณ' }
+  ].map((p) => {
+    const matchedUser = availableUsers.find(
+      (u) => (u.department && u.department.includes(p.name)) || (u.name && u.name.includes(p.name))
+    );
+    return {
+      ...p,
+      onClick: () => {
+        if (matchedUser) {
+          handleQuickSelect(matchedUser);
+        } else {
+          scrollToLogin();
+        }
+      }
+    };
+  });
 
   const handleLoginSubmit = async (e) => {
     if (e) e.preventDefault();
@@ -192,17 +215,15 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
         </header>
       </div>
 
-      {/* 2. Interactive 3D Spline Robot Hero */}
-      <section className="relative w-full pt-24 sm:pt-28 pb-10 px-3 sm:px-6 max-w-7xl mx-auto flex items-center min-h-[85vh]">
-        <SplineSceneBasic
-          badge="IA-OS 24/7 Engine • 6 Departments Linked"
-          kicker="INTERNAL AUDIT OPERATING SYSTEM"
-          title="IA-OS Fang Kham"
-          subtitle="ระบบปฏิบัติการตรวจสอบภายใน องค์การบริหารส่วนตำบลฝางคำ"
-          buttonText="สำรวจระบบงาน"
-          onExplore={scrollToExplore}
-          onLogin={scrollToLogin}
+      {/* 2. Responsive Hero Banner (Modern Soft Warm White & Royal Blue) */}
+      <section className="relative w-full pt-20 sm:pt-24 pb-6 px-3 sm:px-6 max-w-7xl mx-auto">
+        <ResponsiveHeroBanner
+          hideHeader={true}
           session={session}
+          onPrimaryClick={scrollToLogin}
+          onSecondaryClick={scrollToExplore}
+          onCtaClick={scrollToLogin}
+          partners={heroPartners}
         />
       </section>
 
