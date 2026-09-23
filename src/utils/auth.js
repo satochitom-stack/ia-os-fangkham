@@ -33,8 +33,7 @@ export const DEFAULT_DEPARTMENTS = [
   'สำนักปลัด',
   'กองช่าง',
   'กองการศึกษา',
-  'กองสวัสดิการสังคม',
-  'กองยุทธศาสตร์และงบประมาณ'
+  'กองสวัสดิการสังคม'
 ];
 
 const DEPARTMENTS_KEY = 'ia_departments';
@@ -65,6 +64,11 @@ export function getDepartments() {
 
 export function saveDepartments(departments) {
   localStorage.setItem(DEPARTMENTS_KEY, JSON.stringify(departments));
+  try {
+    window.dispatchEvent(new Event('ia-departments-changed'));
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 export function addDepartment(name) {
@@ -443,17 +447,6 @@ export const DEFAULT_INITIAL_USERS = [
     permissions: ['dashboard', 'internal-control', 'risk-management', 'knowledge'],
     canManageUsers: false,
     createdAt: Date.now()
-  },
-  {
-    username: 'strategy',
-    displayName: 'กองยุทธศาสตร์และงบประมาณ',
-    position: 'ผู้อำนวยการกองยุทธศาสตร์ฯ / นักวิเคราะห์ฯ',
-    department: 'กองยุทธศาสตร์และงบประมาณ',
-    role: 'user',
-    passwordText: '1234',
-    permissions: ['dashboard', 'internal-control', 'risk-management', 'knowledge'],
-    canManageUsers: false,
-    createdAt: Date.now()
   }
 ];
 
@@ -549,6 +542,11 @@ export function getUsers() {
 
 export function saveUsers(users) {
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  try {
+    window.dispatchEvent(new Event('ia-departments-changed'));
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 export function getUserByUsername(username) {

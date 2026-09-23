@@ -11,6 +11,7 @@ import {
   Trash2,
   FileText
 } from 'lucide-react';
+import { getDepartments } from '../utils/auth';
 
 export default function InternalControlView({
   internalControls,
@@ -356,12 +357,9 @@ export default function InternalControlView({
                   onChange={(e) => setNewPk4({ ...newPk4, department: e.target.value })}
                   className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                 >
-                  <option value="สำนักปลัด">สำนักปลัด</option>
-                  <option value="กองคลัง">กองคลัง</option>
-                  <option value="กองช่าง">กองช่าง</option>
-                  <option value="กองการศึกษา">กองการศึกษา</option>
-                  <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
-                  <option value="กองยุทธศาสตร์และงบประมาณ">กองยุทธศาสตร์และงบประมาณ</option>
+                  {getDepartments().filter((d) => d !== 'หน่วยตรวจสอบภายใน').map((dept) => (
+                    <option key={dept} value={dept}>{dept}</option>
+                  ))}
                 </select>
               </div>
 

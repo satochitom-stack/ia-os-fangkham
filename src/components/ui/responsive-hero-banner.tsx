@@ -54,7 +54,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   backgroundImageUrl = "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=80",
   navLinks = [
     { label: "ภาพรวมระบบ", href: "#welcome-features", isActive: true },
-    { label: "หน่วยรับตรวจ 6 กอง", href: "#departments" },
+    { label: "หน่วยรับตรวจ", href: "#departments" },
     { label: "ฟังก์ชันการตรวจสอบ", href: "#modules" },
     { label: "คลังระเบียบ ว 614", href: "#standards" }
   ],
@@ -64,19 +64,18 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   badgeText = "ระบบปฏิบัติการตรวจสอบภายใน อปท. ยุคดิจิทัล",
   title = "ระบบงานตรวจสอบภายใน",
   titleLine2 = "องค์การบริหารส่วนตำบลฝางคำ",
-  description = "ยกระดับการปฏิบัติงานตรวจสอบภายในสู่มาตรฐานสากล เชื่อมโยง 6 กองงาน ประเมินความเสี่ยง SOFCK จัดทำแนวการตรวจตามหนังสือสั่งการ ว 614 และรายงานการควบคุมภายใน ปอ.1 - ปค.5 อย่างครบวงจร",
+  description = "ยกระดับการปฏิบัติงานตรวจสอบภายในสู่มาตรฐานสากล เชื่อมโยงหน่วยรับตรวจ ประเมินความเสี่ยง SOFCK จัดทำแนวการตรวจตามหนังสือสั่งการ ว 614 และรายงานการควบคุมภายใน ปอ.1 - ปค.5 อย่างครบวงจร",
   primaryButtonText = "เข้าสู่ระบบงาน (Sign In)",
   onPrimaryClick,
   secondaryButtonText = "สำรวจฟังก์ชันระบบ",
   onSecondaryClick,
-  partnersTitle = "โครงสร้าง 6 หน่วยรับตรวจที่เชื่อมโยงในระบบ (CONNECTED DEPARTMENTS)",
+  partnersTitle = "โครงสร้างหน่วยรับตรวจที่เชื่อมโยงในระบบ (CONNECTED DEPARTMENTS)",
   partners = [
     { name: "สำนักปลัด", label: "งานบริหารทั่วไปและนโยบาย" },
     { name: "กองคลัง", label: "งานการเงิน พัสดุ และบัญชี" },
     { name: "กองช่าง", label: "งานโยธาและโครงการก่อสร้าง" },
     { name: "กองการศึกษา", label: "ศูนย์พัฒนาเด็กเล็กและการศึกษา" },
-    { name: "กองสวัสดิการสังคม", label: "เบี้ยยังชีพและการพัฒนาชุมชน" },
-    { name: "กองยุทธศาสตร์ฯ", label: "แผนงานและงบประมาณ" }
+    { name: "กองสวัสดิการสังคม", label: "เบี้ยยังชีพและการพัฒนาชุมชน" }
   ],
   session
 }) => {
@@ -374,7 +373,12 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
           <p className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center animate-fade-slide-in-1">
             {partnersTitle}
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 mt-4 gap-2.5 sm:gap-3 animate-fade-slide-in-2">
+          <div 
+            className="grid mt-4 gap-2.5 sm:gap-3 animate-fade-slide-in-2 justify-center"
+            style={{
+              gridTemplateColumns: `repeat(auto-fit, minmax(135px, 1fr))`
+            }}
+          >
             {partners.map((partner, index) => (
               <div
                 key={index}

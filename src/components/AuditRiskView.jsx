@@ -33,6 +33,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import ConfirmModal from './ConfirmModal';
+import { getDepartments } from '../utils/auth';
 
 // =========================================================================
 // 1. ข้อมูลการประเมินความเสี่ยงจริงของ องค์การบริหารส่วนตำบลฝางคำ (PDF ที่ 3)
@@ -1333,12 +1334,9 @@ export default function AuditRiskView({
                 className="px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none text-xs font-medium"
               >
                 <option value="all">ทุกสำนัก/กอง</option>
-                <option value="สำนักปลัด">สำนักปลัด</option>
-                <option value="กองคลัง">กองคลัง</option>
-                <option value="กองช่าง">กองช่าง</option>
-                <option value="กองการศึกษา">กองการศึกษา</option>
-                <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
-                <option value="กองยุทธศาสตร์และงบประมาณ">กองยุทธศาสตร์และงบประมาณ</option>
+                {getDepartments().filter((d) => d !== 'หน่วยตรวจสอบภายใน').map((dept) => (
+                  <option key={dept} value={dept}>{dept}</option>
+                ))}
               </select>
 
               <select
@@ -1399,7 +1397,7 @@ export default function AuditRiskView({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {['สำนักปลัด', 'กองคลัง', 'กองช่าง', 'กองการศึกษา', 'กองสวัสดิการสังคม', 'กองสาธารณสุขและสิ่งแวดล้อม', 'กองยุทธศาสตร์และงบประมาณ'].map((dept) => {
+                  {getDepartments().filter((d) => d !== 'หน่วยตรวจสอบภายใน').map((dept) => {
                     const deptItems = filteredActivities.filter((a) => a.department === dept);
                     if (deptItems.length === 0) return null;
 
@@ -2007,7 +2005,7 @@ export default function AuditRiskView({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                {['สำนักปลัด', 'กองคลัง', 'กองช่าง', 'กองการศึกษา', 'กองสวัสดิการสังคม', 'กองสาธารณสุขและสิ่งแวดล้อม', 'กองยุทธศาสตร์และงบประมาณ'].map((dept) => {
+                {getDepartments().filter((d) => d !== 'หน่วยตรวจสอบภายใน').map((dept) => {
                   const items = scoredActivities.filter((a) => a.department === dept);
                   if (items.length === 0) return null;
 
@@ -2082,12 +2080,9 @@ export default function AuditRiskView({
                   onChange={(e) => setFormData({ ...formData, department: e.target.value })}
                   className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-100 outline-none"
                 >
-                  <option value="สำนักปลัด">สำนักปลัด</option>
-                  <option value="กองคลัง">กองคลัง</option>
-                  <option value="กองช่าง">กองช่าง</option>
-                  <option value="กองการศึกษา">กองการศึกษา</option>
-                  <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
-                  <option value="กองยุทธศาสตร์และงบประมาณ">กองยุทธศาสตร์และงบประมาณ</option>
+                  {getDepartments().filter((d) => d !== 'หน่วยตรวจสอบภายใน').map((dept) => (
+                    <option key={dept} value={dept}>{dept}</option>
+                  ))}
                 </select>
               </div>
 

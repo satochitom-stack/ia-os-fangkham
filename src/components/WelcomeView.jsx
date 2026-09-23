@@ -45,22 +45,44 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const availableUsers = getUsers();
-  const departments = getDepartments();
+  const [departments, setDepartments] = useState(() => getDepartments());
+  const [availableUsers, setAvailableUsers] = useState(() => getUsers());
 
-  const heroPartners = [
-    { name: 'สำนักปลัด', label: 'งานบริหารทั่วไปและนโยบาย' },
-    { name: 'กองคลัง', label: 'งานการเงิน พัสดุ และบัญชี' },
-    { name: 'กองช่าง', label: 'งานโยธาและโครงการก่อสร้าง' },
-    { name: 'กองการศึกษา', label: 'ศูนย์พัฒนาเด็กเล็กและการศึกษา' },
-    { name: 'กองสวัสดิการสังคม', label: 'เบี้ยยังชีพและการพัฒนาชุมชน' },
-    { name: 'กองยุทธศาสตร์ฯ', label: 'แผนงานและงบประมาณ' }
-  ].map((p) => {
+  useEffect(() => {
+    const handleSync = () => {
+      setDepartments(getDepartments());
+      setAvailableUsers(getUsers());
+    };
+    window.addEventListener('ia-departments-changed', handleSync);
+    window.addEventListener('storage', handleSync);
+    return () => {
+      window.removeEventListener('ia-departments-changed', handleSync);
+      window.removeEventListener('storage', handleSync);
+    };
+  }, []);
+
+  // Filter out internal audit to get auditee departments (หน่วยรับตรวจ)
+  const auditeeDepartments = departments.filter((d) => d !== 'หน่วยตรวจสอบภายใน');
+
+  const KNOWN_LABELS = {
+    'สำนักปลัด': 'งานบริหารทั่วไปและนโยบาย',
+    'กองคลัง': 'งานการเงิน พัสดุ และบัญชี',
+    'กองช่าง': 'งานโยธาและโครงการก่อสร้าง',
+    'กองการศึกษา': 'ศูนย์พัฒนาเด็กเล็กและการศึกษา',
+    'กองสวัสดิการสังคม': 'เบี้ยยังชีพและการพัฒนาชุมชน',
+    'กองสาธารณสุขและสิ่งแวดล้อม': 'งานสาธารณสุขและสิ่งแวดล้อม',
+    'ศพด.': 'ศูนย์พัฒนาเด็กเล็กตำบลฝางคำ',
+    'ศูนย์พัฒนาเด็กเล็ก': 'ศูนย์พัฒนาเด็กเล็กตำบลฝางคำ'
+  };
+
+  const heroPartners = auditeeDepartments.map((deptName) => {
     const matchedUser = availableUsers.find(
-      (u) => (u.department && u.department.includes(p.name)) || (u.name && u.name.includes(p.name))
+      (u) => (u.department && (u.department === deptName || u.department.includes(deptName))) ||
+             (u.displayName && (u.displayName === deptName || u.displayName.includes(deptName)))
     );
     return {
-      ...p,
+      name: deptName,
+      label: KNOWN_LABELS[deptName] || matchedUser?.position || 'งานในภารกิจและหน่วยรับตรวจ',
       onClick: () => {
         if (matchedUser) {
           handleQuickSelect(matchedUser);
@@ -184,7 +206,7 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
               className="px-4 py-1.5 rounded-full hover:text-blue-700 hover:bg-white hover:shadow-xs border border-transparent transition-all cursor-pointer flex items-center space-x-1.5"
             >
               <Building className="w-3.5 h-3.5 text-indigo-600" />
-              <span>หน่วยรับตรวจ 6 กอง</span>
+              <span>หน่วยรับตรวจ {auditeeDepartments.length} หน่วย</span>
             </a>
             <a
               href="#modules"
@@ -234,6 +256,14 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
           onSecondaryClick={scrollToExplore}
           onCtaClick={scrollToLogin}
           partners={heroPartners}
+          partnersTitle={`โครงสร้าง ${auditeeDepartments.length} หน่วยรับตรวจที่เชื่อมโยงในระบบ (CONNECTED DEPARTMENTS)`}
+          description={`ยกระดับการปฏิบัติงานตรวจสอบภายในสู่มาตรฐานสากล เชื่อมโยง ${auditeeDepartments.length} หน่วยรับตรวจ ประเมินความเสี่ยง SOFCK จัดทำแนวการตรวจตามหนังสือสั่งการ ว 614 และรายงานการควบคุมภายใน ปอ.1 - ปค.5 อย่างครบวงจร`}
+          navLinks={[
+            { label: "ภาพรวมระบบ", href: "#welcome-features", isActive: true },
+            { label: `หน่วยรับตรวจ ${auditeeDepartments.length} หน่วย`, href: "#departments" },
+            { label: "ฟังก์ชันการตรวจสอบ", href: "#modules" },
+            { label: "คลังระเบียบ ว 614", href: "#standards" }
+          ]}
         />
       </section>
 
@@ -252,13 +282,13 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
           </p>
         </div>
 
-        {/* 4. Departments Grid (6 หน่วยรับตรวจ) */}
+        {/* 4. Departments Grid (หน่วยรับตรวจ) */}
         <div id="departments" className="space-y-6 pt-4">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-2 border-b border-slate-200 pb-4">
             <div>
               <h3 className="text-lg md:text-xl font-bold text-slate-900 flex items-center space-x-2">
                 <Building className="w-5 h-5 text-blue-600" />
-                <span>โครงสร้างหน่วยรับตรวจและผู้ใช้งานรายกอง</span>
+                <span>โครงสร้างหน่วยรับตรวจและผู้ใช้งานรายกอง ({departments.length} สำนัก/กอง/หน่วย)</span>
               </h3>
               <p className="text-xs text-slate-500 mt-1">
                 กำหนดสิทธิ์การมองเห็นและการปฏิบัติงานแยกอิสระตามภารกิจของแต่ละกอง

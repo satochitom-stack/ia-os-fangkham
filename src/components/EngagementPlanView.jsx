@@ -28,6 +28,7 @@ import {
   generateEngagementPlanWithAI
 } from '../data/engagementPlanTemplates';
 import ConfirmModal from './ConfirmModal';
+import { getDepartments } from '../utils/auth';
 
 export default function EngagementPlanView({
   selectedYear = '2569',
@@ -479,12 +480,9 @@ export default function EngagementPlanView({
                 onChange={(e) => setAiDepartment(e.target.value)}
                 className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm text-slate-800 dark:text-slate-200"
               >
-                <option value="กองคลัง">กองคลัง</option>
-                <option value="สำนักปลัด">สำนักปลัด</option>
-                <option value="กองช่าง">กองช่าง</option>
-                <option value="กองการศึกษา">กองการศึกษา</option>
-                <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
-                <option value="กองยุทธศาสตร์และงบประมาณ">กองยุทธศาสตร์และงบประมาณ</option>
+                {getDepartments().filter((d) => d !== 'หน่วยตรวจสอบภายใน').map((dept) => (
+                  <option key={dept} value={dept}>{dept}</option>
+                ))}
               </select>
             </div>
 
