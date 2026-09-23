@@ -106,7 +106,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
         >
           <defs>
             {/* Main beam gradient flowing along path from top-left to bottom-right */}
-            <linearGradient id="beamGradient" x1="450" y1="-10" x2="1220" y2="920" gradientUnits="userSpaceOnUse">
+            <linearGradient id="beamGradient" x1="430" y1="-20" x2="1260" y2="920" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="#0284c7" stopOpacity="0" />
               <stop offset="12%" stopColor="#0284c7" stopOpacity="0.85" />
               <stop offset="42%" stopColor="#0ea5e9" stopOpacity="1" />
@@ -116,7 +116,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             </linearGradient>
 
             {/* Core laser white-cyan hot gradient */}
-            <linearGradient id="coreGradient" x1="450" y1="-10" x2="1220" y2="920" gradientUnits="userSpaceOnUse">
+            <linearGradient id="coreGradient" x1="430" y1="-20" x2="1260" y2="920" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="#38bdf8" stopOpacity="0" />
               <stop offset="18%" stopColor="#bae6fd" stopOpacity="0.9" />
               <stop offset="45%" stopColor="#ffffff" stopOpacity="1" />
@@ -144,13 +144,13 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
           </defs>
 
           {/* Soft radiant aura behind text intersection at ภายใน and ฝางคำ */}
-          <circle cx="890" cy="350" r="140" fill="url(#textBacklight)" />
-          <circle cx="990" cy="460" r="140" fill="url(#textBacklight)" />
+          <circle cx="885" cy="350" r="140" fill="url(#textBacklight)" />
+          <circle cx="965" cy="440" r="140" fill="url(#textBacklight)" />
 
-          {/* Sweeping curve matching user drawing: Starts top-left (450, -10), arcs through 'ภายใน' (890, 350) and 'ฝางคำ' (990, 460), exiting bottom-right (1220, 920) */}
+          {/* Smooth circular arc beam: M 430 -20 C 796 201, 1086 529, 1260 920 smoothly curving across ภายใน and ฝางคำ */}
           {/* Layer 1: Wide atmospheric blue dispersion aura */}
           <path 
-            d="M 450 -10 C 580 110, 760 240, 890 350 C 930 385, 960 420, 990 460 C 1060 560, 1140 720, 1220 920" 
+            d="M 430 -20 C 796 201, 1086 529, 1260 920" 
             stroke="#0284c7" 
             strokeWidth="94" 
             strokeOpacity="0.22"
@@ -161,7 +161,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
 
           {/* Layer 2: Medium vibrant cyan/royal beam body */}
           <path 
-            d="M 450 -10 C 580 110, 760 240, 890 350 C 930 385, 960 420, 990 460 C 1060 560, 1140 720, 1220 920" 
+            d="M 430 -20 C 796 201, 1086 529, 1260 920" 
             stroke="url(#beamGradient)" 
             strokeWidth="25" 
             strokeOpacity="0.82"
@@ -172,7 +172,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
 
           {/* Layer 3: Neon electric line */}
           <path 
-            d="M 450 -10 C 580 110, 760 240, 890 350 C 930 385, 960 420, 990 460 C 1060 560, 1140 720, 1220 920" 
+            d="M 430 -20 C 796 201, 1086 529, 1260 920" 
             stroke="url(#beamGradient)" 
             strokeWidth="8.5" 
             strokeOpacity="0.95"
@@ -183,7 +183,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
 
           {/* Layer 4: Razor-sharp white-hot laser core */}
           <path 
-            d="M 450 -10 C 580 110, 760 240, 890 350 C 930 385, 960 420, 990 460 C 1060 560, 1140 720, 1220 920" 
+            d="M 430 -20 C 796 201, 1086 529, 1260 920" 
             stroke="url(#coreGradient)" 
             strokeWidth="3.2" 
             strokeOpacity="1"
