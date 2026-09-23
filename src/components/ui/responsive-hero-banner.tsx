@@ -9,9 +9,7 @@ import {
   Menu, 
   X, 
   Building2, 
-  Play,
-  CheckCircle2,
-  ExternalLink
+  Play
 } from 'lucide-react';
 
 export interface NavLink {
@@ -53,7 +51,7 @@ export interface ResponsiveHeroBannerProps {
 export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   logoText = "IA-OS",
   subLogoText = "อบต.ฝางคำ",
-  backgroundImageUrl = "/hero-bg.jpg",
+  backgroundImageUrl = "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=80",
   navLinks = [
     { label: "ภาพรวมระบบ", href: "#welcome-features", isActive: true },
     { label: "หน่วยรับตรวจ 6 กอง", href: "#departments" },
@@ -85,52 +83,135 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <section className="w-full isolate min-h-[92vh] lg:min-h-screen overflow-hidden relative rounded-3xl sm:rounded-[2.5rem] border border-blue-500/20 shadow-[0_25px_70px_-15px_rgba(2,6,23,0.7)] bg-[#030712] text-white flex flex-col justify-between">
-      {/* 1. Cinematic Background with Royal Blue & Cyan Hue Rotation */}
+    <section className="w-full isolate min-h-[92vh] lg:min-h-screen overflow-hidden relative rounded-3xl sm:rounded-[2.5rem] border border-blue-200/80 shadow-[0_20px_60px_-15px_rgba(30,58,138,0.12)] bg-gradient-to-br from-white via-[#f4f8fe] to-[#eaf2fc] text-slate-800 flex flex-col justify-between">
+      {/* 1. Bright Architectural Building Photo Background */}
       <img
         src={backgroundImageUrl}
-        alt="IA-OS Cosmic Background"
-        className="w-full h-full object-cover absolute inset-0 pointer-events-none select-none scale-105"
-        style={{
-          filter: 'hue-rotate(185deg) saturate(1.4) brightness(1.08) contrast(1.05)'
-        }}
+        alt="IA-OS Building Background"
+        className="w-full h-full object-cover absolute inset-0 opacity-[0.22] filter blur-[0.5px] scale-105 pointer-events-none select-none"
       />
 
-      {/* Subtle overlay vignettes for depth & text contrast */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-[#020617]/70" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#020617]/60 via-transparent to-transparent" />
-      <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10 rounded-3xl sm:rounded-[2.5rem]" />
+      {/* Soft warm-white and sky-blue gradient wash for daylight clarity */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/95 via-white/80 to-blue-50/70" />
+      <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-blue-900/5 rounded-3xl sm:rounded-[2.5rem]" />
 
-      {/* Ambient glowing orbs in cyan and royal sapphire */}
-      <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-[400px] h-[400px] bg-cyan-400/10 rounded-full blur-3xl pointer-events-none" />
+      {/* 2. Dynamic Electric Royal Blue & Cyan Cutting Light Beam (เส้นแสงที่ตัดลงมาสีฟ้า) */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
+        <svg 
+          viewBox="0 0 1440 900" 
+          fill="none" 
+          xmlns="http://www.w3.org/2000/svg" 
+          className="w-full h-full object-cover"
+          preserveAspectRatio="none"
+        >
+          <defs>
+            {/* Main beam gradient */}
+            <linearGradient id="beamGradient" x1="1260" y1="920" x2="160" y2="100" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#0284c7" stopOpacity="0" />
+              <stop offset="25%" stopColor="#0284c7" stopOpacity="0.85" />
+              <stop offset="50%" stopColor="#0ea5e9" stopOpacity="1" />
+              <stop offset="75%" stopColor="#38bdf8" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#2563eb" stopOpacity="0" />
+            </linearGradient>
 
-      {/* 2. Embedded Glassmorphic Header (Exactly like Image 1) */}
+            {/* Core laser white-cyan hot gradient */}
+            <linearGradient id="coreGradient" x1="1260" y1="920" x2="160" y2="100" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#38bdf8" stopOpacity="0" />
+              <stop offset="25%" stopColor="#bae6fd" stopOpacity="0.95" />
+              <stop offset="50%" stopColor="#ffffff" stopOpacity="1" />
+              <stop offset="75%" stopColor="#e0f2fe" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
+            </linearGradient>
+
+            {/* Radiant lens glow */}
+            <radialGradient id="focalGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.5" />
+              <stop offset="40%" stopColor="#0284c7" stopOpacity="0.18" />
+              <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
+            </radialGradient>
+
+            {/* Laser blur filters */}
+            <filter id="glowWide" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="32" result="blurWide" />
+            </filter>
+            <filter id="glowMed" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="10" result="blurMed" />
+            </filter>
+            <filter id="glowSharp" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="2.5" result="blurSharp" />
+            </filter>
+          </defs>
+
+          {/* Layer 1: Wide atmospheric blue dispersion aura */}
+          <path 
+            d="M 1260 920 C 1040 680, 680 340, 160 100" 
+            stroke="#0284c7" 
+            strokeWidth="96" 
+            strokeOpacity="0.25"
+            filter="url(#glowWide)"
+          />
+
+          {/* Layer 2: Medium vibrant cyan/royal beam body */}
+          <path 
+            d="M 1260 920 C 1040 680, 680 340, 160 100" 
+            stroke="url(#beamGradient)" 
+            strokeWidth="26" 
+            strokeOpacity="0.85"
+            filter="url(#glowMed)"
+          />
+
+          {/* Layer 3: Neon electric line */}
+          <path 
+            d="M 1260 920 C 1040 680, 680 340, 160 100" 
+            stroke="url(#beamGradient)" 
+            strokeWidth="9" 
+            strokeOpacity="0.95"
+            filter="url(#glowSharp)"
+          />
+
+          {/* Layer 4: Razor-sharp white-hot laser core */}
+          <path 
+            d="M 1260 920 C 1040 680, 680 340, 160 100" 
+            stroke="url(#coreGradient)" 
+            strokeWidth="3" 
+            strokeOpacity="1"
+          />
+
+          {/* Focal radiant glare on the beam intersection */}
+          <circle cx="940" cy="580" r="160" fill="url(#focalGlow)" />
+        </svg>
+      </div>
+
+      {/* Ambient soft glow bubbles */}
+      <div className="absolute top-1/4 right-1/4 w-[450px] h-[450px] bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-[400px] h-[400px] bg-cyan-300/12 rounded-full blur-3xl pointer-events-none" />
+
+      {/* 3. Integrated Modern Glass Header */}
       <header className="z-20 relative pt-5 sm:pt-6 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          {/* Left: Modern High-Tech Government Logo */}
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 border border-white/20">
+          {/* Left: Modern Government Tech Brand */}
+          <div className="flex items-center space-x-3 bg-white/85 backdrop-blur-md px-3.5 py-1.5 rounded-2xl border border-blue-100/80 shadow-xs">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/25">
               <Shield className="w-5 h-5 text-white" />
             </div>
             <div>
-              <div className="flex items-center space-x-2">
-                <span className="font-black text-base sm:text-lg tracking-wider text-white drop-shadow-sm font-['Plus_Jakarta_Sans',sans-serif]">
+              <div className="flex items-center space-x-1.5">
+                <span className="font-black text-sm sm:text-base tracking-wider text-slate-900 font-['Plus_Jakarta_Sans',sans-serif]">
                   {logoText}
                 </span>
-                <span className="text-[10px] font-bold bg-blue-500/20 text-cyan-300 border border-blue-400/30 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/80 px-2 py-0.5 rounded-full">
                   {subLogoText}
                 </span>
               </div>
-              <div className="flex items-center space-x-1.5 text-[10px] text-slate-300">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <div className="flex items-center space-x-1.5 text-[10px] text-slate-500">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="font-medium">ระบบราชการดิจิทัล 24/7</span>
               </div>
             </div>
           </div>
 
           {/* Center: Frosted Glass Capsule Navigation Pill */}
-          <nav className="hidden md:flex items-center gap-1 rounded-full bg-white/10 px-2 py-1.5 ring-1 ring-white/15 backdrop-blur-xl shadow-lg">
+          <nav className="hidden md:flex items-center gap-1 rounded-full bg-white/85 px-2 py-1.5 border border-slate-200/80 shadow-xs backdrop-blur-md">
             {navLinks.map((link, index) => (
               <a
                 key={index}
@@ -143,8 +224,8 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
                 }}
                 className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
                   link.isActive
-                    ? 'bg-white/20 text-white font-bold shadow-xs border border-white/20'
-                    : 'text-white/80 hover:text-white hover:bg-white/10'
+                    ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200/60 shadow-2xs'
+                    : 'text-slate-600 hover:text-blue-700 hover:bg-slate-50'
                 }`}
               >
                 {link.label}
@@ -152,12 +233,12 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             ))}
           </nav>
 
-          {/* Right: Crisp White Pill CTA Button (Reserve Seat style from Image 1) */}
+          {/* Right: CTA Button */}
           <div className="hidden sm:flex items-center">
             <button
               type="button"
               onClick={onCtaClick}
-              className="inline-flex items-center gap-2 rounded-full bg-white hover:bg-blue-50 text-slate-900 font-bold text-xs sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 shadow-md shadow-white/10 hover:shadow-cyan-400/25 hover:scale-[1.03] active:scale-[0.98] transition-all cursor-pointer group"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-bold text-xs sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 shadow-md shadow-blue-600/25 hover:shadow-lg hover:shadow-blue-600/35 hover:scale-[1.03] active:scale-[0.98] transition-all cursor-pointer group"
             >
               <span>{session ? "ไปยังแดชบอร์ดงาน" : ctaButtonText}</span>
               <svg 
@@ -181,7 +262,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20 backdrop-blur-md text-white"
+            className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/90 border border-slate-200 shadow-xs text-slate-700"
             aria-expanded={mobileMenuOpen}
             aria-label="Toggle menu"
           >
@@ -191,7 +272,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
 
         {/* Mobile Dropdown */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-3 p-4 bg-slate-900/95 backdrop-blur-xl border border-white/15 rounded-2xl shadow-2xl space-y-2">
+          <div className="md:hidden mt-3 p-4 bg-white/95 backdrop-blur-xl border border-slate-200 rounded-2xl shadow-xl space-y-2">
             {navLinks.map((link, index) => (
               <a
                 key={index}
@@ -203,7 +284,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
                     link.onClick();
                   }
                 }}
-                className="block px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-white/10 hover:text-white rounded-xl"
+                className="block px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 rounded-xl"
               >
                 {link.label}
               </a>
@@ -213,7 +294,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
                 setMobileMenuOpen(false);
                 if (onCtaClick) onCtaClick();
               }}
-              className="w-full mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-xs font-bold text-slate-900 shadow-md"
+              className="w-full mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-md"
             >
               <span>{session ? "ไปยังแดชบอร์ดงาน" : ctaButtonText}</span>
               <ArrowRight className="w-4 h-4" />
@@ -222,31 +303,31 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
         )}
       </header>
 
-      {/* 3. Hero Center Body (Title, Badge, Description, CTA Buttons) */}
-      <div className="z-10 relative my-auto py-12 sm:py-16 lg:py-20 px-6">
+      {/* 4. Hero Center Body (Title, Badge, Description, CTA Buttons) */}
+      <div className="z-10 relative my-auto py-10 sm:py-14 lg:py-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
           {/* Frosted Glass Badge */}
-          <div className="mb-6 inline-flex items-center gap-2.5 rounded-full bg-white/10 px-3.5 py-1.5 ring-1 ring-white/20 backdrop-blur-xl shadow-lg animate-fade-slide-in-1">
-            <span className="inline-flex items-center text-[11px] font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-500 rounded-full py-0.5 px-2.5 shadow-xs font-['Chakra_Petch',sans-serif]">
+          <div className="mb-6 inline-flex items-center gap-2.5 rounded-full bg-white/90 px-3.5 py-1.5 border border-blue-200/80 shadow-xs backdrop-blur-md animate-fade-slide-in-1">
+            <span className="inline-flex items-center text-[11px] font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full py-0.5 px-2.5 shadow-2xs font-['Chakra_Petch',sans-serif]">
               {badgeLabel}
             </span>
-            <span className="text-xs sm:text-sm font-medium text-white/95">
+            <span className="text-xs sm:text-sm font-semibold text-slate-700">
               {badgeText}
             </span>
           </div>
 
-          {/* Main Title - Modern, Futuristic, Dignified (No Broken Lines) */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.15] animate-fade-slide-in-2 font-['Prompt',sans-serif]">
-            <span className="block drop-shadow-[0_4px_24px_rgba(0,0,0,0.8)]">
+          {/* Main Title - No awkward wrapping, guaranteed 2 balanced lines */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.18] animate-fade-slide-in-2 font-['Prompt',sans-serif]">
+            <span className="block drop-shadow-xs">
               {title}
             </span>
-            <span className="block bg-gradient-to-r from-white via-blue-100 to-cyan-300 bg-clip-text text-transparent drop-shadow-[0_2px_20px_rgba(56,189,248,0.5)] mt-1 sm:mt-2">
+            <span className="inline-block whitespace-nowrap bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 bg-clip-text text-transparent drop-shadow-xs mt-1 sm:mt-2">
               {titleLine2}
             </span>
           </h1>
 
           {/* Subtitle / Description */}
-          <p className="mt-6 text-sm sm:text-base lg:text-lg text-slate-200/90 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow-sm animate-fade-slide-in-3">
+          <p className="mt-6 text-sm sm:text-base lg:text-lg text-slate-600 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow-2xs animate-fade-slide-in-3">
             {description}
           </p>
 
@@ -255,7 +336,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             <button
               type="button"
               onClick={onPrimaryClick}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-sm py-3.5 px-8 shadow-lg shadow-blue-600/35 hover:shadow-cyan-400/30 hover:scale-[1.03] active:scale-[0.98] transition-all cursor-pointer ring-1 ring-white/20"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold text-sm py-3.5 px-8 shadow-md shadow-blue-600/30 hover:shadow-lg hover:shadow-blue-600/40 hover:scale-[1.03] active:scale-[0.98] transition-all cursor-pointer"
             >
               <span>⚡</span>
               <span>{session ? "เปิดแดชบอร์ดงานตรวจสอบ" : primaryButtonText}</span>
@@ -265,19 +346,19 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             <button
               type="button"
               onClick={onSecondaryClick}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white/10 hover:bg-white/20 text-white font-medium text-sm py-3.5 px-6 ring-1 ring-white/20 backdrop-blur-md hover:ring-white/30 transition-all cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white/95 hover:bg-white text-slate-700 hover:text-blue-700 font-bold text-sm py-3.5 px-6 border border-slate-200/80 shadow-xs hover:border-blue-300 transition-all cursor-pointer"
             >
-              <Play className="w-3.5 h-3.5 text-cyan-300 fill-cyan-300" />
+              <Play className="w-3.5 h-3.5 text-blue-600 fill-blue-600" />
               <span>{secondaryButtonText}</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* 4. Bottom Connected Departments (Matching Image 1's Partner Grid) */}
-      <div className="z-10 relative pb-8 sm:pb-10 px-6">
-        <div className="max-w-5xl mx-auto pt-6 border-t border-white/10">
-          <p className="text-[11px] sm:text-xs font-semibold text-slate-300/80 uppercase tracking-widest text-center animate-fade-slide-in-1">
+      {/* 5. Bottom Connected Departments (6 หน่วยรับตรวจ) */}
+      <div className="z-10 relative pb-7 sm:pb-8 px-6">
+        <div className="max-w-5xl mx-auto pt-5 border-t border-slate-200/80">
+          <p className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center animate-fade-slide-in-1">
             {partnersTitle}
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 mt-4 gap-2.5 sm:gap-3 animate-fade-slide-in-2">
@@ -285,16 +366,16 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
               <div
                 key={index}
                 onClick={partner.onClick}
-                className="bg-white/5 hover:bg-white/15 border border-white/10 hover:border-cyan-400/50 rounded-2xl p-2.5 sm:p-3 text-center transition-all backdrop-blur-md cursor-pointer group shadow-xs hover:shadow-cyan-500/20"
+                className="bg-white/85 hover:bg-blue-50/90 border border-slate-200/80 hover:border-blue-300 rounded-2xl p-2.5 sm:p-3 text-center transition-all shadow-2xs hover:shadow-xs cursor-pointer group"
               >
-                <div className="w-7 h-7 rounded-xl bg-blue-500/20 group-hover:bg-cyan-500/30 text-cyan-300 flex items-center justify-center mx-auto mb-1 transition-colors">
+                <div className="w-7 h-7 rounded-xl bg-blue-50 group-hover:bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-1 transition-colors">
                   <Building2 className="w-3.5 h-3.5" />
                 </div>
-                <div className="text-xs font-bold text-white group-hover:text-cyan-300 transition-colors">
+                <div className="text-xs font-bold text-slate-800 group-hover:text-blue-700 transition-colors">
                   {partner.name}
                 </div>
                 {partner.label && (
-                  <div className="text-[9px] text-slate-300/70 line-clamp-1 mt-0.5">
+                  <div className="text-[9px] text-slate-500 line-clamp-1 mt-0.5">
                     {partner.label}
                   </div>
                 )}
