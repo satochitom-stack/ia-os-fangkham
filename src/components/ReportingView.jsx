@@ -22,6 +22,12 @@ export default function ReportingView({
   const [activeTab, setActiveTab] = useState('report'); // 'report', 'exit', 'followup'
   const [selectedWpId, setSelectedWpId] = useState(() => workingPapers[0]?.id || '');
 
+  useEffect(() => {
+    if (workingPapers.length > 0 && !workingPapers.some((w) => w.id === selectedWpId)) {
+      setSelectedWpId(workingPapers[0].id);
+    }
+  }, [workingPapers, selectedWpId]);
+
   // Persistent Follow-up state isolated by fiscal year
   const [followupByYear, setFollowupByYear] = useState(() => {
     try {

@@ -25,6 +25,7 @@ import {
   initialFiscalYears,
   initialAnnualPlans,
   initialWorkingPapers,
+  initialWorkingPapers2570,
   initialRiskAssessments,
   initialInternalControls,
   initialRiskManagement,
@@ -152,22 +153,20 @@ export default function App() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (!parsed['2569'] && parsed['2568']) parsed['2569'] = parsed['2568'];
+        if (!parsed['2570'] || parsed['2570'].length === 0) parsed['2570'] = initialWorkingPapers2570;
         return parsed;
       }
       const old = localStorage.getItem('ia_working_papers');
       if (old) {
         const parsed = JSON.parse(old);
         if (Array.isArray(parsed)) {
-          if (parsed.some((w) => w.finding?.condition?.includes('Maker') || w.samples?.length > 0)) {
-            return { '2569': initialWorkingPapers };
-          }
-          return { '2569': parsed };
+          return { '2569': parsed, '2570': initialWorkingPapers2570 };
         }
       }
     } catch (e) {
       console.error(e);
     }
-    return { '2569': initialWorkingPapers };
+    return { '2569': initialWorkingPapers, '2570': initialWorkingPapers2570 };
   });
 
   const [riskAssessmentsByYear, setRiskAssessmentsByYear] = useState(() => {
@@ -398,10 +397,11 @@ export default function App() {
     });
   };
 
-  const workingPapers = workingPapersByYear[selectedYear] || initialWorkingPapers;
+  const defaultWpForYear = selectedYear === '2570' ? initialWorkingPapers2570 : initialWorkingPapers;
+  const workingPapers = workingPapersByYear[selectedYear] || defaultWpForYear;
   const setWorkingPapers = (updaterOrValue) => {
     setWorkingPapersByYear((prev) => {
-      const current = prev[selectedYear] || initialWorkingPapers;
+      const current = prev[selectedYear] || defaultWpForYear;
       const updated = typeof updaterOrValue === 'function' ? updaterOrValue(current) : updaterOrValue;
       return { ...prev, [selectedYear]: updated };
     });

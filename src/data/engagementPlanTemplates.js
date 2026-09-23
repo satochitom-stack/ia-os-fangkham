@@ -43,7 +43,7 @@ export const INITIAL_ENGAGEMENT_PLANS = [
     status: 'planned', // planned, ongoing, completed
     period: '1 พฤศจิกายน 2567 – 25 พฤศจิกายน 2567',
     fieldworkPeriod: '15 พฤศจิกายน 2567 – 20 พฤศจิกายน 2567',
-    auditorName: 'นายศุภมงคล ธรรมพิทักษ์',
+    auditorName: 'หน่วยตรวจสอบภายใน',
     auditorPosition: 'นักวิชาการตรวจสอบภายในปฏิบัติการ',
     objectives: [
       'เพื่อให้ความเชื่อมั่นอย่างสมเหตุสมผลว่า รายการบัญชีที่บันทึกในระบบ e-LAAS มีเอกสารหลักฐานครบถ้วน ถูกต้องตามข้อเท็จจริง และเป็นปัจจุบัน',
@@ -87,7 +87,7 @@ export const INITIAL_ENGAGEMENT_PLANS = [
         evidence: 'รายงานสมุดรายวัน, ใบเสร็จรับเงิน, ฎีกาเบิกจ่ายเงิน',
         samplingMethod: 'สุ่มตรวจรายการรับ-จ่ายเงิน ร้อยละ 20 ของจำนวนรายการในแต่ละเดือน โดยเน้นรายการช่วงสิ้นเดือน',
         wpRef: 'WP-FIN-01',
-        auditor: 'นายศุภมงคล ธรรมพิทักษ์',
+        auditor: 'หน่วยตรวจสอบภายใน',
         status: 'pending'
       },
       {
@@ -97,7 +97,7 @@ export const INITIAL_ENGAGEMENT_PLANS = [
         evidence: 'งบกระทบยอดเงินฝากธนาคาร, Bank Statement, สมุดคู่ฝากธนาคาร, ทะเบียนคุมเช็ค',
         samplingMethod: 'ตรวจสอบครบถ้วน 100% ทุกบัญชีเงินฝากธนาคาร',
         wpRef: 'WP-FIN-02',
-        auditor: 'นายศุภมงคล ธรรมพิทักษ์',
+        auditor: 'หน่วยตรวจสอบภายใน',
         status: 'pending'
       },
       {
@@ -107,7 +107,7 @@ export const INITIAL_ENGAGEMENT_PLANS = [
         evidence: 'ใบผ่านรายการบัญชี, เอกสารประกอบการปรับปรุงบัญชี',
         samplingMethod: 'สุ่มตรวจใบผ่านรายการบัญชีที่มีมูลค่าเกิน 50,000 บาททุกฉบับ และสุ่มทั่วไปร้อยละ 15',
         wpRef: 'WP-FIN-03',
-        auditor: 'นายศุภมงคล ธรรมพิทักษ์',
+        auditor: 'หน่วยตรวจสอบภายใน',
         status: 'pending'
       },
       {
@@ -117,7 +117,7 @@ export const INITIAL_ENGAGEMENT_PLANS = [
         evidence: 'งบทดลองประจำเดือน, รายงานฐานะการเงิน, หนังสือส่งรายงานการเงิน',
         samplingMethod: 'ตรวจสอบงบทดลองย้อนหลัง 3 เดือนล่าสุด',
         wpRef: 'WP-FIN-04',
-        auditor: 'นายศุภมงคล ธรรมพิทักษ์',
+        auditor: 'หน่วยตรวจสอบภายใน',
         status: 'pending'
       }
     ],
@@ -142,7 +142,7 @@ export function generateEngagementPlanWithAI({
   serviceType = 'assurance',
   year = '2568',
   orgName = 'องค์การบริหารส่วนตำบลฝางคำ',
-  auditorName = 'นายศุภมงคล ธรรมพิทักษ์',
+  auditorName = 'หน่วยตรวจสอบภายใน',
   auditorPosition = 'นักวิชาการตรวจสอบภายในปฏิบัติการ',
   customGoal = ''
 }) {
