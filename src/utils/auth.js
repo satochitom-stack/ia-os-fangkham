@@ -247,6 +247,18 @@ export function autoRepairDataLinkages() {
 
     cascadeDepartmentRenameToStorage('กองสาธารณสุขและสิ่งแวดล้อม', 'กองสวัสดิการสังคม');
 
+    // Also repair orgProfile auditorName if stored as former developer name
+    try {
+      const rawProfile = localStorage.getItem('ia_org_profile');
+      if (rawProfile) {
+        const parsed = JSON.parse(rawProfile);
+        if (parsed && (parsed.auditorName === 'นายศุภมงคล ธรรมพิทักษ์' || !parsed.auditorName)) {
+          parsed.auditorName = 'หน่วยตรวจสอบภายใน';
+          localStorage.setItem('ia_org_profile', JSON.stringify(parsed));
+        }
+      }
+    } catch (_) {}
+
     if (usersChanged) {
       localStorage.setItem(USERS_KEY, JSON.stringify(users));
     }
