@@ -162,7 +162,7 @@ export default function LoginView({ onLogin }) {
               onClick={() => setShowQuickLogin(!showQuickLogin)}
               className="w-full flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 cursor-pointer"
             >
-              <span>⚡ เลือกเข้าสู่ระบบด่วนรายกอง (Quick Switch):</span>
+              <span>🏢 เลือกเข้าสู่ระบบด่วนรายกอง (Quick Switch):</span>
               {showQuickLogin ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
             </button>
 

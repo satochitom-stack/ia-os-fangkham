@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { 
   Shield, 
+  ShieldCheck,
   ArrowRight, 
   Sparkles, 
   LogIn, 
@@ -322,7 +323,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
               onClick={onPrimaryClick}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold text-sm sm:text-base py-3 sm:py-3.5 px-8 sm:px-9 shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
             >
-              <span>⚡</span>
+              <ShieldCheck className="w-5 h-5 text-cyan-200" />
               <span>{session ? "เปิดแดชบอร์ดงานตรวจสอบ" : primaryButtonText}</span>
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
