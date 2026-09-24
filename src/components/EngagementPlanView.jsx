@@ -151,16 +151,16 @@ export default function EngagementPlanView({
   return (
     <div className="space-y-6">
       {/* 1. Header Banner */}
-      <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-sky-800 rounded-2xl p-6 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6 print:hidden">
+      <div className="bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-white dark:from-slate-850 dark:to-slate-900 rounded-2xl p-6 text-slate-900 dark:text-slate-100 shadow-xs border border-blue-200/80 dark:border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-6 print:hidden">
         <div className="space-y-2">
-          <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-medium text-sky-100">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+          <div className="inline-flex items-center space-x-2 bg-blue-100/80 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-800 px-3 py-1 rounded-full text-xs font-semibold text-blue-700 dark:text-blue-300">
+            <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
             <span>มาตรฐานหนังสือกรมบัญชีกลาง ว 614 & AI Co-Auditor</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             แผนปฏิบัติงานตรวจสอบ (Audit Engagement Plan)
           </h1>
-          <p className="text-sky-100 text-sm max-w-2xl">
+          <p className="text-slate-600 dark:text-slate-400 text-sm max-w-2xl">
             วางแผนและออกแบบแนวการตรวจสอบรายกิจกรรม (Audit Program) สเต็ปต่อสเต็ป พร้อมเชื่อมโยงเกณฑ์ระเบียบกฎหมาย
             และเปลี่ยนภาพลักษณ์ผู้ตรวจสอบจาก "คนจับผิด" สู่ "เพื่อนคู่คิด (Consulting Mindset)" ประจำปีงบประมาณ {selectedYear}
           </p>
@@ -169,16 +169,16 @@ export default function EngagementPlanView({
         <div className="flex flex-wrap gap-3">
           <button
             onClick={() => setActiveTab('ai-copilot')}
-            className="flex items-center space-x-2 bg-amber-400 hover:bg-amber-300 text-slate-900 px-4 py-2.5 rounded-xl font-bold text-sm shadow-md transition-all cursor-pointer transform hover:-translate-y-0.5"
+            className="flex items-center space-x-2 bg-amber-400 hover:bg-amber-300 text-slate-900 px-4 py-2.5 rounded-xl font-bold text-sm shadow-xs transition-all cursor-pointer transform hover:-translate-y-0.5"
           >
             <Sparkles className="w-4 h-4 text-slate-900" />
             <span>+ AI สร้างแผนตาม ว 614</span>
           </button>
           <button
             onClick={handlePrint}
-            className="flex items-center space-x-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer"
+            className="flex items-center space-x-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-xs transition-all cursor-pointer"
           >
-            <Printer className="w-4 h-4" />
+            <Printer className="w-4 h-4 text-slate-600 dark:text-slate-300" />
             <span>พิมพ์แผน (A4)</span>
           </button>
         </div>

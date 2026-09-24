@@ -46,22 +46,22 @@ export default function DashboardView({
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-900 rounded-2xl p-6 text-white shadow-md border border-blue-600/30 relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+      <div className="bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-white dark:from-slate-850 dark:to-slate-900 rounded-2xl p-6 text-slate-900 dark:text-slate-100 shadow-xs border border-blue-200/80 dark:border-slate-700/80 relative overflow-hidden">
+        <div className="absolute right-0 top-0 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center space-x-2 bg-blue-500/30 border border-blue-400/30 rounded-full px-3 py-1 text-xs font-medium text-blue-100 mb-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <div className="inline-flex items-center space-x-2 bg-blue-100/80 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-800 rounded-full px-3 py-1 text-xs font-semibold text-blue-700 dark:text-blue-300 mb-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>ปีงบประมาณ พ.ศ. {selectedYear}</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100">
               ระบบงานตรวจสอบภายใน {orgDisplayName}
             </h2>
-            <p className="text-sm text-blue-100/90 mt-1 max-w-2xl">
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-2xl">
               {hasAuditorName ? (
-                <>ผู้ตรวจสอบภายใน: <strong className="text-white">{orgProfile.auditorName}</strong> ({orgProfile.auditorPosition})</>
+                <>ผู้ตรวจสอบภายใน: <strong className="text-slate-900 dark:text-slate-200">{orgProfile.auditorName}</strong> ({orgProfile.auditorPosition})</>
               ) : (
-                <span className="text-amber-200">
+                <span className="text-amber-700 dark:text-amber-400">
                   ⚠️ ยังไม่ได้ตั้งชื่อผู้ตรวจสอบภายใน กรุณากดปุ่มตั้งค่าโปรไฟล์เพื่อระบุชื่อของท่าน
                 </span>
               )}
@@ -71,7 +71,7 @@ export default function DashboardView({
             {!hasAuditorName && (
               <button
                 onClick={onOpenSettings}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 px-3.5 py-2 rounded-xl text-xs font-bold shadow-md transition-all flex items-center space-x-1.5 cursor-pointer"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 px-3.5 py-2 rounded-xl text-xs font-bold shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer"
               >
                 <Settings className="w-4 h-4" />
                 <span>ตั้งชื่อผู้ตรวจสอบ</span>
@@ -79,16 +79,16 @@ export default function DashboardView({
             )}
             <button
               onClick={() => setCurrentTab('execution')}
-              className="bg-white text-blue-800 hover:bg-blue-50 px-3.5 py-2 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center space-x-1.5 cursor-pointer"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer"
             >
-              <ClipboardList className="w-4 h-4 text-blue-600" />
+              <ClipboardList className="w-4 h-4 text-blue-100" />
               <span>เปิดกระดาษทำการ</span>
             </button>
             <button
               onClick={() => setCurrentTab('reporting')}
-              className="bg-blue-600/80 hover:bg-blue-600 border border-blue-400/30 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer"
+              className="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer"
             >
-              <FileText className="w-4 h-4" />
+              <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               <span>สรุปรายงานผล</span>
             </button>
           </div>
@@ -317,23 +317,22 @@ export default function DashboardView({
         {/* Right Col: Quick Working Papers & Reference Directives */}
         <div className="space-y-4">
           {/* Quick Access to Working Paper */}
-          <div className="bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900 text-white rounded-2xl p-5 shadow-md border border-blue-600/30 relative overflow-hidden">
-            <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+          <div className="bg-gradient-to-br from-blue-50/70 via-white to-white dark:from-slate-850 dark:via-slate-900 dark:to-slate-900 rounded-2xl p-5 shadow-xs border border-blue-200/80 dark:border-slate-800 hover:border-blue-300 dark:hover:border-slate-700 relative overflow-hidden transition-all">
             <div className="relative z-10">
-              <div className="flex items-center space-x-2 text-xs font-semibold text-blue-200 mb-2">
-                <div className="w-6 h-6 rounded-lg bg-blue-500/40 flex items-center justify-center">
-                  <TrendingUp className="w-3.5 h-3.5 text-blue-200" />
+              <div className="flex items-center space-x-2 text-xs font-semibold text-blue-700 dark:text-blue-300 mb-2">
+                <div className="w-6 h-6 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
+                  <TrendingUp className="w-3.5 h-3.5 text-blue-700 dark:text-blue-300" />
                 </div>
                 <span>กระดาษทำการตรวจสอบมาตรฐาน ({workingPapers.length} เรื่อง)</span>
               </div>
-              <h4 className="text-base font-bold text-white leading-tight">
+              <h4 className="text-base font-bold text-slate-900 dark:text-slate-100 leading-tight">
                 {workingPapers[0]?.topic || 'ระบบตรวจสอบภายใน'}
               </h4>
-              <p className="text-xs text-blue-100/80 mt-2 line-clamp-2 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 line-clamp-2 leading-relaxed">
                 พร้อมเกณฑ์ตรวจสอบตามระเบียบกระทรวงมหาดไทย ระบบสุ่มตรวจฎีกา และส่งออก Excel
               </p>
-              <div className="mt-4 pt-4 border-t border-blue-600/40 flex items-center justify-between">
-                <span className="text-xs text-blue-200 font-medium">
+              <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                   {workingPapers[0]?.department}
                 </span>
                 <button
@@ -341,7 +340,7 @@ export default function DashboardView({
                     setSelectedWp(workingPapers[0]?.id || 'WP-KTB-01');
                     setCurrentTab('execution');
                   }}
-                  className="bg-white hover:bg-blue-50 text-blue-900 text-xs font-bold px-3.5 py-1.5 rounded-xl shadow-xs transition-all cursor-pointer"
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl shadow-xs transition-all cursor-pointer"
                 >
                   เปิดกระดาษทำการ
                 </button>
@@ -350,25 +349,27 @@ export default function DashboardView({
           </div>
 
           {/* Quick Access to Technical Audit Toolkits */}
-          <div className="bg-gradient-to-br from-indigo-700 via-blue-800 to-slate-900 text-white rounded-2xl p-5 shadow-md border border-indigo-500/30 relative overflow-hidden">
+          <div className="bg-gradient-to-br from-indigo-50/70 via-white to-white dark:from-slate-850 dark:via-slate-900 dark:to-slate-900 rounded-2xl p-5 shadow-xs border border-indigo-200/80 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-slate-700 relative overflow-hidden transition-all">
             <div className="relative z-10 space-y-2">
-              <div className="flex items-center space-x-2 text-xs font-semibold text-indigo-200">
-                <Wrench className="w-3.5 h-3.5 text-amber-300" />
+              <div className="flex items-center space-x-2 text-xs font-semibold text-indigo-700 dark:text-indigo-300">
+                <div className="w-6 h-6 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center">
+                  <Wrench className="w-3.5 h-3.5 text-indigo-700 dark:text-indigo-300" />
+                </div>
                 <span>เสาหลักที่ 2: เครื่องมือช่วยตรวจเชิงเทคนิค</span>
               </div>
-              <h4 className="text-sm font-bold text-white leading-tight">
+              <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-tight">
                 เครื่องมือคำนวณราคากลาง & ค่าปรับจัดซื้อจัดจ้าง
               </h4>
-              <p className="text-[11px] text-indigo-100/80 leading-relaxed">
+              <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
                 4 โมดูลเฉพาะทางสำหรับปี 2570: Factor F, ค่าปรับ, ข้อบัญญัติ, และค่าธรรมเนียมอาคาร
               </p>
               <div className="pt-2 flex items-center justify-between">
-                <span className="text-[10px] bg-indigo-500/40 text-indigo-200 px-2 py-0.5 rounded-full font-bold">
+                <span className="text-[10px] bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-full font-bold">
                   4 เครื่องมือพร้อมใช้
                 </span>
                 <button
                   onClick={() => setCurrentTab('audit-toolkits')}
-                  className="bg-white hover:bg-indigo-50 text-indigo-900 text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs transition-all cursor-pointer flex items-center space-x-1"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs transition-all cursor-pointer flex items-center space-x-1"
                 >
                   <span>เปิดเครื่องมือ</span>
                   <ChevronRight className="w-3.5 h-3.5" />

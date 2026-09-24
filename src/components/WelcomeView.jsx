@@ -416,12 +416,12 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
         </div>
 
         {/* 6. Call to Action Banner */}
-        <div className="p-8 md:p-12 rounded-3xl bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 border border-blue-400/20 text-white text-center space-y-5 relative overflow-hidden shadow-xl shadow-blue-900/10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-          <h3 className="text-xl md:text-3xl font-extrabold text-white">
+        <div className="p-8 md:p-12 rounded-3xl bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-white border border-blue-200/80 text-center space-y-5 relative overflow-hidden shadow-xs">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
+          <h3 className="text-xl md:text-3xl font-extrabold text-slate-900">
             พร้อมเริ่มต้นปฏิบัติงานตรวจสอบภายในแล้วหรือยัง?
           </h3>
-          <p className="text-xs md:text-sm text-blue-100 max-w-xl mx-auto">
+          <p className="text-xs md:text-sm text-slate-600 max-w-xl mx-auto">
             เข้าสู่ระบบด้วยชื่อผู้ใช้งานประจำกองของท่าน หรือติดต่อผู้ดูแลระบบ (หน่วยตรวจสอบภายใน) เพื่อเปิดสิทธิ์การใช้งาน
           </p>
           <div>
@@ -429,7 +429,7 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
               <button
                 type="button"
                 onClick={onEnterDashboard}
-                className="bg-white hover:bg-blue-50 text-blue-950 font-bold text-sm px-6 py-3 rounded-2xl inline-flex items-center space-x-2 shadow-lg shadow-black/10 transition-all cursor-pointer"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm px-6 py-3 rounded-2xl inline-flex items-center space-x-2 shadow-xs transition-all cursor-pointer"
               >
                 <span>กลับสู่หน้าทำงาน (Dashboard)</span>
                 <ArrowRight className="w-4 h-4" />
@@ -438,9 +438,9 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
               <button
                 type="button"
                 onClick={() => setShowLoginModal(true)}
-                className="bg-white hover:bg-blue-50 text-blue-950 font-bold text-sm px-6 py-3 rounded-2xl inline-flex items-center space-x-2 shadow-lg shadow-black/10 transition-all cursor-pointer"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm px-6 py-3 rounded-2xl inline-flex items-center space-x-2 shadow-xs transition-all cursor-pointer"
               >
-                <LogIn className="w-4 h-4 text-blue-700" />
+                <LogIn className="w-4 h-4 text-blue-100" />
                 <span>เข้าสู่ระบบตรวจสอบภายในทันที</span>
               </button>
             )}

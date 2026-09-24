@@ -109,20 +109,20 @@ export default function TechnicalToolkitsView({
   return (
     <div className="space-y-6">
       {/* Pillar Hero Banner */}
-      <div className="bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-900 rounded-2xl p-6 text-white shadow-md border border-blue-600/30 relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+      <div className="bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-white dark:from-slate-850 dark:to-slate-900 rounded-2xl p-6 text-slate-900 dark:text-slate-100 shadow-xs border border-blue-200/80 dark:border-slate-700/80 relative overflow-hidden">
+        <div className="absolute right-0 top-0 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center space-x-2 bg-blue-500/30 border border-blue-400/30 rounded-full px-3 py-1 text-xs font-medium text-blue-100 mb-2">
-              <Wrench className="w-3.5 h-3.5 text-amber-300" />
+            <div className="inline-flex items-center space-x-2 bg-blue-100/80 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-800 rounded-full px-3 py-1 text-xs font-semibold text-blue-700 dark:text-blue-300 mb-2">
+              <Wrench className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
               <span>เสาหลักที่ 2: ปฏิบัติการตรวจสอบ & เครื่องมือเฉพาะทาง</span>
               <span>•</span>
-              <span className="text-amber-200 font-bold">ปีงบประมาณ พ.ศ. {selectedYear}</span>
+              <span className="text-blue-800 dark:text-blue-200 font-bold">ปีงบประมาณ พ.ศ. {selectedYear}</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100">
               ชุดเครื่องมือช่วยตรวจสอบเชิงเทคนิค (Technical Audit Toolkits)
             </h2>
-            <p className="text-xs sm:text-sm text-blue-100/90 mt-1 max-w-3xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-3xl leading-relaxed">
               เครื่องมืออำนวยความสะดวกสำหรับผู้ตรวจสอบภายใน ช่วยคำนวณและสอบทานความถูกต้องตามระเบียบ กฎหมาย หนังสือสั่งการ
               ใน 4 ประเด็นหลัก: ราคากลาง, จัดซื้อจัดจ้าง, โครงการตามข้อบัญญัติ และการขออนุญาตก่อสร้าง
             </p>
@@ -131,11 +131,11 @@ export default function TechnicalToolkitsView({
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
             <button
               onClick={() => handleOpenWorkingPaper(currentTopic.wpId)}
-              className="bg-white text-blue-900 hover:bg-blue-50 px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center space-x-2 cursor-pointer"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-xs transition-all flex items-center space-x-2 cursor-pointer"
             >
-              <ClipboardList className="w-4 h-4 text-blue-700" />
+              <ClipboardList className="w-4 h-4 text-blue-100" />
               <span>เปิดกระดาษทำการ ({currentTopic.wpId})</span>
-              <ArrowRight className="w-3.5 h-3.5 text-blue-500" />
+              <ArrowRight className="w-3.5 h-3.5 text-blue-200" />
             </button>
           </div>
         </div>

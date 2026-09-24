@@ -1989,9 +1989,9 @@ export default function AuditRiskView({
           </div>
 
           {/* Table */}
-          <div className="border border-slate-300 dark:border-slate-700 rounded-lg overflow-hidden">
+          <div className="border border-slate-200/80 dark:border-slate-700 rounded-lg overflow-hidden">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-100 dark:bg-slate-950 font-bold border-b border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200">
+              <thead className="bg-slate-50/90 dark:bg-slate-900 font-bold border-b border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200">
                 <tr>
                   <th className="p-2 w-10 text-center">ที่</th>
                   <th className="p-2">กิจกรรม</th>
