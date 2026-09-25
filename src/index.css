@@ -29,15 +29,66 @@ html.dark body {
 }
 
 @media print {
-  aside, nav, .no-print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+  
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+    margin: 0 !important;
+    padding: 8mm 10mm !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-sizing: border-box;
+  }
+
+  header, aside, nav, footer, .no-print, [role="navigation"] {
     display: none !important;
   }
+
   main {
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    background: transparent !important;
+  }
+
+  .overflow-x-auto {
+    overflow: visible !important;
+  }
+
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+
+  /* Make borders crisp black for official printing */
+  .printable-document table, 
+  .printable-document th, 
+  .printable-document td {
+    border: 1px solid #000000 !important;
   }
 }
+
 
 @keyframes fadeSlideIn {
   from {

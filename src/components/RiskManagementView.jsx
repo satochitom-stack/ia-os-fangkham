@@ -23,9 +23,12 @@ import {
   Calendar,
   Sparkles,
   HelpCircle,
-  ExternalLink
+  ExternalLink,
+  FileSpreadsheet,
+  Download
 } from 'lucide-react';
 import { getDepartments, getSession } from '../utils/auth';
+import { exportBsToWord, exportBsToExcel } from '../utils/exportRiskDocs';
 
 // 6 ประเภทความเสี่ยง ตามหนังสือสั่งการ มท 0805.2/ว 3482 (แบบ บส.2 ข้อ 8)
 export const RISK_CATEGORIES = [
@@ -358,6 +361,8 @@ export default function RiskManagementView({
 
   // Filtered lists based on permission and active department filter
   const effectiveDept = isAdmin ? filterDept : userDept;
+  // เป็นกองย่อยหรือไม่ (หากไม่ใช่ Admin หรือ Admin กำลังเลือกดูกองย่อยใดกองหนึ่ง)
+  const isSubDivision = !isAdmin || (filterDept !== 'all');
 
   const filteredBs1 = useMemo(() => {
     if (isAdmin && filterDept === 'all') return bs1List;
@@ -686,10 +691,46 @@ export default function RiskManagementView({
     window.print();
   };
 
+  // Handle Download Word (.doc)
+  const handleDownloadWord = () => {
+    exportBsToWord({
+      activeTab,
+      filteredBs1,
+      filteredBs2,
+      filteredBs3,
+      filteredBs4,
+      filteredBs5Items,
+      bs5Data,
+      bs4Period,
+      orgProfile,
+      selectedYear,
+      isSubDivision,
+      effectiveDept: isAdmin ? filterDept : userDept
+    });
+  };
+
+  // Handle Download Excel (.xls)
+  const handleDownloadExcel = () => {
+    exportBsToExcel({
+      activeTab,
+      filteredBs1,
+      filteredBs2,
+      filteredBs3,
+      filteredBs4,
+      filteredBs5Items,
+      bs5Data,
+      bs4Period,
+      orgProfile,
+      selectedYear,
+      isSubDivision,
+      effectiveDept: isAdmin ? filterDept : userDept
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* 1. Header Banner */}
-      <div className="bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-white dark:from-slate-850 dark:to-slate-900 p-6 rounded-2xl border border-blue-200/80 dark:border-slate-700/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-white dark:from-slate-850 dark:to-slate-900 p-6 rounded-2xl border border-blue-200/80 dark:border-slate-700/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 no-print">
         <div>
           <div className="inline-flex items-center space-x-2 bg-blue-100/80 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-800 rounded-full px-3 py-1 text-xs font-semibold text-blue-700 dark:text-blue-300 mb-2">
             <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
@@ -704,23 +745,45 @@ export default function RiskManagementView({
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto shrink-0 no-print">
+        <div className="flex flex-wrap items-center gap-2 self-start md:self-auto shrink-0 no-print">
           <button
             type="button"
             onClick={() => setShowGuide(!showGuide)}
-            className="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
+            className="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-slate-700 text-xs font-bold px-3 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
+            title="คำอธิบายการจัดทำแบบรายงานตามหนังสือสั่งการ"
           >
-            <BookOpen className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-            <span>{showGuide ? 'ซ่อนคำอธิบายแบบ' : '📖 คำอธิบายตาม ว ๓๔๘๒'}</span>
+            <BookOpen className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+            <span>{showGuide ? 'ซ่อนคำอธิบาย' : 'คำอธิบาย ว ๓๔๘๒'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleDownloadWord}
+            className="bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-800 text-xs font-bold px-3 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
+            title="ดาวน์โหลดแบบรายงานที่เปิดอยู่ออกมาเป็นไฟล์ Word (.doc)"
+          >
+            <FileText className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+            <span>ดาวน์โหลด Word</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleDownloadExcel}
+            className="bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 text-xs font-bold px-3 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
+            title="ดาวน์โหลดแบบรายงานที่เปิดอยู่ออกมาเป็นไฟล์ Excel (.xls)"
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>ดาวน์โหลด Excel</span>
           </button>
 
           <button
             type="button"
             onClick={handlePrint}
-            className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs flex items-center space-x-2 transition-all cursor-pointer"
+            className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
+            title="พิมพ์แบบฟอร์มตามหนังสือสั่งการ (A4 แนวนอน)"
           >
-            <Printer className="w-4 h-4 text-blue-100" />
-            <span>พิมพ์เอกสาร บส. (A4)</span>
+            <Printer className="w-3.5 h-3.5 text-blue-100" />
+            <span>พิมพ์เอกสาร (A4)</span>
           </button>
         </div>
       </div>
@@ -933,29 +996,29 @@ export default function RiskManagementView({
           TAB 1: แบบ บส. ๑
       ========================================================================= */}
       {activeTab === 'bs1' && (
-        <div className="space-y-4">
+        <div className="space-y-4 printable-document">
           {/* Official Document Header */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs text-center space-y-1.5">
-            <div className="flex justify-between items-start text-xs font-bold text-slate-500 mb-1">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs text-center space-y-1.5 print:p-2 print:border-none print:shadow-none print:rounded-none">
+            <div className="flex justify-between items-start text-xs font-bold text-slate-500 mb-1 print:mb-2 print:text-black">
               <span className="no-print">ลำดับที่ ๑ ของชุดแบบรายงาน</span>
-              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200">แบบ บส. ๑</span>
+              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. ๑</span>
             </div>
-            <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100">
-              ชื่อหน่วยงาน (๑) <span className="underline decoration-blue-500/50 underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
+            <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 print:text-black print:text-lg">
+              ชื่อหน่วยงาน (๑) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
             </h3>
-            <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
+            <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
               กำหนดขอบเขตความรับผิดชอบตามประเด็นยุทธศาสตร์/ข้อบัญญัติ/เทศบัญญัติ/อื่น ๆ (ถ้ามี)
             </p>
-            <p className="text-xs text-slate-600 dark:text-slate-400">
-              ประจำปีงบประมาณ พ.ศ. (๒) <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{selectedYear}</span>
+            <p className="text-xs text-slate-600 dark:text-slate-400 print:text-black print:text-xs">
+              ประจำปีงบประมาณ พ.ศ. (๒) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
             </p>
           </div>
 
           {/* Table BS 1 */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400 border-collapse">
-                <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden print:border-none print:shadow-none print:rounded-none">
+            <div className="overflow-x-auto print:overflow-visible">
+              <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400 border-collapse print:text-black">
+                <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80 print:bg-slate-100 print:text-black">
                   <tr>
                     <th className="px-3.5 py-3.5 w-24 text-center">
                       (๓)<br />รหัสความเสี่ยง
@@ -1061,11 +1124,20 @@ export default function RiskManagementView({
             </div>
 
             {/* Official Signature Section */}
-            <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300">
-              <div className="w-72 text-center space-y-2">
+            <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-6">
+              <div className="w-72 text-center space-y-2 print:text-xs">
                 <div>ลายมือชื่อ...................................................(๑๐)</div>
-                <div>( {orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
-                <div>ตำแหน่ง (๑๑) {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
+                {isSubDivision ? (
+                  <>
+                    <div>( .................................................... )</div>
+                    <div>ตำแหน่ง (๑๑) ....................................................</div>
+                  </>
+                ) : (
+                  <>
+                    <div>( {orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
+                    <div>ตำแหน่ง (๑๑) {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
+                  </>
+                )}
                 <div>วันที่ (๑๒)......................................................</div>
               </div>
             </div>
@@ -1077,29 +1149,29 @@ export default function RiskManagementView({
           TAB 2: แบบ บส. ๒
       ========================================================================= */}
       {activeTab === 'bs2' && (
-        <div className="space-y-4">
+        <div className="space-y-4 printable-document">
           {/* Official Document Header */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs text-center space-y-1.5">
-            <div className="flex justify-between items-start text-xs font-bold text-slate-500 mb-1">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs text-center space-y-1.5 print:p-2 print:border-none print:shadow-none print:rounded-none">
+            <div className="flex justify-between items-start text-xs font-bold text-slate-500 mb-1 print:mb-2 print:text-black">
               <span className="no-print">ลำดับที่ ๒ ของชุดแบบรายงาน</span>
-              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200">แบบ บส. ๒</span>
+              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. ๒</span>
             </div>
-            <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100">
-              ชื่อหน่วยงาน (๑) <span className="underline decoration-blue-500/50 underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
+            <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 print:text-black print:text-lg">
+              ชื่อหน่วยงาน (๑) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
             </h3>
-            <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
+            <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
               การวิเคราะห์โอกาส ผลกระทบ และการตอบสนองความเสี่ยง
             </p>
-            <p className="text-xs text-slate-600 dark:text-slate-400">
-              ประจำปีงบประมาณ พ.ศ. (๒) <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{selectedYear}</span>
+            <p className="text-xs text-slate-600 dark:text-slate-400 print:text-black print:text-xs">
+              ประจำปีงบประมาณ พ.ศ. (๒) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
             </p>
           </div>
 
           {/* Table BS 2 */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400 border-collapse">
-                <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden print:border-none print:shadow-none print:rounded-none">
+            <div className="overflow-x-auto print:overflow-visible">
+              <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400 border-collapse print:text-black">
+                <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80 print:bg-slate-100 print:text-black">
                   <tr>
                     <th className="px-3 py-3.5 w-24 text-center">
                       (๓)<br />รหัสความเสี่ยง
@@ -1204,11 +1276,20 @@ export default function RiskManagementView({
             </div>
 
             {/* Official Signature Section */}
-            <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300">
-              <div className="w-72 text-center space-y-2">
+            <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-6">
+              <div className="w-72 text-center space-y-2 print:text-xs">
                 <div>ลายมือชื่อ...................................................(๑๓)</div>
-                <div>( {orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
-                <div>ตำแหน่ง (๑๔) {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
+                {isSubDivision ? (
+                  <>
+                    <div>( .................................................... )</div>
+                    <div>ตำแหน่ง (๑๔) ....................................................</div>
+                  </>
+                ) : (
+                  <>
+                    <div>( {orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
+                    <div>ตำแหน่ง (๑๔) {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
+                  </>
+                )}
                 <div>วันที่ (๑๕)......................................................</div>
               </div>
             </div>
@@ -1220,29 +1301,29 @@ export default function RiskManagementView({
           TAB 3: แบบ บส. ๓
       ========================================================================= */}
       {activeTab === 'bs3' && (
-        <div className="space-y-4">
+        <div className="space-y-4 printable-document">
           {/* Official Document Header */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs text-center space-y-1.5">
-            <div className="flex justify-between items-start text-xs font-bold text-slate-500 mb-1">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs text-center space-y-1.5 print:p-2 print:border-none print:shadow-none print:rounded-none">
+            <div className="flex justify-between items-start text-xs font-bold text-slate-500 mb-1 print:mb-2 print:text-black">
               <span className="no-print">ลำดับที่ ๓ ของชุดแบบรายงาน</span>
-              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200">แบบ บส. ๓</span>
+              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. ๓</span>
             </div>
-            <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100">
-              ชื่อหน่วยงาน (๑) <span className="underline decoration-blue-500/50 underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
+            <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 print:text-black print:text-lg">
+              ชื่อหน่วยงาน (๑) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
             </h3>
-            <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
+            <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
               รายงานการจัดทำแผนบริหารความเสี่ยง
             </p>
-            <p className="text-xs text-slate-600 dark:text-slate-400">
-              ประจำปีงบประมาณ พ.ศ. (๒) <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{selectedYear}</span>
+            <p className="text-xs text-slate-600 dark:text-slate-400 print:text-black print:text-xs">
+              ประจำปีงบประมาณ พ.ศ. (๒) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
             </p>
           </div>
 
           {/* Table BS 3 */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400 border-collapse">
-                <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden print:border-none print:shadow-none print:rounded-none">
+            <div className="overflow-x-auto print:overflow-visible">
+              <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400 border-collapse print:text-black">
+                <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80 print:bg-slate-100 print:text-black">
                   <tr>
                     <th className="px-3 py-3.5 w-24 text-center">
                       (๓)<br />รหัสความเสี่ยง
@@ -1338,11 +1419,20 @@ export default function RiskManagementView({
             </div>
 
             {/* Official Signature Section */}
-            <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300">
-              <div className="w-72 text-center space-y-2">
+            <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-6">
+              <div className="w-72 text-center space-y-2 print:text-xs">
                 <div>ลายมือชื่อ...................................................(๑๒)</div>
-                <div>( {orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
-                <div>ตำแหน่ง (๑๓) {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
+                {isSubDivision ? (
+                  <>
+                    <div>( .................................................... )</div>
+                    <div>ตำแหน่ง (๑๓) ....................................................</div>
+                  </>
+                ) : (
+                  <>
+                    <div>( {orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
+                    <div>ตำแหน่ง (๑๓) {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
+                  </>
+                )}
                 <div>วันที่ (๑๔)......................................................</div>
               </div>
             </div>
@@ -1354,20 +1444,20 @@ export default function RiskManagementView({
           TAB 4: แบบ บส. ๔
       ========================================================================= */}
       {activeTab === 'bs4' && (
-        <div className="space-y-4">
+        <div className="space-y-4 printable-document">
           {/* Official Document Header with Period Selectors */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs text-center space-y-3">
-            <div className="flex justify-between items-start text-xs font-bold text-slate-500 mb-1">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs text-center space-y-3 print:p-2 print:border-none print:shadow-none print:rounded-none">
+            <div className="flex justify-between items-start text-xs font-bold text-slate-500 mb-1 print:mb-2 print:text-black">
               <span className="no-print">ลำดับที่ ๔ ของชุดแบบรายงาน</span>
-              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200">แบบ บส. ๔</span>
+              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. ๔</span>
             </div>
-            <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100">
-              ชื่อหน่วยงาน (๑) <span className="underline decoration-blue-500/50 underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
+            <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 print:text-black print:text-lg">
+              ชื่อหน่วยงาน (๑) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
             </h3>
             
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-xs font-bold text-slate-800 dark:text-slate-200">
-              <span>รายงานการติดตามผลการบริหารความเสี่ยง</span>
-              <div className="flex items-center space-x-3 bg-slate-50 dark:bg-slate-800 px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-xs font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
+              <span>รายงานการติดตามผลการบริหารความเสี่ยง <span className="hidden print:inline">({bs4Period === '3month' ? 'รอบ ๓ เดือน' : bs4Period === '6month' ? 'รอบ ๖ เดือน' : 'รอบ ๑๒ เดือน'})</span></span>
+              <div className="flex items-center space-x-3 bg-slate-50 dark:bg-slate-800 px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 no-print">
                 <label className="inline-flex items-center space-x-1.5 cursor-pointer">
                   <input
                     type="radio"
@@ -1404,16 +1494,16 @@ export default function RiskManagementView({
               </div>
             </div>
 
-            <p className="text-xs text-slate-600 dark:text-slate-400">
-              สำหรับปีงบประมาณ พ.ศ. (๒) <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{selectedYear}</span>
+            <p className="text-xs text-slate-600 dark:text-slate-400 print:text-black print:text-xs">
+              สำหรับปีงบประมาณ พ.ศ. (๒) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
             </p>
           </div>
 
           {/* Table BS 4 */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400 border-collapse">
-                <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden print:border-none print:shadow-none print:rounded-none">
+            <div className="overflow-x-auto print:overflow-visible">
+              <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400 border-collapse print:text-black">
+                <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80 print:bg-slate-100 print:text-black">
                   <tr>
                     <th className="px-3 py-3.5 w-24 text-center">
                       (๓)<br />รหัสความเสี่ยง
@@ -1511,11 +1601,20 @@ export default function RiskManagementView({
             </div>
 
             {/* Official Signature Section */}
-            <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300">
-              <div className="w-72 text-center space-y-2">
+            <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-6">
+              <div className="w-72 text-center space-y-2 print:text-xs">
                 <div>ลายมือชื่อ...................................................(๑๒)</div>
-                <div>( {orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
-                <div>ตำแหน่ง (๑๓) {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
+                {isSubDivision ? (
+                  <>
+                    <div>( .................................................... )</div>
+                    <div>ตำแหน่ง (๑๓) ....................................................</div>
+                  </>
+                ) : (
+                  <>
+                    <div>( {orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
+                    <div>ตำแหน่ง (๑๓) {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
+                  </>
+                )}
                 <div>วันที่ (๑๔)......................................................</div>
               </div>
             </div>
@@ -1527,29 +1626,29 @@ export default function RiskManagementView({
           TAB 5: แบบ บส. ๕
       ========================================================================= */}
       {activeTab === 'bs5' && (
-        <div className="space-y-4">
+        <div className="space-y-4 printable-document">
           {/* Official Document Header */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs text-center space-y-1.5">
-            <div className="flex justify-between items-start text-xs font-bold text-slate-500 mb-1">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs text-center space-y-1.5 print:p-2 print:border-none print:shadow-none print:rounded-none">
+            <div className="flex justify-between items-start text-xs font-bold text-slate-500 mb-1 print:mb-2 print:text-black">
               <span className="no-print">ลำดับที่ ๕ ของชุดแบบรายงาน</span>
-              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200">แบบ บส. ๕</span>
+              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. ๕</span>
             </div>
-            <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100">
-              ชื่อหน่วยงาน (๑) <span className="underline decoration-blue-500/50 underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
+            <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 print:text-black print:text-lg">
+              ชื่อหน่วยงาน (๑) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
             </h3>
-            <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
+            <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
               รายงานผลการดำเนินการและทบทวนแผนการบริหารความเสี่ยง
             </p>
-            <p className="text-xs text-slate-600 dark:text-slate-400">
-              สำหรับปีงบประมาณ พ.ศ. (๒) <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{selectedYear}</span>
+            <p className="text-xs text-slate-600 dark:text-slate-400 print:text-black print:text-xs">
+              สำหรับปีงบประมาณ พ.ศ. (๒) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
             </p>
           </div>
 
           {/* Official Multi-Header Table BS 5 */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400 border-collapse">
-                <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80 text-center">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden print:border-none print:shadow-none print:rounded-none">
+            <div className="overflow-x-auto print:overflow-visible">
+              <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400 border-collapse print:text-black">
+                <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80 text-center print:bg-slate-100 print:text-black">
                   <tr>
                     <th rowSpan={2} className="px-3 py-2.5 w-24 border-r border-slate-200 dark:border-slate-700">
                       (๓)<br />รหัสความเสี่ยง
@@ -1698,7 +1797,7 @@ export default function RiskManagementView({
             </div>
 
             {/* Executive Summary Card */}
-            <div className="p-6 bg-slate-50/70 dark:bg-slate-850/60 border-t border-slate-200 dark:border-slate-800 space-y-4">
+            <div className="p-6 bg-slate-50/70 dark:bg-slate-850/60 border-t border-slate-200 dark:border-slate-800 space-y-4 print:bg-slate-50 print:border print:border-black print:p-4">
               <div className="flex items-center justify-between">
                 <div className="font-bold text-xs sm:text-sm text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                   <FileText className="w-4 h-4 text-blue-600" />
@@ -1721,11 +1820,20 @@ export default function RiskManagementView({
             </div>
 
             {/* Official Signature Section */}
-            <div className="p-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300">
-              <div className="w-72 text-center space-y-2">
+            <div className="p-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-6">
+              <div className="w-72 text-center space-y-2 print:text-xs">
                 <div>ลายมือชื่อ...................................................(๑๔)</div>
-                <div>( {bs5Data.approvedBy || orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
-                <div>ตำแหน่ง (๑๕) {bs5Data.approverPosition || orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
+                {isSubDivision ? (
+                  <>
+                    <div>( .................................................... )</div>
+                    <div>ตำแหน่ง (๑๕) ....................................................</div>
+                  </>
+                ) : (
+                  <>
+                    <div>( {bs5Data.approvedBy || orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
+                    <div>ตำแหน่ง (๑๕) {bs5Data.approverPosition || orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
+                  </>
+                )}
                 <div>วันที่รายงาน (๑๖) {bs5Data.reportDate || `......................................................`}</div>
               </div>
             </div>

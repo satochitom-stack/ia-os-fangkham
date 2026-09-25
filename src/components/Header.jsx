@@ -48,7 +48,7 @@ export default function Header({
   const departmentLabel = session?.department || (isAdmin ? 'หน่วยตรวจสอบภายใน' : 'ส่วนราชการ');
 
   return (
-    <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-xs">
+    <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-xs no-print">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo & Agency Name */}
