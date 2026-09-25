@@ -1030,224 +1030,124 @@ export default function RiskManagementView({
 
   return (
     <div className="space-y-6">
-      {/* 1. Header Banner */}
-      <div className="bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-white dark:from-slate-850 dark:to-slate-900 p-6 rounded-2xl border border-blue-200/80 dark:border-slate-700/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 no-print">
-        <div>
-          <div className="inline-flex items-center space-x-2 bg-blue-100/80 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-800 rounded-full px-3 py-1 text-xs font-semibold text-blue-700 dark:text-blue-300 mb-2">
-            <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-            <span>มาตรฐานกระทรวงการคลัง พ.ศ. ๒๕๖๒ • หนังสือสั่งการ มท ๐๘๐๕.๒/ว ๓๔๘๒</span>
+      {/* 1. Clean & Streamlined Header Card */}
+      <div className="bg-white dark:bg-slate-900 px-5 py-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3 no-print">
+        <div className="space-y-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+              การบริหารจัดการความเสี่ยงองค์กร (บส.๑ - บส.๕)
+            </h2>
+            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+              ปีงบฯ {selectedYear}
+            </span>
+            {/* Compliance pill button */}
+            <button
+              type="button"
+              onClick={() => setShowAuditModal(true)}
+              className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border flex items-center space-x-1 cursor-pointer transition-colors ${
+                complianceAudit.isCompliant
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800'
+                  : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800'
+              }`}
+              title="คลิกเพื่อดูผลตรวจความสอดคล้องตาม ว ๓๔๘๒ และเกณฑ์กระทรวงการคลัง"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>ความสอดคล้อง ว ๓๔๘๒ ({complianceAudit.score}%)</span>
+            </button>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
-            ระบบบริหารจัดการความเสี่ยงองค์กร (Enterprise Risk Management: บส.๑ - บส.๕)
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-3xl leading-relaxed">
-            แบบรายงานการบริหารจัดการความเสี่ยงตามมาตรฐานของกรมส่งเสริมการปกครองท้องถิ่น จัดทำครอบคลุม ๕ แบบ 
-            จำแนกตามภารกิจรายกอง ประจำปีงบประมาณ พ.ศ. {selectedYear}
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            มาตรฐาน มท ๐๘๐๕.๒/ว ๓๔๘๒ และกระทรวงการคลัง พ.ศ. ๒๕๖๒ • {isAdmin ? 'มุมมองหน่วยตรวจสอบภายใน' : `ส่วนราชการ: ${userDept}`}
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 self-start md:self-auto shrink-0 no-print">
+        {/* Action Buttons: Export & Official Ref */}
+        <div className="flex flex-wrap items-center gap-1.5 shrink-0 no-print">
           <a
             href="/docs/w3482-risk-forms.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 text-xs font-bold px-3 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
-            title="เปิดดูหนังสือสั่งการ มท 0805.2/ว 3482 ฉบับจริง (PDF 12 หน้า)"
+            className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1"
+            title="เปิดดูหนังสือสั่งการ มท 0805.2/ว 3482 ฉบับจริง"
           >
-            <FileText className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-            <span>เปิด PDF ว ๓๔๘๒</span>
+            <FileText className="w-3.5 h-3.5 text-slate-500" />
+            <span>PDF ว ๓๔๘๒</span>
           </a>
 
           <button
             type="button"
             onClick={() => setShowGuide(!showGuide)}
-            className="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-slate-700 text-xs font-bold px-3 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
-            title="คำอธิบายการจัดทำแบบรายงานตามหนังสือสั่งการ"
+            className={`border text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1 cursor-pointer ${
+              showGuide
+                ? 'bg-blue-50 text-blue-700 border-blue-300 dark:bg-blue-900/50 dark:text-blue-300'
+                : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+            }`}
+            title="คำอธิบายการจัดทำแบบรายงาน"
           >
-            <BookOpen className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-            <span>{showGuide ? 'ซ่อนคำอธิบาย' : 'คำอธิบาย ว ๓๔๘๒'}</span>
+            <BookOpen className="w-3.5 h-3.5 text-slate-500" />
+            <span>{showGuide ? 'ซ่อนคำอธิบาย' : 'คำอธิบาย'}</span>
           </button>
 
           <button
             type="button"
             onClick={handleDownloadWord}
-            className="bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-800 text-xs font-bold px-3 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
-            title="ดาวน์โหลดแบบรายงานที่เปิดอยู่ออกมาเป็นไฟล์ Word (.doc)"
+            className="text-blue-700 dark:text-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/60 border border-blue-200 dark:border-blue-800 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1 cursor-pointer"
+            title="ดาวน์โหลด Word (.doc)"
           >
-            <FileText className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-            <span>ดาวน์โหลด Word</span>
+            <FileText className="w-3.5 h-3.5 text-blue-600" />
+            <span>Word</span>
           </button>
 
           <button
             type="button"
             onClick={handleDownloadExcel}
-            className="bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 text-xs font-bold px-3 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
-            title="ดาวน์โหลดแบบรายงานที่เปิดอยู่ออกมาเป็นไฟล์ Excel (.xls)"
+            className="text-emerald-700 dark:text-emerald-300 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1 cursor-pointer"
+            title="ดาวน์โหลด Excel (.xls)"
           >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span>ดาวน์โหลด Excel</span>
+            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Excel</span>
           </button>
 
           <button
             type="button"
             onClick={handlePrint}
-            className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
-            title="พิมพ์แบบฟอร์มตามหนังสือสั่งการ (A4 แนวนอน)"
+            className="text-white bg-blue-600 hover:bg-blue-700 text-xs font-semibold px-3 py-1.5 rounded-lg shadow-xs transition-colors flex items-center space-x-1 cursor-pointer"
+            title="พิมพ์เอกสาร (A4 แนวนอน)"
           >
-            <Printer className="w-3.5 h-3.5 text-blue-100" />
-            <span>พิมพ์เอกสาร (A4)</span>
+            <Printer className="w-3.5 h-3.5 text-white" />
+            <span>พิมพ์ (A4)</span>
           </button>
         </div>
       </div>
 
       {/* Cascade / Action Toast Notification */}
       {cascadeSuccessMsg && (
-        <div className="bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-800 p-4 rounded-2xl flex items-center justify-between text-emerald-800 dark:text-emerald-200 text-xs font-bold shadow-xs no-print">
+        <div className="bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-800 p-3 rounded-xl flex items-center justify-between text-emerald-800 dark:text-emerald-200 text-xs font-bold shadow-xs no-print">
           <div className="flex items-center space-x-2">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
             <span>{cascadeSuccessMsg}</span>
           </div>
           <button
             onClick={() => setCascadeSuccessMsg('')}
             className="p-1 hover:bg-emerald-100 dark:hover:bg-emerald-900 rounded-lg text-emerald-600 cursor-pointer"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
       )}
 
-      {/* Compliance & Quality Audit Status Bar */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-4 sm:p-5 rounded-2xl border border-indigo-900/60 shadow-md space-y-3 no-print">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-indigo-800/60 pb-3">
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-indigo-500/20 text-indigo-300 flex items-center justify-center border border-indigo-500/30">
-              <ShieldCheck className="w-5 h-5 text-indigo-400" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <h4 className="text-xs sm:text-sm font-bold tracking-tight text-white flex items-center space-x-1.5">
-                  <span>สถานะการประเมินความสอดคล้องตาม ว ๓๔๘๒ และเกณฑ์กระทรวงการคลัง</span>
-                </h4>
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
-                  complianceAudit.isCompliant
-                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                    : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                }`}>
-                  {complianceAudit.isCompliant ? '✓ สอดคล้องตามเกณฑ์' : '⚠️ ต้องปรับปรุงความเชื่อมโยง'}
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-300 mt-0.5">
-                ตรวจสอบการเชื่อมโยงข้อมูลแบบ บส.๑ ➜ บส.๕, การคำนวณ Matrix 5x5, และการคัดกรองตามระเบียบข้อ ๑๐
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-2 self-start sm:self-center shrink-0">
-            <div className="text-right mr-2 hidden sm:block">
-              <div className="text-[10px] text-slate-400">คะแนนความสอดคล้อง</div>
-              <div className="text-lg font-mono font-black text-indigo-300">{complianceAudit.score}%</div>
-            </div>
-            <button
-              type="button"
-              onClick={() => setShowAuditModal(true)}
-              className="bg-indigo-600/80 hover:bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl border border-indigo-400/30 flex items-center space-x-1.5 transition-all cursor-pointer"
-            >
-              <CheckSquare className="w-3.5 h-3.5 text-indigo-200" />
-              <span>ดูผลตรวจเช็คลิสต์ ({complianceAudit.score}%)</span>
-            </button>
-          </div>
-        </div>
-
-        {/* 4 Compliance Criteria Badges */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
-          {complianceAudit.checks.map((check) => (
-            <div
-              key={check.id}
-              className={`p-2.5 rounded-xl border flex items-start space-x-2 ${
-                check.status === 'passed'
-                  ? 'bg-indigo-900/40 border-indigo-700/50 text-indigo-200'
-                  : 'bg-amber-950/40 border-amber-800/60 text-amber-200'
-              }`}
-            >
-              {check.status === 'passed' ? (
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-              ) : (
-                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-              )}
-              <div className="min-w-0">
-                <div className="font-bold text-[11px] text-white truncate">{check.title}</div>
-                <div className="text-[10px] text-slate-300 line-clamp-1">{check.detail}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 2. Role-Based Scope & Department Filter Bar */}
-      <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs no-print">
-        <div className="flex items-center space-x-3">
-          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
-            isAdmin 
-              ? 'bg-blue-600 text-white shadow-xs' 
-              : 'bg-indigo-600 text-white shadow-xs'
-          }`}>
-            {isAdmin ? <ShieldCheck className="w-5 h-5 text-white" /> : <Building className="w-5 h-5 text-white" />}
-          </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="font-bold text-xs sm:text-sm text-slate-900 dark:text-slate-100">
-                {isAdmin ? 'สิทธิ์หน่วยตรวจสอบภายใน (Admin)' : `สิทธิ์ส่วนราชการ: ${userDept}`}
-              </span>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                isAdmin 
-                  ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800' 
-                  : 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800'
-              }`}>
-                {isAdmin ? 'เห็นข้อมูลทุกกอง' : 'เฉพาะข้อมูลของกองท่าน'}
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-              {isAdmin 
-                ? 'หน่วยตรวจสอบภายในสามารถดู แก้ไข และติดตามความเสี่ยงของทุกส่วนราชการใน อปท. ได้อย่างครบถ้วน' 
-                : `ท่านสามารถกรอกและแก้ไขข้อมูลความเสี่ยงเฉพาะส่วนของ "${userDept}" ตามหนังสือสั่งการ`}
-            </p>
-          </div>
-        </div>
-
-        {/* Admin Filter Dropdown */}
-        {isAdmin && (
-          <div className="flex items-center space-x-2 self-end sm:self-center">
-            <span className="text-xs text-slate-500 font-medium flex items-center space-x-1">
-              <Filter className="w-3.5 h-3.5" />
-              <span>มุมมองกอง:</span>
-            </span>
-            <select
-              value={filterDept}
-              onChange={(e) => setFilterDept(e.target.value)}
-              className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-            >
-              <option value="all">🏢 แสดงทุกส่วนราชการ ({departmentsList.length} รายการ)</option>
-              {departmentsList.map((dept) => (
-                <option key={dept} value={dept}>📁 {dept}</option>
-              ))}
-            </select>
-          </div>
-        )}
-      </div>
-
-      {/* 3. Official Form Guidelines (Collapsible Accordion) */}
+      {/* Official Form Guidelines (Collapsible Accordion) */}
       {showGuide && (
-        <div className="bg-gradient-to-r from-amber-50/70 via-white to-amber-50/40 dark:from-slate-850 dark:via-slate-900 dark:to-slate-850 rounded-2xl p-5 border border-amber-200/80 dark:border-amber-900/50 shadow-xs space-y-4 no-print">
-          <div className="flex items-center justify-between border-b border-amber-200/60 dark:border-slate-800 pb-3">
-            <div className="flex items-center space-x-2.5">
-              <div className="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-                <BookOpen className="w-4 h-4" />
+        <div className="bg-slate-50 dark:bg-slate-850 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-xs space-y-3 no-print">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+            <div className="flex items-center space-x-2">
+              <div className="w-6 h-6 rounded-md bg-blue-100 text-blue-600 dark:bg-blue-900/60 dark:text-blue-300 flex items-center justify-center">
+                <BookOpen className="w-3.5 h-3.5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
                   {FORM_GUIDELINES[activeTab]?.title}
                 </h4>
-                <p className="text-[11px] text-amber-700 dark:text-amber-400 font-medium">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                   {FORM_GUIDELINES[activeTab]?.subtitle}
                 </p>
               </div>
@@ -1260,16 +1160,16 @@ export default function RiskManagementView({
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs leading-relaxed">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs leading-relaxed">
             {FORM_GUIDELINES[activeTab]?.items.map((item, idx) => (
-              <div key={idx} className="bg-white/80 dark:bg-slate-900/80 p-3 rounded-xl border border-amber-100 dark:border-slate-800 space-y-1">
+              <div key={idx} className="bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 space-y-1">
                 <div className="flex items-center space-x-2 font-bold text-slate-900 dark:text-slate-100">
-                  <span className="w-6 h-6 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-bold flex items-center justify-center text-[11px] shrink-0">
+                  <span className="w-5 h-5 rounded-full bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-bold flex items-center justify-center text-[10px] shrink-0">
                     ({item.num})
                   </span>
                   <span>{item.title}</span>
                 </div>
-                <p className="text-slate-600 dark:text-slate-400 pl-8 leading-relaxed">
+                <p className="text-slate-600 dark:text-slate-400 pl-7 leading-relaxed text-[11px]">
                   {item.desc}
                 </p>
               </div>
@@ -1278,22 +1178,22 @@ export default function RiskManagementView({
 
           {/* Special Guideline Badges for BS.2 */}
           {activeTab === 'bs2' && (
-            <div className="pt-2 border-t border-amber-200/60 dark:border-slate-800 grid grid-cols-1 lg:grid-cols-2 gap-3 text-xs">
-              <div className="p-3 bg-white/90 dark:bg-slate-900/90 rounded-xl border border-slate-200 dark:border-slate-800">
-                <span className="font-bold text-blue-700 dark:text-blue-300 block mb-1">
+            <div className="pt-2 border-t border-slate-200 dark:border-slate-700 grid grid-cols-1 lg:grid-cols-2 gap-2.5 text-xs">
+              <div className="p-2.5 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800">
+                <span className="font-bold text-blue-700 dark:text-blue-300 block mb-1 text-[11px]">
                   📌 ประเภทความเสี่ยง ๖ ประเภท (ข้อ ๘):
                 </span>
-                <ul className="space-y-1 text-slate-600 dark:text-slate-400 list-disc list-inside text-[11px]">
+                <ul className="space-y-1 text-slate-600 dark:text-slate-400 list-disc list-inside text-[10px]">
                   {RISK_CATEGORIES.map((c) => (
                     <li key={c.id}><strong>{c.label}:</strong> {c.desc}</li>
                   ))}
                 </ul>
               </div>
-              <div className="p-3 bg-white/90 dark:bg-slate-900/90 rounded-xl border border-slate-200 dark:border-slate-800">
-                <span className="font-bold text-indigo-700 dark:text-indigo-300 block mb-1">
+              <div className="p-2.5 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800">
+                <span className="font-bold text-indigo-700 dark:text-indigo-300 block mb-1 text-[11px]">
                   📌 วิธีการตอบสนองความเสี่ยง ๘ วิธี (ข้อ ๑๒):
                 </span>
-                <ul className="space-y-1 text-slate-600 dark:text-slate-400 list-disc list-inside text-[11px]">
+                <ul className="space-y-1 text-slate-600 dark:text-slate-400 list-disc list-inside text-[10px]">
                   {RISK_RESPONSES.map((r) => (
                     <li key={r.id}><strong>{r.label}:</strong> {r.desc}</li>
                   ))}
@@ -1304,114 +1204,146 @@ export default function RiskManagementView({
         </div>
       )}
 
-      {/* 4. Tab Navigation (บส. ๑ ถึง บส. ๕) */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-2 no-print">
-        <div className="flex flex-wrap gap-1.5 sm:gap-2">
+      {/* 2. Unified Navigation Tabs & Working Tools Toolbar */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3 no-print">
+        {/* Tabs บส. ๑ - ๕ */}
+        <div className="flex flex-wrap items-center gap-1.5 bg-slate-100/80 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
           <button
             onClick={() => setActiveTab('bs1')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
               activeTab === 'bs1'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
+                ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            <span>แบบ บส. ๑: กำหนดขอบเขต ({filteredBs1.length})</span>
+            <span>บส. ๑ กำหนดขอบเขต</span>
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+              activeTab === 'bs1' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
+            }`}>{filteredBs1.length}</span>
           </button>
           <button
             onClick={() => setActiveTab('bs2')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
               activeTab === 'bs2'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
+                ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            <span>แบบ บส. ๒: วิเคราะห์ความเสี่ยง ({filteredBs2.length})</span>
+            <span>บส. ๒ วิเคราะห์</span>
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+              activeTab === 'bs2' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
+            }`}>{filteredBs2.length}</span>
           </button>
           <button
             onClick={() => setActiveTab('bs3')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
               activeTab === 'bs3'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
+                ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            <span>แบบ บส. ๓: แผนบริหารความเสี่ยง ({filteredBs3.length})</span>
+            <span>บส. ๓ แผนบริหาร</span>
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+              activeTab === 'bs3' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
+            }`}>{filteredBs3.length}</span>
           </button>
           <button
             onClick={() => setActiveTab('bs4')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
               activeTab === 'bs4'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
+                ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            <span>แบบ บส. ๔: ติดตามผล ({filteredBs4.length})</span>
+            <span>บส. ๔ ติดตามผล</span>
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+              activeTab === 'bs4' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
+            }`}>{filteredBs4.length}</span>
           </button>
           <button
             onClick={() => setActiveTab('bs5')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
               activeTab === 'bs5'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
+                ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            <span>แบบ บส. ๕: ทบทวนระดับองค์กร</span>
+            <span>บส. ๕ ทบทวนระดับองค์กร</span>
           </button>
         </div>
 
-        {/* Context Action Buttons */}
-        {setRiskManagement && (
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setSmartDept(isAdmin ? (filterDept !== 'all' ? filterDept : 'กองคลัง') : userDept);
-                setShowSmartAssistant(true);
-              }}
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
-              title="ผู้ช่วยวิเคราะห์และจับคู่ความเสี่ยงมาตรฐานตามหนังสือสั่งการ มท 0805.2/ว 3482"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>ผู้ช่วยวิเคราะห์ความเสี่ยง (ว ๓๔๘๒)</span>
-            </button>
+        {/* Right Toolbar: Admin Filter + AI Assistant + Cascade + Add New */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Admin Dept Selector (if admin) */}
+          {isAdmin && (
+            <div className="flex items-center space-x-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1">
+              <Filter className="w-3.5 h-3.5 text-slate-400" />
+              <select
+                value={filterDept}
+                onChange={(e) => setFilterDept(e.target.value)}
+                className="bg-transparent text-xs font-bold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
+              >
+                <option value="all">🏢 ทุกส่วนราชการ ({departmentsList.length})</option>
+                {departmentsList.map((dept) => (
+                  <option key={dept} value={dept}>📁 {dept}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
-            <button
-              type="button"
-              onClick={() => setShowCascadeConfirm(true)}
-              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
-              title="ซิงค์เชื่อมโยงข้อมูลจาก บส.๑ ไปยัง บส.๒, บส.๓, บส.๔, บส.๕ อัตโนมัติตามเกณฑ์ ว ๓๔๘๒"
-            >
-              <Zap className="w-3.5 h-3.5 text-amber-100" />
-              <span>ซิงค์ข้ามแบบฟอร์ม ๑ ➜ ๕ (Auto-Cascade)</span>
-            </button>
-
-            {activeTab === 'bs1' && (
+          {setRiskManagement && (
+            <>
               <button
                 type="button"
                 onClick={() => {
-                  setFormBs1({
-                    department: isAdmin ? (filterDept !== 'all' ? filterDept : 'กองคลัง') : userDept,
-                    riskCode: `RSK-0${bs1List.length + 1}`,
-                    strategy: '',
-                    activity: '',
-                    budget: '',
-                    objective: '',
-                    kpi: '',
-                    target: '',
-                    riskEvent: '',
-                    cause: '',
-                    riskCategory: 'ด้านการดำเนินงาน (Operation Risks)'
-                  });
-                  setShowAddModal(true);
+                  setSmartDept(isAdmin ? (filterDept !== 'all' ? filterDept : 'กองคลัง') : userDept);
+                  setShowSmartAssistant(true);
                 }}
-                className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
+                className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-bold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5 cursor-pointer"
+                title="ผู้ช่วยวิเคราะห์และจับคู่ความเสี่ยงมาตรฐานตาม ว ๓๔๘๒"
               >
-                <Plus className="w-4 h-4" />
-                <span>+ กำหนดความเสี่ยงใหม่ (บส.๑)</span>
+                <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                <span>ผู้ช่วยวิเคราะห์ (ว ๓๔๘๒)</span>
               </button>
-            )}
-          </div>
-        )}
+
+              <button
+                type="button"
+                onClick={() => setShowCascadeConfirm(true)}
+                className="bg-slate-50 hover:bg-slate-100 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5 cursor-pointer"
+                title="ซิงค์เชื่อมโยงข้อมูลจาก บส.๑ ไปยัง บส.๒, บส.๓, บส.๔, บส.๕ อัตโนมัติ"
+              >
+                <Zap className="w-3.5 h-3.5 text-amber-500" />
+                <span>ซิงค์ ๑ ➜ ๕ (Cascade)</span>
+              </button>
+
+              {activeTab === 'bs1' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormBs1({
+                      department: isAdmin ? (filterDept !== 'all' ? filterDept : 'กองคลัง') : userDept,
+                      riskCode: `RSK-0${bs1List.length + 1}`,
+                      strategy: '',
+                      activity: '',
+                      budget: '',
+                      objective: '',
+                      kpi: '',
+                      target: '',
+                      riskEvent: '',
+                      cause: '',
+                      riskCategory: 'ด้านการดำเนินงาน (Operation Risks)'
+                    });
+                    setShowAddModal(true);
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs transition-colors flex items-center space-x-1.5 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5 text-white" />
+                  <span>+ กำหนดความเสี่ยงใหม่ (บส.๑)</span>
+                </button>
+              )}
+            </>
+          )}
+        </div>
       </div>
 
       {/* =========================================================================
