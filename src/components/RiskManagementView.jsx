@@ -25,10 +25,28 @@ import {
   HelpCircle,
   ExternalLink,
   FileSpreadsheet,
-  Download
+  Download,
+  Zap,
+  RefreshCw,
+  Search,
+  ArrowRight,
+  Sliders,
+  CheckSquare,
+  Target,
+  Activity,
+  Play
 } from 'lucide-react';
 import { getDepartments, getSession } from '../utils/auth';
 import { exportBsToWord, exportBsToExcel } from '../utils/exportRiskDocs';
+import {
+  getStandardRisksByDepartment,
+  calculateRiskLevel,
+  analyzeRiskKeyword,
+  getAllStandardRisks,
+  auditW3482Compliance,
+  cascadeAllBsForms,
+  STANDARD_RISK_LIBRARY
+} from '../data/standardRiskLibrary';
 
 // 6 ประเภทความเสี่ยง ตามหนังสือสั่งการ มท 0805.2/ว 3482 (แบบ บส.2 ข้อ 8)
 export const RISK_CATEGORIES = [
@@ -166,6 +184,14 @@ export default function RiskManagementView({
   const [editingBs4, setEditingBs4] = useState(null);
   const [editingBs5, setEditingBs5] = useState(null);
   const [editingBs5Summary, setEditingBs5Summary] = useState(false);
+
+  // Smart Assistant & Cascade & Compliance state
+  const [showSmartAssistant, setShowSmartAssistant] = useState(false);
+  const [smartDept, setSmartDept] = useState(isAdmin ? (filterDept !== 'all' ? filterDept : 'กองคลัง') : userDept);
+  const [smartSearchTerm, setSmartSearchTerm] = useState('');
+  const [showAuditModal, setShowAuditModal] = useState(false);
+  const [showCascadeConfirm, setShowCascadeConfirm] = useState(false);
+  const [cascadeSuccessMsg, setCascadeSuccessMsg] = useState('');
 
   // State for Add Modals
   const [formBs1, setFormBs1] = useState({
@@ -417,6 +443,281 @@ export default function RiskManagementView({
       default:
         return 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800';
     }
+  };
+
+  // คำนวณความสอดคล้องตามมาตรฐาน ว ๓๔๘๒ และหลักเกณฑ์ กค. ๒๕๖๒
+  const complianceAudit = useMemo(() => {
+    return auditW3482Compliance({
+      bs1: bs1List,
+      bs2: bs2List,
+      bs3: bs3List,
+      bs4: bs4List,
+      bs5: bs5Data
+    });
+  }, [bs1List, bs2List, bs3List, bs4List, bs5Data]);
+
+  // Execute Auto-Cascade across BS.1 -> BS.5
+  const handleExecuteCascade = (targetDept = (isAdmin ? filterDept : userDept)) => {
+    const isAll = targetDept === 'all';
+    const result = cascadeAllBsForms({
+      bs1List: isAll ? bs1List : bs1List.filter(item => (item.department || '').trim() === targetDept.trim()),
+      targetDepartment: targetDept,
+      orgProfile,
+      selectedYear
+    });
+
+    if (setRiskManagement) {
+      setRiskManagement(prev => {
+        const updatedBs2 = isAll 
+          ? result.bs2 
+          : [...(prev?.bs2 || bs2List).filter(b => (b.department || '').trim() !== targetDept.trim()), ...result.bs2];
+        const updatedBs3 = isAll 
+          ? result.bs3 
+          : [...(prev?.bs3 || bs3List).filter(b => (b.department || '').trim() !== targetDept.trim()), ...result.bs3];
+        const updatedBs4 = isAll 
+          ? result.bs4 
+          : [...(prev?.bs4 || bs4List).filter(b => (b.department || '').trim() !== targetDept.trim()), ...result.bs4];
+        const updatedBs5Items = isAll 
+          ? result.bs5Items 
+          : [...(bs5Data.items || []).filter(b => (b.department || '').trim() !== targetDept.trim()), ...result.bs5Items];
+
+        return {
+          ...prev,
+          bs2: updatedBs2,
+          bs3: updatedBs3,
+          bs4: updatedBs4,
+          bs5: {
+            ...bs5Data,
+            items: updatedBs5Items
+          }
+        };
+      });
+    }
+    setCascadeSuccessMsg(`⚡ ซิงค์เชื่อมโยงข้อมูลข้ามแบบฟอร์ม ๑ ➜ ๕ สำหรับ "${targetDept === 'all' ? 'ทุกกอง' : targetDept}" สำเร็จตามหลักเกณฑ์ ว ๓๔๘๒!`);
+    setTimeout(() => setCascadeSuccessMsg(''), 5000);
+    setShowCascadeConfirm(false);
+  };
+
+  // Import single standard risk from library into BS.1 -> BS.5
+  const handleImportStandardRisk = (stdRisk, targetDept) => {
+    const dept = targetDept || (isAdmin ? (filterDept !== 'all' ? filterDept : 'กองคลัง') : userDept);
+    const newCode = `RSK-0${bs1List.length + 1}`;
+    const newId = `BS1-${Date.now()}`;
+
+    const newBs1 = {
+      id: newId,
+      riskCode: newCode,
+      department: dept,
+      strategy: stdRisk.strategy,
+      activity: stdRisk.activity,
+      budget: stdRisk.budget || 0,
+      objective: stdRisk.objective,
+      kpi: stdRisk.kpi,
+      target: stdRisk.target,
+      riskEvent: stdRisk.riskEvent,
+      cause: stdRisk.cause,
+      riskCategory: stdRisk.riskCategory
+    };
+
+    const newBs2 = {
+      id: `BS2-${Date.now()}`,
+      riskCode: newCode,
+      department: dept,
+      activity: stdRisk.activity,
+      objective: stdRisk.objective,
+      responsiblePerson: stdRisk.responsiblePerson,
+      riskEvent: stdRisk.riskEvent,
+      riskCategory: stdRisk.riskCategory,
+      likelihood: stdRisk.likelihood,
+      impact: stdRisk.impact,
+      riskScore: stdRisk.riskScore,
+      riskLevel: stdRisk.riskLevel,
+      riskResponse: stdRisk.riskResponse
+    };
+
+    const newBs3 = {
+      id: `BS3-${Date.now()}`,
+      riskCode: newCode,
+      department: dept,
+      activity: stdRisk.activity,
+      riskEvent: stdRisk.riskEvent,
+      riskResponse: stdRisk.riskResponse,
+      responsiblePerson: stdRisk.responsiblePerson,
+      measures: stdRisk.treatmentMeasures,
+      kpi: stdRisk.kpiMeasure,
+      timeline: stdRisk.timeline,
+      monitoringMethod: stdRisk.monitoringMethod
+    };
+
+    const newBs4 = {
+      id: `BS4-${Date.now()}`,
+      period: '6month',
+      riskCode: newCode,
+      department: dept,
+      activity: stdRisk.activity,
+      measures: stdRisk.treatmentMeasures,
+      timeline: stdRisk.timeline,
+      responsiblePerson: stdRisk.responsiblePerson,
+      result: 'ดำเนินการตามมาตรการควบคุมแล้วเสร็จ ความเสี่ยงลดลงสู่ระดับที่ยอมรับได้',
+      evidence: 'บันทึกข้อความ, รายงานสรุปผล, ภาพถ่ายตรวจหน้างาน',
+      progressPercent: 85,
+      problemSolution: 'ไม่มีปัญหาอุปสรรคสำคัญ'
+    };
+
+    const newBs5 = {
+      id: `BS5-${Date.now()}`,
+      riskCode: newCode,
+      department: dept,
+      activity: stdRisk.activity,
+      riskEvent: stdRisk.riskEvent,
+      preLikelihood: stdRisk.likelihood,
+      preImpact: stdRisk.impact,
+      preScore: stdRisk.riskScore,
+      measures: stdRisk.treatmentMeasures,
+      result: 'ดำเนินมาตรการครบถ้วน ความเสี่ยงลดลงสู่ระดับที่ยอมรับได้',
+      postLikelihood: stdRisk.expectedPostLikelihood || 1,
+      postImpact: stdRisk.expectedPostImpact || 2,
+      postScore: (stdRisk.expectedPostLikelihood || 1) * (stdRisk.expectedPostImpact || 2),
+      riskChange: 'ลดลง',
+      residualRisk: 'ความเสี่ยงด้านการปฏิบัติงานต่อเนื่อง',
+      controllable: 'ควบคุมได้',
+      nextYearMeasures: 'ติดตามผลการควบคุมและทบทวนความเสี่ยงในปีงบประมาณถัดไป'
+    };
+
+    if (setRiskManagement) {
+      setRiskManagement(prev => ({
+        ...prev,
+        bs1: [...(prev?.bs1 || bs1List), newBs1],
+        bs2: [...(prev?.bs2 || bs2List), newBs2],
+        bs3: stdRisk.riskScore >= 10 ? [...(prev?.bs3 || bs3List), newBs3] : (prev?.bs3 || bs3List),
+        bs4: stdRisk.riskScore >= 10 ? [...(prev?.bs4 || bs4List), newBs4] : (prev?.bs4 || bs4List),
+        bs5: {
+          ...bs5Data,
+          items: [...(bs5Data.items || []), newBs5]
+        }
+      }));
+    }
+
+    setCascadeSuccessMsg(`✨ นำเข้าภารกิจ "${stdRisk.activity}" เข้าสู่แบบ บส. ๑ - บส. ๕ เรียบร้อยแล้ว!`);
+    setTimeout(() => setCascadeSuccessMsg(''), 4000);
+  };
+
+  // Deploy all standard risks for selected department
+  const handleDeployFullPackage = (targetDept) => {
+    const stds = getStandardRisksByDepartment(targetDept);
+    if (!stds || stds.length === 0) return;
+    
+    if (!window.confirm(`คุณต้องการติดตั้งชุดภารกิจและความเสี่ยงมาตรฐาน ว ๓๔๘๒ สำหรับ "${targetDept}" ทั้งหมด ${stds.length} ภารกิจใช่หรือไม่?`)) return;
+
+    const newBs1Items = [];
+    const newBs2Items = [];
+    const newBs3Items = [];
+    const newBs4Items = [];
+    const newBs5Items = [];
+
+    stds.forEach((stdRisk, idx) => {
+      const newCode = `RSK-${String(bs1List.length + idx + 1).padStart(2, '0')}`;
+      const uniqueId = `${Date.now()}-${idx}`;
+
+      newBs1Items.push({
+        id: `BS1-${uniqueId}`,
+        riskCode: newCode,
+        department: targetDept,
+        strategy: stdRisk.strategy,
+        activity: stdRisk.activity,
+        budget: stdRisk.budget || 0,
+        objective: stdRisk.objective,
+        kpi: stdRisk.kpi,
+        target: stdRisk.target,
+        riskEvent: stdRisk.riskEvent,
+        cause: stdRisk.cause,
+        riskCategory: stdRisk.riskCategory
+      });
+
+      newBs2Items.push({
+        id: `BS2-${uniqueId}`,
+        riskCode: newCode,
+        department: targetDept,
+        activity: stdRisk.activity,
+        objective: stdRisk.objective,
+        responsiblePerson: stdRisk.responsiblePerson,
+        riskEvent: stdRisk.riskEvent,
+        riskCategory: stdRisk.riskCategory,
+        likelihood: stdRisk.likelihood,
+        impact: stdRisk.impact,
+        riskScore: stdRisk.riskScore,
+        riskLevel: stdRisk.riskLevel,
+        riskResponse: stdRisk.riskResponse
+      });
+
+      if (stdRisk.riskScore >= 10) {
+        newBs3Items.push({
+          id: `BS3-${uniqueId}`,
+          riskCode: newCode,
+          department: targetDept,
+          activity: stdRisk.activity,
+          riskEvent: stdRisk.riskEvent,
+          riskResponse: stdRisk.riskResponse,
+          responsiblePerson: stdRisk.responsiblePerson,
+          measures: stdRisk.treatmentMeasures,
+          kpi: stdRisk.kpiMeasure,
+          timeline: stdRisk.timeline,
+          monitoringMethod: stdRisk.monitoringMethod
+        });
+
+        newBs4Items.push({
+          id: `BS4-${uniqueId}`,
+          period: '6month',
+          riskCode: newCode,
+          department: targetDept,
+          activity: stdRisk.activity,
+          measures: stdRisk.treatmentMeasures,
+          timeline: stdRisk.timeline,
+          responsiblePerson: stdRisk.responsiblePerson,
+          result: 'ดำเนินการตามมาตรการควบคุมแล้วเสร็จ ความเสี่ยงลดลงสู่ระดับที่ยอมรับได้',
+          evidence: 'บันทึกข้อความ, รายงานสรุปผล, ภาพถ่ายตรวจหน้างาน',
+          progressPercent: 85,
+          problemSolution: 'ไม่มีปัญหาอุปสรรคสำคัญ'
+        });
+      }
+
+      newBs5Items.push({
+        id: `BS5-${uniqueId}`,
+        riskCode: newCode,
+        department: targetDept,
+        activity: stdRisk.activity,
+        riskEvent: stdRisk.riskEvent,
+        preLikelihood: stdRisk.likelihood,
+        preImpact: stdRisk.impact,
+        preScore: stdRisk.riskScore,
+        measures: stdRisk.treatmentMeasures,
+        result: 'ดำเนินมาตรการครบถ้วน ความเสี่ยงลดลงสู่ระดับที่ยอมรับได้',
+        postLikelihood: stdRisk.expectedPostLikelihood || 1,
+        postImpact: stdRisk.expectedPostImpact || 2,
+        postScore: (stdRisk.expectedPostLikelihood || 1) * (stdRisk.expectedPostImpact || 2),
+        riskChange: 'ลดลง',
+        residualRisk: 'ความเสี่ยงด้านการปฏิบัติงานต่อเนื่อง',
+        controllable: 'ควบคุมได้',
+        nextYearMeasures: 'ติดตามผลการควบคุมและทบทวนความเสี่ยงในปีงบประมาณถัดไป'
+      });
+    });
+
+    if (setRiskManagement) {
+      setRiskManagement(prev => ({
+        ...prev,
+        bs1: [...(prev?.bs1 || bs1List), ...newBs1Items],
+        bs2: [...(prev?.bs2 || bs2List), ...newBs2Items],
+        bs3: [...(prev?.bs3 || bs3List), ...newBs3Items],
+        bs4: [...(prev?.bs4 || bs4List), ...newBs4Items],
+        bs5: {
+          ...bs5Data,
+          items: [...(bs5Data.items || []), ...newBs5Items]
+        }
+      }));
+    }
+
+    setCascadeSuccessMsg(`🚀 ติดตั้งชุดภารกิจและความเสี่ยงมาตรฐาน ${stds.length} รายการ สำหรับ "${targetDept}" เรียบร้อยแล้ว!`);
+    setTimeout(() => setCascadeSuccessMsg(''), 5000);
   };
 
   // --- HANDLERS: ADD / EDIT / DELETE ---
@@ -799,6 +1100,89 @@ export default function RiskManagementView({
         </div>
       </div>
 
+      {/* Cascade / Action Toast Notification */}
+      {cascadeSuccessMsg && (
+        <div className="bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-800 p-4 rounded-2xl flex items-center justify-between text-emerald-800 dark:text-emerald-200 text-xs font-bold shadow-xs no-print">
+          <div className="flex items-center space-x-2">
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <span>{cascadeSuccessMsg}</span>
+          </div>
+          <button
+            onClick={() => setCascadeSuccessMsg('')}
+            className="p-1 hover:bg-emerald-100 dark:hover:bg-emerald-900 rounded-lg text-emerald-600 cursor-pointer"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Compliance & Quality Audit Status Bar */}
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-4 sm:p-5 rounded-2xl border border-indigo-900/60 shadow-md space-y-3 no-print">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-indigo-800/60 pb-3">
+          <div className="flex items-center space-x-3">
+            <div className="w-9 h-9 rounded-xl bg-indigo-500/20 text-indigo-300 flex items-center justify-center border border-indigo-500/30">
+              <ShieldCheck className="w-5 h-5 text-indigo-400" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <h4 className="text-xs sm:text-sm font-bold tracking-tight text-white flex items-center space-x-1.5">
+                  <span>สถานะการประเมินความสอดคล้องตาม ว ๓๔๘๒ และเกณฑ์กระทรวงการคลัง</span>
+                </h4>
+                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                  complianceAudit.isCompliant
+                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                    : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                }`}>
+                  {complianceAudit.isCompliant ? '✓ สอดคล้องตามเกณฑ์' : '⚠️ ต้องปรับปรุงความเชื่อมโยง'}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-300 mt-0.5">
+                ตรวจสอบการเชื่อมโยงข้อมูลแบบ บส.๑ ➜ บส.๕, การคำนวณ Matrix 5x5, และการคัดกรองตามระเบียบข้อ ๑๐
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2 self-start sm:self-center shrink-0">
+            <div className="text-right mr-2 hidden sm:block">
+              <div className="text-[10px] text-slate-400">คะแนนความสอดคล้อง</div>
+              <div className="text-lg font-mono font-black text-indigo-300">{complianceAudit.score}%</div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowAuditModal(true)}
+              className="bg-indigo-600/80 hover:bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl border border-indigo-400/30 flex items-center space-x-1.5 transition-all cursor-pointer"
+            >
+              <CheckSquare className="w-3.5 h-3.5 text-indigo-200" />
+              <span>ดูผลตรวจเช็คลิสต์ ({complianceAudit.score}%)</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 4 Compliance Criteria Badges */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+          {complianceAudit.checks.map((check) => (
+            <div
+              key={check.id}
+              className={`p-2.5 rounded-xl border flex items-start space-x-2 ${
+                check.status === 'passed'
+                  ? 'bg-indigo-900/40 border-indigo-700/50 text-indigo-200'
+                  : 'bg-amber-950/40 border-amber-800/60 text-amber-200'
+              }`}
+            >
+              {check.status === 'passed' ? (
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+              ) : (
+                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              )}
+              <div className="min-w-0">
+                <div className="font-bold text-[11px] text-white truncate">{check.title}</div>
+                <div className="text-[10px] text-slate-300 line-clamp-1">{check.detail}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* 2. Role-Based Scope & Department Filter Bar */}
       <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs no-print">
         <div className="flex items-center space-x-3">
@@ -975,31 +1359,58 @@ export default function RiskManagementView({
           </button>
         </div>
 
-        {/* Context Action Button */}
-        {setRiskManagement && activeTab === 'bs1' && (
-          <button
-            type="button"
-            onClick={() => {
-              setFormBs1({
-                department: isAdmin ? (filterDept !== 'all' ? filterDept : 'กองคลัง') : userDept,
-                riskCode: `RSK-0${bs1List.length + 1}`,
-                strategy: '',
-                activity: '',
-                budget: '',
-                objective: '',
-                kpi: '',
-                target: '',
-                riskEvent: '',
-                cause: '',
-                riskCategory: 'ด้านการดำเนินงาน (Operation Risks)'
-              });
-              setShowAddModal(true);
-            }}
-            className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>+ กำหนดความเสี่ยงใหม่ (บส.๑)</span>
-          </button>
+        {/* Context Action Buttons */}
+        {setRiskManagement && (
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setSmartDept(isAdmin ? (filterDept !== 'all' ? filterDept : 'กองคลัง') : userDept);
+                setShowSmartAssistant(true);
+              }}
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
+              title="ผู้ช่วยวิเคราะห์และจับคู่ความเสี่ยงมาตรฐานตามหนังสือสั่งการ มท 0805.2/ว 3482"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span>ผู้ช่วยวิเคราะห์ความเสี่ยง (ว ๓๔๘๒)</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowCascadeConfirm(true)}
+              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
+              title="ซิงค์เชื่อมโยงข้อมูลจาก บส.๑ ไปยัง บส.๒, บส.๓, บส.๔, บส.๕ อัตโนมัติตามเกณฑ์ ว ๓๔๘๒"
+            >
+              <Zap className="w-3.5 h-3.5 text-amber-100" />
+              <span>ซิงค์ข้ามแบบฟอร์ม ๑ ➜ ๕ (Auto-Cascade)</span>
+            </button>
+
+            {activeTab === 'bs1' && (
+              <button
+                type="button"
+                onClick={() => {
+                  setFormBs1({
+                    department: isAdmin ? (filterDept !== 'all' ? filterDept : 'กองคลัง') : userDept,
+                    riskCode: `RSK-0${bs1List.length + 1}`,
+                    strategy: '',
+                    activity: '',
+                    budget: '',
+                    objective: '',
+                    kpi: '',
+                    target: '',
+                    riskEvent: '',
+                    cause: '',
+                    riskCategory: 'ด้านการดำเนินงาน (Operation Risks)'
+                  });
+                  setShowAddModal(true);
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>+ กำหนดความเสี่ยงใหม่ (บส.๑)</span>
+              </button>
+            )}
+          </div>
         )}
       </div>
 
@@ -1911,6 +2322,49 @@ export default function RiskManagementView({
                 </div>
               </div>
 
+              {/* Quick Standard Mission Selector from Library */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50/80 dark:from-slate-800 dark:to-slate-800/80 p-3.5 rounded-xl border border-blue-200 dark:border-blue-900/60 space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-blue-900 dark:text-blue-200 flex items-center space-x-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                    <span>เลือกจากคลังภารกิจและความเสี่ยงมาตรฐาน อปท. (ว ๓๔๘๒):</span>
+                  </label>
+                  <span className="text-[10px] text-blue-700 dark:text-blue-300 font-semibold bg-white dark:bg-slate-900 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">
+                    กรอกอัตโนมัติครบ ๑๐๐%
+                  </span>
+                </div>
+                <select
+                  onChange={(e) => {
+                    const selectedLibId = e.target.value;
+                    if (!selectedLibId) return;
+                    const deptList = getStandardRisksByDepartment(isAdmin ? formBs1.department : userDept);
+                    const chosen = deptList.find(x => x.riskId === selectedLibId);
+                    if (chosen) {
+                      setFormBs1(prev => ({
+                        ...prev,
+                        strategy: chosen.strategy,
+                        activity: chosen.activity,
+                        budget: chosen.budget !== undefined ? chosen.budget : prev.budget,
+                        objective: chosen.objective,
+                        kpi: chosen.kpi,
+                        target: chosen.target,
+                        riskEvent: chosen.riskEvent,
+                        cause: chosen.cause,
+                        riskCategory: chosen.riskCategory
+                      }));
+                    }
+                  }}
+                  className="w-full p-2 rounded-lg border border-blue-300 dark:border-slate-700 bg-white dark:bg-slate-900 font-medium text-xs text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                >
+                  <option value="">-- คลิกเพื่อเลือกภารกิจมาตรฐานของ {isAdmin ? formBs1.department : userDept} --</option>
+                  {getStandardRisksByDepartment(isAdmin ? formBs1.department : userDept).map(item => (
+                    <option key={item.riskId} value={item.riskId}>
+                      📌 {item.activity} ({item.riskLevel})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   (๔) ยุทธศาสตร์ที่รับผิดชอบ:
@@ -1926,9 +2380,35 @@ export default function RiskManagementView({
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๕) โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ:
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300">
+                    (๕) โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ:
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!formBs1.activity) return;
+                      const analyzed = analyzeRiskKeyword(formBs1.activity, isAdmin ? formBs1.department : userDept);
+                      if (analyzed) {
+                        setFormBs1(prev => ({
+                          ...prev,
+                          strategy: prev.strategy || analyzed.strategy,
+                          objective: prev.objective || analyzed.objective,
+                          kpi: prev.kpi || analyzed.kpi,
+                          target: prev.target || analyzed.target,
+                          riskEvent: prev.riskEvent || analyzed.riskEvent,
+                          cause: prev.cause || analyzed.cause,
+                          riskCategory: prev.riskCategory || analyzed.riskCategory
+                        }));
+                      }
+                    }}
+                    className="text-[11px] font-bold text-indigo-700 dark:text-indigo-300 hover:text-indigo-800 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 px-2 py-0.5 rounded-lg border border-indigo-200 dark:border-indigo-800 flex items-center space-x-1 cursor-pointer transition-all"
+                    title="วิเคราะห์และแนะนำข้อมูลตามคำสำคัญของชื่อโครงการ"
+                  >
+                    <Sparkles className="w-3 h-3 text-indigo-600" />
+                    <span>วิเคราะห์อัตโนมัติตามชื่อ</span>
+                  </button>
+                </div>
                 <input
                   type="text"
                   required
@@ -2083,6 +2563,49 @@ export default function RiskManagementView({
                 </div>
               </div>
 
+              {/* Quick Standard Mission Selector from Library */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50/80 dark:from-slate-800 dark:to-slate-800/80 p-3.5 rounded-xl border border-blue-200 dark:border-blue-900/60 space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-blue-900 dark:text-blue-200 flex items-center space-x-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                    <span>เลือกจากคลังภารกิจและความเสี่ยงมาตรฐาน อปท. (ว ๓๔๘๒):</span>
+                  </label>
+                  <span className="text-[10px] text-blue-700 dark:text-blue-300 font-semibold bg-white dark:bg-slate-900 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">
+                    อัปเดตข้อมูลอัตโนมัติ
+                  </span>
+                </div>
+                <select
+                  onChange={(e) => {
+                    const selectedLibId = e.target.value;
+                    if (!selectedLibId) return;
+                    const deptList = getStandardRisksByDepartment(editingBs1.department);
+                    const chosen = deptList.find(x => x.riskId === selectedLibId);
+                    if (chosen) {
+                      setEditingBs1(prev => ({
+                        ...prev,
+                        strategy: chosen.strategy,
+                        activity: chosen.activity,
+                        budget: chosen.budget !== undefined ? chosen.budget : prev.budget,
+                        objective: chosen.objective,
+                        kpi: chosen.kpi,
+                        target: chosen.target,
+                        riskEvent: chosen.riskEvent,
+                        cause: chosen.cause,
+                        riskCategory: chosen.riskCategory
+                      }));
+                    }
+                  }}
+                  className="w-full p-2 rounded-lg border border-blue-300 dark:border-slate-700 bg-white dark:bg-slate-900 font-medium text-xs text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                >
+                  <option value="">-- คลิกเพื่อเลือกภารกิจมาตรฐานของ {editingBs1.department} --</option>
+                  {getStandardRisksByDepartment(editingBs1.department).map(item => (
+                    <option key={item.riskId} value={item.riskId}>
+                      📌 {item.activity} ({item.riskLevel})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   (๔) ยุทธศาสตร์ที่รับผิดชอบ:
@@ -2097,9 +2620,35 @@ export default function RiskManagementView({
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๕) โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ:
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300">
+                    (๕) โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ:
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!editingBs1.activity) return;
+                      const analyzed = analyzeRiskKeyword(editingBs1.activity, editingBs1.department);
+                      if (analyzed) {
+                        setEditingBs1(prev => ({
+                          ...prev,
+                          strategy: prev.strategy || analyzed.strategy,
+                          objective: prev.objective || analyzed.objective,
+                          kpi: prev.kpi || analyzed.kpi,
+                          target: prev.target || analyzed.target,
+                          riskEvent: prev.riskEvent || analyzed.riskEvent,
+                          cause: prev.cause || analyzed.cause,
+                          riskCategory: prev.riskCategory || analyzed.riskCategory
+                        }));
+                      }
+                    }}
+                    className="text-[11px] font-bold text-indigo-700 dark:text-indigo-300 hover:text-indigo-800 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 px-2 py-0.5 rounded-lg border border-indigo-200 dark:border-indigo-800 flex items-center space-x-1 cursor-pointer transition-all"
+                    title="วิเคราะห์และแนะนำข้อมูลตามคำสำคัญของชื่อโครงการ"
+                  >
+                    <Sparkles className="w-3 h-3 text-indigo-600" />
+                    <span>วิเคราะห์อัตโนมัติตามชื่อ</span>
+                  </button>
+                </div>
                 <input
                   type="text"
                   required
@@ -2845,6 +3394,433 @@ export default function RiskManagementView({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          MODAL: SMART RISK ASSISTANT (ว ๓๔๘๒)
+      ========================================================================= */}
+      {showSmartAssistant && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs no-print">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-7 max-w-4xl w-full shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-start justify-between border-b border-slate-200/80 dark:border-slate-800 pb-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/20">
+                  <Sparkles className="w-5 h-5 text-amber-300" />
+                </div>
+                <div>
+                  <h3 className="font-black text-base sm:text-lg text-slate-900 dark:text-slate-100 flex items-center space-x-2">
+                    <span>ผู้ช่วยวิเคราะห์และจับคู่ความเสี่ยงมาตรฐาน อปท.</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                      ว ๓๔๘๒
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    คลังภารกิจและวิเคราะห์ความเสี่ยงจำแนกรายกอง อ้างอิงตามหนังสือสั่งการ มท ๐๘๐๕.๒/ว ๓๔๘๒ และหลักเกณฑ์ กค. ๒๕๖๒
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowSmartAssistant(false)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Filter & Action Controls */}
+            <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/80 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                {/* Department Selection */}
+                <div className="flex items-center space-x-2 flex-1">
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 shrink-0">
+                    เลือกส่วนราชการ:
+                  </span>
+                  <select
+                    value={smartDept}
+                    onChange={(e) => setSmartDept(e.target.value)}
+                    className="w-full sm:w-auto flex-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                  >
+                    <option value="all">🏢 ทุกส่วนราชการ (แสดงทั้งหมด)</option>
+                    {departmentsList.map((d) => (
+                      <option key={d} value={d}>📁 {d}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Keyword Search */}
+                <div className="relative flex-1">
+                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
+                  <input
+                    type="text"
+                    placeholder="ค้นหาภารกิจ เช่น ภาษี, คสล., พัสดุ, อาหารกลางวัน..."
+                    value={smartSearchTerm}
+                    onChange={(e) => setSmartSearchTerm(e.target.value)}
+                    className="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl text-xs text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
+
+              {/* Quick Deployment Action */}
+              {smartDept !== 'all' && (
+                <div className="flex items-center justify-between pt-2 border-t border-slate-200/80 dark:border-slate-700/60">
+                  <span className="text-[11px] text-slate-600 dark:text-slate-400">
+                    💡 ต้องการติดตั้งภารกิจและความเสี่ยงตามหนังสือสั่งการสำหรับ <strong>"{smartDept}"</strong> ครบชุดหรือไม่?
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleDeployFullPackage(smartDept)}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer shrink-0"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                    <span>🚀 ติดตั้งครบชุด ({getStandardRisksByDepartment(smartDept).length} ภารกิจ)</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* List of Standard Risks */}
+            <div className="space-y-4">
+              {(() => {
+                const list = smartDept === 'all' 
+                  ? getAllStandardRisks() 
+                  : getStandardRisksByDepartment(smartDept);
+                const filtered = list.filter((item) => {
+                  if (!smartSearchTerm) return true;
+                  const q = smartSearchTerm.toLowerCase();
+                  return (
+                    (item.activity || '').toLowerCase().includes(q) ||
+                    (item.riskEvent || '').toLowerCase().includes(q) ||
+                    (item.objective || '').toLowerCase().includes(q)
+                  );
+                });
+
+                if (filtered.length === 0) {
+                  return (
+                    <div className="p-8 text-center text-slate-400 dark:text-slate-500 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+                      ไม่พบภารกิจหรือความเสี่ยงที่ตรงกับคำค้นหา
+                    </div>
+                  );
+                }
+
+                return filtered.map((item, idx) => (
+                  <div
+                    key={item.riskId || idx}
+                    className="bg-white dark:bg-slate-850 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-indigo-300 dark:hover:border-indigo-700 transition-all space-y-3"
+                  >
+                    {/* Top Row: Meta Badges */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-mono text-xs font-black text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 px-2.5 py-0.5 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                          {item.department || smartDept}
+                        </span>
+                        <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg">
+                          {item.riskCategory}
+                        </span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                          item.riskLevel === 'สูงมาก'
+                            ? 'bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-300'
+                            : item.riskLevel === 'สูง'
+                            ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-300'
+                            : 'bg-yellow-100 dark:bg-yellow-950/60 text-yellow-800 dark:text-yellow-300 border border-yellow-300'
+                        }`}>
+                          ระดับความเสี่ยง: {item.riskLevel} (คะแนน {item.riskScore})
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleImportStandardRisk(item, item.department || smartDept)}
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
+                        title="นำเข้าภารกิจนี้เข้าสู่แบบ บส. ๑ ถึง บส. ๕ ทันที"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>✨ นำเข้าสู่ระบบ (บส.๑ - ๕)</span>
+                      </button>
+                    </div>
+
+                    {/* Mission Title & Strategy */}
+                    <div>
+                      <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">
+                        {item.activity}
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                        🎯 {item.strategy} • งบประมาณ: {item.budget ? `${Number(item.budget).toLocaleString()} บาท` : 'ตามภารกิจประจำ'}
+                      </p>
+                    </div>
+
+                    {/* 2-Column Risk & Measure Breakdown */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                      {/* Left: Risk Analysis (บส. ๒) */}
+                      <div className="p-3 bg-rose-50/50 dark:bg-rose-950/20 rounded-xl border border-rose-200/60 dark:border-rose-900/40 space-y-1.5">
+                        <span className="font-bold text-rose-800 dark:text-rose-300 flex items-center space-x-1">
+                          <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
+                          <span>เหตุการณ์ความเสี่ยง (แบบ บส. ๒ ข้อ ๗):</span>
+                        </span>
+                        <p className="text-slate-700 dark:text-slate-300 font-medium">
+                          {item.riskEvent}
+                        </p>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                          <strong>สาเหตุ:</strong> {item.cause}
+                        </p>
+                        <div className="pt-1 flex items-center space-x-2 text-[11px] font-mono text-slate-600 dark:text-slate-300">
+                          <span>โอกาส (L): {item.likelihood}</span>
+                          <span>•</span>
+                          <span>ผลกระทบ (I): {item.impact}</span>
+                          <span>•</span>
+                          <span className="font-bold text-rose-700 dark:text-rose-300">ผลคูณ: {item.riskScore}</span>
+                        </div>
+                      </div>
+
+                      {/* Right: Treatment Plan (บส. ๓ & บส. ๕) */}
+                      <div className="p-3 bg-indigo-50/50 dark:bg-indigo-950/20 rounded-xl border border-indigo-200/60 dark:border-indigo-900/40 space-y-1.5">
+                        <span className="font-bold text-indigo-800 dark:text-indigo-300 flex items-center space-x-1">
+                          <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+                          <span>มาตรการจัดการความเสี่ยง (แบบ บส. ๓ ข้อ ๘):</span>
+                        </span>
+                        <p className="text-slate-700 dark:text-slate-300 whitespace-pre-line leading-relaxed text-[11px]">
+                          {item.treatmentMeasures}
+                        </p>
+                        <div className="pt-1 flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 border-t border-indigo-100 dark:border-indigo-900/60">
+                          <span>วิธีตอบสนอง: {item.riskResponse}</span>
+                          <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                            Residual Risk: {item.expectedResidualScore} ({item.expectedResidualLevel})
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ));
+              })()}
+            </div>
+
+            {/* Bottom Footer */}
+            <div className="flex items-center justify-between pt-4 border-t border-slate-200/80 dark:border-slate-800">
+              <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                ข้อมูลยึดตามหลักเกณฑ์กระทรวงการคลัง พ.ศ. ๒๕๖๒ และหนังสือสั่งการ มท ๐๘๐๕.๒/ว ๓๔๘๒ ลว. ๑๘ สิงหาคม ๒๕๖๖
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowSmartAssistant(false)}
+                className="px-5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs"
+              >
+                ปิดหน้าต่าง
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          MODAL: COMPLIANCE AUDIT CHECKLIST (ว ๓๔๘๒)
+      ========================================================================= */}
+      {showAuditModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs no-print">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-7 max-w-2xl w-full shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-start justify-between border-b border-slate-200/80 dark:border-slate-800 pb-3">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-md">
+                  <ShieldCheck className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                    รายงานการตรวจสอบความสอดคล้องตามมาตรฐาน ว ๓๔๘๒
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    ประเมินความถูกต้องของแบบ บส. ๑ ถึง บส. ๕ ประจำปีงบประมาณ พ.ศ. {selectedYear}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAuditModal(false)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Overall Score Card */}
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50/70 dark:from-slate-800 dark:to-slate-850 p-5 rounded-2xl border border-blue-200 dark:border-blue-900/60 flex items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 block mb-1">
+                  คะแนนประเมินความสอดคล้อง (Compliance Score):
+                </span>
+                <div className="flex items-center space-x-2">
+                  <span className="text-3xl font-mono font-black text-indigo-600 dark:text-indigo-400">
+                    {complianceAudit.score}%
+                  </span>
+                  <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+                    complianceAudit.isCompliant
+                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300'
+                      : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-300'
+                  }`}>
+                    {complianceAudit.isCompliant ? '✓ ผ่านเกณฑ์มาตรฐานสมบูรณ์' : '⚠️ ต้องปรับปรุงความเชื่อมโยง'}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAuditModal(false);
+                  handleExecuteCascade(isAdmin ? filterDept : userDept);
+                }}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
+              >
+                <Zap className="w-3.5 h-3.5 text-amber-300" />
+                <span>ปรับปรุงอัตโนมัติ (Auto-Cascade)</span>
+              </button>
+            </div>
+
+            {/* Checklist Items */}
+            <div className="space-y-3">
+              <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                รายการตรวจสอบความสอดคล้องตามหลักเกณฑ์:
+              </h4>
+              <div className="space-y-2.5">
+                {complianceAudit.checks.map((c) => (
+                  <div
+                    key={c.id}
+                    className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 flex items-start space-x-3"
+                  >
+                    <div className="shrink-0 mt-0.5">
+                      {c.status === 'passed' ? (
+                        <div className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
+                          ✓
+                        </div>
+                      ) : (
+                        <div className="w-6 h-6 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-xs">
+                          !
+                        </div>
+                      )}
+                    </div>
+                    <div className="space-y-0.5">
+                      <div className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                        {c.title}
+                      </div>
+                      <div className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        {c.detail}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Statistics Table */}
+            <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/80 text-xs">
+              <span className="font-bold text-slate-700 dark:text-slate-300 block mb-2">
+                สถิติข้อมูลในระบบบริหารจัดการความเสี่ยง:
+              </span>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]">
+                <div className="p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                  <span className="text-slate-500 block">แบบ บส. ๑ (ขอบเขต):</span>
+                  <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{complianceAudit.stats.totalRisks} รายการ</span>
+                </div>
+                <div className="p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                  <span className="text-slate-500 block">ความเสี่ยงระดับสูง/สูงมาก (บส. ๒):</span>
+                  <span className="font-mono font-bold text-rose-600 dark:text-rose-400">{complianceAudit.stats.highRisks} รายการ</span>
+                </div>
+                <div className="p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                  <span className="text-slate-500 block">แบบ บส. ๓ (แผนบริหาร):</span>
+                  <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">{complianceAudit.stats.plansCount} รายการ</span>
+                </div>
+                <div className="p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                  <span className="text-slate-500 block">แบบ บส. ๔ (ติดตามผล):</span>
+                  <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{complianceAudit.stats.trackedCount} รายการ</span>
+                </div>
+                <div className="p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 col-span-2 sm:col-span-1">
+                  <span className="text-slate-500 block">แบบ บส. ๕ (ทบทวนองค์กร):</span>
+                  <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{complianceAudit.stats.evaluatedCount} รายการ</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex justify-end space-x-2 pt-2 border-t border-slate-200/80 dark:border-slate-800">
+              <button
+                type="button"
+                onClick={() => setShowAuditModal(false)}
+                className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs"
+              >
+                ปิด
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          MODAL: CASCADE CONFIRMATION (ซิงค์ข้ามแบบฟอร์ม ๑ ➜ ๕)
+      ========================================================================= */}
+      {showCascadeConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs no-print">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-4">
+            <div className="flex items-start space-x-3">
+              <div className="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-md">
+                <Zap className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                  ซิงค์เชื่อมโยงข้อมูลอัตโนมัติข้ามแบบฟอร์ม (Auto-Cascade)
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  เชื่อมโยงข้อมูลจาก บส. ๑ ➜ บส. ๒ ➜ บส. ๓ ➜ บส. ๔ ➜ บส. ๕ ตามหนังสือสั่งการ ว ๓๔๘๒
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/80 space-y-2 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              <div className="font-bold text-slate-800 dark:text-slate-200">
+                ระบบจะดำเนินการตามหลักเกณฑ์ระเบียบ ดังนี้:
+              </div>
+              <ul className="space-y-1.5 list-disc list-inside text-[11px]">
+                <li><strong>บส. ๑ ➜ บส. ๒:</strong> นำภารกิจ/วัตถุประสงค์มาวิเคราะห์โอกาส (L) x ผลกระทบ (I) คำนวณระดับความเสี่ยงตาม Matrix 5x5</li>
+                <li><strong>บส. ๒ ➜ บส. ๓:</strong> <span className="text-amber-700 dark:text-amber-400 font-bold">คัดกรองเฉพาะระดับ "สูง" และ "สูงมาก"</span> มาจัดทำแผนและมาตรการจัดการความเสี่ยงตามระเบียบข้อ ๑๐</li>
+                <li><strong>บส. ๓ ➜ บส. ๔:</strong> นำแผนมาตรการมารายงานติดตามผลดำเนินงาน ระบุความคืบหน้า (%) และหลักฐานอ้างอิง</li>
+                <li><strong>บส. ๔ ➜ บส. ๕:</strong> ประเมินคะแนนความเสี่ยงก่อนดำเนินการ vs หลังดำเนินการ (Residual Risk) และสรุปผลว่า "ลดลง" และ "ควบคุมได้"</li>
+              </ul>
+            </div>
+
+            {isAdmin && (
+              <div className="text-xs">
+                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  เลือกขอบเขตส่วนราชการที่ต้องการซิงค์:
+                </label>
+                <select
+                  value={filterDept}
+                  onChange={(e) => setFilterDept(e.target.value)}
+                  className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-bold text-xs"
+                >
+                  <option value="all">🏢 ทุกส่วนราชการใน อปท. (แนะนำ)</option>
+                  {departmentsList.map(d => (
+                    <option key={d} value={d}>📁 {d}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <div className="flex justify-end space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <button
+                type="button"
+                onClick={() => setShowCascadeConfirm(false)}
+                className="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs"
+              >
+                ยกเลิก
+              </button>
+              <button
+                type="button"
+                onClick={() => handleExecuteCascade(isAdmin ? filterDept : userDept)}
+                className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs cursor-pointer flex items-center space-x-1.5"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                <span>ยืนยันซิงค์ข้อมูล (Auto-Cascade)</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
