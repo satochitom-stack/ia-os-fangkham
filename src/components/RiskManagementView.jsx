@@ -530,7 +530,9 @@ export default function RiskManagementView({
 
   // Import single standard risk from library into BS.1 -> BS.5
   const handleImportStandardRisk = (stdRisk, targetDept) => {
-    const dept = targetDept || (isAdmin ? (filterDept !== 'all' ? filterDept : 'กองคลัง') : userDept);
+    const dept = isAdmin
+      ? (targetDept || (filterDept !== 'all' ? filterDept : 'กองคลัง'))
+      : userDept;
     const newCode = `RSK-0${bs1List.length + 1}`;
     const newId = `BS1-${Date.now()}`;
 
@@ -634,16 +636,17 @@ export default function RiskManagementView({
 
   // Deploy all standard risks for selected department
   const handleDeployFullPackage = (targetDept) => {
-    const stds = getStandardRisksByDepartment(targetDept);
+    const deptToDeploy = isAdmin ? targetDept : userDept;
+    const stds = getStandardRisksByDepartment(deptToDeploy);
     if (!stds || stds.length === 0) return;
     
     openConfirmModal({
       title: 'ติดตั้งชุดภารกิจและความเสี่ยงมาตรฐาน ว 3482',
-      message: `คุณต้องการติดตั้งชุดภารกิจและความเสี่ยงมาตรฐาน ว 3482 สำหรับ "${targetDept}" ทั้งหมด ${stds.length} ภารกิจ เข้าสู่แบบฟอร์ม บส.1 ถึง บส.5 ใช่หรือไม่?`,
+      message: `คุณต้องการติดตั้งชุดภารกิจและความเสี่ยงมาตรฐาน ว 3482 สำหรับ "${deptToDeploy}" ทั้งหมด ${stds.length} ภารกิจ เข้าสู่แบบฟอร์ม บส.1 ถึง บส.5 ใช่หรือไม่?`,
       confirmText: 'ติดตั้งภารกิจมาตรฐาน',
       type: 'info',
       onConfirm: () => {
-        executeDeployFullPackage(targetDept, stds);
+        executeDeployFullPackage(deptToDeploy, stds);
       }
     });
   };
@@ -3400,7 +3403,9 @@ export default function RiskManagementView({
                     </span>
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                    คลังภารกิจและวิเคราะห์ความเสี่ยงจำแนกรายกอง อ้างอิงตามหนังสือสั่งการ มท 0805.2/ว 3482 และหลักเกณฑ์ กค. 2562
+                    {isAdmin
+                      ? 'คลังภารกิจและวิเคราะห์ความเสี่ยงจำแนกรายกอง อ้างอิงตามหนังสือสั่งการ มท 0805.2/ว 3482 และหลักเกณฑ์ กค. 2562 (สิทธิ์หน่วยตรวจสอบภายใน: แสดงทุกส่วนราชการ)'
+                      : `คลังภารกิจและวิเคราะห์ความเสี่ยงจำแนกเฉพาะหน่วยงาน (${userDept}) อ้างอิงตามหนังสือสั่งการ มท 0805.2/ว 3482`}
                   </p>
                 </div>
               </div>
@@ -3421,16 +3426,28 @@ export default function RiskManagementView({
                   <span className="text-xs font-bold text-slate-700 dark:text-slate-300 shrink-0">
                     เลือกส่วนราชการ:
                   </span>
-                  <select
-                    value={smartDept}
-                    onChange={(e) => setSmartDept(e.target.value)}
-                    className="w-full sm:w-auto flex-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 cursor-pointer"
-                  >
-                    <option value="all">🏢 ทุกส่วนราชการ (แสดงทั้งหมด)</option>
-                    {departmentsList.map((d) => (
-                      <option key={d} value={d}>📁 {d}</option>
-                    ))}
-                  </select>
+                  {isAdmin ? (
+                    <select
+                      value={smartDept}
+                      onChange={(e) => setSmartDept(e.target.value)}
+                      className="w-full sm:w-auto flex-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                    >
+                      <option value="all">🏢 ทุกส่วนราชการ (แสดงทั้งหมด)</option>
+                      {departmentsList.map((d) => (
+                        <option key={d} value={d}>📁 {d}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div className="flex items-center justify-between flex-1 bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-800/80 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-200 shadow-2xs">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-indigo-600 dark:text-indigo-400">📁</span>
+                        <span>{userDept}</span>
+                      </div>
+                      <span className="text-[10px] bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-200/60 dark:border-indigo-800/60 font-medium">
+                        🔒 เฉพาะหน่วยงานที่เข้าใช้งาน
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Keyword Search */}
@@ -3447,18 +3464,18 @@ export default function RiskManagementView({
               </div>
 
               {/* Quick Deployment Action */}
-              {smartDept !== 'all' && (
-                <div className="flex items-center justify-between pt-2 border-t border-slate-200/80 dark:border-slate-700/60">
+              {(isAdmin ? smartDept !== 'all' : true) && (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-slate-200/80 dark:border-slate-700/60">
                   <span className="text-[11px] text-slate-600 dark:text-slate-400">
-                    💡 ต้องการติดตั้งภารกิจและความเสี่ยงตามหนังสือสั่งการสำหรับ <strong>"{smartDept}"</strong> ครบชุดหรือไม่?
+                    💡 ต้องการติดตั้งภารกิจและความเสี่ยงตามหนังสือสั่งการสำหรับ <strong>"{isAdmin ? smartDept : userDept}"</strong> ครบชุดหรือไม่?
                   </span>
                   <button
                     type="button"
-                    onClick={() => handleDeployFullPackage(smartDept)}
+                    onClick={() => handleDeployFullPackage(isAdmin ? smartDept : userDept)}
                     className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer shrink-0"
                   >
                     <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                    <span>🚀 ติดตั้งครบชุด ({getStandardRisksByDepartment(smartDept).length} ภารกิจ)</span>
+                    <span>🚀 ติดตั้งครบชุด ({getStandardRisksByDepartment(isAdmin ? smartDept : userDept).length} ภารกิจ)</span>
                   </button>
                 </div>
               )}
@@ -3467,9 +3484,10 @@ export default function RiskManagementView({
             {/* List of Standard Risks */}
             <div className="space-y-4">
               {(() => {
-                const list = smartDept === 'all' 
+                const effectiveDept = isAdmin ? smartDept : userDept;
+                const list = (isAdmin && effectiveDept === 'all') 
                   ? getAllStandardRisks() 
-                  : getStandardRisksByDepartment(smartDept);
+                  : getStandardRisksByDepartment(effectiveDept);
                 const filtered = list.filter((item) => {
                   if (!smartSearchTerm) return true;
                   const q = smartSearchTerm.toLowerCase();
@@ -3497,7 +3515,7 @@ export default function RiskManagementView({
                     <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="font-mono text-xs font-black text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 px-2.5 py-0.5 rounded-lg border border-indigo-200 dark:border-indigo-800">
-                          {item.department || smartDept}
+                          {isAdmin ? (item.department || smartDept) : userDept}
                         </span>
                         <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg">
                           {item.riskCategory}
@@ -3515,7 +3533,7 @@ export default function RiskManagementView({
 
                       <button
                         type="button"
-                        onClick={() => handleImportStandardRisk(item, item.department || smartDept)}
+                        onClick={() => handleImportStandardRisk(item, isAdmin ? (item.department || smartDept) : userDept)}
                         className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
                         title="นำเข้าภารกิจนี้เข้าสู่แบบ บส. 1 ถึง บส. 5 ทันที"
                       >
