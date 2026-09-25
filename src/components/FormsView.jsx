@@ -323,39 +323,37 @@ export default function FormsView({
       ========================================================================= */}
       {selectedDoc && (
         <div className="space-y-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs overflow-hidden">
-            {/* Detailed Header Banner */}
-            <div className="p-6 sm:p-8 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white relative">
-              <div className="absolute top-0 right-0 -mt-10 -mr-10 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
-
-              <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                <div className="space-y-3 max-w-3xl">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-200 border border-blue-400/30 text-xs font-semibold">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
+            {/* Detailed Header Banner (Soft Modern Gradient) */}
+            <div className="p-6 sm:p-7 bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-white dark:from-slate-850 dark:via-slate-900 dark:to-slate-850 border-b border-blue-200/70 dark:border-slate-800">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div className="space-y-2.5 max-w-3xl">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100/80 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200/70 dark:border-blue-800/60 text-xs font-semibold">
+                    <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                     <span>เอกสารทางการกระทรวงมหาดไทย</span>
                   </div>
 
-                  <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white leading-snug">
+                  <h3 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100 leading-snug">
                     {selectedDoc.title}
                   </h3>
 
-                  <div className="text-sm font-semibold text-blue-200">
+                  <div className="text-xs sm:text-sm font-bold text-blue-700 dark:text-blue-400">
                     เรื่อง: {selectedDoc.topic}
                   </div>
 
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed bg-white/80 dark:bg-slate-950/40 p-3 rounded-xl border border-slate-200/60 dark:border-slate-800">
                     {selectedDoc.description}
                   </p>
 
-                  <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-slate-300">
-                    <span className="bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-mono">
+                  <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
+                    <span className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-md font-mono text-[11px]">
                       📄 ขนาด: {selectedDoc.pages} ({selectedDoc.fileSize})
                     </span>
-                    <span className="bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 px-2.5 py-1 rounded-md font-semibold">
+                    <span className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 rounded-md font-semibold text-[11px]">
                       ✓ วันที่ลงนาม: {selectedDoc.date}
                     </span>
                     {selectedDoc.isOfficial && (
-                      <span className="bg-amber-500/20 text-amber-200 border border-amber-400/30 px-2.5 py-1 rounded-md font-semibold">
+                      <span className="bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 px-2.5 py-1 rounded-md font-semibold text-[11px]">
                         ★ บังคับใช้ อปท. ทั่วประเทศ
                       </span>
                     )}
@@ -363,22 +361,22 @@ export default function FormsView({
                 </div>
 
                 {/* Quick Action Buttons */}
-                <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5 shrink-0">
+                <div className="flex flex-col sm:flex-row lg:flex-col gap-2 shrink-0">
                   <button
                     type="button"
                     onClick={() => setPdfModalOpen(true)}
-                    className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition-all cursor-pointer hover:shadow-blue-500/30"
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-all cursor-pointer"
                   >
-                    <Eye className="w-4 h-4" />
+                    <Eye className="w-4 h-4 text-blue-100" />
                     <span>เปิดดูเต็มจอ (Preview Modal)</span>
                   </button>
 
                   <a
                     href={selectedDoc.pdfUrl}
                     download={selectedDoc.downloadName}
-                    className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/20 transition-all cursor-pointer text-center"
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 font-bold text-xs shadow-xs transition-all cursor-pointer text-center"
                   >
-                    <Download className="w-4 h-4 text-emerald-400" />
+                    <Download className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                     <span>ดาวน์โหลดไฟล์ PDF</span>
                   </a>
 
@@ -386,9 +384,9 @@ export default function FormsView({
                     href={selectedDoc.pdfUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 text-xs font-semibold border border-slate-700 transition-all cursor-pointer text-center"
+                    className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 text-xs font-semibold border border-slate-300 dark:border-slate-700 transition-all cursor-pointer text-center"
                   >
-                    <ExternalLink className="w-4 h-4 text-blue-400" />
+                    <ExternalLink className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                     <span>เปิดในแท็บใหม่</span>
                   </a>
 
@@ -396,10 +394,10 @@ export default function FormsView({
                     <button
                       type="button"
                       onClick={() => setCurrentTab(selectedDoc.onlineFormTab)}
-                      className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-700/80 hover:bg-indigo-700 text-white text-xs font-bold transition-all cursor-pointer"
+                      className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-bold transition-all cursor-pointer"
                     >
                       <span>ไปยังระบบกรอกแบบ บส. ๑ - ๕</span>
-                      <ChevronRight className="w-4 h-4" />
+                      <ChevronRight className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                     </button>
                   )}
                 </div>
