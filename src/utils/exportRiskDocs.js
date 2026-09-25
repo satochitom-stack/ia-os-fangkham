@@ -1,6 +1,6 @@
 /**
  * exportRiskDocs.js
- * ส่งออกรายงานการบริหารจัดการความเสี่ยง (แบบ บส. ๑ ถึง บส. ๕)
+ * ส่งออกรายงานการบริหารจัดการความเสี่ยง (แบบ บส. 1 ถึง บส. 5)
  * ตามหนังสือสั่งการกระทรวงมหาดไทย ที่ มท 0805.2/ว 3482
  * เป็นไฟล์ Microsoft Word (.doc) และ Microsoft Excel (.xls)
  */
@@ -48,31 +48,31 @@ export function exportBsToWord({
   const approverPosition = isSubDivision ? '....................................................' : (orgProfile.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ');
   const deptLabel = effectiveDept && effectiveDept !== 'all' ? `_${effectiveDept}` : '';
 
-  let formNumber = '๑';
-  let formName = 'บส.๑';
+  let formNumber = '1';
+  let formName = 'บส.1';
   let title = '';
   let subtitle = '';
   let tableHeaderHtml = '';
   let tableBodyHtml = '';
   let extraHtml = '';
-  let signatureNumber = { sign: '๑๐', name: '', pos: '๑๑', date: '๑๒' };
+  let signatureNumber = { sign: '10', name: '', pos: '11', date: '12' };
 
   if (activeTab === 'bs1') {
-    formNumber = '๑';
-    formName = 'บส.๑';
+    formNumber = '1';
+    formName = 'บส.1';
     title = 'กำหนดขอบเขตความรับผิดชอบตามประเด็นยุทธศาสตร์/ข้อบัญญัติ/เทศบัญญัติ/อื่น ๆ (ถ้ามี)';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. (๒) ${selectedYear}`;
-    signatureNumber = { sign: '๑๐', pos: '๑๑', date: '๑๒' };
+    subtitle = `ประจำปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
+    signatureNumber = { sign: '10', pos: '11', date: '12' };
 
     tableHeaderHtml = `
       <tr>
-        <th style="width: 70px;">(๓)<br/>รหัสความเสี่ยง</th>
-        <th>(๔)<br/>ยุทธศาสตร์ที่รับผิดชอบ</th>
-        <th>(๕)<br/>โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ</th>
-        <th style="width: 100px;">(๖)<br/>งบประมาณ (บาท)</th>
-        <th>(๗)<br/>วัตถุประสงค์</th>
-        <th>(๘)<br/>ตัวชี้วัด</th>
-        <th>(๙)<br/>เป้าหมาย</th>
+        <th style="width: 70px;">(3)<br/>รหัสความเสี่ยง</th>
+        <th>(4)<br/>ยุทธศาสตร์ที่รับผิดชอบ</th>
+        <th>(5)<br/>โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ</th>
+        <th style="width: 100px;">(6)<br/>งบประมาณ (บาท)</th>
+        <th>(7)<br/>วัตถุประสงค์</th>
+        <th>(8)<br/>ตัวชี้วัด</th>
+        <th>(9)<br/>เป้าหมาย</th>
         <th style="width: 110px;">ส่วนราชการ</th>
       </tr>
     `;
@@ -90,25 +90,25 @@ export function exportBsToWord({
       </tr>
     `).join('');
   } else if (activeTab === 'bs2') {
-    formNumber = '๒';
-    formName = 'บส.๒';
+    formNumber = '2';
+    formName = 'บส.2';
     title = 'การวิเคราะห์โอกาส ผลกระทบ และการตอบสนองความเสี่ยง';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. (๒) ${selectedYear}`;
-    signatureNumber = { sign: '๑๓', pos: '๑๔', date: '๑๕' };
+    subtitle = `ประจำปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
+    signatureNumber = { sign: '13', pos: '14', date: '15' };
 
     tableHeaderHtml = `
       <tr>
-        <th style="width: 70px;">(๓)<br/>รหัส</th>
-        <th>(๔)<br/>โครงการ/กิจกรรม</th>
-        <th>(๕)<br/>วัตถุประสงค์</th>
-        <th>(๖)<br/>เหตุการณ์ความเสี่ยง</th>
-        <th>(๗)<br/>ปัจจัยเสี่ยง</th>
-        <th>(๘)<br/>ประเภทความเสี่ยง</th>
-        <th>(๙)<br/>การควบคุมที่มีอยู่</th>
-        <th style="width: 45px;">(๑๐)<br/>โอกาส(L)</th>
-        <th style="width: 45px;">(๑๐)<br/>ผลกระทบ(I)</th>
-        <th style="width: 65px;">(๑๐)<br/>ระดับ(LxI)</th>
-        <th>(๑๑)<br/>วิธีการตอบสนองความเสี่ยง</th>
+        <th style="width: 70px;">(3)<br/>รหัส</th>
+        <th>(4)<br/>โครงการ/กิจกรรม</th>
+        <th>(5)<br/>วัตถุประสงค์</th>
+        <th>(6)<br/>เหตุการณ์ความเสี่ยง</th>
+        <th>(7)<br/>ปัจจัยเสี่ยง</th>
+        <th>(8)<br/>ประเภทความเสี่ยง</th>
+        <th>(9)<br/>การควบคุมที่มีอยู่</th>
+        <th style="width: 45px;">(10)<br/>โอกาส(L)</th>
+        <th style="width: 45px;">(10)<br/>ผลกระทบ(I)</th>
+        <th style="width: 65px;">(10)<br/>ระดับ(LxI)</th>
+        <th>(11)<br/>วิธีการตอบสนองความเสี่ยง</th>
         <th style="width: 100px;">ส่วนราชการ</th>
       </tr>
     `;
@@ -136,23 +136,23 @@ export function exportBsToWord({
       `;
     }).join('');
   } else if (activeTab === 'bs3') {
-    formNumber = '๓';
-    formName = 'บส.๓';
+    formNumber = '3';
+    formName = 'บส.3';
     title = 'รายงานการจัดทำแผนบริหารความเสี่ยง';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. (๒) ${selectedYear}`;
-    signatureNumber = { sign: '๑๒', pos: '๑๓', date: '๑๔' };
+    subtitle = `ประจำปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
+    signatureNumber = { sign: '12', pos: '13', date: '14' };
 
     tableHeaderHtml = `
       <tr>
-        <th style="width: 70px;">(๓)<br/>รหัส</th>
-        <th>(๔)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
-        <th>(๕)<br/>ความเสี่ยง</th>
-        <th>(๖)<br/>วิธีการตอบสนองความเสี่ยง</th>
-        <th style="width: 100px;">(๗)<br/>ผู้รับผิดชอบ</th>
-        <th>(๘)<br/>วิธีการจัดการความเสี่ยง (มาตรการ)</th>
-        <th>(๙)<br/>ตัวชี้วัด</th>
-        <th style="width: 100px;">(๑๐)<br/>ระยะเวลา</th>
-        <th>(๑๑)<br/>วิธีการติดตามและการรายงาน</th>
+        <th style="width: 70px;">(3)<br/>รหัส</th>
+        <th>(4)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
+        <th>(5)<br/>ความเสี่ยง</th>
+        <th>(6)<br/>วิธีการตอบสนองความเสี่ยง</th>
+        <th style="width: 100px;">(7)<br/>ผู้รับผิดชอบ</th>
+        <th>(8)<br/>วิธีการจัดการความเสี่ยง (มาตรการ)</th>
+        <th>(9)<br/>ตัวชี้วัด</th>
+        <th style="width: 100px;">(10)<br/>ระยะเวลา</th>
+        <th>(11)<br/>วิธีการติดตามและการรายงาน</th>
       </tr>
     `;
 
@@ -170,24 +170,24 @@ export function exportBsToWord({
       </tr>
     `).join('');
   } else if (activeTab === 'bs4') {
-    formNumber = '๔';
-    formName = 'บส.๔';
-    const periodLabel = bs4Period === '3month' ? 'รอบ ๓ เดือน' : bs4Period === '6month' ? 'รอบ ๖ เดือน' : 'รอบ ๑๒ เดือน';
+    formNumber = '4';
+    formName = 'บส.4';
+    const periodLabel = bs4Period === '3month' ? 'รอบ 3 เดือน' : bs4Period === '6month' ? 'รอบ 6 เดือน' : 'รอบ 12 เดือน';
     title = `รายงานการติดตามผลการบริหารความเสี่ยง (${periodLabel})`;
-    subtitle = `ประจำปีงบประมาณ พ.ศ. (๒) ${selectedYear}`;
-    signatureNumber = { sign: '๑๒', pos: '๑๓', date: '๑๔' };
+    subtitle = `ประจำปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
+    signatureNumber = { sign: '12', pos: '13', date: '14' };
 
     tableHeaderHtml = `
       <tr>
-        <th style="width: 70px;">(๓)<br/>รหัส</th>
-        <th>(๔)<br/>โครงการ/กิจกรรม</th>
-        <th>(๕)<br/>วิธีการจัดการความเสี่ยง</th>
-        <th style="width: 90px;">(๖)<br/>ระยะเวลา</th>
-        <th style="width: 100px;">(๗)<br/>ผู้รับผิดชอบ</th>
-        <th>(๘)<br/>ผลการดำเนินงาน</th>
-        <th>(๙)<br/>หลักฐานอ้างอิง</th>
-        <th style="width: 65px;">(๑๐)<br/>ร้อยละ</th>
-        <th>(๑๑)<br/>ปัญหา อุปสรรค และแนวทางแก้ไข</th>
+        <th style="width: 70px;">(3)<br/>รหัส</th>
+        <th>(4)<br/>โครงการ/กิจกรรม</th>
+        <th>(5)<br/>วิธีการจัดการความเสี่ยง</th>
+        <th style="width: 90px;">(6)<br/>ระยะเวลา</th>
+        <th style="width: 100px;">(7)<br/>ผู้รับผิดชอบ</th>
+        <th>(8)<br/>ผลการดำเนินงาน</th>
+        <th>(9)<br/>หลักฐานอ้างอิง</th>
+        <th style="width: 65px;">(10)<br/>ร้อยละ</th>
+        <th>(11)<br/>ปัญหา อุปสรรค และแนวทางแก้ไข</th>
       </tr>
     `;
 
@@ -205,33 +205,33 @@ export function exportBsToWord({
       </tr>
     `).join('');
   } else if (activeTab === 'bs5') {
-    formNumber = '๕';
-    formName = 'บส.๕';
+    formNumber = '5';
+    formName = 'บส.5';
     title = 'รายงานผลการดำเนินการและทบทวนแผนการบริหารความเสี่ยง';
-    subtitle = `สำหรับปีงบประมาณ พ.ศ. (๒) ${selectedYear}`;
-    signatureNumber = { sign: '๑๔', pos: '๑๕', date: '๑๖' };
+    subtitle = `สำหรับปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
+    signatureNumber = { sign: '14', pos: '15', date: '16' };
 
     tableHeaderHtml = `
       <tr>
-        <th rowspan="2" style="width: 60px;">(๓)<br/>รหัส</th>
-        <th rowspan="2">(๔)<br/>โครงการ/กิจกรรม</th>
-        <th rowspan="2">(๕)<br/>ความเสี่ยง</th>
-        <th colspan="3">(๖) คะแนนก่อนดำเนินการ</th>
-        <th rowspan="2">(๗)<br/>วิธีการจัดการ</th>
-        <th rowspan="2">(๘)<br/>ผลการจัดการ</th>
-        <th colspan="3">(๙) คะแนนหลังดำเนินการ</th>
-        <th rowspan="2" style="width: 60px;">(๑๐)<br/>การเปลี่ยน</th>
-        <th rowspan="2">(๑๑)<br/>ความเสี่ยงคงเหลือ</th>
-        <th colspan="2">(๑๒) สรุปผล</th>
-        <th rowspan="2">(๑๓)<br/>มาตรการปีถัดไป</th>
+        <th rowspan="2" style="width: 60px;">(3)<br/>รหัส</th>
+        <th rowspan="2">(4)<br/>โครงการ/กิจกรรม</th>
+        <th rowspan="2">(5)<br/>ความเสี่ยง</th>
+        <th colspan="3">(6) คะแนนก่อนดำเนินการ</th>
+        <th rowspan="2">(7)<br/>วิธีการจัดการ</th>
+        <th rowspan="2">(8)<br/>ผลการจัดการ</th>
+        <th colspan="3">(9) คะแนนหลังดำเนินการ</th>
+        <th rowspan="2" style="width: 60px;">(10)<br/>การเปลี่ยน</th>
+        <th rowspan="2">(11)<br/>ความเสี่ยงคงเหลือ</th>
+        <th colspan="2">(12) สรุปผล</th>
+        <th rowspan="2">(13)<br/>มาตรการปีถัดไป</th>
       </tr>
       <tr>
-        <th style="width: 35px;">(๑)L</th>
-        <th style="width: 35px;">(๒)I</th>
-        <th style="width: 45px;">(๓)คะแนน</th>
-        <th style="width: 35px;">(๑)L</th>
-        <th style="width: 35px;">(๒)I</th>
-        <th style="width: 45px;">(๓)คะแนน</th>
+        <th style="width: 35px;">(1)L</th>
+        <th style="width: 35px;">(2)I</th>
+        <th style="width: 45px;">(3)คะแนน</th>
+        <th style="width: 35px;">(1)L</th>
+        <th style="width: 35px;">(2)I</th>
+        <th style="width: 45px;">(3)คะแนน</th>
         <th style="width: 50px;">ควบคุมได้</th>
         <th style="width: 55px;">ควบคุมไม่ได้</th>
       </tr>
@@ -359,7 +359,7 @@ export function exportBsToWord({
       <div class="Section1">
         <div class="header-top">แบบ บส. ${formNumber}</div>
         <div class="header-center">
-          <h2>ชื่อหน่วยงาน (๑) ${escapeHtml(orgName)}</h2>
+          <h2>ชื่อหน่วยงาน (1) ${escapeHtml(orgName)}</h2>
           <h3>${escapeHtml(title)}</h3>
           <p>${escapeHtml(subtitle)}</p>
         </div>
@@ -414,33 +414,33 @@ export function exportBsToExcel({
   const approverPosition = isSubDivision ? '....................................................' : (orgProfile.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ');
   const deptLabel = effectiveDept && effectiveDept !== 'all' ? `_${effectiveDept}` : '';
 
-  let formNumber = '๑';
-  let formName = 'บส.๑';
+  let formNumber = '1';
+  let formName = 'บส.1';
   let title = '';
   let subtitle = '';
   let tableHeaderHtml = '';
   let tableBodyHtml = '';
   let extraRowsHtml = '';
   let colSpanTotal = 8;
-  let signatureNumber = { sign: '๑๐', pos: '๑๑', date: '๑๒' };
+  let signatureNumber = { sign: '10', pos: '11', date: '12' };
 
   if (activeTab === 'bs1') {
-    formNumber = '๑';
-    formName = 'บส.๑';
+    formNumber = '1';
+    formName = 'บส.1';
     title = 'กำหนดขอบเขตความรับผิดชอบตามประเด็นยุทธศาสตร์/ข้อบัญญัติ/เทศบัญญัติ/อื่น ๆ (ถ้ามี)';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. (๒) ${selectedYear}`;
+    subtitle = `ประจำปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
     colSpanTotal = 8;
-    signatureNumber = { sign: '๑๐', pos: '๑๑', date: '๑๒' };
+    signatureNumber = { sign: '10', pos: '11', date: '12' };
 
     tableHeaderHtml = `
       <tr>
-        <th style="background-color: #D9E1F2;">(๓) รหัสความเสี่ยง</th>
-        <th style="background-color: #D9E1F2;">(๔) ยุทธศาสตร์ที่รับผิดชอบ</th>
-        <th style="background-color: #D9E1F2;">(๕) โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ</th>
-        <th style="background-color: #D9E1F2;">(๖) งบประมาณ (บาท)</th>
-        <th style="background-color: #D9E1F2;">(๗) วัตถุประสงค์</th>
-        <th style="background-color: #D9E1F2;">(๘) ตัวชี้วัด</th>
-        <th style="background-color: #D9E1F2;">(๙) เป้าหมาย</th>
+        <th style="background-color: #D9E1F2;">(3) รหัสความเสี่ยง</th>
+        <th style="background-color: #D9E1F2;">(4) ยุทธศาสตร์ที่รับผิดชอบ</th>
+        <th style="background-color: #D9E1F2;">(5) โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ</th>
+        <th style="background-color: #D9E1F2;">(6) งบประมาณ (บาท)</th>
+        <th style="background-color: #D9E1F2;">(7) วัตถุประสงค์</th>
+        <th style="background-color: #D9E1F2;">(8) ตัวชี้วัด</th>
+        <th style="background-color: #D9E1F2;">(9) เป้าหมาย</th>
         <th style="background-color: #D9E1F2;">ส่วนราชการ</th>
       </tr>
     `;
@@ -458,26 +458,26 @@ export function exportBsToExcel({
       </tr>
     `).join('');
   } else if (activeTab === 'bs2') {
-    formNumber = '๒';
-    formName = 'บส.๒';
+    formNumber = '2';
+    formName = 'บส.2';
     title = 'การวิเคราะห์โอกาส ผลกระทบ และการตอบสนองความเสี่ยง';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. (๒) ${selectedYear}`;
+    subtitle = `ประจำปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
     colSpanTotal = 12;
-    signatureNumber = { sign: '๑๓', pos: '๑๔', date: '๑๕' };
+    signatureNumber = { sign: '13', pos: '14', date: '15' };
 
     tableHeaderHtml = `
       <tr>
-        <th style="background-color: #D9E1F2;">(๓) รหัส</th>
-        <th style="background-color: #D9E1F2;">(๔) โครงการ/กิจกรรม</th>
-        <th style="background-color: #D9E1F2;">(๕) วัตถุประสงค์</th>
-        <th style="background-color: #D9E1F2;">(๖) เหตุการณ์ความเสี่ยง</th>
-        <th style="background-color: #D9E1F2;">(๗) ปัจจัยเสี่ยง</th>
-        <th style="background-color: #D9E1F2;">(๘) ประเภทความเสี่ยง</th>
-        <th style="background-color: #D9E1F2;">(๙) การควบคุมที่มีอยู่</th>
-        <th style="background-color: #D9E1F2;">(๑๐) โอกาส(L)</th>
-        <th style="background-color: #D9E1F2;">(๑๐) ผลกระทบ(I)</th>
-        <th style="background-color: #D9E1F2;">(๑๐) ระดับ(LxI)</th>
-        <th style="background-color: #D9E1F2;">(๑๑) วิธีการตอบสนองความเสี่ยง</th>
+        <th style="background-color: #D9E1F2;">(3) รหัส</th>
+        <th style="background-color: #D9E1F2;">(4) โครงการ/กิจกรรม</th>
+        <th style="background-color: #D9E1F2;">(5) วัตถุประสงค์</th>
+        <th style="background-color: #D9E1F2;">(6) เหตุการณ์ความเสี่ยง</th>
+        <th style="background-color: #D9E1F2;">(7) ปัจจัยเสี่ยง</th>
+        <th style="background-color: #D9E1F2;">(8) ประเภทความเสี่ยง</th>
+        <th style="background-color: #D9E1F2;">(9) การควบคุมที่มีอยู่</th>
+        <th style="background-color: #D9E1F2;">(10) โอกาส(L)</th>
+        <th style="background-color: #D9E1F2;">(10) ผลกระทบ(I)</th>
+        <th style="background-color: #D9E1F2;">(10) ระดับ(LxI)</th>
+        <th style="background-color: #D9E1F2;">(11) วิธีการตอบสนองความเสี่ยง</th>
         <th style="background-color: #D9E1F2;">ส่วนราชการ</th>
       </tr>
     `;
@@ -505,24 +505,24 @@ export function exportBsToExcel({
       `;
     }).join('');
   } else if (activeTab === 'bs3') {
-    formNumber = '๓';
-    formName = 'บส.๓';
+    formNumber = '3';
+    formName = 'บส.3';
     title = 'รายงานการจัดทำแผนบริหารความเสี่ยง';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. (๒) ${selectedYear}`;
+    subtitle = `ประจำปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
     colSpanTotal = 9;
-    signatureNumber = { sign: '๑๒', pos: '๑๓', date: '๑๔' };
+    signatureNumber = { sign: '12', pos: '13', date: '14' };
 
     tableHeaderHtml = `
       <tr>
-        <th style="background-color: #D9E1F2;">(๓) รหัส</th>
-        <th style="background-color: #D9E1F2;">(๔) โครงการ/กิจกรรม/ภารกิจ</th>
-        <th style="background-color: #D9E1F2;">(๕) ความเสี่ยง</th>
-        <th style="background-color: #D9E1F2;">(๖) วิธีการตอบสนองความเสี่ยง</th>
-        <th style="background-color: #D9E1F2;">(๗) ผู้รับผิดชอบ</th>
-        <th style="background-color: #D9E1F2;">(๘) วิธีการจัดการความเสี่ยง (มาตรการ)</th>
-        <th style="background-color: #D9E1F2;">(๙) ตัวชี้วัด</th>
-        <th style="background-color: #D9E1F2;">(๑๐) ระยะเวลา</th>
-        <th style="background-color: #D9E1F2;">(๑๑) วิธีการติดตามและการรายงาน</th>
+        <th style="background-color: #D9E1F2;">(3) รหัส</th>
+        <th style="background-color: #D9E1F2;">(4) โครงการ/กิจกรรม/ภารกิจ</th>
+        <th style="background-color: #D9E1F2;">(5) ความเสี่ยง</th>
+        <th style="background-color: #D9E1F2;">(6) วิธีการตอบสนองความเสี่ยง</th>
+        <th style="background-color: #D9E1F2;">(7) ผู้รับผิดชอบ</th>
+        <th style="background-color: #D9E1F2;">(8) วิธีการจัดการความเสี่ยง (มาตรการ)</th>
+        <th style="background-color: #D9E1F2;">(9) ตัวชี้วัด</th>
+        <th style="background-color: #D9E1F2;">(10) ระยะเวลา</th>
+        <th style="background-color: #D9E1F2;">(11) วิธีการติดตามและการรายงาน</th>
       </tr>
     `;
 
@@ -540,25 +540,25 @@ export function exportBsToExcel({
       </tr>
     `).join('');
   } else if (activeTab === 'bs4') {
-    formNumber = '๔';
-    formName = 'บส.๔';
-    const periodLabel = bs4Period === '3month' ? 'รอบ ๓ เดือน' : bs4Period === '6month' ? 'รอบ ๖ เดือน' : 'รอบ ๑๒ เดือน';
+    formNumber = '4';
+    formName = 'บส.4';
+    const periodLabel = bs4Period === '3month' ? 'รอบ 3 เดือน' : bs4Period === '6month' ? 'รอบ 6 เดือน' : 'รอบ 12 เดือน';
     title = `รายงานการติดตามผลการบริหารความเสี่ยง (${periodLabel})`;
-    subtitle = `ประจำปีงบประมาณ พ.ศ. (๒) ${selectedYear}`;
+    subtitle = `ประจำปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
     colSpanTotal = 9;
-    signatureNumber = { sign: '๑๒', pos: '๑๓', date: '๑๔' };
+    signatureNumber = { sign: '12', pos: '13', date: '14' };
 
     tableHeaderHtml = `
       <tr>
-        <th style="background-color: #D9E1F2;">(๓) รหัส</th>
-        <th style="background-color: #D9E1F2;">(๔) โครงการ/กิจกรรม</th>
-        <th style="background-color: #D9E1F2;">(๕) วิธีการจัดการความเสี่ยง</th>
-        <th style="background-color: #D9E1F2;">(๖) ระยะเวลา</th>
-        <th style="background-color: #D9E1F2;">(๗) ผู้รับผิดชอบ</th>
-        <th style="background-color: #D9E1F2;">(๘) ผลการดำเนินงาน</th>
-        <th style="background-color: #D9E1F2;">(๙) หลักฐานอ้างอิง</th>
-        <th style="background-color: #D9E1F2;">(๑๐) ร้อยละความก้าวหน้า</th>
-        <th style="background-color: #D9E1F2;">(๑๑) ปัญหา อุปสรรค และแนวทางแก้ไข</th>
+        <th style="background-color: #D9E1F2;">(3) รหัส</th>
+        <th style="background-color: #D9E1F2;">(4) โครงการ/กิจกรรม</th>
+        <th style="background-color: #D9E1F2;">(5) วิธีการจัดการความเสี่ยง</th>
+        <th style="background-color: #D9E1F2;">(6) ระยะเวลา</th>
+        <th style="background-color: #D9E1F2;">(7) ผู้รับผิดชอบ</th>
+        <th style="background-color: #D9E1F2;">(8) ผลการดำเนินงาน</th>
+        <th style="background-color: #D9E1F2;">(9) หลักฐานอ้างอิง</th>
+        <th style="background-color: #D9E1F2;">(10) ร้อยละความก้าวหน้า</th>
+        <th style="background-color: #D9E1F2;">(11) ปัญหา อุปสรรค และแนวทางแก้ไข</th>
       </tr>
     `;
 
@@ -576,34 +576,34 @@ export function exportBsToExcel({
       </tr>
     `).join('');
   } else if (activeTab === 'bs5') {
-    formNumber = '๕';
-    formName = 'บส.๕';
+    formNumber = '5';
+    formName = 'บส.5';
     title = 'รายงานผลการดำเนินการและทบทวนแผนการบริหารความเสี่ยง';
-    subtitle = `สำหรับปีงบประมาณ พ.ศ. (๒) ${selectedYear}`;
+    subtitle = `สำหรับปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
     colSpanTotal = 16;
-    signatureNumber = { sign: '๑๔', pos: '๑๕', date: '๑๖' };
+    signatureNumber = { sign: '14', pos: '15', date: '16' };
 
     tableHeaderHtml = `
       <tr>
-        <th rowspan="2" style="background-color: #D9E1F2;">(๓) รหัส</th>
-        <th rowspan="2" style="background-color: #D9E1F2;">(๔) โครงการ/กิจกรรม</th>
-        <th rowspan="2" style="background-color: #D9E1F2;">(๕) ความเสี่ยง</th>
-        <th colspan="3" style="background-color: #D9E1F2;">(๖) คะแนนก่อนดำเนินการ</th>
-        <th rowspan="2" style="background-color: #D9E1F2;">(๗) วิธีการจัดการ</th>
-        <th rowspan="2" style="background-color: #D9E1F2;">(๘) ผลการจัดการ</th>
-        <th colspan="3" style="background-color: #D9E1F2;">(๙) คะแนนหลังดำเนินการ</th>
-        <th rowspan="2" style="background-color: #D9E1F2;">(๑๐) การเปลี่ยน</th>
-        <th rowspan="2" style="background-color: #D9E1F2;">(๑๑) ความเสี่ยงคงเหลือ</th>
-        <th colspan="2" style="background-color: #D9E1F2;">(๑๒) สรุปผล</th>
-        <th rowspan="2" style="background-color: #D9E1F2;">(๑๓) มาตรการปีถัดไป</th>
+        <th rowspan="2" style="background-color: #D9E1F2;">(3) รหัส</th>
+        <th rowspan="2" style="background-color: #D9E1F2;">(4) โครงการ/กิจกรรม</th>
+        <th rowspan="2" style="background-color: #D9E1F2;">(5) ความเสี่ยง</th>
+        <th colspan="3" style="background-color: #D9E1F2;">(6) คะแนนก่อนดำเนินการ</th>
+        <th rowspan="2" style="background-color: #D9E1F2;">(7) วิธีการจัดการ</th>
+        <th rowspan="2" style="background-color: #D9E1F2;">(8) ผลการจัดการ</th>
+        <th colspan="3" style="background-color: #D9E1F2;">(9) คะแนนหลังดำเนินการ</th>
+        <th rowspan="2" style="background-color: #D9E1F2;">(10) การเปลี่ยน</th>
+        <th rowspan="2" style="background-color: #D9E1F2;">(11) ความเสี่ยงคงเหลือ</th>
+        <th colspan="2" style="background-color: #D9E1F2;">(12) สรุปผล</th>
+        <th rowspan="2" style="background-color: #D9E1F2;">(13) มาตรการปีถัดไป</th>
       </tr>
       <tr>
-        <th style="background-color: #D9E1F2;">(๑)L</th>
-        <th style="background-color: #D9E1F2;">(๒)I</th>
-        <th style="background-color: #D9E1F2;">(๓)คะแนน</th>
-        <th style="background-color: #D9E1F2;">(๑)L</th>
-        <th style="background-color: #D9E1F2;">(๒)I</th>
-        <th style="background-color: #D9E1F2;">(๓)คะแนน</th>
+        <th style="background-color: #D9E1F2;">(1)L</th>
+        <th style="background-color: #D9E1F2;">(2)I</th>
+        <th style="background-color: #D9E1F2;">(3)คะแนน</th>
+        <th style="background-color: #D9E1F2;">(1)L</th>
+        <th style="background-color: #D9E1F2;">(2)I</th>
+        <th style="background-color: #D9E1F2;">(3)คะแนน</th>
         <th style="background-color: #D9E1F2;">ควบคุมได้</th>
         <th style="background-color: #D9E1F2;">ควบคุมไม่ได้</th>
       </tr>
@@ -688,7 +688,7 @@ export function exportBsToExcel({
           <td colspan="${colSpanTotal}" class="header-tag">แบบ บส. ${formNumber}</td>
         </tr>
         <tr>
-          <td colspan="${colSpanTotal}" class="title-row">ชื่อหน่วยงาน (๑) ${escapeHtml(orgName)}</td>
+          <td colspan="${colSpanTotal}" class="title-row">ชื่อหน่วยงาน (1) ${escapeHtml(orgName)}</td>
         </tr>
         <tr>
           <td colspan="${colSpanTotal}" class="subtitle-row">${escapeHtml(title)}</td>

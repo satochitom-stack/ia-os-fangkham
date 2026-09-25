@@ -84,8 +84,8 @@ export default function InternalControlView({
 
   const handleDeletePk4 = (id, processName = '') => {
     openConfirmModal({
-      title: 'ยืนยันการลบรายการควบคุมภายใน (ปค.๔)',
-      message: `คุณต้องการลบรายการกระบวนการ "${processName || 'นี้'}" ออกจากรายงาน ปค.๔ ใช่หรือไม่?`,
+      title: 'ยืนยันการลบรายการควบคุมภายใน (ปค.4)',
+      message: `คุณต้องการลบรายการกระบวนการ "${processName || 'นี้'}" ออกจากรายงาน ปค.4 ใช่หรือไม่?`,
       confirmText: 'ลบรายการนี้',
       type: 'danger',
       onConfirm: () => {

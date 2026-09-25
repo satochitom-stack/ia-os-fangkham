@@ -399,7 +399,7 @@ export const ALL_MENU_IDS = [
   { id: 'risk-management', label: 'การบริหารความเสี่ยง', icon: 'AlertTriangle', desc: 'บันทึกแบบ บส.1 - บส.5 และ Matrix ระดับความเสี่ยง 5x5 ของแต่ละกอง' },
   { id: 'lpa', label: 'เตรียมรับประเมิน LPA', icon: 'Award', desc: 'เช็กลิสต์และหลักฐานเตรียมรับประเมิน LPA' },
   { id: 'knowledge', label: 'คลังระเบียบและกฎหมาย', icon: 'BookOpen', desc: 'สืบค้นระเบียบกระทรวงมหาดไทย พ.ร.บ. และหนังสือสั่งการ' },
-  { id: 'forms', label: 'แบบฟอร์มมาตรฐาน', icon: 'FileSpreadsheet', desc: 'เปิดดูและดาวน์โหลดแบบฟอร์ม บส.๑-๕ ตาม ว 3482, ปค. และเอกสารตรวจสอบ' },
+  { id: 'forms', label: 'แบบฟอร์มมาตรฐาน', icon: 'FileSpreadsheet', desc: 'เปิดดูและดาวน์โหลดแบบฟอร์ม บส.1-5 ตาม ว 3482, ปค. และเอกสารตรวจสอบ' },
   { id: 'users', label: 'จัดการผู้ใช้งาน & กำหนดสิทธิ์', icon: 'Users', desc: 'จัดการบัญชีกองและกำหนดสิทธิ์การมองเห็นเมนู (ADMIN Only)' }
 ];
 

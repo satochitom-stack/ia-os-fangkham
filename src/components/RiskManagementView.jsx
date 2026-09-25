@@ -77,76 +77,76 @@ const FORM_GUIDELINES = {
     title: 'คำอธิบายแบบกำหนดขอบเขตความรับผิดชอบตามประเด็นยุทธศาสตร์/ข้อบัญญัติ/เทศบัญญัติ/อื่น ๆ (ถ้ามี)',
     subtitle: 'ตามหนังสือสั่งการ มท 0805.2/ว 3482 ลงวันที่ 18 สิงหาคม 2566',
     items: [
-      { num: '๑', title: 'ชื่อ อปท.', desc: 'ระบุชื่อองค์กรปกครองส่วนท้องถิ่น เช่น องค์การบริหารส่วนตำบลฝางคำ' },
-      { num: '๒', title: 'ปีงบประมาณ', desc: 'ปีงบประมาณในการบริหารจัดการความเสี่ยง' },
-      { num: '๓', title: 'รหัสความเสี่ยง', desc: 'รหัสความเสี่ยงตามลำดับจำนวนความเสี่ยงโครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ (เช่น RSK-01, RSK-02)' },
-      { num: '๔', title: 'ยุทธศาสตร์ที่รับผิดชอบ', desc: 'ระบุโครงการ/กิจกรรม/ภารกิจ อปท. ที่จัดทำขึ้นเพื่อตอบสนองยุทธศาสตร์ใดหรือภารกิจใดของ อปท.' },
-      { num: '๕', title: 'โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ', desc: 'โครงการ/กิจกรรมที่สำคัญต่อการบรรลุวัตถุประสงค์ตามยุทธศาสตร์ (ระบุทั้งหมด หรือที่มีความเสี่ยง หรือที่มีความเสี่ยงสูง ตามนโยบายผู้บริหาร)' },
-      { num: '๖', title: 'งบประมาณ (บาท)', desc: 'จำนวนเงินงบประมาณโครงการ/กิจกรรม/ภารกิจ อปท. ตาม (๕) (ถ้ามี)' },
-      { num: '๗', title: 'วัตถุประสงค์', desc: 'วัตถุประสงค์ตามโครงการ/กิจกรรม/ภารกิจ อปท. ตาม (๕)' },
-      { num: '๘', title: 'ตัวชี้วัด', desc: 'ตัวชี้วัดของโครงการ/กิจกรรม/ภารกิจ อปท. ตาม (๕)' },
-      { num: '๙', title: 'เป้าหมาย', desc: 'เป้าหมายที่ต้องการสูงสุดของโครงการ/กิจกรรม/ภารกิจ อปท.' },
-      { num: '๑๐-๑๒', title: 'ลายมือชื่อ ตำแหน่ง วันเดือนปี', desc: 'ลายมือชื่อผู้บริหารท้องถิ่น ตำแหน่ง และวันเดือนปีที่ลงนาม' },
+      { num: '1', title: 'ชื่อ อปท.', desc: 'ระบุชื่อองค์กรปกครองส่วนท้องถิ่น เช่น องค์การบริหารส่วนตำบลฝางคำ' },
+      { num: '2', title: 'ปีงบประมาณ', desc: 'ปีงบประมาณในการบริหารจัดการความเสี่ยง' },
+      { num: '3', title: 'รหัสความเสี่ยง', desc: 'รหัสความเสี่ยงตามลำดับจำนวนความเสี่ยงโครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ (เช่น RSK-01, RSK-02)' },
+      { num: '4', title: 'ยุทธศาสตร์ที่รับผิดชอบ', desc: 'ระบุโครงการ/กิจกรรม/ภารกิจ อปท. ที่จัดทำขึ้นเพื่อตอบสนองยุทธศาสตร์ใดหรือภารกิจใดของ อปท.' },
+      { num: '5', title: 'โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ', desc: 'โครงการ/กิจกรรมที่สำคัญต่อการบรรลุวัตถุประสงค์ตามยุทธศาสตร์ (ระบุทั้งหมด หรือที่มีความเสี่ยง หรือที่มีความเสี่ยงสูง ตามนโยบายผู้บริหาร)' },
+      { num: '6', title: 'งบประมาณ (บาท)', desc: 'จำนวนเงินงบประมาณโครงการ/กิจกรรม/ภารกิจ อปท. ตาม (5) (ถ้ามี)' },
+      { num: '7', title: 'วัตถุประสงค์', desc: 'วัตถุประสงค์ตามโครงการ/กิจกรรม/ภารกิจ อปท. ตาม (5)' },
+      { num: '8', title: 'ตัวชี้วัด', desc: 'ตัวชี้วัดของโครงการ/กิจกรรม/ภารกิจ อปท. ตาม (5)' },
+      { num: '9', title: 'เป้าหมาย', desc: 'เป้าหมายที่ต้องการสูงสุดของโครงการ/กิจกรรม/ภารกิจ อปท.' },
+      { num: '10-12', title: 'ลายมือชื่อ ตำแหน่ง วันเดือนปี', desc: 'ลายมือชื่อผู้บริหารท้องถิ่น ตำแหน่ง และวันเดือนปีที่ลงนาม' },
     ]
   },
   bs2: {
     title: 'คำอธิบายแบบการวิเคราะห์โอกาส ผลกระทบ และการตอบสนองความเสี่ยง',
     subtitle: 'ตามหนังสือสั่งการ มท 0805.2/ว 3482 ลงวันที่ 18 สิงหาคม 2566',
     items: [
-      { num: '๑ - ๒', title: 'ชื่อ อปท. และปีงบประมาณ', desc: 'ระบุชื่อหน่วยงาน และปีงบประมาณที่บริหารจัดการความเสี่ยง' },
-      { num: '๓ - ๕', title: 'รหัส, โครงการ/กิจกรรม, วัตถุประสงค์', desc: 'นำข้อมูลเชื่อมโยงมาจาก แบบ บส. ๑ (ข้อ ๓, ๕, ๗)' },
-      { num: '๖', title: 'ผู้รับผิดชอบ', desc: 'ระบุบุคคลหรือหน่วยงาน หรือบุคคลและหน่วยงานผู้รับผิดชอบภารกิจ' },
-      { num: '๗', title: 'ความเสี่ยง', desc: 'ความเสี่ยงที่มีผลกระทบต่อการบรรลุวัตถุประสงค์ของโครงการ/กิจกรรม/ภารกิจ อปท.' },
-      { num: '๘', title: 'ประเภทความเสี่ยง (๖ ประเภท)', desc: '๑. กลยุทธ์ (Strategy) ๒. การเงิน (Financial) ๓. การดำเนินงาน (Operation) ๔. กฎระเบียบ (Legal) ๕. เทคโนโลยีสารสนเทศ (Technology) ๖. ความน่าเชื่อถือขององค์กร (Reputational)' },
-      { num: '๙', title: 'คะแนนโอกาส', desc: 'ระบุคะแนนโอกาสที่จะเกิดความเป็นไปได้หรือความถี่ที่จะเกิดความเสี่ยง (เกณฑ์ ๑ - ๕: สูงมาก, สูง, ปานกลาง, น้อย, น้อยที่สุด)' },
-      { num: '๑๐', title: 'คะแนนผลกระทบ', desc: 'ระบุคะแนนผลกระทบต่อโครงการ/กิจกรรม/ภารกิจ (เกณฑ์ ๑ - ๕: สูงมาก, สูง, ปานกลาง, น้อย, น้อยที่สุด)' },
-      { num: '๑๑', title: 'คะแนนระดับความเสี่ยง (๙) x (๑๐)', desc: 'คะแนนโอกาส x คะแนนผลกระทบ (๑-๒๕) และจัดระดับความเสี่ยง (สูงมาก, สูง, ปานกลาง, ต่ำ)' },
-      { num: '๑๒', title: 'วิธีการตอบสนองความเสี่ยง (๘ วิธี)', desc: '๑. ปฏิเสธความเสี่ยง ๒. ลดโอกาส ๓. ลดผลกระทบ ๔. โอนความเสี่ยง ๕. ยอมรับความเสี่ยง ๖. ใช้มาตรการเฝ้าระวัง ๗. ทำแผนฉุกเฉิน ๘. ส่งเสริม/ผลักดันเหตุการณ์' },
-      { num: '๑๓-๑๕', title: 'การลงนาม', desc: 'ลายมือชื่อผู้บริหารท้องถิ่น ตำแหน่ง และวันเดือนปีที่ลงนาม' },
+      { num: '1 - 2', title: 'ชื่อ อปท. และปีงบประมาณ', desc: 'ระบุชื่อหน่วยงาน และปีงบประมาณที่บริหารจัดการความเสี่ยง' },
+      { num: '3 - 5', title: 'รหัส, โครงการ/กิจกรรม, วัตถุประสงค์', desc: 'นำข้อมูลเชื่อมโยงมาจาก แบบ บส. 1 (ข้อ 3, 5, 7)' },
+      { num: '6', title: 'ผู้รับผิดชอบ', desc: 'ระบุบุคคลหรือหน่วยงาน หรือบุคคลและหน่วยงานผู้รับผิดชอบภารกิจ' },
+      { num: '7', title: 'ความเสี่ยง', desc: 'ความเสี่ยงที่มีผลกระทบต่อการบรรลุวัตถุประสงค์ของโครงการ/กิจกรรม/ภารกิจ อปท.' },
+      { num: '8', title: 'ประเภทความเสี่ยง (6 ประเภท)', desc: '1. กลยุทธ์ (Strategy) 2. การเงิน (Financial) 3. การดำเนินงาน (Operation) 4. กฎระเบียบ (Legal) 5. เทคโนโลยีสารสนเทศ (Technology) 6. ความน่าเชื่อถือขององค์กร (Reputational)' },
+      { num: '9', title: 'คะแนนโอกาส', desc: 'ระบุคะแนนโอกาสที่จะเกิดความเป็นไปได้หรือความถี่ที่จะเกิดความเสี่ยง (เกณฑ์ 1 - 5: สูงมาก, สูง, ปานกลาง, น้อย, น้อยที่สุด)' },
+      { num: '10', title: 'คะแนนผลกระทบ', desc: 'ระบุคะแนนผลกระทบต่อโครงการ/กิจกรรม/ภารกิจ (เกณฑ์ 1 - 5: สูงมาก, สูง, ปานกลาง, น้อย, น้อยที่สุด)' },
+      { num: '11', title: 'คะแนนระดับความเสี่ยง (9) x (10)', desc: 'คะแนนโอกาส x คะแนนผลกระทบ (1-25) และจัดระดับความเสี่ยง (สูงมาก, สูง, ปานกลาง, ต่ำ)' },
+      { num: '12', title: 'วิธีการตอบสนองความเสี่ยง (8 วิธี)', desc: '1. ปฏิเสธความเสี่ยง 2. ลดโอกาส 3. ลดผลกระทบ 4. โอนความเสี่ยง 5. ยอมรับความเสี่ยง 6. ใช้มาตรการเฝ้าระวัง 7. ทำแผนฉุกเฉิน 8. ส่งเสริม/ผลักดันเหตุการณ์' },
+      { num: '13-15', title: 'การลงนาม', desc: 'ลายมือชื่อผู้บริหารท้องถิ่น ตำแหน่ง และวันเดือนปีที่ลงนาม' },
     ]
   },
   bs3: {
     title: 'คำอธิบายแบบรายงานการจัดทำแผนบริหารความเสี่ยง',
     subtitle: 'ตามหนังสือสั่งการ มท 0805.2/ว 3482 ลงวันที่ 18 สิงหาคม 2566',
     items: [
-      { num: '๑ - ๒', title: 'ชื่อ อปท. และปีงบประมาณ', desc: 'ระบุชื่อหน่วยงาน และปีงบประมาณ' },
-      { num: '๓ - ๗', title: 'รหัส, โครงการ, ความเสี่ยง, การตอบสนอง, ผู้รับผิดชอบ', desc: 'นำข้อมูลเชื่อมโยงมาจาก แบบ บส. ๒ (ข้อ ๓, ๔, ๗, ๑๒, ๖)' },
-      { num: '๘', title: 'วิธีการจัดการความเสี่ยง (มาตรการควบคุม)', desc: 'ระบุแนวทางการดำเนินงาน/ขั้นตอนการปฏิบัติงาน ตามกฎหมาย ระเบียบ ข้อบังคับ และหนังสือสั่งการที่กำหนด เพื่อให้ความเสี่ยงลดลงหรืออยู่ในระดับที่ยอมรับได้' },
-      { num: '๙', title: 'ตัวชี้วัด', desc: 'ตัวชี้วัดของโครงการ/กิจกรรม/ภารกิจที่มีความเสี่ยง โดยนำข้อมูลมาจาก แบบ บส. ๑ (ข้อ ๘)' },
-      { num: '๑๐', title: 'ระยะเวลาดำเนินการ', desc: 'ระบุช่วงระยะเวลาในการดำเนินการจัดการความเสี่ยง (เช่น ตลอดปีงบประมาณ, ไตรมาส 1 - 2)' },
-      { num: '๑๑', title: 'วิธีการติดตาม และการรายงาน', desc: 'ระบุวิธีการติดตามและการรายงานให้ผู้บริหารทราบ เช่น การประชุมประจำเดือน, รายงานไตรมาส, สรุปผลต่อคณะกรรมการ' },
-      { num: '๑๒-๑๔', title: 'การลงนาม', desc: 'ลายมือชื่อผู้บริหารท้องถิ่น ตำแหน่ง และวันเดือนปีที่ลงนาม' },
+      { num: '1 - 2', title: 'ชื่อ อปท. และปีงบประมาณ', desc: 'ระบุชื่อหน่วยงาน และปีงบประมาณ' },
+      { num: '3 - 7', title: 'รหัส, โครงการ, ความเสี่ยง, การตอบสนอง, ผู้รับผิดชอบ', desc: 'นำข้อมูลเชื่อมโยงมาจาก แบบ บส. 2 (ข้อ 3, 4, 7, 12, 6)' },
+      { num: '8', title: 'วิธีการจัดการความเสี่ยง (มาตรการควบคุม)', desc: 'ระบุแนวทางการดำเนินงาน/ขั้นตอนการปฏิบัติงาน ตามกฎหมาย ระเบียบ ข้อบังคับ และหนังสือสั่งการที่กำหนด เพื่อให้ความเสี่ยงลดลงหรืออยู่ในระดับที่ยอมรับได้' },
+      { num: '9', title: 'ตัวชี้วัด', desc: 'ตัวชี้วัดของโครงการ/กิจกรรม/ภารกิจที่มีความเสี่ยง โดยนำข้อมูลมาจาก แบบ บส. 1 (ข้อ 8)' },
+      { num: '10', title: 'ระยะเวลาดำเนินการ', desc: 'ระบุช่วงระยะเวลาในการดำเนินการจัดการความเสี่ยง (เช่น ตลอดปีงบประมาณ, ไตรมาส 1 - 2)' },
+      { num: '11', title: 'วิธีการติดตาม และการรายงาน', desc: 'ระบุวิธีการติดตามและการรายงานให้ผู้บริหารทราบ เช่น การประชุมประจำเดือน, รายงานไตรมาส, สรุปผลต่อคณะกรรมการ' },
+      { num: '12-14', title: 'การลงนาม', desc: 'ลายมือชื่อผู้บริหารท้องถิ่น ตำแหน่ง และวันเดือนปีที่ลงนาม' },
     ]
   },
   bs4: {
     title: 'คำอธิบายแบบรายงานการติดตามผลการบริหารความเสี่ยง',
     subtitle: 'ตามหนังสือสั่งการ มท 0805.2/ว 3482 ลงวันที่ 18 สิงหาคม 2566',
     items: [
-      { num: 'หัวแบบ', title: 'รอบการติดตามผล', desc: 'เลือกกาเครื่องหมายถูก [✓] รอบ ๓ เดือน หรือ [✓] รอบ ๖ เดือน หรือ [✓] รอบ ๑๒ เดือน' },
-      { num: '๑ - ๒', title: 'ชื่อ อปท. และปีงบประมาณ', desc: 'ระบุชื่อหน่วยงาน และปีงบประมาณ' },
-      { num: '๓ - ๗', title: 'รหัส, โครงการ, วิธีจัดการ, ระยะเวลา, ผู้รับผิดชอบ', desc: 'นำข้อมูลเชื่อมโยงมาจาก แบบ บส. ๓ (ข้อ ๓, ๔, ๘, ๑๐, ๗)' },
-      { num: '๘', title: 'ผลลัพธ์การดำเนินการจัดการความเสี่ยง', desc: 'ระบุผลการดำเนินงาน/ขั้นตอนปฏิบัติงาน ได้ดำเนินการหรือไม่อย่างไร (ระบุแต่ละขั้นตอนหรือภาพรวม)' },
-      { num: '๙', title: 'เอกสาร/หลักฐาน', desc: 'เอกสารหลักฐานอ้างอิงประกอบผลการดำเนินการจัดการความเสี่ยง เช่น บันทึกข้อความ, รายงาน, ภาพถ่าย' },
-      { num: '๑๐', title: 'ร้อยละความคืบหน้า', desc: 'ระบุความคืบหน้าของการดำเนินการเป็นร้อยละ (%)' },
-      { num: '๑๑', title: 'ปัญหาอุปสรรค และแนวทางแก้ไข', desc: 'ระบุปัญหา อุปสรรค และแนวทางแก้ไขปัญหาในการดำเนินมาตรการจัดการความเสี่ยง (ถ้ามี)' },
-      { num: '๑๒-๑๔', title: 'การลงนาม', desc: 'ลายมือชื่อผู้บริหารท้องถิ่น ตำแหน่ง และวันเดือนปีที่ลงนาม' },
+      { num: 'หัวแบบ', title: 'รอบการติดตามผล', desc: 'เลือกกาเครื่องหมายถูก [✓] รอบ 3 เดือน หรือ [✓] รอบ 6 เดือน หรือ [✓] รอบ 12 เดือน' },
+      { num: '1 - 2', title: 'ชื่อ อปท. และปีงบประมาณ', desc: 'ระบุชื่อหน่วยงาน และปีงบประมาณ' },
+      { num: '3 - 7', title: 'รหัส, โครงการ, วิธีจัดการ, ระยะเวลา, ผู้รับผิดชอบ', desc: 'นำข้อมูลเชื่อมโยงมาจาก แบบ บส. 3 (ข้อ 3, 4, 8, 10, 7)' },
+      { num: '8', title: 'ผลลัพธ์การดำเนินการจัดการความเสี่ยง', desc: 'ระบุผลการดำเนินงาน/ขั้นตอนปฏิบัติงาน ได้ดำเนินการหรือไม่อย่างไร (ระบุแต่ละขั้นตอนหรือภาพรวม)' },
+      { num: '9', title: 'เอกสาร/หลักฐาน', desc: 'เอกสารหลักฐานอ้างอิงประกอบผลการดำเนินการจัดการความเสี่ยง เช่น บันทึกข้อความ, รายงาน, ภาพถ่าย' },
+      { num: '10', title: 'ร้อยละความคืบหน้า', desc: 'ระบุความคืบหน้าของการดำเนินการเป็นร้อยละ (%)' },
+      { num: '11', title: 'ปัญหาอุปสรรค และแนวทางแก้ไข', desc: 'ระบุปัญหา อุปสรรค และแนวทางแก้ไขปัญหาในการดำเนินมาตรการจัดการความเสี่ยง (ถ้ามี)' },
+      { num: '12-14', title: 'การลงนาม', desc: 'ลายมือชื่อผู้บริหารท้องถิ่น ตำแหน่ง และวันเดือนปีที่ลงนาม' },
     ]
   },
   bs5: {
     title: 'คำอธิบายแบบรายงานผลการดำเนินการและทบทวนแผนการบริหารความเสี่ยง',
     subtitle: 'ตามหนังสือสั่งการ มท 0805.2/ว 3482 ลงวันที่ 18 สิงหาคม 2566',
     items: [
-      { num: '๑ - ๒', title: 'ชื่อ อปท. และปีงบประมาณ', desc: 'ระบุชื่อหน่วยงาน และปีงบประมาณ' },
-      { num: '๓ - ๕', title: 'รหัส, โครงการ/กิจกรรม, ความเสี่ยง', desc: 'นำข้อมูลเชื่อมโยงมาจาก แบบ บส. ๔ และ บส. ๓' },
-      { num: '๖', title: 'คะแนนระดับความเสี่ยงก่อนดำเนินการ', desc: 'โอกาส (๑) x ผลกระทบ (๒) = คะแนนระดับความเสี่ยง (๓) จากการประเมินในแบบ บส. ๒' },
-      { num: '๗', title: 'วิธีการจัดการความเสี่ยง', desc: 'แนวทางการดำเนินงานตามที่ระบุไว้ในแบบ บส. ๔ (ข้อ ๕)' },
-      { num: '๘', title: 'ผลดำเนินการจากการจัดการความเสี่ยง', desc: 'สรุปผลการดำเนินการจัดการความเสี่ยงเป็นภาพรวม' },
-      { num: '๙', title: 'คะแนนระดับความเสี่ยงภายหลังดำเนินการ', desc: 'ประเมินซ้ำหลังมีมาตรการ: โอกาส (๑) x ผลกระทบ (๒) = คะแนนระดับความเสี่ยง (๓)' },
-      { num: '๑๐', title: 'การเปลี่ยนแปลงระดับความเสี่ยง', desc: 'เปรียบเทียบก่อนดำเนินการกับหลังดำเนินการว่า "ลดลง" หรือ "ไม่ลดลง"' },
-      { num: '๑๑', title: 'ความเสี่ยงคงเหลือ/เกิดขึ้นใหม่', desc: 'ระบุประเด็นความเสี่ยงที่ยังคงหลงเหลืออยู่ หรือความเสี่ยงใหม่ที่เกิดขึ้นระหว่างปี' },
-      { num: '๑๒', title: 'สรุปความเสี่ยง', desc: 'ระบุว่า "ควบคุมได้" หรือ "ควบคุมไม่ได้" (หรืออยู่ในระดับที่ยอมรับได้/ไม่ได้)' },
-      { num: '๑๓', title: 'แนวทาง/มาตรการสำหรับปีถัดไป', desc: 'กำหนดแนวทาง มาตรการ หรือวิธีการดำเนินการสำหรับปีงบประมาณถัดไป' },
-      { num: '๑๔-๑๖', title: 'การลงนาม', desc: 'ลายมือชื่อผู้บริหารท้องถิ่น ตำแหน่ง และวันเดือนปีที่รายงาน' },
+      { num: '1 - 2', title: 'ชื่อ อปท. และปีงบประมาณ', desc: 'ระบุชื่อหน่วยงาน และปีงบประมาณ' },
+      { num: '3 - 5', title: 'รหัส, โครงการ/กิจกรรม, ความเสี่ยง', desc: 'นำข้อมูลเชื่อมโยงมาจาก แบบ บส. 4 และ บส. 3' },
+      { num: '6', title: 'คะแนนระดับความเสี่ยงก่อนดำเนินการ', desc: 'โอกาส (1) x ผลกระทบ (2) = คะแนนระดับความเสี่ยง (3) จากการประเมินในแบบ บส. 2' },
+      { num: '7', title: 'วิธีการจัดการความเสี่ยง', desc: 'แนวทางการดำเนินงานตามที่ระบุไว้ในแบบ บส. 4 (ข้อ 5)' },
+      { num: '8', title: 'ผลดำเนินการจากการจัดการความเสี่ยง', desc: 'สรุปผลการดำเนินการจัดการความเสี่ยงเป็นภาพรวม' },
+      { num: '9', title: 'คะแนนระดับความเสี่ยงภายหลังดำเนินการ', desc: 'ประเมินซ้ำหลังมีมาตรการ: โอกาส (1) x ผลกระทบ (2) = คะแนนระดับความเสี่ยง (3)' },
+      { num: '10', title: 'การเปลี่ยนแปลงระดับความเสี่ยง', desc: 'เปรียบเทียบก่อนดำเนินการกับหลังดำเนินการว่า "ลดลง" หรือ "ไม่ลดลง"' },
+      { num: '11', title: 'ความเสี่ยงคงเหลือ/เกิดขึ้นใหม่', desc: 'ระบุประเด็นความเสี่ยงที่ยังคงหลงเหลืออยู่ หรือความเสี่ยงใหม่ที่เกิดขึ้นระหว่างปี' },
+      { num: '12', title: 'สรุปความเสี่ยง', desc: 'ระบุว่า "ควบคุมได้" หรือ "ควบคุมไม่ได้" (หรืออยู่ในระดับที่ยอมรับได้/ไม่ได้)' },
+      { num: '13', title: 'แนวทาง/มาตรการสำหรับปีถัดไป', desc: 'กำหนดแนวทาง มาตรการ หรือวิธีการดำเนินการสำหรับปีงบประมาณถัดไป' },
+      { num: '14-16', title: 'การลงนาม', desc: 'ลายมือชื่อผู้บริหารท้องถิ่น ตำแหน่ง และวันเดือนปีที่รายงาน' },
     ]
   }
 };
@@ -475,7 +475,7 @@ export default function RiskManagementView({
     }
   };
 
-  // คำนวณความสอดคล้องตามมาตรฐาน ว ๓๔๘๒ และหลักเกณฑ์ กค. ๒๕๖๒
+  // คำนวณความสอดคล้องตามมาตรฐาน ว 3482 และหลักเกณฑ์ กค. 2562
   const complianceAudit = useMemo(() => {
     return auditW3482Compliance({
       bs1: bs1List,
@@ -523,7 +523,7 @@ export default function RiskManagementView({
         };
       });
     }
-    setCascadeSuccessMsg(`⚡ ซิงค์เชื่อมโยงข้อมูลข้ามแบบฟอร์ม ๑ ➜ ๕ สำหรับ "${targetDept === 'all' ? 'ทุกกอง' : targetDept}" สำเร็จตามหลักเกณฑ์ ว ๓๔๘๒!`);
+    setCascadeSuccessMsg(`⚡ ซิงค์เชื่อมโยงข้อมูลข้ามแบบฟอร์ม 1 ➜ 5 สำหรับ "${targetDept === 'all' ? 'ทุกกอง' : targetDept}" สำเร็จตามหลักเกณฑ์ ว 3482!`);
     setTimeout(() => setCascadeSuccessMsg(''), 5000);
     setShowCascadeConfirm(false);
   };
@@ -628,7 +628,7 @@ export default function RiskManagementView({
       }));
     }
 
-    setCascadeSuccessMsg(`✨ นำเข้าภารกิจ "${stdRisk.activity}" เข้าสู่แบบ บส. ๑ - บส. ๕ เรียบร้อยแล้ว!`);
+    setCascadeSuccessMsg(`✨ นำเข้าภารกิจ "${stdRisk.activity}" เข้าสู่แบบ บส. 1 - บส. 5 เรียบร้อยแล้ว!`);
     setTimeout(() => setCascadeSuccessMsg(''), 4000);
   };
 
@@ -638,8 +638,8 @@ export default function RiskManagementView({
     if (!stds || stds.length === 0) return;
     
     openConfirmModal({
-      title: 'ติดตั้งชุดภารกิจและความเสี่ยงมาตรฐาน ว ๓๔๘๒',
-      message: `คุณต้องการติดตั้งชุดภารกิจและความเสี่ยงมาตรฐาน ว ๓๔๘๒ สำหรับ "${targetDept}" ทั้งหมด ${stds.length} ภารกิจ เข้าสู่แบบฟอร์ม บส.๑ ถึง บส.๕ ใช่หรือไม่?`,
+      title: 'ติดตั้งชุดภารกิจและความเสี่ยงมาตรฐาน ว 3482',
+      message: `คุณต้องการติดตั้งชุดภารกิจและความเสี่ยงมาตรฐาน ว 3482 สำหรับ "${targetDept}" ทั้งหมด ${stds.length} ภารกิจ เข้าสู่แบบฟอร์ม บส.1 ถึง บส.5 ใช่หรือไม่?`,
       confirmText: 'ติดตั้งภารกิจมาตรฐาน',
       type: 'info',
       onConfirm: () => {
@@ -920,7 +920,7 @@ export default function RiskManagementView({
   const handleDeleteBs1 = (id, riskCode, activityName = '') => {
     openConfirmModal({
       title: 'ยืนยันการลบรายการความเสี่ยง',
-      message: `คุณต้องการลบรายการ "${riskCode}${activityName ? ` : ${activityName}` : ''}" ออกจากระบบบริหารความเสี่ยง (แบบ บส.๑ ถึง บส.๕) ใช่หรือไม่?`,
+      message: `คุณต้องการลบรายการ "${riskCode}${activityName ? ` : ${activityName}` : ''}" ออกจากระบบบริหารความเสี่ยง (แบบ บส.1 ถึง บส.5) ใช่หรือไม่?`,
       confirmText: 'ลบรายการนี้',
       type: 'danger',
       onConfirm: () => {
@@ -1085,7 +1085,7 @@ export default function RiskManagementView({
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 tracking-tight">
-              การบริหารจัดการความเสี่ยงองค์กร (บส.๑ - บส.๕)
+              การบริหารจัดการความเสี่ยงองค์กร (บส.1 - บส.5)
             </h2>
             <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
               ปีงบฯ {selectedYear}
@@ -1099,14 +1099,14 @@ export default function RiskManagementView({
                   ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800'
                   : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800'
               }`}
-              title="คลิกเพื่อดูผลตรวจความสอดคล้องตาม ว ๓๔๘๒ และเกณฑ์กระทรวงการคลัง"
+              title="คลิกเพื่อดูผลตรวจความสอดคล้องตาม ว 3482 และเกณฑ์กระทรวงการคลัง"
             >
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>ความสอดคล้อง ว ๓๔๘๒ ({complianceAudit.score}%)</span>
+              <span>ความสอดคล้อง ว 3482 ({complianceAudit.score}%)</span>
             </button>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            มาตรฐาน มท ๐๘๐๕.๒/ว ๓๔๘๒ และกระทรวงการคลัง พ.ศ. ๒๕๖๒ • {isAdmin ? 'มุมมองหน่วยตรวจสอบภายใน' : `ส่วนราชการ: ${userDept}`}
+            มาตรฐาน มท 0805.2/ว 3482 และกระทรวงการคลัง พ.ศ. 2562 • {isAdmin ? 'มุมมองหน่วยตรวจสอบภายใน' : `ส่วนราชการ: ${userDept}`}
           </p>
         </div>
 
@@ -1120,7 +1120,7 @@ export default function RiskManagementView({
             title="เปิดดูหนังสือสั่งการ มท 0805.2/ว 3482 ฉบับจริง"
           >
             <FileText className="w-3.5 h-3.5 text-slate-500" />
-            <span>PDF ว ๓๔๘๒</span>
+            <span>PDF ว 3482</span>
           </a>
 
           <button
@@ -1231,7 +1231,7 @@ export default function RiskManagementView({
             <div className="pt-2 border-t border-slate-200 dark:border-slate-700 grid grid-cols-1 lg:grid-cols-2 gap-2.5 text-xs">
               <div className="p-2.5 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800">
                 <span className="font-bold text-blue-700 dark:text-blue-300 block mb-1 text-[11px]">
-                  📌 ประเภทความเสี่ยง ๖ ประเภท (ข้อ ๘):
+                  📌 ประเภทความเสี่ยง 6 ประเภท (ข้อ 8):
                 </span>
                 <ul className="space-y-1 text-slate-600 dark:text-slate-400 list-disc list-inside text-[10px]">
                   {RISK_CATEGORIES.map((c) => (
@@ -1241,7 +1241,7 @@ export default function RiskManagementView({
               </div>
               <div className="p-2.5 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800">
                 <span className="font-bold text-indigo-700 dark:text-indigo-300 block mb-1 text-[11px]">
-                  📌 วิธีการตอบสนองความเสี่ยง ๘ วิธี (ข้อ ๑๒):
+                  📌 วิธีการตอบสนองความเสี่ยง 8 วิธี (ข้อ 12):
                 </span>
                 <ul className="space-y-1 text-slate-600 dark:text-slate-400 list-disc list-inside text-[10px]">
                   {RISK_RESPONSES.map((r) => (
@@ -1256,7 +1256,7 @@ export default function RiskManagementView({
 
       {/* 2. Unified Navigation Tabs & Working Tools Toolbar */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3 no-print">
-        {/* Tabs บส. ๑ - ๕ */}
+        {/* Tabs บส. 1 - 5 */}
         <div className="flex flex-wrap items-center gap-1.5 bg-slate-100/80 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
           <button
             onClick={() => setActiveTab('bs1')}
@@ -1266,7 +1266,7 @@ export default function RiskManagementView({
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            <span>บส. ๑ กำหนดขอบเขต</span>
+            <span>บส. 1 กำหนดขอบเขต</span>
             <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
               activeTab === 'bs1' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
             }`}>{filteredBs1.length}</span>
@@ -1279,7 +1279,7 @@ export default function RiskManagementView({
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            <span>บส. ๒ วิเคราะห์</span>
+            <span>บส. 2 วิเคราะห์</span>
             <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
               activeTab === 'bs2' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
             }`}>{filteredBs2.length}</span>
@@ -1292,7 +1292,7 @@ export default function RiskManagementView({
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            <span>บส. ๓ แผนบริหาร</span>
+            <span>บส. 3 แผนบริหาร</span>
             <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
               activeTab === 'bs3' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
             }`}>{filteredBs3.length}</span>
@@ -1305,7 +1305,7 @@ export default function RiskManagementView({
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            <span>บส. ๔ ติดตามผล</span>
+            <span>บส. 4 ติดตามผล</span>
             <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
               activeTab === 'bs4' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
             }`}>{filteredBs4.length}</span>
@@ -1318,7 +1318,7 @@ export default function RiskManagementView({
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            <span>บส. ๕ ทบทวนระดับองค์กร</span>
+            <span>บส. 5 ทบทวนระดับองค์กร</span>
           </button>
         </div>
 
@@ -1350,20 +1350,20 @@ export default function RiskManagementView({
                   setShowSmartAssistant(true);
                 }}
                 className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-bold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5 cursor-pointer"
-                title="ผู้ช่วยวิเคราะห์และจับคู่ความเสี่ยงมาตรฐานตาม ว ๓๔๘๒"
+                title="ผู้ช่วยวิเคราะห์และจับคู่ความเสี่ยงมาตรฐานตาม ว 3482"
               >
                 <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                <span>ผู้ช่วยวิเคราะห์ (ว ๓๔๘๒)</span>
+                <span>ผู้ช่วยวิเคราะห์ (ว 3482)</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setShowCascadeConfirm(true)}
                 className="bg-slate-50 hover:bg-slate-100 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5 cursor-pointer"
-                title="ซิงค์เชื่อมโยงข้อมูลจาก บส.๑ ไปยัง บส.๒, บส.๓, บส.๔, บส.๕ อัตโนมัติ"
+                title="ซิงค์เชื่อมโยงข้อมูลจาก บส.1 ไปยัง บส.2, บส.3, บส.4, บส.5 อัตโนมัติ"
               >
                 <Zap className="w-3.5 h-3.5 text-amber-500" />
-                <span>ซิงค์ ๑ ➜ ๕ (Cascade)</span>
+                <span>ซิงค์ 1 ➜ 5 (Cascade)</span>
               </button>
 
               {activeTab === 'bs1' && (
@@ -1388,7 +1388,7 @@ export default function RiskManagementView({
                   className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs transition-colors flex items-center space-x-1.5 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5 text-white" />
-                  <span>+ กำหนดความเสี่ยงใหม่ (บส.๑)</span>
+                  <span>+ กำหนดความเสี่ยงใหม่ (บส.1)</span>
                 </button>
               )}
             </>
@@ -1397,24 +1397,24 @@ export default function RiskManagementView({
       </div>
 
       {/* =========================================================================
-          TAB 1: แบบ บส. ๑
+          TAB 1: แบบ บส. 1
       ========================================================================= */}
       {activeTab === 'bs1' && (
         <div className="space-y-4 printable-document">
           {/* Official Document Header */}
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs text-center space-y-1.5 print:p-2 print:border-none print:shadow-none print:rounded-none">
             <div className="flex justify-between items-start text-xs font-bold text-slate-500 mb-1 print:mb-2 print:text-black">
-              <span className="no-print">ลำดับที่ ๑ ของชุดแบบรายงาน</span>
-              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. ๑</span>
+              <span className="no-print">ลำดับที่ 1 ของชุดแบบรายงาน</span>
+              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. 1</span>
             </div>
             <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 print:text-black print:text-lg">
-              ชื่อหน่วยงาน (๑) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
+              ชื่อหน่วยงาน (1) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
             </h3>
             <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
               กำหนดขอบเขตความรับผิดชอบตามประเด็นยุทธศาสตร์/ข้อบัญญัติ/เทศบัญญัติ/อื่น ๆ (ถ้ามี)
             </p>
             <p className="text-xs text-slate-600 dark:text-slate-400 print:text-black print:text-xs">
-              ประจำปีงบประมาณ พ.ศ. (๒) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
+              ประจำปีงบประมาณ พ.ศ. (2) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
             </p>
           </div>
 
@@ -1425,25 +1425,25 @@ export default function RiskManagementView({
                 <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80 print:bg-slate-100 print:text-black">
                   <tr>
                     <th className="px-3.5 py-3.5 w-24 text-center">
-                      (๓)<br />รหัสความเสี่ยง
+                      (3)<br />รหัสความเสี่ยง
                     </th>
                     <th className="px-3.5 py-3.5 w-44">
-                      (๔)<br />ยุทธศาสตร์ที่รับผิดชอบ
+                      (4)<br />ยุทธศาสตร์ที่รับผิดชอบ
                     </th>
                     <th className="px-4 py-3.5 min-w-[200px]">
-                      (๕)<br />โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ
+                      (5)<br />โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ
                     </th>
                     <th className="px-3.5 py-3.5 w-28 text-right">
-                      (๖)<br />งบประมาณ (บาท)
+                      (6)<br />งบประมาณ (บาท)
                     </th>
                     <th className="px-4 py-3.5 min-w-[180px]">
-                      (๗)<br />วัตถุประสงค์
+                      (7)<br />วัตถุประสงค์
                     </th>
                     <th className="px-3.5 py-3.5 min-w-[160px]">
-                      (๘)<br />ตัวชี้วัด
+                      (8)<br />ตัวชี้วัด
                     </th>
                     <th className="px-3.5 py-3.5 min-w-[150px]">
-                      (๙)<br />เป้าหมาย
+                      (9)<br />เป้าหมาย
                     </th>
                     <th className="px-3 py-3.5 text-center w-28">
                       ส่วนราชการ
@@ -1455,10 +1455,10 @@ export default function RiskManagementView({
                   {filteredBs1.length === 0 ? (
                     <tr>
                       <td colSpan={9} className="px-4 py-10 text-center text-slate-400">
-                        ไม่พบข้อมูลในแบบ บส. ๑ {filterDept !== 'all' ? `ของ "${filterDept}"` : ''} 
+                        ไม่พบข้อมูลในแบบ บส. 1 {filterDept !== 'all' ? `ของ "${filterDept}"` : ''} 
                         <br />
                         <span className="text-[11px] text-slate-400 mt-1 inline-block">
-                          คลิกปุ่ม "+ กำหนดความเสี่ยงใหม่ (บส.๑)" เพื่อกรอกข้อมูลตามหนังสือสั่งการ
+                          คลิกปุ่ม "+ กำหนดความเสี่ยงใหม่ (บส.1)" เพื่อกรอกข้อมูลตามหนังสือสั่งการ
                         </span>
                       </td>
                     </tr>
@@ -1550,24 +1550,24 @@ export default function RiskManagementView({
       )}
 
       {/* =========================================================================
-          TAB 2: แบบ บส. ๒
+          TAB 2: แบบ บส. 2
       ========================================================================= */}
       {activeTab === 'bs2' && (
         <div className="space-y-4 printable-document">
           {/* Official Document Header */}
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs text-center space-y-1.5 print:p-2 print:border-none print:shadow-none print:rounded-none">
             <div className="flex justify-between items-start text-xs font-bold text-slate-500 mb-1 print:mb-2 print:text-black">
-              <span className="no-print">ลำดับที่ ๒ ของชุดแบบรายงาน</span>
-              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. ๒</span>
+              <span className="no-print">ลำดับที่ 2 ของชุดแบบรายงาน</span>
+              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. 2</span>
             </div>
             <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 print:text-black print:text-lg">
-              ชื่อหน่วยงาน (๑) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
+              ชื่อหน่วยงาน (1) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
             </h3>
             <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
               การวิเคราะห์โอกาส ผลกระทบ และการตอบสนองความเสี่ยง
             </p>
             <p className="text-xs text-slate-600 dark:text-slate-400 print:text-black print:text-xs">
-              ประจำปีงบประมาณ พ.ศ. (๒) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
+              ประจำปีงบประมาณ พ.ศ. (2) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
             </p>
           </div>
 
@@ -1578,34 +1578,34 @@ export default function RiskManagementView({
                 <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80 print:bg-slate-100 print:text-black">
                   <tr>
                     <th className="px-3 py-3.5 w-24 text-center">
-                      (๓)<br />รหัสความเสี่ยง
+                      (3)<br />รหัสความเสี่ยง
                     </th>
                     <th className="px-4 py-3.5 min-w-[180px]">
-                      (๔)<br />โครงการ/กิจกรรม/ภารกิจ
+                      (4)<br />โครงการ/กิจกรรม/ภารกิจ
                     </th>
                     <th className="px-4 py-3.5 min-w-[160px]">
-                      (๕)<br />วัตถุประสงค์
+                      (5)<br />วัตถุประสงค์
                     </th>
                     <th className="px-3.5 py-3.5 w-36">
-                      (๖)<br />ผู้รับผิดชอบ
+                      (6)<br />ผู้รับผิดชอบ
                     </th>
                     <th className="px-4 py-3.5 min-w-[170px]">
-                      (๗)<br />ความเสี่ยง
+                      (7)<br />ความเสี่ยง
                     </th>
                     <th className="px-3.5 py-3.5 min-w-[150px]">
-                      (๘)<br />ประเภทความเสี่ยง
+                      (8)<br />ประเภทความเสี่ยง
                     </th>
                     <th className="px-2.5 py-3.5 text-center w-20">
-                      (๙)<br />คะแนนโอกาส
+                      (9)<br />คะแนนโอกาส
                     </th>
                     <th className="px-2.5 py-3.5 text-center w-20">
-                      (๑๐)<br />คะแนนผลกระทบ
+                      (10)<br />คะแนนผลกระทบ
                     </th>
                     <th className="px-3 py-3.5 text-center w-24">
-                      (๑๑)<br />ระดับความเสี่ยง<br /><span className="text-[10px] font-normal">(๙) x (๑๐)</span>
+                      (11)<br />ระดับความเสี่ยง<br /><span className="text-[10px] font-normal">(9) x (10)</span>
                     </th>
                     <th className="px-4 py-3.5 min-w-[170px]">
-                      (๑๒)<br />วิธีการตอบสนองความเสี่ยง
+                      (12)<br />วิธีการตอบสนองความเสี่ยง
                     </th>
                     {setRiskManagement && <th className="px-3 py-3.5 text-center w-16 no-print">จัดการ</th>}
                   </tr>
@@ -1614,7 +1614,7 @@ export default function RiskManagementView({
                   {filteredBs2.length === 0 ? (
                     <tr>
                       <td colSpan={11} className="px-4 py-10 text-center text-slate-400">
-                        ไม่พบข้อมูลในแบบ บส. ๒ {filterDept !== 'all' ? `ของ "${filterDept}"` : ''}
+                        ไม่พบข้อมูลในแบบ บส. 2 {filterDept !== 'all' ? `ของ "${filterDept}"` : ''}
                       </td>
                     </tr>
                   ) : (
@@ -1702,24 +1702,24 @@ export default function RiskManagementView({
       )}
 
       {/* =========================================================================
-          TAB 3: แบบ บส. ๓
+          TAB 3: แบบ บส. 3
       ========================================================================= */}
       {activeTab === 'bs3' && (
         <div className="space-y-4 printable-document">
           {/* Official Document Header */}
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs text-center space-y-1.5 print:p-2 print:border-none print:shadow-none print:rounded-none">
             <div className="flex justify-between items-start text-xs font-bold text-slate-500 mb-1 print:mb-2 print:text-black">
-              <span className="no-print">ลำดับที่ ๓ ของชุดแบบรายงาน</span>
-              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. ๓</span>
+              <span className="no-print">ลำดับที่ 3 ของชุดแบบรายงาน</span>
+              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. 3</span>
             </div>
             <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 print:text-black print:text-lg">
-              ชื่อหน่วยงาน (๑) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
+              ชื่อหน่วยงาน (1) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
             </h3>
             <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
               รายงานการจัดทำแผนบริหารความเสี่ยง
             </p>
             <p className="text-xs text-slate-600 dark:text-slate-400 print:text-black print:text-xs">
-              ประจำปีงบประมาณ พ.ศ. (๒) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
+              ประจำปีงบประมาณ พ.ศ. (2) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
             </p>
           </div>
 
@@ -1730,31 +1730,31 @@ export default function RiskManagementView({
                 <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80 print:bg-slate-100 print:text-black">
                   <tr>
                     <th className="px-3 py-3.5 w-24 text-center">
-                      (๓)<br />รหัสความเสี่ยง
+                      (3)<br />รหัสความเสี่ยง
                     </th>
                     <th className="px-4 py-3.5 min-w-[180px]">
-                      (๔)<br />โครงการ/กิจกรรม/ภารกิจ
+                      (4)<br />โครงการ/กิจกรรม/ภารกิจ
                     </th>
                     <th className="px-4 py-3.5 min-w-[160px]">
-                      (๕)<br />ความเสี่ยง
+                      (5)<br />ความเสี่ยง
                     </th>
                     <th className="px-3.5 py-3.5 min-w-[140px]">
-                      (๖)<br />วิธีการตอบสนองความเสี่ยง
+                      (6)<br />วิธีการตอบสนองความเสี่ยง
                     </th>
                     <th className="px-3.5 py-3.5 w-36">
-                      (๗)<br />ผู้รับผิดชอบ
+                      (7)<br />ผู้รับผิดชอบ
                     </th>
                     <th className="px-4 py-3.5 min-w-[220px]">
-                      (๘)<br />วิธีการจัดการความเสี่ยง (มาตรการ)
+                      (8)<br />วิธีการจัดการความเสี่ยง (มาตรการ)
                     </th>
                     <th className="px-3.5 py-3.5 min-w-[140px]">
-                      (๙)<br />ตัวชี้วัด
+                      (9)<br />ตัวชี้วัด
                     </th>
                     <th className="px-3 py-3.5 w-32">
-                      (๑๐)<br />ระยะเวลาดำเนินการ
+                      (10)<br />ระยะเวลาดำเนินการ
                     </th>
                     <th className="px-3.5 py-3.5 min-w-[160px]">
-                      (๑๑)<br />วิธีการติดตาม และการรายงาน
+                      (11)<br />วิธีการติดตาม และการรายงาน
                     </th>
                     {setRiskManagement && <th className="px-3 py-3.5 text-center w-16 no-print">จัดการ</th>}
                   </tr>
@@ -1763,7 +1763,7 @@ export default function RiskManagementView({
                   {filteredBs3.length === 0 ? (
                     <tr>
                       <td colSpan={10} className="px-4 py-10 text-center text-slate-400">
-                        ไม่พบข้อมูลในแบบ บส. ๓ {filterDept !== 'all' ? `ของ "${filterDept}"` : ''}
+                        ไม่พบข้อมูลในแบบ บส. 3 {filterDept !== 'all' ? `ของ "${filterDept}"` : ''}
                       </td>
                     </tr>
                   ) : (
@@ -1845,22 +1845,22 @@ export default function RiskManagementView({
       )}
 
       {/* =========================================================================
-          TAB 4: แบบ บส. ๔
+          TAB 4: แบบ บส. 4
       ========================================================================= */}
       {activeTab === 'bs4' && (
         <div className="space-y-4 printable-document">
           {/* Official Document Header with Period Selectors */}
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs text-center space-y-3 print:p-2 print:border-none print:shadow-none print:rounded-none">
             <div className="flex justify-between items-start text-xs font-bold text-slate-500 mb-1 print:mb-2 print:text-black">
-              <span className="no-print">ลำดับที่ ๔ ของชุดแบบรายงาน</span>
-              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. ๔</span>
+              <span className="no-print">ลำดับที่ 4 ของชุดแบบรายงาน</span>
+              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. 4</span>
             </div>
             <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 print:text-black print:text-lg">
-              ชื่อหน่วยงาน (๑) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
+              ชื่อหน่วยงาน (1) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
             </h3>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-xs font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
-              <span>รายงานการติดตามผลการบริหารความเสี่ยง <span className="hidden print:inline">({bs4Period === '3month' ? 'รอบ ๓ เดือน' : bs4Period === '6month' ? 'รอบ ๖ เดือน' : 'รอบ ๑๒ เดือน'})</span></span>
+              <span>รายงานการติดตามผลการบริหารความเสี่ยง <span className="hidden print:inline">({bs4Period === '3month' ? 'รอบ 3 เดือน' : bs4Period === '6month' ? 'รอบ 6 เดือน' : 'รอบ 12 เดือน'})</span></span>
               <div className="flex items-center space-x-3 bg-slate-50 dark:bg-slate-800 px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 no-print">
                 <label className="inline-flex items-center space-x-1.5 cursor-pointer">
                   <input
@@ -1871,7 +1871,7 @@ export default function RiskManagementView({
                     onChange={() => setBs4Period('3month')}
                     className="text-blue-600 focus:ring-blue-500"
                   />
-                  <span>รอบ ๓ เดือน</span>
+                  <span>รอบ 3 เดือน</span>
                 </label>
                 <label className="inline-flex items-center space-x-1.5 cursor-pointer">
                   <input
@@ -1882,7 +1882,7 @@ export default function RiskManagementView({
                     onChange={() => setBs4Period('6month')}
                     className="text-blue-600 focus:ring-blue-500"
                   />
-                  <span>รอบ ๖ เดือน</span>
+                  <span>รอบ 6 เดือน</span>
                 </label>
                 <label className="inline-flex items-center space-x-1.5 cursor-pointer">
                   <input
@@ -1893,13 +1893,13 @@ export default function RiskManagementView({
                     onChange={() => setBs4Period('12month')}
                     className="text-blue-600 focus:ring-blue-500"
                   />
-                  <span>รอบ ๑๒ เดือน</span>
+                  <span>รอบ 12 เดือน</span>
                 </label>
               </div>
             </div>
 
             <p className="text-xs text-slate-600 dark:text-slate-400 print:text-black print:text-xs">
-              สำหรับปีงบประมาณ พ.ศ. (๒) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
+              สำหรับปีงบประมาณ พ.ศ. (2) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
             </p>
           </div>
 
@@ -1910,31 +1910,31 @@ export default function RiskManagementView({
                 <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80 print:bg-slate-100 print:text-black">
                   <tr>
                     <th className="px-3 py-3.5 w-24 text-center">
-                      (๓)<br />รหัสความเสี่ยง
+                      (3)<br />รหัสความเสี่ยง
                     </th>
                     <th className="px-4 py-3.5 min-w-[170px]">
-                      (๔)<br />โครงการ/กิจกรรม/ภารกิจ
+                      (4)<br />โครงการ/กิจกรรม/ภารกิจ
                     </th>
                     <th className="px-4 py-3.5 min-w-[200px]">
-                      (๕)<br />วิธีการจัดการความเสี่ยง
+                      (5)<br />วิธีการจัดการความเสี่ยง
                     </th>
                     <th className="px-3 py-3.5 w-32">
-                      (๖)<br />ระยะเวลาดำเนินการ
+                      (6)<br />ระยะเวลาดำเนินการ
                     </th>
                     <th className="px-3.5 py-3.5 w-36">
-                      (๗)<br />ผู้รับผิดชอบ
+                      (7)<br />ผู้รับผิดชอบ
                     </th>
                     <th className="px-4 py-3.5 min-w-[220px]">
-                      (๘)<br />ผลลัพธ์การดำเนินการจัดการความเสี่ยง
+                      (8)<br />ผลลัพธ์การดำเนินการจัดการความเสี่ยง
                     </th>
                     <th className="px-3.5 py-3.5 min-w-[150px]">
-                      (๙)<br />เอกสาร/หลักฐาน
+                      (9)<br />เอกสาร/หลักฐาน
                     </th>
                     <th className="px-2.5 py-3.5 text-center w-24">
-                      (๑๐)<br />ร้อยละความคืบหน้า
+                      (10)<br />ร้อยละความคืบหน้า
                     </th>
                     <th className="px-4 py-3.5 min-w-[180px]">
-                      (๑๑)<br />ปัญหาอุปสรรค และแนวทางแก้ไข
+                      (11)<br />ปัญหาอุปสรรค และแนวทางแก้ไข
                     </th>
                     {setRiskManagement && <th className="px-3 py-3.5 text-center w-16 no-print">จัดการ</th>}
                   </tr>
@@ -1943,7 +1943,7 @@ export default function RiskManagementView({
                   {filteredBs4.length === 0 ? (
                     <tr>
                       <td colSpan={10} className="px-4 py-10 text-center text-slate-400">
-                        ไม่พบข้อมูลในแบบ บส. ๔ สำหรับรอบ {bs4Period === '3month' ? '๓ เดือน' : bs4Period === '6month' ? '๖ เดือน' : '๑๒ เดือน'} {filterDept !== 'all' ? `ของ "${filterDept}"` : ''}
+                        ไม่พบข้อมูลในแบบ บส. 4 สำหรับรอบ {bs4Period === '3month' ? '3 เดือน' : bs4Period === '6month' ? '6 เดือน' : '12 เดือน'} {filterDept !== 'all' ? `ของ "${filterDept}"` : ''}
                       </td>
                     </tr>
                   ) : (
@@ -2027,24 +2027,24 @@ export default function RiskManagementView({
       )}
 
       {/* =========================================================================
-          TAB 5: แบบ บส. ๕
+          TAB 5: แบบ บส. 5
       ========================================================================= */}
       {activeTab === 'bs5' && (
         <div className="space-y-4 printable-document">
           {/* Official Document Header */}
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs text-center space-y-1.5 print:p-2 print:border-none print:shadow-none print:rounded-none">
             <div className="flex justify-between items-start text-xs font-bold text-slate-500 mb-1 print:mb-2 print:text-black">
-              <span className="no-print">ลำดับที่ ๕ ของชุดแบบรายงาน</span>
-              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. ๕</span>
+              <span className="no-print">ลำดับที่ 5 ของชุดแบบรายงาน</span>
+              <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. 5</span>
             </div>
             <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 print:text-black print:text-lg">
-              ชื่อหน่วยงาน (๑) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
+              ชื่อหน่วยงาน (1) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
             </h3>
             <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
               รายงานผลการดำเนินการและทบทวนแผนการบริหารความเสี่ยง
             </p>
             <p className="text-xs text-slate-600 dark:text-slate-400 print:text-black print:text-xs">
-              สำหรับปีงบประมาณ พ.ศ. (๒) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
+              สำหรับปีงบประมาณ พ.ศ. (2) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
             </p>
           </div>
 
@@ -2055,49 +2055,49 @@ export default function RiskManagementView({
                 <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80 text-center print:bg-slate-100 print:text-black">
                   <tr>
                     <th rowSpan={2} className="px-3 py-2.5 w-24 border-r border-slate-200 dark:border-slate-700">
-                      (๓)<br />รหัสความเสี่ยง
+                      (3)<br />รหัสความเสี่ยง
                     </th>
                     <th rowSpan={2} className="px-4 py-2.5 min-w-[160px] text-left border-r border-slate-200 dark:border-slate-700">
-                      (๔)<br />โครงการ/กิจกรรม/ภารกิจ
+                      (4)<br />โครงการ/กิจกรรม/ภารกิจ
                     </th>
                     <th rowSpan={2} className="px-4 py-2.5 min-w-[150px] text-left border-r border-slate-200 dark:border-slate-700">
-                      (๕)<br />ความเสี่ยง
+                      (5)<br />ความเสี่ยง
                     </th>
                     <th colSpan={3} className="px-2 py-2 border-r border-slate-200 dark:border-slate-700 bg-blue-50/50 dark:bg-blue-950/20">
-                      (๖) คะแนนระดับความเสี่ยงก่อนดำเนินการ
+                      (6) คะแนนระดับความเสี่ยงก่อนดำเนินการ
                     </th>
                     <th rowSpan={2} className="px-4 py-2.5 min-w-[180px] text-left border-r border-slate-200 dark:border-slate-700">
-                      (๗)<br />วิธีการจัดการความเสี่ยง
+                      (7)<br />วิธีการจัดการความเสี่ยง
                     </th>
                     <th rowSpan={2} className="px-4 py-2.5 min-w-[180px] text-left border-r border-slate-200 dark:border-slate-700">
-                      (๘)<br />ผลดำเนินการจากการจัดการ
+                      (8)<br />ผลดำเนินการจากการจัดการ
                     </th>
                     <th colSpan={3} className="px-2 py-2 border-r border-slate-200 dark:border-slate-700 bg-emerald-50/50 dark:bg-emerald-950/20">
-                      (๙) คะแนนระดับความเสี่ยงภายหลังดำเนินการ
+                      (9) คะแนนระดับความเสี่ยงภายหลังดำเนินการ
                     </th>
                     <th rowSpan={2} className="px-2.5 py-2.5 w-24 border-r border-slate-200 dark:border-slate-700">
-                      (๑๐)<br />การเปลี่ยนแปลง
+                      (10)<br />การเปลี่ยนแปลง
                     </th>
                     <th rowSpan={2} className="px-3.5 py-2.5 min-w-[140px] text-left border-r border-slate-200 dark:border-slate-700">
-                      (๑๑)<br />ความเสี่ยงคงเหลือ/เกิดใหม่
+                      (11)<br />ความเสี่ยงคงเหลือ/เกิดใหม่
                     </th>
                     <th colSpan={2} className="px-2 py-2 border-r border-slate-200 dark:border-slate-700">
-                      (๑๒) สรุปความเสี่ยง
+                      (12) สรุปความเสี่ยง
                     </th>
                     <th rowSpan={2} className="px-4 py-2.5 min-w-[180px] text-left">
-                      (๑๓)<br />มาตรการสำหรับปีถัดไป
+                      (13)<br />มาตรการสำหรับปีถัดไป
                     </th>
                     {setRiskManagement && <th rowSpan={2} className="px-3 py-2.5 w-16 no-print">จัดการ</th>}
                   </tr>
                   <tr className="border-t border-slate-200 dark:border-slate-700 text-[10px]">
                     {/* (6) Pre-score subheaders */}
-                    <th className="px-1.5 py-1.5 w-12 border-r border-slate-200 dark:border-slate-700 bg-blue-50/50 dark:bg-blue-950/20">โอกาส (๑)</th>
-                    <th className="px-1.5 py-1.5 w-12 border-r border-slate-200 dark:border-slate-700 bg-blue-50/50 dark:bg-blue-950/20">ผลกระทบ (๒)</th>
-                    <th className="px-1.5 py-1.5 w-14 border-r border-slate-200 dark:border-slate-700 bg-blue-50/50 dark:bg-blue-950/20">คะแนน (๓)</th>
+                    <th className="px-1.5 py-1.5 w-12 border-r border-slate-200 dark:border-slate-700 bg-blue-50/50 dark:bg-blue-950/20">โอกาส (1)</th>
+                    <th className="px-1.5 py-1.5 w-12 border-r border-slate-200 dark:border-slate-700 bg-blue-50/50 dark:bg-blue-950/20">ผลกระทบ (2)</th>
+                    <th className="px-1.5 py-1.5 w-14 border-r border-slate-200 dark:border-slate-700 bg-blue-50/50 dark:bg-blue-950/20">คะแนน (3)</th>
                     {/* (9) Post-score subheaders */}
-                    <th className="px-1.5 py-1.5 w-12 border-r border-slate-200 dark:border-slate-700 bg-emerald-50/50 dark:bg-emerald-950/20">โอกาส (๑)</th>
-                    <th className="px-1.5 py-1.5 w-12 border-r border-slate-200 dark:border-slate-700 bg-emerald-50/50 dark:bg-emerald-950/20">ผลกระทบ (๒)</th>
-                    <th className="px-1.5 py-1.5 w-14 border-r border-slate-200 dark:border-slate-700 bg-emerald-50/50 dark:bg-emerald-950/20">คะแนน (๓)</th>
+                    <th className="px-1.5 py-1.5 w-12 border-r border-slate-200 dark:border-slate-700 bg-emerald-50/50 dark:bg-emerald-950/20">โอกาส (1)</th>
+                    <th className="px-1.5 py-1.5 w-12 border-r border-slate-200 dark:border-slate-700 bg-emerald-50/50 dark:bg-emerald-950/20">ผลกระทบ (2)</th>
+                    <th className="px-1.5 py-1.5 w-14 border-r border-slate-200 dark:border-slate-700 bg-emerald-50/50 dark:bg-emerald-950/20">คะแนน (3)</th>
                     {/* (12) Controllable subheaders */}
                     <th className="px-2 py-1.5 w-16 border-r border-slate-200 dark:border-slate-700">ควบคุมได้</th>
                     <th className="px-2 py-1.5 w-16 border-r border-slate-200 dark:border-slate-700">ควบคุมไม่ได้</th>
@@ -2107,7 +2107,7 @@ export default function RiskManagementView({
                   {filteredBs5Items.length === 0 ? (
                     <tr>
                       <td colSpan={16} className="px-4 py-10 text-center text-slate-400">
-                        ไม่พบข้อมูลในแบบ บส. ๕ {filterDept !== 'all' ? `ของ "${filterDept}"` : ''}
+                        ไม่พบข้อมูลในแบบ บส. 5 {filterDept !== 'all' ? `ของ "${filterDept}"` : ''}
                       </td>
                     </tr>
                   ) : (
@@ -2256,7 +2256,7 @@ export default function RiskManagementView({
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                 <Plus className="w-4 h-4 text-blue-600" />
-                <span>กำหนดขอบเขตและระบุความเสี่ยงใหม่ (แบบ บส. ๑)</span>
+                <span>กำหนดขอบเขตและระบุความเสี่ยงใหม่ (แบบ บส. 1)</span>
               </h3>
               <button
                 type="button"
@@ -2271,7 +2271,7 @@ export default function RiskManagementView({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๓) รหัสความเสี่ยง:
+                    (3) รหัสความเสี่ยง:
                   </label>
                   <input
                     type="text"
@@ -2309,10 +2309,10 @@ export default function RiskManagementView({
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-blue-900 dark:text-blue-200 flex items-center space-x-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                    <span>เลือกจากคลังภารกิจและความเสี่ยงมาตรฐาน อปท. (ว ๓๔๘๒):</span>
+                    <span>เลือกจากคลังภารกิจและความเสี่ยงมาตรฐาน อปท. (ว 3482):</span>
                   </label>
                   <span className="text-[10px] text-blue-700 dark:text-blue-300 font-semibold bg-white dark:bg-slate-900 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">
-                    กรอกอัตโนมัติครบ ๑๐๐%
+                    กรอกอัตโนมัติครบ 100%
                   </span>
                 </div>
                 <select
@@ -2349,7 +2349,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๔) ยุทธศาสตร์ที่รับผิดชอบ:
+                  (4) ยุทธศาสตร์ที่รับผิดชอบ:
                 </label>
                 <input
                   type="text"
@@ -2364,7 +2364,7 @@ export default function RiskManagementView({
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="block font-semibold text-slate-700 dark:text-slate-300">
-                    (๕) โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ:
+                    (5) โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ:
                   </label>
                   <button
                     type="button"
@@ -2404,7 +2404,7 @@ export default function RiskManagementView({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๖) งบประมาณ (บาท):
+                    (6) งบประมาณ (บาท):
                   </label>
                   <input
                     type="number"
@@ -2416,7 +2416,7 @@ export default function RiskManagementView({
                 </div>
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๗) วัตถุประสงค์:
+                    (7) วัตถุประสงค์:
                   </label>
                   <input
                     type="text"
@@ -2432,7 +2432,7 @@ export default function RiskManagementView({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๘) ตัวชี้วัด:
+                    (8) ตัวชี้วัด:
                   </label>
                   <input
                     type="text"
@@ -2445,7 +2445,7 @@ export default function RiskManagementView({
                 </div>
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๙) เป้าหมายสูงสุด:
+                    (9) เป้าหมายสูงสุด:
                   </label>
                   <input
                     type="text"
@@ -2460,7 +2460,7 @@ export default function RiskManagementView({
 
               <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl space-y-2 border border-slate-200 dark:border-slate-700">
                 <span className="font-bold text-slate-800 dark:text-slate-200 block text-[11px]">
-                  ประเด็นความเสี่ยงสำหรับเชื่อมต่อไปยังแบบ บส. ๒:
+                  ประเด็นความเสี่ยงสำหรับเชื่อมต่อไปยังแบบ บส. 2:
                 </span>
                 <input
                   type="text"
@@ -2483,7 +2483,7 @@ export default function RiskManagementView({
                   type="submit"
                   className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-xs cursor-pointer"
                 >
-                  บันทึกแบบ บส. ๑
+                  บันทึกแบบ บส. 1
                 </button>
               </div>
             </form>
@@ -2498,7 +2498,7 @@ export default function RiskManagementView({
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                 <Pencil className="w-4 h-4 text-blue-600" />
-                <span>แก้ไขข้อมูลกำหนดขอบเขตความเสี่ยง (แบบ บส. ๑)</span>
+                <span>แก้ไขข้อมูลกำหนดขอบเขตความเสี่ยง (แบบ บส. 1)</span>
               </h3>
               <button
                 type="button"
@@ -2513,7 +2513,7 @@ export default function RiskManagementView({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๓) รหัสความเสี่ยง:
+                    (3) รหัสความเสี่ยง:
                   </label>
                   <input
                     type="text"
@@ -2550,7 +2550,7 @@ export default function RiskManagementView({
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-blue-900 dark:text-blue-200 flex items-center space-x-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                    <span>เลือกจากคลังภารกิจและความเสี่ยงมาตรฐาน อปท. (ว ๓๔๘๒):</span>
+                    <span>เลือกจากคลังภารกิจและความเสี่ยงมาตรฐาน อปท. (ว 3482):</span>
                   </label>
                   <span className="text-[10px] text-blue-700 dark:text-blue-300 font-semibold bg-white dark:bg-slate-900 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">
                     อัปเดตข้อมูลอัตโนมัติ
@@ -2590,7 +2590,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๔) ยุทธศาสตร์ที่รับผิดชอบ:
+                  (4) ยุทธศาสตร์ที่รับผิดชอบ:
                 </label>
                 <input
                   type="text"
@@ -2604,7 +2604,7 @@ export default function RiskManagementView({
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="block font-semibold text-slate-700 dark:text-slate-300">
-                    (๕) โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ:
+                    (5) โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ:
                   </label>
                   <button
                     type="button"
@@ -2643,7 +2643,7 @@ export default function RiskManagementView({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๖) งบประมาณ (บาท):
+                    (6) งบประมาณ (บาท):
                   </label>
                   <input
                     type="number"
@@ -2654,7 +2654,7 @@ export default function RiskManagementView({
                 </div>
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๗) วัตถุประสงค์:
+                    (7) วัตถุประสงค์:
                   </label>
                   <input
                     type="text"
@@ -2669,7 +2669,7 @@ export default function RiskManagementView({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๘) ตัวชี้วัด:
+                    (8) ตัวชี้วัด:
                   </label>
                   <input
                     type="text"
@@ -2681,7 +2681,7 @@ export default function RiskManagementView({
                 </div>
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๙) เป้าหมายสูงสุด:
+                    (9) เป้าหมายสูงสุด:
                   </label>
                   <input
                     type="text"
@@ -2695,7 +2695,7 @@ export default function RiskManagementView({
 
               <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl space-y-2 border border-slate-200 dark:border-slate-700">
                 <span className="font-bold text-slate-800 dark:text-slate-200 block text-[11px]">
-                  ประเด็นความเสี่ยงสำหรับเชื่อมต่อไปยังแบบ บส. ๒:
+                  ประเด็นความเสี่ยงสำหรับเชื่อมต่อไปยังแบบ บส. 2:
                 </span>
                 <input
                   type="text"
@@ -2732,7 +2732,7 @@ export default function RiskManagementView({
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                 <Pencil className="w-4 h-4 text-blue-600" />
-                <span>วิเคราะห์โอกาส ผลกระทบ และการตอบสนองความเสี่ยง (แบบ บส. ๒)</span>
+                <span>วิเคราะห์โอกาส ผลกระทบ และการตอบสนองความเสี่ยง (แบบ บส. 2)</span>
               </h3>
               <button
                 type="button"
@@ -2754,7 +2754,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๖) ผู้รับผิดชอบ (บุคคลหรือหน่วยงาน):
+                  (6) ผู้รับผิดชอบ (บุคคลหรือหน่วยงาน):
                 </label>
                 <input
                   type="text"
@@ -2767,7 +2767,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๗) เหตุการณ์ความเสี่ยง:
+                  (7) เหตุการณ์ความเสี่ยง:
                 </label>
                 <input
                   type="text"
@@ -2780,7 +2780,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๘) ประเภทความเสี่ยง (๖ ประเภทตามหนังสือสั่งการ):
+                  (8) ประเภทความเสี่ยง (6 ประเภทตามหนังสือสั่งการ):
                 </label>
                 <select
                   value={editingBs2.riskCategory || RISK_CATEGORIES[2].label}
@@ -2796,7 +2796,7 @@ export default function RiskManagementView({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๙) คะแนนโอกาสเกิด (๑ - ๕):
+                    (9) คะแนนโอกาสเกิด (1 - 5):
                   </label>
                   <select
                     value={editingBs2.likelihood}
@@ -2813,7 +2813,7 @@ export default function RiskManagementView({
 
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๑๐) คะแนนผลกระทบ (๑ - ๕):
+                    (10) คะแนนผลกระทบ (1 - 5):
                   </label>
                   <select
                     value={editingBs2.impact}
@@ -2832,7 +2832,7 @@ export default function RiskManagementView({
               {/* Calculated Matrix Level */}
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-between border border-slate-200 dark:border-slate-700">
                 <div>
-                  <span className="text-slate-500 font-medium">คะแนนรวม (๙) x (๑๐): </span>
+                  <span className="text-slate-500 font-medium">คะแนนรวม (9) x (10): </span>
                   <span className="font-mono font-black text-sm text-slate-900 dark:text-slate-100">
                     {Number(editingBs2.likelihood) * Number(editingBs2.impact)}
                   </span>
@@ -2846,7 +2846,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๑๒) วิธีการตอบสนองความเสี่ยง (๘ วิธีตามหนังสือสั่งการ):
+                  (12) วิธีการตอบสนองความเสี่ยง (8 วิธีตามหนังสือสั่งการ):
                 </label>
                 <select
                   value={editingBs2.riskResponse || RISK_RESPONSES[1].label}
@@ -2871,7 +2871,7 @@ export default function RiskManagementView({
                   type="submit"
                   className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-xs cursor-pointer"
                 >
-                  บันทึกแบบ บส. ๒
+                  บันทึกแบบ บส. 2
                 </button>
               </div>
             </form>
@@ -2886,7 +2886,7 @@ export default function RiskManagementView({
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                 <Pencil className="w-4 h-4 text-blue-600" />
-                <span>แก้ไขรายงานการจัดทำแผนบริหารความเสี่ยง (แบบ บส. ๓)</span>
+                <span>แก้ไขรายงานการจัดทำแผนบริหารความเสี่ยง (แบบ บส. 3)</span>
               </h3>
               <button
                 type="button"
@@ -2909,7 +2909,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๖) วิธีการตอบสนองความเสี่ยง:
+                  (6) วิธีการตอบสนองความเสี่ยง:
                 </label>
                 <select
                   value={editingBs3.riskResponse || RISK_RESPONSES[1].label}
@@ -2924,7 +2924,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๗) ผู้รับผิดชอบ:
+                  (7) ผู้รับผิดชอบ:
                 </label>
                 <input
                   type="text"
@@ -2937,7 +2937,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๘) วิธีการจัดการความเสี่ยง (แนวทาง/ขั้นตอนการปฏิบัติงาน/มาตรการ):
+                  (8) วิธีการจัดการความเสี่ยง (แนวทาง/ขั้นตอนการปฏิบัติงาน/มาตรการ):
                 </label>
                 <textarea
                   rows={3}
@@ -2952,7 +2952,7 @@ export default function RiskManagementView({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๙) ตัวชี้วัด:
+                    (9) ตัวชี้วัด:
                   </label>
                   <input
                     type="text"
@@ -2964,7 +2964,7 @@ export default function RiskManagementView({
                 </div>
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๑๐) ระยะเวลาดำเนินการ:
+                    (10) ระยะเวลาดำเนินการ:
                   </label>
                   <input
                     type="text"
@@ -2978,7 +2978,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๑๑) วิธีการติดตาม และการรายงาน:
+                  (11) วิธีการติดตาม และการรายงาน:
                 </label>
                 <input
                   type="text"
@@ -3002,7 +3002,7 @@ export default function RiskManagementView({
                   type="submit"
                   className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-xs cursor-pointer"
                 >
-                  บันทึกแบบ บส. ๓
+                  บันทึกแบบ บส. 3
                 </button>
               </div>
             </form>
@@ -3017,7 +3017,7 @@ export default function RiskManagementView({
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                 <Pencil className="w-4 h-4 text-blue-600" />
-                <span>แก้ไขรายงานการติดตามผลการบริหารความเสี่ยง (แบบ บส. ๔)</span>
+                <span>แก้ไขรายงานการติดตามผลการบริหารความเสี่ยง (แบบ บส. 4)</span>
               </h3>
               <button
                 type="button"
@@ -3047,14 +3047,14 @@ export default function RiskManagementView({
                     onChange={(e) => setEditingBs4({ ...editingBs4, period: e.target.value })}
                     className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-bold"
                   >
-                    <option value="3month">รอบ ๓ เดือน</option>
-                    <option value="6month">รอบ ๖ เดือน</option>
-                    <option value="12month">รอบ ๑๒ เดือน</option>
+                    <option value="3month">รอบ 3 เดือน</option>
+                    <option value="6month">รอบ 6 เดือน</option>
+                    <option value="12month">รอบ 12 เดือน</option>
                   </select>
                 </div>
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๑๐) ร้อยละความคืบหน้า (%):
+                    (10) ร้อยละความคืบหน้า (%):
                   </label>
                   <input
                     type="number"
@@ -3070,7 +3070,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๘) ผลลัพธ์การดำเนินการจัดการความเสี่ยง:
+                  (8) ผลลัพธ์การดำเนินการจัดการความเสี่ยง:
                 </label>
                 <textarea
                   rows={3}
@@ -3084,7 +3084,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๙) เอกสาร/หลักฐานอ้างอิง:
+                  (9) เอกสาร/หลักฐานอ้างอิง:
                 </label>
                 <input
                   type="text"
@@ -3097,7 +3097,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๑๑) ปัญหาอุปสรรค และแนวทางแก้ไข:
+                  (11) ปัญหาอุปสรรค และแนวทางแก้ไข:
                 </label>
                 <textarea
                   rows={2}
@@ -3120,7 +3120,7 @@ export default function RiskManagementView({
                   type="submit"
                   className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-xs cursor-pointer"
                 >
-                  บันทึกแบบ บส. ๔
+                  บันทึกแบบ บส. 4
                 </button>
               </div>
             </form>
@@ -3135,7 +3135,7 @@ export default function RiskManagementView({
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                 <Pencil className="w-4 h-4 text-blue-600" />
-                <span>ทบทวนผลการดำเนินการและระดับความเสี่ยง (แบบ บส. ๕)</span>
+                <span>ทบทวนผลการดำเนินการและระดับความเสี่ยง (แบบ บส. 5)</span>
               </h3>
               <button
                 type="button"
@@ -3160,7 +3160,7 @@ export default function RiskManagementView({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="p-3 rounded-xl bg-blue-50/50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 space-y-2">
                   <span className="font-bold text-blue-800 dark:text-blue-300 block text-[11px]">
-                    (๖) คะแนนก่อนดำเนินการ:
+                    (6) คะแนนก่อนดำเนินการ:
                   </span>
                   <div className="flex items-center space-x-2">
                     <label className="w-20">โอกาส:</label>
@@ -3188,7 +3188,7 @@ export default function RiskManagementView({
 
                 <div className="p-3 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 space-y-2">
                   <span className="font-bold text-emerald-800 dark:text-emerald-300 block text-[11px]">
-                    (๙) คะแนนภายหลังดำเนินการ:
+                    (9) คะแนนภายหลังดำเนินการ:
                   </span>
                   <div className="flex items-center space-x-2">
                     <label className="w-20">โอกาส:</label>
@@ -3217,7 +3217,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๘) ผลดำเนินการจากการจัดการความเสี่ยง (สรุปเป็นภาพรวม):
+                  (8) ผลดำเนินการจากการจัดการความเสี่ยง (สรุปเป็นภาพรวม):
                 </label>
                 <textarea
                   rows={2}
@@ -3231,7 +3231,7 @@ export default function RiskManagementView({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๑๑) ความเสี่ยงคงเหลือหรือเกิดขึ้นใหม่:
+                    (11) ความเสี่ยงคงเหลือหรือเกิดขึ้นใหม่:
                   </label>
                   <input
                     type="text"
@@ -3243,7 +3243,7 @@ export default function RiskManagementView({
                 </div>
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (๑๒) สรุปความเสี่ยง:
+                    (12) สรุปความเสี่ยง:
                   </label>
                   <select
                     value={editingBs5.controllable || 'ควบคุมได้'}
@@ -3258,7 +3258,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๑๓) แนวทาง/มาตรการจัดการความเสี่ยงสำหรับปีถัดไป:
+                  (13) แนวทาง/มาตรการจัดการความเสี่ยงสำหรับปีถัดไป:
                 </label>
                 <textarea
                   rows={2}
@@ -3281,7 +3281,7 @@ export default function RiskManagementView({
                   type="submit"
                   className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-xs cursor-pointer"
                 >
-                  บันทึกแบบ บส. ๕
+                  บันทึกแบบ บส. 5
                 </button>
               </div>
             </form>
@@ -3296,7 +3296,7 @@ export default function RiskManagementView({
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                 <Pencil className="w-4 h-4 text-blue-600" />
-                <span>แก้ไขข้อความสรุปภาพรวม & ผู้ลงนาม (แบบ บส. ๕)</span>
+                <span>แก้ไขข้อความสรุปภาพรวม & ผู้ลงนาม (แบบ บส. 5)</span>
               </h3>
               <button
                 type="button"
@@ -3323,7 +3323,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๑๔) ลายมือชื่อผู้บริหารท้องถิ่น:
+                  (14) ลายมือชื่อผู้บริหารท้องถิ่น:
                 </label>
                 <input
                   type="text"
@@ -3336,7 +3336,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๑๕) ตำแหน่งผู้บริหารท้องถิ่น:
+                  (15) ตำแหน่งผู้บริหารท้องถิ่น:
                 </label>
                 <input
                   type="text"
@@ -3349,7 +3349,7 @@ export default function RiskManagementView({
 
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (๑๖) วันเดือนปีที่รายงาน:
+                  (16) วันเดือนปีที่รายงาน:
                 </label>
                 <input
                   type="text"
@@ -3381,7 +3381,7 @@ export default function RiskManagementView({
       )}
 
       {/* =========================================================================
-          MODAL: SMART RISK ASSISTANT (ว ๓๔๘๒)
+          MODAL: SMART RISK ASSISTANT (ว 3482)
       ========================================================================= */}
       {showSmartAssistant && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs no-print">
@@ -3396,11 +3396,11 @@ export default function RiskManagementView({
                   <h3 className="font-black text-base sm:text-lg text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                     <span>ผู้ช่วยวิเคราะห์และจับคู่ความเสี่ยงมาตรฐาน อปท.</span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                      ว ๓๔๘๒
+                      ว 3482
                     </span>
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                    คลังภารกิจและวิเคราะห์ความเสี่ยงจำแนกรายกอง อ้างอิงตามหนังสือสั่งการ มท ๐๘๐๕.๒/ว ๓๔๘๒ และหลักเกณฑ์ กค. ๒๕๖๒
+                    คลังภารกิจและวิเคราะห์ความเสี่ยงจำแนกรายกอง อ้างอิงตามหนังสือสั่งการ มท 0805.2/ว 3482 และหลักเกณฑ์ กค. 2562
                   </p>
                 </div>
               </div>
@@ -3517,10 +3517,10 @@ export default function RiskManagementView({
                         type="button"
                         onClick={() => handleImportStandardRisk(item, item.department || smartDept)}
                         className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
-                        title="นำเข้าภารกิจนี้เข้าสู่แบบ บส. ๑ ถึง บส. ๕ ทันที"
+                        title="นำเข้าภารกิจนี้เข้าสู่แบบ บส. 1 ถึง บส. 5 ทันที"
                       >
                         <Plus className="w-3.5 h-3.5" />
-                        <span>✨ นำเข้าสู่ระบบ (บส.๑ - ๕)</span>
+                        <span>✨ นำเข้าสู่ระบบ (บส.1 - 5)</span>
                       </button>
                     </div>
 
@@ -3536,11 +3536,11 @@ export default function RiskManagementView({
 
                     {/* 2-Column Risk & Measure Breakdown */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                      {/* Left: Risk Analysis (บส. ๒) */}
+                      {/* Left: Risk Analysis (บส. 2) */}
                       <div className="p-3 bg-rose-50/50 dark:bg-rose-950/20 rounded-xl border border-rose-200/60 dark:border-rose-900/40 space-y-1.5">
                         <span className="font-bold text-rose-800 dark:text-rose-300 flex items-center space-x-1">
                           <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
-                          <span>เหตุการณ์ความเสี่ยง (แบบ บส. ๒ ข้อ ๗):</span>
+                          <span>เหตุการณ์ความเสี่ยง (แบบ บส. 2 ข้อ 7):</span>
                         </span>
                         <p className="text-slate-700 dark:text-slate-300 font-medium">
                           {item.riskEvent}
@@ -3557,11 +3557,11 @@ export default function RiskManagementView({
                         </div>
                       </div>
 
-                      {/* Right: Treatment Plan (บส. ๓ & บส. ๕) */}
+                      {/* Right: Treatment Plan (บส. 3 & บส. 5) */}
                       <div className="p-3 bg-indigo-50/50 dark:bg-indigo-950/20 rounded-xl border border-indigo-200/60 dark:border-indigo-900/40 space-y-1.5">
                         <span className="font-bold text-indigo-800 dark:text-indigo-300 flex items-center space-x-1">
                           <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
-                          <span>มาตรการจัดการความเสี่ยง (แบบ บส. ๓ ข้อ ๘):</span>
+                          <span>มาตรการจัดการความเสี่ยง (แบบ บส. 3 ข้อ 8):</span>
                         </span>
                         <p className="text-slate-700 dark:text-slate-300 whitespace-pre-line leading-relaxed text-[11px]">
                           {item.treatmentMeasures}
@@ -3582,7 +3582,7 @@ export default function RiskManagementView({
             {/* Bottom Footer */}
             <div className="flex items-center justify-between pt-4 border-t border-slate-200/80 dark:border-slate-800">
               <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                ข้อมูลยึดตามหลักเกณฑ์กระทรวงการคลัง พ.ศ. ๒๕๖๒ และหนังสือสั่งการ มท ๐๘๐๕.๒/ว ๓๔๘๒ ลว. ๑๘ สิงหาคม ๒๕๖๖
+                ข้อมูลยึดตามหลักเกณฑ์กระทรวงการคลัง พ.ศ. 2562 และหนังสือสั่งการ มท 0805.2/ว 3482 ลว. 18 สิงหาคม 2566
               </span>
               <button
                 type="button"
@@ -3597,7 +3597,7 @@ export default function RiskManagementView({
       )}
 
       {/* =========================================================================
-          MODAL: COMPLIANCE AUDIT CHECKLIST (ว ๓๔๘๒)
+          MODAL: COMPLIANCE AUDIT CHECKLIST (ว 3482)
       ========================================================================= */}
       {showAuditModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs no-print">
@@ -3610,10 +3610,10 @@ export default function RiskManagementView({
                 </div>
                 <div>
                   <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
-                    รายงานการตรวจสอบความสอดคล้องตามมาตรฐาน ว ๓๔๘๒
+                    รายงานการตรวจสอบความสอดคล้องตามมาตรฐาน ว 3482
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                    ประเมินความถูกต้องของแบบ บส. ๑ ถึง บส. ๕ ประจำปีงบประมาณ พ.ศ. {selectedYear}
+                    ประเมินความถูกต้องของแบบ บส. 1 ถึง บส. 5 ประจำปีงบประมาณ พ.ศ. {selectedYear}
                   </p>
                 </div>
               </div>
@@ -3700,23 +3700,23 @@ export default function RiskManagementView({
               </span>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]">
                 <div className="p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-                  <span className="text-slate-500 block">แบบ บส. ๑ (ขอบเขต):</span>
+                  <span className="text-slate-500 block">แบบ บส. 1 (ขอบเขต):</span>
                   <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{complianceAudit.stats.totalRisks} รายการ</span>
                 </div>
                 <div className="p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-                  <span className="text-slate-500 block">ความเสี่ยงระดับสูง/สูงมาก (บส. ๒):</span>
+                  <span className="text-slate-500 block">ความเสี่ยงระดับสูง/สูงมาก (บส. 2):</span>
                   <span className="font-mono font-bold text-rose-600 dark:text-rose-400">{complianceAudit.stats.highRisks} รายการ</span>
                 </div>
                 <div className="p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-                  <span className="text-slate-500 block">แบบ บส. ๓ (แผนบริหาร):</span>
+                  <span className="text-slate-500 block">แบบ บส. 3 (แผนบริหาร):</span>
                   <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">{complianceAudit.stats.plansCount} รายการ</span>
                 </div>
                 <div className="p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-                  <span className="text-slate-500 block">แบบ บส. ๔ (ติดตามผล):</span>
+                  <span className="text-slate-500 block">แบบ บส. 4 (ติดตามผล):</span>
                   <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{complianceAudit.stats.trackedCount} รายการ</span>
                 </div>
                 <div className="p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 col-span-2 sm:col-span-1">
-                  <span className="text-slate-500 block">แบบ บส. ๕ (ทบทวนองค์กร):</span>
+                  <span className="text-slate-500 block">แบบ บส. 5 (ทบทวนองค์กร):</span>
                   <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{complianceAudit.stats.evaluatedCount} รายการ</span>
                 </div>
               </div>
@@ -3737,7 +3737,7 @@ export default function RiskManagementView({
       )}
 
       {/* =========================================================================
-          MODAL: CASCADE CONFIRMATION (ซิงค์ข้ามแบบฟอร์ม ๑ ➜ ๕)
+          MODAL: CASCADE CONFIRMATION (ซิงค์ข้ามแบบฟอร์ม 1 ➜ 5)
       ========================================================================= */}
       {showCascadeConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs no-print">
@@ -3751,7 +3751,7 @@ export default function RiskManagementView({
                   ซิงค์เชื่อมโยงข้อมูลอัตโนมัติข้ามแบบฟอร์ม (Auto-Cascade)
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  เชื่อมโยงข้อมูลจาก บส. ๑ ➜ บส. ๒ ➜ บส. ๓ ➜ บส. ๔ ➜ บส. ๕ ตามหนังสือสั่งการ ว ๓๔๘๒
+                  เชื่อมโยงข้อมูลจาก บส. 1 ➜ บส. 2 ➜ บส. 3 ➜ บส. 4 ➜ บส. 5 ตามหนังสือสั่งการ ว 3482
                 </p>
               </div>
             </div>
@@ -3761,10 +3761,10 @@ export default function RiskManagementView({
                 ระบบจะดำเนินการตามหลักเกณฑ์ระเบียบ ดังนี้:
               </div>
               <ul className="space-y-1.5 list-disc list-inside text-[11px]">
-                <li><strong>บส. ๑ ➜ บส. ๒:</strong> นำภารกิจ/วัตถุประสงค์มาวิเคราะห์โอกาส (L) x ผลกระทบ (I) คำนวณระดับความเสี่ยงตาม Matrix 5x5</li>
-                <li><strong>บส. ๒ ➜ บส. ๓:</strong> <span className="text-amber-700 dark:text-amber-400 font-bold">คัดกรองเฉพาะระดับ "สูง" และ "สูงมาก"</span> มาจัดทำแผนและมาตรการจัดการความเสี่ยงตามระเบียบข้อ ๑๐</li>
-                <li><strong>บส. ๓ ➜ บส. ๔:</strong> นำแผนมาตรการมารายงานติดตามผลดำเนินงาน ระบุความคืบหน้า (%) และหลักฐานอ้างอิง</li>
-                <li><strong>บส. ๔ ➜ บส. ๕:</strong> ประเมินคะแนนความเสี่ยงก่อนดำเนินการ vs หลังดำเนินการ (Residual Risk) และสรุปผลว่า "ลดลง" และ "ควบคุมได้"</li>
+                <li><strong>บส. 1 ➜ บส. 2:</strong> นำภารกิจ/วัตถุประสงค์มาวิเคราะห์โอกาส (L) x ผลกระทบ (I) คำนวณระดับความเสี่ยงตาม Matrix 5x5</li>
+                <li><strong>บส. 2 ➜ บส. 3:</strong> <span className="text-amber-700 dark:text-amber-400 font-bold">คัดกรองเฉพาะระดับ "สูง" และ "สูงมาก"</span> มาจัดทำแผนและมาตรการจัดการความเสี่ยงตามระเบียบข้อ 10</li>
+                <li><strong>บส. 3 ➜ บส. 4:</strong> นำแผนมาตรการมารายงานติดตามผลดำเนินงาน ระบุความคืบหน้า (%) และหลักฐานอ้างอิง</li>
+                <li><strong>บส. 4 ➜ บส. 5:</strong> ประเมินคะแนนความเสี่ยงก่อนดำเนินการ vs หลังดำเนินการ (Residual Risk) และสรุปผลว่า "ลดลง" และ "ควบคุมได้"</li>
               </ul>
             </div>
 

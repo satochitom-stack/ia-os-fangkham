@@ -898,7 +898,7 @@ export default function EngagementPlanView({
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div><strong>ส่วนราชการ:</strong> หน่วยตรวจสอบภายใน {orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</div>
                 <div><strong>โทรศัพท์:</strong> 045-XXXXXX</div>
-                <div><strong>ที่:</strong> ฝค ๐๑/๒๕๖๘</div>
+                <div><strong>ที่:</strong> ฝค 01/2568</div>
                 <div><strong>วันที่:</strong> {new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
               </div>
               <div>
@@ -941,13 +941,13 @@ export default function EngagementPlanView({
               หน่วยตรวจสอบภายใน {orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'} ประจำปีงบประมาณ พ.ศ. {selectedYear}
             </div>
             <div className="text-xs italic text-slate-700">
-              อ้างอิงตามหนังสือกรมบัญชีกลาง ด่วนที่สุด ที่ กค ๐๔๐๙.๒/ว ๖๑๔ ลงวันที่ ๒๓ ธันวาคม ๒๕๖๓
+              อ้างอิงตามหนังสือกรมบัญชีกลาง ด่วนที่สุด ที่ กค 0409.2/ว 614 ลงวันที่ 23 ธันวาคม 2563
             </div>
           </div>
 
           <div className="space-y-3 pt-2">
             <div>
-              <strong>๑. ข้อมูลทั่วไปและประเภทงานตรวจสอบ:</strong>
+              <strong>1. ข้อมูลทั่วไปและประเภทงานตรวจสอบ:</strong>
               <div className="pl-4 mt-0.5">
                 • <strong>รหัสแผน:</strong> {selectedPlan.id} ({selectedPlan.planCode})<br />
                 • <strong>ประเภทงานตาม ว 614:</strong> {selectedPlan.serviceSubtype}<br />
@@ -957,7 +957,7 @@ export default function EngagementPlanView({
             </div>
 
             <div>
-              <strong>๒. วัตถุประสงค์การตรวจสอบ (Engagement Objectives):</strong>
+              <strong>2. วัตถุประสงค์การตรวจสอบ (Engagement Objectives):</strong>
               <ul className="list-decimal list-inside pl-4 mt-0.5 space-y-0.5">
                 {selectedPlan.objectives?.map((obj, idx) => (
                   <li key={idx}>{obj}</li>
@@ -966,7 +966,7 @@ export default function EngagementPlanView({
             </div>
 
             <div>
-              <strong>๓. ขอบเขตการตรวจสอบ (Scope):</strong>
+              <strong>3. ขอบเขตการตรวจสอบ (Scope):</strong>
               <div className="pl-4 mt-0.5 space-y-0.5">
                 <div>• <strong>เนื้อหา:</strong> {selectedPlan.scope?.content}</div>
                 <div>• <strong>กรอบเวลา:</strong> {selectedPlan.scope?.timeframe}</div>
@@ -975,7 +975,7 @@ export default function EngagementPlanView({
             </div>
 
             <div>
-              <strong>๔. เกณฑ์การตรวจสอบ (Audit Criteria):</strong>
+              <strong>4. เกณฑ์การตรวจสอบ (Audit Criteria):</strong>
               <ul className="list-decimal list-inside pl-4 mt-0.5 space-y-0.5">
                 {selectedPlan.criteria?.map((cri, idx) => (
                   <li key={idx}>{cri}</li>
@@ -984,7 +984,7 @@ export default function EngagementPlanView({
             </div>
 
             <div>
-              <strong>๕. แนวการปฏิบัติงานตรวจสอบ (Audit Program):</strong>
+              <strong>5. แนวการปฏิบัติงานตรวจสอบ (Audit Program):</strong>
               <table className="w-full border-collapse border border-black mt-2 text-xs">
                 <thead>
                   <tr className="bg-slate-100">

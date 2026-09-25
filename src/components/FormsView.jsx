@@ -22,16 +22,16 @@ import ConfirmModal from './ConfirmModal';
 const INITIAL_DOCUMENTS = [
   {
     id: 'doc-w3482',
-    code: 'มท ๐๘๐๕.๒/ว ๓๔๘๒',
-    date: '๑๘ สิงหาคม ๒๕๖๖',
-    title: 'หนังสือกระทรวงมหาดไทย ด่วนที่สุด ที่ มท ๐๘๐๕.๒/ว ๓๔๘๒',
-    topic: 'แนวทางการประเมินและบริหารจัดการความเสี่ยงสำหรับองค์กรปกครองส่วนท้องถิ่น (พร้อมแบบ บส. ๑ ถึง แบบ บส. ๕)',
+    code: 'มท 0805.2/ว 3482',
+    date: '18 สิงหาคม 2566',
+    title: 'หนังสือกระทรวงมหาดไทย ด่วนที่สุด ที่ มท 0805.2/ว 3482',
+    topic: 'แนวทางการประเมินและบริหารจัดการความเสี่ยงสำหรับองค์กรปกครองส่วนท้องถิ่น (พร้อมแบบ บส. 1 ถึง แบบ บส. 5)',
     category: 'การบริหารความเสี่ยง (ERM)',
-    pages: '๑๒ หน้า',
+    pages: '12 หน้า',
     fileSize: '805 KB',
     pdfUrl: '/docs/w3482-risk-forms.pdf',
     downloadName: 'หนังสือสั่งการ_มท_ว3482_แนวทางบริหารความเสี่ยง_อปท.pdf',
-    description: 'รวบรวมแนวทางปฏิบัติการประเมินความเสี่ยง การวิเคราะห์ระดับความเสี่ยง ๕x๕ พร้อมตัวอย่างแบบฟอร์ม บส.๑ (ระบุและประเมินความเสี่ยง), บส.๒ (แผนบริหารจัดการความเสี่ยง), บส.๓ (รายงานรอบ ๖ เดือน), บส.๔ (รายงานรอบ ๑๒ เดือน) และ บส.๕ (รายงานภาพรวมระดับ อปท.) พร้อมคำอธิบายหมายเลขกำกับทุกขั้นตอน',
+    description: 'รวบรวมแนวทางปฏิบัติการประเมินความเสี่ยง การวิเคราะห์ระดับความเสี่ยง 5x5 พร้อมตัวอย่างแบบฟอร์ม บส.1 (ระบุและประเมินความเสี่ยง), บส.2 (แผนบริหารจัดการความเสี่ยง), บส.3 (รายงานรอบ 6 เดือน), บส.4 (รายงานรอบ 12 เดือน) และ บส.5 (รายงานภาพรวมระดับ อปท.) พร้อมคำอธิบายหมายเลขกำกับทุกขั้นตอน',
     hasOnlineForm: true,
     onlineFormTab: 'risk-management',
     isOfficial: true
@@ -71,7 +71,7 @@ export default function FormsView({
     title: '',
     topic: '',
     date: '',
-    pages: '๑ หน้า',
+    pages: '1 หน้า',
     fileSize: 'PDF',
     pdfUrl: '',
     description: ''
@@ -154,7 +154,7 @@ export default function FormsView({
       title: '',
       topic: '',
       date: '',
-      pages: '๑ หน้า',
+      pages: '1 หน้า',
       fileSize: 'PDF',
       pdfUrl: '',
       description: ''
@@ -438,7 +438,7 @@ export default function FormsView({
                       onClick={() => setCurrentTab(selectedDoc.onlineFormTab)}
                       className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-bold transition-all cursor-pointer"
                     >
-                      <span>ไปยังระบบกรอกแบบ บส. ๑ - ๕</span>
+                      <span>ไปยังระบบกรอกแบบ บส. 1 - 5</span>
                       <ChevronRight className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                     </button>
                   )}
@@ -468,7 +468,7 @@ export default function FormsView({
 
               <div className="pt-2 text-[11px] text-slate-500 dark:text-slate-400 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                 <div>
-                  💡 <strong>คำแนะนำ:</strong> ตัวอย่างแบบ บส. ๑ ถึง บส. ๕ อยู่ในหน้า ๕ ถึง หน้า ๙ ของเอกสารฉบับนี้
+                  💡 <strong>คำแนะนำ:</strong> ตัวอย่างแบบ บส. 1 ถึง บส. 5 อยู่ในหน้า 5 ถึง หน้า 9 ของเอกสารฉบับนี้
                 </div>
                 <div>
                   หากอุปกรณ์ของท่านไม่แสดงตัวอย่างเอกสาร สามารถคลิก <a href={selectedDoc.pdfUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline font-semibold">เปิดแท็บใหม่</a> หรือ <a href={selectedDoc.pdfUrl} download className="text-emerald-600 dark:text-emerald-400 underline font-semibold">ดาวน์โหลด PDF</a>
@@ -507,7 +507,7 @@ export default function FormsView({
                 <input
                   type="text"
                   required
-                  placeholder="เช่น มท 0808.2/ว 257 หรือ แบบ ปค. ๑"
+                  placeholder="เช่น มท 0808.2/ว 257 หรือ แบบ ปค. 1"
                   value={newDocForm.code}
                   onChange={(e) => setNewDocForm({ ...newDocForm, code: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100"
@@ -548,7 +548,7 @@ export default function FormsView({
                   </label>
                   <input
                     type="text"
-                    placeholder="เช่น ๑๕ มกราคม ๒๕๖๔"
+                    placeholder="เช่น 15 มกราคม 2564"
                     value={newDocForm.date}
                     onChange={(e) => setNewDocForm({ ...newDocForm, date: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100"
@@ -560,7 +560,7 @@ export default function FormsView({
                   </label>
                   <input
                     type="text"
-                    placeholder="เช่น ๔ หน้า (652 KB)"
+                    placeholder="เช่น 4 หน้า (652 KB)"
                     value={newDocForm.pages}
                     onChange={(e) => setNewDocForm({ ...newDocForm, pages: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100"
