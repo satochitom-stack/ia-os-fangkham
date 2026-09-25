@@ -796,7 +796,6 @@ export default function App() {
                 key={`forms-${selectedYear}`}
                 setCurrentTab={setCurrentTab}
                 selectedYear={selectedYear}
-                selectedDepartment={selectedDepartment}
                 orgProfile={orgProfile}
                 session={session}
                 riskManagement={riskManagement}

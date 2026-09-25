@@ -40,9 +40,9 @@ export default function Sidebar({
       pillarTitle: 'การวางแผน & ประเมินความเสี่ยง',
       items: [
         { id: 'dashboard', label: 'ภาพรวม & ปฏิทินงาน', icon: LayoutDashboard },
-        { id: 'audit-risk', label: 'การประเมินความเสี่ยงแผน', icon: ShieldAlert, badge: 'SOFCK' },
+        { id: 'audit-risk', label: 'การประเมินความเสี่ยงแผน', icon: ShieldAlert },
         { id: 'planning', label: 'แผนการตรวจสอบประจำปี', icon: FileText },
-        { id: 'engagement-plan', label: 'แผนปฏิบัติงานตรวจ (ว 614)', icon: Sparkles, badge: 'ว 614' }
+        { id: 'engagement-plan', label: 'แผนปฏิบัติงานตรวจ (ว 614)', icon: Sparkles }
       ]
     },
     {
@@ -55,7 +55,6 @@ export default function Sidebar({
           id: 'audit-toolkits',
           label: 'เครื่องมือช่วยตรวจเชิงเทคนิค',
           icon: Wrench,
-          badge: 'ปี 70 ✨',
           hasSubmenu: true,
           subItems: [
             { toolId: 'factor-f', label: 'ราคากลาง & Factor F', icon: Calculator },
@@ -71,7 +70,7 @@ export default function Sidebar({
       pillarNumber: 'หมวดที่ 3',
       pillarTitle: 'รายงานผล สรุปตรวจพบ & ติดตาม',
       items: [
-        { id: 'reporting', label: 'รายงานผล & ติดตามข้อเสนอแนะ', icon: FileSpreadsheet, badge: '4 องค์ประกอบ' }
+        { id: 'reporting', label: 'รายงานผล & ติดตามข้อเสนอแนะ', icon: FileSpreadsheet }
       ]
     },
     {
@@ -79,9 +78,9 @@ export default function Sidebar({
       pillarNumber: 'หมวดที่ 4',
       pillarTitle: 'ธรรมาภิบาล ควบคุมภายใน & LPA',
       items: [
-        { id: 'internal-control', label: 'การควบคุมภายใน (ปค.4/5)', icon: ShieldCheck, badge: 'กค. 2561' },
-        { id: 'risk-management', label: 'การบริหารความเสี่ยงองค์กร', icon: AlertTriangle, badge: 'บส.1-5' },
-        { id: 'lpa', label: 'เตรียมรับประเมิน LPA', icon: Award, badge: 'ด้านที่ 1' }
+        { id: 'internal-control', label: 'การควบคุมภายใน (ปค.4/5)', icon: ShieldCheck },
+        { id: 'risk-management', label: 'การบริหารความเสี่ยงองค์กร', icon: AlertTriangle },
+        { id: 'lpa', label: 'เตรียมรับประเมิน LPA', icon: Award }
       ]
     },
     {
@@ -90,8 +89,8 @@ export default function Sidebar({
       pillarTitle: 'คลังระเบียบ & บริหารระบบ',
       items: [
         { id: 'knowledge', label: 'คลังระเบียบและกฎหมาย', icon: BookOpen },
-        { id: 'forms', label: 'แบบฟอร์มมาตรฐาน', icon: FileSpreadsheet, badge: 'ว 3482' },
-        { id: 'users', label: 'จัดการผู้ใช้งาน & กำหนดสิทธิ์', icon: Users, adminOnly: true, badge: 'ADMIN' }
+        { id: 'forms', label: 'แบบฟอร์มมาตรฐาน', icon: FileSpreadsheet },
+        { id: 'users', label: 'จัดการผู้ใช้งาน & กำหนดสิทธิ์', icon: Users, adminOnly: true }
       ]
     }
   ];
@@ -130,7 +129,7 @@ export default function Sidebar({
         {/* Welcome / Quick Portal Button */}
         <button
           onClick={() => setCurrentTab('welcome')}
-          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+          className={`w-full flex items-center px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             currentTab === 'welcome'
               ? 'bg-blue-600 text-white shadow-xs'
               : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -140,9 +139,6 @@ export default function Sidebar({
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             <span>หน้าแรก / หน้าต้อนรับ</span>
           </div>
-          <span className="text-[10px] bg-amber-400/20 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 rounded-full font-bold">
-            Portal
-          </span>
         </button>
 
         {/* 5 Grouped Pillars */}
@@ -186,19 +182,8 @@ export default function Sidebar({
                           <span className="truncate text-left">{item.label}</span>
                         </div>
 
-                        <div className="flex items-center space-x-1 shrink-0 ml-1">
-                          {item.badge && (
-                            <span
-                              className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
-                                isActive
-                                  ? 'bg-white/20 text-white'
-                                  : 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800'
-                              }`}
-                            >
-                              {item.badge}
-                            </span>
-                          )}
-                          {hasSubmenu && (
+                        {hasSubmenu && (
+                          <div className="flex items-center space-x-1 shrink-0 ml-1">
                             <button
                               type="button"
                               onClick={(e) => {
@@ -213,8 +198,8 @@ export default function Sidebar({
                                 <ChevronRight className="w-3 h-3 opacity-70" />
                               )}
                             </button>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </button>
 
                       {/* Sub-menu items (สำหรับเมนูเครื่องมือเชิงเทคนิค) */}
