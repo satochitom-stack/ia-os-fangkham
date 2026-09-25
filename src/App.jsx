@@ -19,7 +19,7 @@ import EngagementPlanView from './components/EngagementPlanView';
 import UserManagementView from './components/UserManagementView';
 import TechnicalToolkitsView from './components/TechnicalToolkitsView';
 import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
-import { getSession, logout as authLogout, switchSessionTo, autoRepairDataLinkages } from './utils/auth';
+import { getSession, logout as authLogout, switchSessionTo, autoRepairDataLinkages, getUsers, saveUsers, getDepartments, saveDepartments } from './utils/auth';
 
 import {
   initialOrgProfile,
@@ -538,8 +538,10 @@ export default function App() {
   // Export JSON Backup
   const handleExportBackup = () => {
     const data = {
-      version: '2.3',
+      version: '2.4',
       exportedAt: new Date().toISOString(),
+      users: getUsers(),
+      departments: getDepartments(),
       orgProfile,
       fiscalYears,
       selectedYear,
@@ -564,6 +566,8 @@ export default function App() {
 
   // Import JSON Backup
   const handleImportBackup = (data) => {
+    if (data.users && Array.isArray(data.users)) saveUsers(data.users);
+    if (data.departments && Array.isArray(data.departments)) saveDepartments(data.departments);
     if (data.orgProfile) setOrgProfile(data.orgProfile);
     if (data.fiscalYears) setFiscalYears(data.fiscalYears);
     if (data.auditUniverseByYear) setAuditUniverseByYear(data.auditUniverseByYear);
@@ -601,10 +605,22 @@ export default function App() {
       <WelcomeView
         session={null}
         onLogin={(sess) => {
-          setSession(sess || getSession());
-          setCurrentTab('dashboard');
+          const s = sess || getSession();
+          setSession(s);
+          if (s?.role === 'admin') {
+            setCurrentTab('dashboard');
+          } else {
+            setCurrentTab(s?.permissions?.[0] || 'risk-management');
+          }
         }}
-        onEnterDashboard={() => setCurrentTab('dashboard')}
+        onEnterDashboard={() => {
+          const s = getSession();
+          if (s?.role === 'admin') {
+            setCurrentTab('dashboard');
+          } else {
+            setCurrentTab(s?.permissions?.[0] || 'risk-management');
+          }
+        }}
       />
     );
   }
@@ -613,8 +629,22 @@ export default function App() {
     return (
       <WelcomeView
         session={session}
-        onLogin={(sess) => setSession(sess || getSession())}
-        onEnterDashboard={() => setCurrentTab('dashboard')}
+        onLogin={(sess) => {
+          const s = sess || getSession();
+          setSession(s);
+          if (s?.role === 'admin') {
+            setCurrentTab('dashboard');
+          } else {
+            setCurrentTab(s?.permissions?.[0] || 'risk-management');
+          }
+        }}
+        onEnterDashboard={() => {
+          if (session?.role === 'admin') {
+            setCurrentTab('dashboard');
+          } else {
+            setCurrentTab(session?.permissions?.[0] || 'risk-management');
+          }
+        }}
       />
     );
   }

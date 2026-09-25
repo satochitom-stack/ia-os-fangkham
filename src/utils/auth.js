@@ -251,7 +251,21 @@ export function autoRepairDataLinkages() {
           usersChanged = true;
         }
       }
+
+      // 6. Synchronize default department permissions to only 2 menus: risk-management & forms
+      // (as specified by Admin in the Permissions Matrix: only การบริหารความเสี่ยง and แบบฟอร์มมาตรฐาน)
+      const DEPT_PERMS_V4_KEY = 'ia_dept_perms_v4_twomenus';
+      if (localStorage.getItem(DEPT_PERMS_V4_KEY) !== 'synced') {
+        if (u.role !== 'admin') {
+          u.permissions = ['risk-management', 'forms'];
+          usersChanged = true;
+        }
+      }
     });
+
+    if (localStorage.getItem('ia_dept_perms_v4_twomenus') !== 'synced') {
+      localStorage.setItem('ia_dept_perms_v4_twomenus', 'synced');
+    }
 
     cascadeDepartmentRenameToStorage('กองสาธารณสุขและสิ่งแวดล้อม', 'กองสวัสดิการสังคม');
 
@@ -295,6 +309,11 @@ export function autoRepairDataLinkages() {
         set.add('risk-management');
         currentSession.permissions = Array.from(set);
         sessChanged = true;
+      }
+      if (currentSession.role !== 'admin' && localStorage.getItem('ia_dept_session_v4') !== 'synced') {
+        currentSession.permissions = ['risk-management', 'forms'];
+        sessChanged = true;
+        localStorage.setItem('ia_dept_session_v4', 'synced');
       }
       if (sessChanged) {
         localStorage.setItem(SESSION_KEY, JSON.stringify(currentSession));
@@ -422,7 +441,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองคลัง',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dashboard', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
+    permissions: ['risk-management', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -433,7 +452,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'สำนักปลัด',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dashboard', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
+    permissions: ['risk-management', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -444,7 +463,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองช่าง',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dashboard', 'internal-control', 'risk-management', 'knowledge', 'forms'],
+    permissions: ['risk-management', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -455,7 +474,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองการศึกษา',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dashboard', 'internal-control', 'risk-management', 'knowledge', 'forms'],
+    permissions: ['risk-management', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -466,7 +485,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองสวัสดิการสังคม',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dashboard', 'internal-control', 'risk-management', 'knowledge', 'forms'],
+    permissions: ['risk-management', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   }

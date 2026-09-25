@@ -80,8 +80,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
   const [customDeptName, setCustomDeptName] = useState('');
   const [formPosition, setFormPosition] = useState('');
   const [formRole, setFormRole] = useState('user');
-  const [formPassword, setFormPassword] = useState('');
-  const [formPermissions, setFormPermissions] = useState(['dashboard', 'internal-control', 'risk-management', 'knowledge']);
+  const [formPermissions, setFormPermissions] = useState(['risk-management', 'forms']);
   const [formError, setFormError] = useState('');
 
   // Department Tab States
@@ -247,7 +246,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
     setFormPosition('');
     setFormRole('user');
     setFormPassword('');
-    setFormPermissions(['dashboard', 'internal-control', 'risk-management', 'knowledge']);
+    setFormPermissions(['risk-management', 'forms']);
     setFormError('');
     setShowAddModal(true);
   };
