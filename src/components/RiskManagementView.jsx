@@ -38,6 +38,7 @@ import {
 } from 'lucide-react';
 import { getDepartments, getSession } from '../utils/auth';
 import { exportBsToWord, exportBsToExcel } from '../utils/exportRiskDocs';
+import ConfirmModal from './ConfirmModal';
 import {
   getStandardRisksByDepartment,
   calculateRiskLevel,
@@ -192,6 +193,35 @@ export default function RiskManagementView({
   const [showAuditModal, setShowAuditModal] = useState(false);
   const [showCascadeConfirm, setShowCascadeConfirm] = useState(false);
   const [cascadeSuccessMsg, setCascadeSuccessMsg] = useState('');
+
+  // Reusable Elegant Confirm Modal State
+  const [confirmModalConfig, setConfirmModalConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    confirmText: 'ยืนยัน',
+    cancelText: 'ยกเลิก',
+    isAlert: false,
+    type: 'danger',
+    onConfirm: () => {}
+  });
+
+  const openConfirmModal = (config) => {
+    setConfirmModalConfig({
+      isOpen: true,
+      title: config.title || 'ยืนยันการทำรายการ',
+      message: config.message,
+      confirmText: config.confirmText || 'ยืนยัน',
+      cancelText: config.cancelText !== undefined ? config.cancelText : 'ยกเลิก',
+      isAlert: config.isAlert || false,
+      type: config.type || 'danger',
+      onConfirm: config.onConfirm || (() => {})
+    });
+  };
+
+  const closeConfirmModal = () => {
+    setConfirmModalConfig((prev) => ({ ...prev, isOpen: false }));
+  };
 
   // State for Add Modals
   const [formBs1, setFormBs1] = useState({
@@ -607,7 +637,18 @@ export default function RiskManagementView({
     const stds = getStandardRisksByDepartment(targetDept);
     if (!stds || stds.length === 0) return;
     
-    if (!window.confirm(`คุณต้องการติดตั้งชุดภารกิจและความเสี่ยงมาตรฐาน ว ๓๔๘๒ สำหรับ "${targetDept}" ทั้งหมด ${stds.length} ภารกิจใช่หรือไม่?`)) return;
+    openConfirmModal({
+      title: 'ติดตั้งชุดภารกิจและความเสี่ยงมาตรฐาน ว ๓๔๘๒',
+      message: `คุณต้องการติดตั้งชุดภารกิจและความเสี่ยงมาตรฐาน ว ๓๔๘๒ สำหรับ "${targetDept}" ทั้งหมด ${stds.length} ภารกิจ เข้าสู่แบบฟอร์ม บส.๑ ถึง บส.๕ ใช่หรือไม่?`,
+      confirmText: 'ติดตั้งภารกิจมาตรฐาน',
+      type: 'info',
+      onConfirm: () => {
+        executeDeployFullPackage(targetDept, stds);
+      }
+    });
+  };
+
+  const executeDeployFullPackage = (targetDept, stds) => {
 
     const newBs1Items = [];
     const newBs2Items = [];
@@ -876,21 +917,30 @@ export default function RiskManagementView({
   };
 
   // Delete BS.1
-  const handleDeleteBs1 = (id, riskCode) => {
-    if (!window.confirm('คุณต้องการลบรายการนี้ออกจากระบบบริหารความเสี่ยงใช่หรือไม่?')) return;
-    if (setRiskManagement) {
-      setRiskManagement((prev) => ({
-        ...prev,
-        bs1: (prev?.bs1 || bs1List).filter((item) => item.id !== id && item.riskCode !== riskCode),
-        bs2: (prev?.bs2 || bs2List).filter((item) => item.id !== id && item.riskCode !== riskCode),
-        bs3: (prev?.bs3 || bs3List).filter((item) => item.id !== id && item.riskCode !== riskCode),
-        bs4: (prev?.bs4 || bs4List).filter((item) => item.id !== id && item.riskCode !== riskCode),
-        bs5: {
-          ...bs5Data,
-          items: (bs5Data.items || []).filter((item) => item.id !== id && item.riskCode !== riskCode)
+  const handleDeleteBs1 = (id, riskCode, activityName = '') => {
+    openConfirmModal({
+      title: 'ยืนยันการลบรายการความเสี่ยง',
+      message: `คุณต้องการลบรายการ "${riskCode}${activityName ? ` : ${activityName}` : ''}" ออกจากระบบบริหารความเสี่ยง (แบบ บส.๑ ถึง บส.๕) ใช่หรือไม่?`,
+      confirmText: 'ลบรายการนี้',
+      type: 'danger',
+      onConfirm: () => {
+        if (setRiskManagement) {
+          setRiskManagement((prev) => ({
+            ...prev,
+            bs1: (prev?.bs1 || bs1List).filter((item) => item.id !== id && item.riskCode !== riskCode),
+            bs2: (prev?.bs2 || bs2List).filter((item) => item.id !== id && item.riskCode !== riskCode),
+            bs3: (prev?.bs3 || bs3List).filter((item) => item.id !== id && item.riskCode !== riskCode),
+            bs4: (prev?.bs4 || bs4List).filter((item) => item.id !== id && item.riskCode !== riskCode),
+            bs5: {
+              ...bs5Data,
+              items: (bs5Data.items || []).filter((item) => item.id !== id && item.riskCode !== riskCode)
+            }
+          }));
+          setCascadeSuccessMsg(`ลบรายการ ${riskCode} เรียบร้อยแล้ว`);
+          setTimeout(() => setCascadeSuccessMsg(''), 3000);
         }
-      }));
-    }
+      }
+    });
   };
 
   // Save Edit BS.2
@@ -1457,7 +1507,7 @@ export default function RiskManagementView({
                                   </button>
                                   <button
                                     type="button"
-                                    onClick={() => handleDeleteBs1(item.id, item.riskCode)}
+                                    onClick={() => handleDeleteBs1(item.id, item.riskCode, item.activity)}
                                     className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                                     title="ลบรายการ"
                                   >
@@ -3756,6 +3806,19 @@ export default function RiskManagementView({
           </div>
         </div>
       )}
+
+      {/* Reusable Elegant Confirm Modal */}
+      <ConfirmModal
+        isOpen={confirmModalConfig.isOpen}
+        title={confirmModalConfig.title}
+        message={confirmModalConfig.message}
+        confirmText={confirmModalConfig.confirmText}
+        cancelText={confirmModalConfig.cancelText}
+        isAlert={confirmModalConfig.isAlert}
+        type={confirmModalConfig.type}
+        onConfirm={confirmModalConfig.onConfirm}
+        onClose={closeConfirmModal}
+      />
     </div>
   );
 }

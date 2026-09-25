@@ -13,6 +13,7 @@ import {
   AlertTriangle,
   CheckCircle2
 } from 'lucide-react';
+import ConfirmModal from './ConfirmModal';
 
 export default function ProfileSettingsModal({
   orgProfile,
@@ -30,6 +31,35 @@ export default function ProfileSettingsModal({
   const [newYearInput, setNewYearInput] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+
+  // Reusable Elegant Confirm Modal State
+  const [confirmModalConfig, setConfirmModalConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    confirmText: 'ยืนยัน',
+    cancelText: 'ยกเลิก',
+    isAlert: false,
+    type: 'danger',
+    onConfirm: () => {}
+  });
+
+  const openConfirmModal = (config) => {
+    setConfirmModalConfig({
+      isOpen: true,
+      title: config.title || 'ยืนยันการทำรายการ',
+      message: config.message,
+      confirmText: config.confirmText || 'ยืนยัน',
+      cancelText: config.cancelText !== undefined ? config.cancelText : 'ยกเลิก',
+      isAlert: config.isAlert || false,
+      type: config.type || 'danger',
+      onConfirm: config.onConfirm || (() => {})
+    });
+  };
+
+  const closeConfirmModal = () => {
+    setConfirmModalConfig((prev) => ({ ...prev, isOpen: false }));
+  };
 
   const handleProfileSubmit = (e) => {
     e.preventDefault();
@@ -296,7 +326,16 @@ export default function ProfileSettingsModal({
                     </div>
                     {fiscalYears.length > 1 && (
                       <button
-                        onClick={() => onDeleteYear(yr)}
+                        type="button"
+                        onClick={() => {
+                          openConfirmModal({
+                            title: 'ยืนยันการลบปีงบประมาณ',
+                            message: `คุณต้องการลบปีงบประมาณ พ.ศ. ${yr} ออกจากระบบใช่หรือไม่?`,
+                            confirmText: 'ลบปีงบประมาณนี้',
+                            type: 'danger',
+                            onConfirm: () => onDeleteYear(yr)
+                          });
+                        }}
                         className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1 rounded-md transition-colors cursor-pointer"
                         title="ลบปีนี้ออกจากรายการ"
                       >
@@ -321,12 +360,19 @@ export default function ProfileSettingsModal({
                   ปุ่มนี้จะล้างข้อมูลโครงการตัวอย่าง, ฎีกาสุ่มตรวจตัวอย่าง, และข้อตรวจพบตัวอย่างจากไดรฟ์ D ออกทั้งหมด เพื่อให้คุณเริ่มต้นกรอกข้อมูลงานจริงของ อปท. ของคุณได้อย่างสะอาดและโปร่งใส 100%
                 </p>
                 <button
+                  type="button"
                   onClick={() => {
-                    if (window.confirm('คุณต้องการล้างข้อมูลตัวอย่างทั้งหมดและเริ่มด้วยฐานข้อมูลที่ว่างเปล่าใช่หรือไม่?')) {
-                      onResetData();
-                      setMessage('ล้างข้อมูลตัวอย่างและเริ่มต้นใหม่เรียบร้อยแล้ว');
-                      setTimeout(() => setMessage(''), 3000);
-                    }
+                    openConfirmModal({
+                      title: 'ยืนยันการล้างข้อมูลตัวอย่าง',
+                      message: 'คุณต้องการล้างข้อมูลโครงการตัวอย่างและข้อตรวจพบทั้งหมด เพื่อเริ่มต้นด้วยฐานข้อมูลที่ว่างเปล่าใช่หรือไม่? (การดำเนินการนี้ไม่สามารถย้อนกลับได้)',
+                      confirmText: 'ล้างข้อมูลตัวอย่างเดี๋ยวนี้',
+                      type: 'danger',
+                      onConfirm: () => {
+                        onResetData();
+                        setMessage('ล้างข้อมูลตัวอย่างและเริ่มต้นใหม่เรียบร้อยแล้ว');
+                        setTimeout(() => setMessage(''), 3000);
+                      }
+                    });
                   }}
                   className="mt-2 bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl cursor-pointer flex items-center space-x-1.5"
                 >
@@ -364,6 +410,19 @@ export default function ProfileSettingsModal({
           )}
         </div>
       </div>
+
+      {/* Reusable Elegant Confirm Modal */}
+      <ConfirmModal
+        isOpen={confirmModalConfig.isOpen}
+        title={confirmModalConfig.title}
+        message={confirmModalConfig.message}
+        confirmText={confirmModalConfig.confirmText}
+        cancelText={confirmModalConfig.cancelText}
+        isAlert={confirmModalConfig.isAlert}
+        type={confirmModalConfig.type}
+        onConfirm={confirmModalConfig.onConfirm}
+        onClose={closeConfirmModal}
+      />
     </div>
   );
 }

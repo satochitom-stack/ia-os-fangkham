@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   FolderOpen
 } from 'lucide-react';
+import ConfirmModal from './ConfirmModal';
 
 const INITIAL_DOCUMENTS = [
   {
@@ -78,6 +79,35 @@ export default function FormsView({
 
   const isAdmin = session?.role === 'admin';
 
+  // Reusable Elegant Confirm Modal State
+  const [confirmModalConfig, setConfirmModalConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    confirmText: 'ยืนยัน',
+    cancelText: 'ยกเลิก',
+    isAlert: false,
+    type: 'danger',
+    onConfirm: () => {}
+  });
+
+  const openConfirmModal = (config) => {
+    setConfirmModalConfig({
+      isOpen: true,
+      title: config.title || 'ยืนยันการทำรายการ',
+      message: config.message,
+      confirmText: config.confirmText || 'ยืนยัน',
+      cancelText: config.cancelText !== undefined ? config.cancelText : 'ยกเลิก',
+      isAlert: config.isAlert || false,
+      type: config.type || 'danger',
+      onConfirm: config.onConfirm || (() => {})
+    });
+  };
+
+  const closeConfirmModal = () => {
+    setConfirmModalConfig((prev) => ({ ...prev, isOpen: false }));
+  };
+
   const saveDocsToStorage = (updated) => {
     setDocuments(updated);
     try {
@@ -90,7 +120,13 @@ export default function FormsView({
   const handleAddDocument = (e) => {
     e.preventDefault();
     if (!newDocForm.title || !newDocForm.code) {
-      alert('กรุณากรอกเลขที่หนังสือและชื่อเอกสาร');
+      openConfirmModal({
+        title: 'กรอกข้อมูลไม่ครบถ้วน',
+        message: 'กรุณากรอกเลขที่หนังสือและชื่อเอกสารให้ครบถ้วนก่อนบันทึกเข้าระบบ',
+        confirmText: 'ตกลง',
+        isAlert: true,
+        type: 'warning'
+      });
       return;
     }
 
@@ -125,15 +161,21 @@ export default function FormsView({
     });
   };
 
-  const handleDeleteDoc = (id, e) => {
-    e.stopPropagation();
-    if (confirm('ต้องการลบเอกสารนี้ออกจากระบบหรือไม่?')) {
-      const updated = documents.filter((d) => d.id !== id);
-      saveDocsToStorage(updated);
-      if (selectedDocId === id) {
-        setSelectedDocId(null);
+  const handleDeleteDoc = (id, e, docTitle = '') => {
+    if (e) e.stopPropagation();
+    openConfirmModal({
+      title: 'ยืนยันการลบแบบฟอร์ม',
+      message: `คุณต้องการลบเอกสาร "${docTitle || 'นี้'}" ออกจากคลังแบบฟอร์มใช่หรือไม่?`,
+      confirmText: 'ลบเอกสารนี้',
+      type: 'danger',
+      onConfirm: () => {
+        const updated = documents.filter((d) => d.id !== id);
+        saveDocsToStorage(updated);
+        if (selectedDocId === id) {
+          setSelectedDocId(null);
+        }
       }
-    }
+    });
   };
 
   const filteredDocs = documents.filter((doc) => {
@@ -292,7 +334,7 @@ export default function FormsView({
                           {isAdmin && !doc.isOfficial && (
                             <button
                               type="button"
-                              onClick={(e) => handleDeleteDoc(doc.id, e)}
+                              onClick={(e) => handleDeleteDoc(doc.id, e, doc.title)}
                               className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
                               title="ลบเอกสารนี้"
                             >
@@ -638,6 +680,19 @@ export default function FormsView({
           </div>
         </div>
       )}
+
+      {/* Reusable Elegant Confirm Modal */}
+      <ConfirmModal
+        isOpen={confirmModalConfig.isOpen}
+        title={confirmModalConfig.title}
+        message={confirmModalConfig.message}
+        confirmText={confirmModalConfig.confirmText}
+        cancelText={confirmModalConfig.cancelText}
+        isAlert={confirmModalConfig.isAlert}
+        type={confirmModalConfig.type}
+        onConfirm={confirmModalConfig.onConfirm}
+        onClose={closeConfirmModal}
+      />
     </div>
   );
 }

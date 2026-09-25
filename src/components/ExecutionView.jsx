@@ -649,8 +649,12 @@ export default function ExecutionView({
             * ข้อมูลข้อตรวจพบนี้จะถูกดึงไปจัดทำรายงานผลการตรวจสอบอัตโนมัติในโมดูลถัดไป
           </span>
           <button
-            onClick={() => alert('บันทึกกระดาษทำการเรียบร้อยแล้ว')}
-            className="no-print bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2 rounded-xl cursor-pointer"
+            type="button"
+            onClick={() => {
+              setAutoFindingToast('✓ บันทึกข้อมูลกระดาษทำการเรียบร้อยแล้ว');
+              setTimeout(() => setAutoFindingToast(''), 3000);
+            }}
+            className="no-print bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2 rounded-xl cursor-pointer transition-colors shadow-xs"
           >
             บันทึกกระดาษทำการ
           </button>

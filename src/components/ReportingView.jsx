@@ -12,6 +12,7 @@ import {
   Plus,
   Trash2
 } from 'lucide-react';
+import ConfirmModal from './ConfirmModal';
 
 export default function ReportingView({
   orgProfile,
@@ -95,8 +96,45 @@ export default function ReportingView({
     });
   };
 
-  const handleDeleteFollowup = (id) => {
-    setFollowupItems(followupItems.filter((f) => f.id !== id));
+  // Reusable Elegant Confirm Modal State
+  const [confirmModalConfig, setConfirmModalConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    confirmText: 'ยืนยัน',
+    cancelText: 'ยกเลิก',
+    isAlert: false,
+    type: 'danger',
+    onConfirm: () => {}
+  });
+
+  const openConfirmModal = (config) => {
+    setConfirmModalConfig({
+      isOpen: true,
+      title: config.title || 'ยืนยันการทำรายการ',
+      message: config.message,
+      confirmText: config.confirmText || 'ยืนยัน',
+      cancelText: config.cancelText !== undefined ? config.cancelText : 'ยกเลิก',
+      isAlert: config.isAlert || false,
+      type: config.type || 'danger',
+      onConfirm: config.onConfirm || (() => {})
+    });
+  };
+
+  const closeConfirmModal = () => {
+    setConfirmModalConfig((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  const handleDeleteFollowup = (id, topicName = '') => {
+    openConfirmModal({
+      title: 'ยืนยันการลบรายการติดตามผล',
+      message: `คุณต้องการลบรายการข้อเสนอแนะ "${topicName || 'นี้'}" ออกจากรายงานการติดตามผล ใช่หรือไม่?`,
+      confirmText: 'ลบรายการนี้',
+      type: 'danger',
+      onConfirm: () => {
+        setFollowupItems(followupItems.filter((f) => f.id !== id));
+      }
+    });
   };
 
   const reportTitle = currentWp.topic || 'รายงานผลการตรวจสอบภายใน';
@@ -392,7 +430,8 @@ export default function ReportingView({
                         </select>
 
                         <button
-                          onClick={() => handleDeleteFollowup(item.id)}
+                          type="button"
+                          onClick={() => handleDeleteFollowup(item.id, item.topic || item.recommendation)}
                           className="text-slate-400 hover:text-rose-600 p-1 rounded transition-colors cursor-pointer"
                           title="ลบรายการนี้"
                         >
@@ -513,6 +552,19 @@ export default function ReportingView({
           )}
         </div>
       )}
+
+      {/* Reusable Elegant Confirm Modal */}
+      <ConfirmModal
+        isOpen={confirmModalConfig.isOpen}
+        title={confirmModalConfig.title}
+        message={confirmModalConfig.message}
+        confirmText={confirmModalConfig.confirmText}
+        cancelText={confirmModalConfig.cancelText}
+        isAlert={confirmModalConfig.isAlert}
+        type={confirmModalConfig.type}
+        onConfirm={confirmModalConfig.onConfirm}
+        onClose={closeConfirmModal}
+      />
     </div>
   );
 }

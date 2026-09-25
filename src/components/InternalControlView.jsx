@@ -12,6 +12,7 @@ import {
   FileText
 } from 'lucide-react';
 import { getDepartments } from '../utils/auth';
+import ConfirmModal from './ConfirmModal';
 
 export default function InternalControlView({
   internalControls,
@@ -52,13 +53,50 @@ export default function InternalControlView({
     setShowAddModal(false);
   };
 
-  const handleDeletePk4 = (id) => {
-    if (setInternalControls) {
-      setInternalControls((prev) => ({
-        ...prev,
-        pk4: (prev?.pk4 || []).filter((item, index) => item.id !== id && index !== id)
-      }));
-    }
+  // Reusable Elegant Confirm Modal State
+  const [confirmModalConfig, setConfirmModalConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    confirmText: 'ยืนยัน',
+    cancelText: 'ยกเลิก',
+    isAlert: false,
+    type: 'danger',
+    onConfirm: () => {}
+  });
+
+  const openConfirmModal = (config) => {
+    setConfirmModalConfig({
+      isOpen: true,
+      title: config.title || 'ยืนยันการทำรายการ',
+      message: config.message,
+      confirmText: config.confirmText || 'ยืนยัน',
+      cancelText: config.cancelText !== undefined ? config.cancelText : 'ยกเลิก',
+      isAlert: config.isAlert || false,
+      type: config.type || 'danger',
+      onConfirm: config.onConfirm || (() => {})
+    });
+  };
+
+  const closeConfirmModal = () => {
+    setConfirmModalConfig((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  const handleDeletePk4 = (id, processName = '') => {
+    openConfirmModal({
+      title: 'ยืนยันการลบรายการควบคุมภายใน (ปค.๔)',
+      message: `คุณต้องการลบรายการกระบวนการ "${processName || 'นี้'}" ออกจากรายงาน ปค.๔ ใช่หรือไม่?`,
+      confirmText: 'ลบรายการนี้',
+      type: 'danger',
+      onConfirm: () => {
+        if (setInternalControls) {
+          setInternalControls((prev) => ({
+            ...prev,
+            pk4: (prev?.pk4 || []).filter((item, index) => item.id !== id && index !== id)
+          }));
+        }
+      }
+    });
   };
 
   const pk4List = internalControls?.pk4 || [];
@@ -216,7 +254,7 @@ export default function InternalControlView({
                           <td className="px-3 py-3 text-center align-top no-print">
                             <button
                               type="button"
-                              onClick={() => handleDeletePk4(item.id || idx)}
+                              onClick={() => handleDeletePk4(item.id || idx, item.process)}
                               className="text-slate-400 hover:text-rose-600 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                               title="ลบรายการ"
                             >
@@ -441,6 +479,19 @@ export default function InternalControlView({
           </div>
         </div>
       )}
+
+      {/* Reusable Elegant Confirm Modal */}
+      <ConfirmModal
+        isOpen={confirmModalConfig.isOpen}
+        title={confirmModalConfig.title}
+        message={confirmModalConfig.message}
+        confirmText={confirmModalConfig.confirmText}
+        cancelText={confirmModalConfig.cancelText}
+        isAlert={confirmModalConfig.isAlert}
+        type={confirmModalConfig.type}
+        onConfirm={confirmModalConfig.onConfirm}
+        onClose={closeConfirmModal}
+      />
     </div>
   );
 }
