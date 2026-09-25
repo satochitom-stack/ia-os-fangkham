@@ -89,7 +89,8 @@ export default function Sidebar({
       pillarNumber: 'หมวดที่ 5',
       pillarTitle: 'คลังระเบียบ & บริหารระบบ',
       items: [
-        { id: 'knowledge', label: 'คลังระเบียบ & แบบฟอร์ม', icon: BookOpen },
+        { id: 'knowledge', label: 'คลังระเบียบและกฎหมาย', icon: BookOpen },
+        { id: 'forms', label: 'แบบฟอร์มมาตรฐาน', icon: FileSpreadsheet, badge: 'ว 3482' },
         { id: 'users', label: 'จัดการผู้ใช้งาน & กำหนดสิทธิ์', icon: Users, adminOnly: true, badge: 'ADMIN' }
       ]
     }

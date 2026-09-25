@@ -9,6 +9,7 @@ import InternalControlView from './components/InternalControlView';
 import RiskManagementView from './components/RiskManagementView';
 import LpaView from './components/LpaView';
 import KnowledgeView from './components/KnowledgeView';
+import FormsView from './components/FormsView';
 import LoginView from './components/LoginView';
 import WelcomeView from './components/WelcomeView';
 import ChangePasswordModal from './components/ChangePasswordModal';
@@ -787,6 +788,18 @@ export default function App() {
                 selectedYear={selectedYear}
                 knowledgeBase={knowledgeBase}
                 orgProfile={orgProfile}
+              />
+            )}
+
+            {currentTab === 'forms' && (
+              <FormsView
+                key={`forms-${selectedYear}`}
+                setCurrentTab={setCurrentTab}
+                selectedYear={selectedYear}
+                selectedDepartment={selectedDepartment}
+                orgProfile={orgProfile}
+                session={session}
+                riskManagement={riskManagement}
               />
             )}
 

@@ -746,6 +746,17 @@ export default function RiskManagementView({
         </div>
 
         <div className="flex flex-wrap items-center gap-2 self-start md:self-auto shrink-0 no-print">
+          <a
+            href="/docs/w3482-risk-forms.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 text-xs font-bold px-3 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 transition-all cursor-pointer"
+            title="เปิดดูหนังสือสั่งการ มท 0805.2/ว 3482 ฉบับจริง (PDF 12 หน้า)"
+          >
+            <FileText className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+            <span>เปิด PDF ว ๓๔๘๒</span>
+          </a>
+
           <button
             type="button"
             onClick={() => setShowGuide(!showGuide)}
@@ -1126,7 +1137,7 @@ export default function RiskManagementView({
             {/* Official Signature Section */}
             <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-6">
               <div className="w-72 text-center space-y-2 print:text-xs">
-                <div>ลายมือชื่อ...................................................(๑๐)</div>
+                <div>ลายมือชื่อ...................................................</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
@@ -1138,7 +1149,7 @@ export default function RiskManagementView({
                     <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
                   </>
                 )}
-                <div>วันที่ (๑๒)......................................................</div>
+                <div>วันที่......................................................</div>
               </div>
             </div>
           </div>
@@ -1278,7 +1289,7 @@ export default function RiskManagementView({
             {/* Official Signature Section */}
             <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-6">
               <div className="w-72 text-center space-y-2 print:text-xs">
-                <div>ลายมือชื่อ...................................................(๑๓)</div>
+                <div>ลายมือชื่อ...................................................</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
@@ -1290,7 +1301,7 @@ export default function RiskManagementView({
                     <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
                   </>
                 )}
-                <div>วันที่ (๑๕)......................................................</div>
+                <div>วันที่......................................................</div>
               </div>
             </div>
           </div>
@@ -1421,7 +1432,7 @@ export default function RiskManagementView({
             {/* Official Signature Section */}
             <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-6">
               <div className="w-72 text-center space-y-2 print:text-xs">
-                <div>ลายมือชื่อ...................................................(๑๒)</div>
+                <div>ลายมือชื่อ...................................................</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
@@ -1433,7 +1444,7 @@ export default function RiskManagementView({
                     <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
                   </>
                 )}
-                <div>วันที่ (๑๔)......................................................</div>
+                <div>วันที่......................................................</div>
               </div>
             </div>
           </div>
@@ -1603,7 +1614,7 @@ export default function RiskManagementView({
             {/* Official Signature Section */}
             <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-6">
               <div className="w-72 text-center space-y-2 print:text-xs">
-                <div>ลายมือชื่อ...................................................(๑๒)</div>
+                <div>ลายมือชื่อ...................................................</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
@@ -1615,7 +1626,7 @@ export default function RiskManagementView({
                     <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
                   </>
                 )}
-                <div>วันที่ (๑๔)......................................................</div>
+                <div>วันที่......................................................</div>
               </div>
             </div>
           </div>
@@ -1822,7 +1833,7 @@ export default function RiskManagementView({
             {/* Official Signature Section */}
             <div className="p-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-6">
               <div className="w-72 text-center space-y-2 print:text-xs">
-                <div>ลายมือชื่อ...................................................(๑๔)</div>
+                <div>ลายมือชื่อ...................................................</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
@@ -1834,7 +1845,7 @@ export default function RiskManagementView({
                     <div>ตำแหน่ง {bs5Data.approverPosition || orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
                   </>
                 )}
-                <div>วันที่รายงาน (๑๖) {bs5Data.reportDate || `......................................................`}</div>
+                <div>วันที่รายงาน {bs5Data.reportDate || `......................................................`}</div>
               </div>
             </div>
           </div>

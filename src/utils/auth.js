@@ -398,7 +398,8 @@ export const ALL_MENU_IDS = [
   { id: 'internal-control', label: 'การควบคุมภายใน', icon: 'ShieldCheck', desc: 'บันทึกแบบ ปค.1, ปค.4, ปค.5 ตามหลักเกณฑ์ กค. พ.ศ. 2561 ของแต่ละกอง' },
   { id: 'risk-management', label: 'การบริหารความเสี่ยง', icon: 'AlertTriangle', desc: 'บันทึกแบบ บส.1 - บส.5 และ Matrix ระดับความเสี่ยง 5x5 ของแต่ละกอง' },
   { id: 'lpa', label: 'เตรียมรับประเมิน LPA', icon: 'Award', desc: 'เช็กลิสต์และหลักฐานเตรียมรับประเมิน LPA' },
-  { id: 'knowledge', label: 'คลังระเบียบ & แบบฟอร์ม', icon: 'BookOpen', desc: 'ดาวน์โหลดระเบียบ หนังสือสั่งการ และแบบฟอร์ม' },
+  { id: 'knowledge', label: 'คลังระเบียบและกฎหมาย', icon: 'BookOpen', desc: 'สืบค้นระเบียบกระทรวงมหาดไทย พ.ร.บ. และหนังสือสั่งการ' },
+  { id: 'forms', label: 'แบบฟอร์มมาตรฐาน', icon: 'FileSpreadsheet', desc: 'เปิดดูและดาวน์โหลดแบบฟอร์ม บส.๑-๕ ตาม ว 3482, ปค. และเอกสารตรวจสอบ' },
   { id: 'users', label: 'จัดการผู้ใช้งาน & กำหนดสิทธิ์', icon: 'Users', desc: 'จัดการบัญชีกองและกำหนดสิทธิ์การมองเห็นเมนู (ADMIN Only)' }
 ];
 
@@ -421,7 +422,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองคลัง',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dashboard', 'internal-control', 'risk-management', 'lpa', 'knowledge'],
+    permissions: ['dashboard', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -432,7 +433,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'สำนักปลัด',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dashboard', 'internal-control', 'risk-management', 'lpa', 'knowledge'],
+    permissions: ['dashboard', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -443,7 +444,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองช่าง',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dashboard', 'internal-control', 'risk-management', 'knowledge'],
+    permissions: ['dashboard', 'internal-control', 'risk-management', 'knowledge', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -454,7 +455,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองการศึกษา',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dashboard', 'internal-control', 'risk-management', 'knowledge'],
+    permissions: ['dashboard', 'internal-control', 'risk-management', 'knowledge', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -465,7 +466,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองสวัสดิการสังคม',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dashboard', 'internal-control', 'risk-management', 'knowledge'],
+    permissions: ['dashboard', 'internal-control', 'risk-management', 'knowledge', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   }
@@ -526,6 +527,13 @@ export function getUsers() {
               u.displayName = 'กองสวัสดิการสังคม';
             }
             changed = true;
+          }
+          // Auto-grant 'forms' permission if user has 'knowledge'
+          if (u.permissions && Array.isArray(u.permissions)) {
+            if (u.permissions.includes('knowledge') && !u.permissions.includes('forms')) {
+              u.permissions.push('forms');
+              changed = true;
+            }
           }
         });
         if (changed) {
@@ -742,6 +750,11 @@ export function getSession() {
     if (session.expiresAt && Date.now() > session.expiresAt) {
       localStorage.removeItem(SESSION_KEY);
       return null;
+    }
+    if (session.permissions && Array.isArray(session.permissions)) {
+      if (session.permissions.includes('knowledge') && !session.permissions.includes('forms')) {
+        session.permissions.push('forms');
+      }
     }
     return session;
   } catch {

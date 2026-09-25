@@ -161,11 +161,11 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
     if (presetType === 'all') {
       perms = ALL_MENU_IDS.map((m) => m.id);
     } else if (presetType === 'control_only') {
-      perms = ['dashboard', 'internal-control', 'risk-management', 'knowledge'];
+      perms = ['dashboard', 'internal-control', 'risk-management', 'knowledge', 'forms'];
     } else if (presetType === 'control_lpa') {
-      perms = ['dashboard', 'internal-control', 'risk-management', 'lpa', 'knowledge'];
+      perms = ['dashboard', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
     } else if (presetType === 'read_only') {
-      perms = ['dashboard', 'knowledge'];
+      perms = ['dashboard', 'knowledge', 'forms'];
     }
 
     setPendingPermissions((prev) => ({
