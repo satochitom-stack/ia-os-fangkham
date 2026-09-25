@@ -30,7 +30,9 @@ import {
   initialWorkingPapers2570,
   initialRiskAssessments,
   initialInternalControls,
+  createEmptyInternalControls,
   initialRiskManagement,
+  createEmptyRiskManagement,
   initialLpaIndicators,
   initialKnowledgeBase
 } from './data/initialData';
@@ -206,12 +208,12 @@ export default function App() {
       }
       const old = localStorage.getItem('ia_internal_controls');
       if (old) {
-        return { '2569': JSON.parse(old) };
+        return { '2569': JSON.parse(old), '2570': createEmptyInternalControls() };
       }
     } catch (e) {
       console.error(e);
     }
-    return { '2569': initialInternalControls };
+    return { '2569': initialInternalControls, '2570': createEmptyInternalControls() };
   });
 
   const [riskManagementByYear, setRiskManagementByYear] = useState(() => {
@@ -220,12 +222,21 @@ export default function App() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (!parsed['2569'] && parsed['2568']) parsed['2569'] = parsed['2568'];
+        // Detect if 2570 was poisoned with exact duplicate of 2569 seed data
+        if (parsed['2570']?.bs1?.length === 5 && parsed['2570'].bs1[0]?.id === 'BS1-01' && parsed['2570'].bs1[0]?.riskCode === 'RSK-01') {
+          parsed['2570'] = createEmptyRiskManagement();
+          try {
+            localStorage.setItem('ia_risk_management_by_year', JSON.stringify(parsed));
+          } catch (err) {
+            console.error(err);
+          }
+        }
         return parsed;
       }
     } catch (e) {
       console.error(e);
     }
-    return { '2569': initialRiskManagement, '2570': initialRiskManagement };
+    return { '2569': initialRiskManagement, '2570': createEmptyRiskManagement() };
   });
 
   const [lpaIndicatorsByYear, setLpaIndicatorsByYear] = useState(() => {
@@ -419,19 +430,19 @@ export default function App() {
     });
   };
 
-  const internalControls = internalControlsByYear[selectedYear] || initialInternalControls;
+  const internalControls = internalControlsByYear[selectedYear] || (selectedYear === '2569' ? initialInternalControls : createEmptyInternalControls());
   const setInternalControls = (updaterOrValue) => {
     setInternalControlsByYear((prev) => {
-      const current = prev[selectedYear] || initialInternalControls;
+      const current = prev[selectedYear] || (selectedYear === '2569' ? initialInternalControls : createEmptyInternalControls());
       const updated = typeof updaterOrValue === 'function' ? updaterOrValue(current) : updaterOrValue;
       return { ...prev, [selectedYear]: updated };
     });
   };
 
-  const riskManagement = riskManagementByYear[selectedYear] || initialRiskManagement;
+  const riskManagement = riskManagementByYear[selectedYear] || (selectedYear === '2569' ? initialRiskManagement : createEmptyRiskManagement());
   const setRiskManagement = (updaterOrValue) => {
     setRiskManagementByYear((prev) => {
-      const current = prev[selectedYear] || initialRiskManagement;
+      const current = prev[selectedYear] || (selectedYear === '2569' ? initialRiskManagement : createEmptyRiskManagement());
       const updated = typeof updaterOrValue === 'function' ? updaterOrValue(current) : updaterOrValue;
       return { ...prev, [selectedYear]: updated };
     });
@@ -465,6 +476,23 @@ export default function App() {
       const updated = [...fiscalYears, newYear].sort();
       setFiscalYears(updated);
       setSelectedYear(newYear);
+      // Pre-seed clean empty structures for new fiscal year
+      setRiskManagementByYear((prev) => ({
+        ...prev,
+        [newYear]: createEmptyRiskManagement()
+      }));
+      setInternalControlsByYear((prev) => ({
+        ...prev,
+        [newYear]: createEmptyInternalControls()
+      }));
+      setAnnualPlansByYear((prev) => ({
+        ...prev,
+        [newYear]: []
+      }));
+      setRiskAssessmentsByYear((prev) => ({
+        ...prev,
+        [newYear]: []
+      }));
     }
   };
 

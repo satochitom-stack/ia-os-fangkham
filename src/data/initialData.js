@@ -520,6 +520,32 @@ export const initialWorkingPapers2570 = [
 export const initialRiskAssessments = [];
 
 // รายการประเมินการควบคุมภายในตามมาตรฐานกระทรวงการคลัง พ.ศ. 2561 (ปค.1, ปค.4, ปค.5)
+export const createEmptyInternalControls = () => ({
+  pk1: {
+    status: 'ยังไม่ได้รับรอง',
+    docNo: '',
+    signDate: '',
+    signer: '',
+    position: ''
+  },
+  pk4: [],
+  pk5: []
+});
+
+export const createEmptyRiskManagement = () => ({
+  bs1: [],
+  bs2: [],
+  bs3: [],
+  bs4: [],
+  bs5: {
+    period: 'รอบ 12 เดือน',
+    evaluator: 'คณะทำงานบริหารจัดการความเสี่ยง อปท.',
+    evaluationDate: '',
+    summaryNotes: '',
+    items: []
+  }
+});
+
 export const initialInternalControls = {
   pk1: {
     status: 'รับรองระบบเรียบร้อย',

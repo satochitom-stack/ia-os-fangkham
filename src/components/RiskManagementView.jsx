@@ -634,6 +634,34 @@ export default function RiskManagementView({
     setTimeout(() => setCascadeSuccessMsg(''), 4000);
   };
 
+  // Copy risk management data from year 2569 to current year
+  const handleCopyFromPreviousYear = () => {
+    try {
+      const raw = localStorage.getItem('ia_risk_management_by_year');
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      const sourceData = parsed['2569'];
+      if (!sourceData || !sourceData.bs1 || sourceData.bs1.length === 0) return;
+
+      openConfirmModal({
+        title: 'คัดลอกข้อมูลความเสี่ยงจากปี พ.ศ. 2569',
+        message: `ต้องการคัดลอกชุดข้อมูลความเสี่ยง (แบบ บส. 1 ถึง บส. 5) จากปีงบประมาณ 2569 มาเริ่มต้นเป็นข้อมูลของปีงบประมาณ ${selectedYear} หรือไม่?`,
+        confirmText: 'คัดลอกข้อมูล',
+        type: 'info',
+        onConfirm: () => {
+          const copied = JSON.parse(JSON.stringify(sourceData));
+          if (setRiskManagement) {
+            setRiskManagement(copied);
+          }
+          setCascadeSuccessMsg(`📋 คัดลอกข้อมูลความเสี่ยงจากปี 2569 มายังปี ${selectedYear} เรียบร้อยแล้ว`);
+          setTimeout(() => setCascadeSuccessMsg(''), 4000);
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   // Deploy all standard risks for selected department
   const handleDeployFullPackage = (targetDept) => {
     const deptToDeploy = isAdmin ? targetDept : userDept;
@@ -1457,12 +1485,46 @@ export default function RiskManagementView({
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredBs1.length === 0 ? (
                     <tr>
-                      <td colSpan={9} className="px-4 py-10 text-center text-slate-400">
-                        ไม่พบข้อมูลในแบบ บส. 1 {filterDept !== 'all' ? `ของ "${filterDept}"` : ''} 
-                        <br />
-                        <span className="text-[11px] text-slate-400 mt-1 inline-block">
-                          คลิกปุ่ม "+ กำหนดความเสี่ยงใหม่ (บส.1)" เพื่อกรอกข้อมูลตามหนังสือสั่งการ
-                        </span>
+                      <td colSpan={setRiskManagement ? 10 : 9} className="px-4 py-12 text-center text-slate-500 dark:text-slate-400">
+                        <div className="max-w-md mx-auto flex flex-col items-center">
+                          <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center text-2xl mb-3">
+                            📋
+                          </div>
+                          <div className="font-semibold text-slate-700 dark:text-slate-200 text-base">
+                            ยังไม่มีข้อมูลความเสี่ยง (แบบ บส. 1) ประจำปีงบประมาณ {selectedYear}
+                            {filterDept !== 'all' ? ` ของ "${filterDept}"` : ''}
+                          </div>
+                          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 mb-4">
+                            ท่านสามารถเริ่มกำหนดความเสี่ยงใหม่, ใช้ระบบผู้ช่วยวิเคราะห์ ว 3482 หรือคัดลอกจากปี 2569 ได้
+                          </p>
+                          <div className="flex flex-wrap items-center justify-center gap-2">
+                            {setRiskManagement && (
+                              <button
+                                type="button"
+                                onClick={() => setShowAddModal(true)}
+                                className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5"
+                              >
+                                <span>+</span> กำหนดความเสี่ยงใหม่ (บส.1)
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => setShowSmartAssistant(true)}
+                              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5"
+                            >
+                              <span>✨</span> ผู้ช่วยวิเคราะห์ (ว 3482)
+                            </button>
+                            {selectedYear !== '2569' && setRiskManagement && (
+                              <button
+                                type="button"
+                                onClick={handleCopyFromPreviousYear}
+                                className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold border border-slate-300 dark:border-slate-700 transition-all flex items-center gap-1.5"
+                              >
+                                <span>📥</span> คัดลอกข้อมูลจากปี 2569
+                              </button>
+                            )}
+                          </div>
+                        </div>
                       </td>
                     </tr>
                   ) : (
@@ -2254,9 +2316,10 @@ export default function RiskManagementView({
 
       {/* Modal: Add BS.1 */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 max-w-2xl w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            {/* Header - Pinned */}
+            <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900 shrink-0 rounded-t-2xl z-10">
               <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                 <Plus className="w-4 h-4 text-blue-600" />
                 <span>กำหนดขอบเขตและระบุความเสี่ยงใหม่ (แบบ บส. 1)</span>
@@ -2264,13 +2327,14 @@ export default function RiskManagementView({
               <button
                 type="button"
                 onClick={() => setShowAddModal(false)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1 rounded-lg"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                title="ปิดหน้าต่าง"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleAddBs1} className="space-y-3.5 text-xs">
+            <form onSubmit={handleAddBs1} className="p-5 sm:p-6 overflow-y-auto space-y-3.5 text-xs flex-1">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
@@ -2387,7 +2451,7 @@ export default function RiskManagementView({
                         }));
                       }
                     }}
-                    className="text-[11px] font-bold text-indigo-700 dark:text-indigo-300 hover:text-indigo-800 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 px-2 py-0.5 rounded-lg border border-indigo-200 dark:border-indigo-800 flex items-center space-x-1 cursor-pointer transition-all"
+                    className="text-[11px] font-bold text-indigo-700 dark:text-indigo-300 hover:text-indigo-800 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 px-2 py-0.5 rounded-lg border border-indigo-200 dark:border-indigo-800 flex items-space-x-1 cursor-pointer transition-all"
                     title="วิเคราะห์และแนะนำข้อมูลตามคำสำคัญของชื่อโครงการ"
                   >
                     <Sparkles className="w-3 h-3 text-indigo-600" />
@@ -2474,7 +2538,7 @@ export default function RiskManagementView({
                 />
               </div>
 
-              <div className="flex justify-end space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex justify-end space-x-2 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
@@ -2496,9 +2560,10 @@ export default function RiskManagementView({
 
       {/* Modal: Edit BS.1 */}
       {editingBs1 && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 max-w-2xl w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            {/* Header - Pinned */}
+            <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900 shrink-0 rounded-t-2xl z-10">
               <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                 <Pencil className="w-4 h-4 text-blue-600" />
                 <span>แก้ไขข้อมูลกำหนดขอบเขตความเสี่ยง (แบบ บส. 1)</span>
@@ -2506,13 +2571,14 @@ export default function RiskManagementView({
               <button
                 type="button"
                 onClick={() => setEditingBs1(null)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1 rounded-lg"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                title="ปิดหน้าต่าง"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveEditBs1} className="space-y-3.5 text-xs">
+            <form onSubmit={handleSaveEditBs1} className="p-5 sm:p-6 overflow-y-auto space-y-3.5 text-xs flex-1">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
@@ -2730,9 +2796,10 @@ export default function RiskManagementView({
 
       {/* Modal: Edit BS.2 */}
       {editingBs2 && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 max-w-xl w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-xl w-full shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            {/* Header - Pinned */}
+            <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900 shrink-0 rounded-t-2xl z-10">
               <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                 <Pencil className="w-4 h-4 text-blue-600" />
                 <span>วิเคราะห์โอกาส ผลกระทบ และการตอบสนองความเสี่ยง (แบบ บส. 2)</span>
@@ -2740,13 +2807,14 @@ export default function RiskManagementView({
               <button
                 type="button"
                 onClick={() => setEditingBs2(null)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1 rounded-lg"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                title="ปิดหน้าต่าง"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveEditBs2} className="space-y-3.5 text-xs">
+            <form onSubmit={handleSaveEditBs2} className="p-5 sm:p-6 overflow-y-auto space-y-3.5 text-xs flex-1">
               <div className="p-3 rounded-xl bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 space-y-1">
                 <div className="flex justify-between items-center text-[11px] font-bold text-blue-800 dark:text-blue-300">
                   <span>รหัส: {editingBs2.riskCode}</span>
@@ -2884,9 +2952,10 @@ export default function RiskManagementView({
 
       {/* Modal: Edit BS.3 */}
       {editingBs3 && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 max-w-xl w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-xl w-full shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            {/* Header - Pinned */}
+            <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900 shrink-0 rounded-t-2xl z-10">
               <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                 <Pencil className="w-4 h-4 text-blue-600" />
                 <span>แก้ไขรายงานการจัดทำแผนบริหารความเสี่ยง (แบบ บส. 3)</span>
@@ -2894,13 +2963,14 @@ export default function RiskManagementView({
               <button
                 type="button"
                 onClick={() => setEditingBs3(null)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1 rounded-lg"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                title="ปิดหน้าต่าง"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveEditBs3} className="space-y-3.5 text-xs">
+            <form onSubmit={handleSaveEditBs3} className="p-5 sm:p-6 overflow-y-auto space-y-3.5 text-xs flex-1">
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 space-y-1">
                 <div className="flex justify-between items-center text-[11px] font-bold text-blue-700">
                   <span>รหัส: {editingBs3.riskCode}</span>
@@ -3015,9 +3085,10 @@ export default function RiskManagementView({
 
       {/* Modal: Edit BS.4 */}
       {editingBs4 && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 max-w-xl w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-xl w-full shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            {/* Header - Pinned */}
+            <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900 shrink-0 rounded-t-2xl z-10">
               <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                 <Pencil className="w-4 h-4 text-blue-600" />
                 <span>แก้ไขรายงานการติดตามผลการบริหารความเสี่ยง (แบบ บส. 4)</span>
@@ -3025,13 +3096,14 @@ export default function RiskManagementView({
               <button
                 type="button"
                 onClick={() => setEditingBs4(null)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1 rounded-lg"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                title="ปิดหน้าต่าง"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveEditBs4} className="space-y-3.5 text-xs">
+            <form onSubmit={handleSaveEditBs4} className="p-5 sm:p-6 overflow-y-auto space-y-3.5 text-xs flex-1">
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 space-y-1">
                 <div className="flex justify-between items-center text-[11px] font-bold text-blue-700">
                   <span>รหัส: {editingBs4.riskCode}</span>
@@ -3133,9 +3205,10 @@ export default function RiskManagementView({
 
       {/* Modal: Edit BS.5 Row */}
       {editingBs5 && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 max-w-xl w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-xl w-full shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            {/* Header - Pinned */}
+            <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900 shrink-0 rounded-t-2xl z-10">
               <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                 <Pencil className="w-4 h-4 text-blue-600" />
                 <span>ทบทวนผลการดำเนินการและระดับความเสี่ยง (แบบ บส. 5)</span>
@@ -3143,13 +3216,14 @@ export default function RiskManagementView({
               <button
                 type="button"
                 onClick={() => setEditingBs5(null)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1 rounded-lg"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                title="ปิดหน้าต่าง"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveEditBs5} className="space-y-3.5 text-xs">
+            <form onSubmit={handleSaveEditBs5} className="p-5 sm:p-6 overflow-y-auto space-y-3.5 text-xs flex-1">
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 space-y-1">
                 <div className="flex justify-between items-center text-[11px] font-bold text-blue-700">
                   <span>รหัส: {editingBs5.riskCode}</span>
@@ -3294,9 +3368,10 @@ export default function RiskManagementView({
 
       {/* Modal: Edit BS.5 Summary & Signatures (Admin only) */}
       {editingBs5Summary && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 max-w-lg w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            {/* Header - Pinned */}
+            <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900 shrink-0 rounded-t-2xl z-10">
               <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                 <Pencil className="w-4 h-4 text-blue-600" />
                 <span>แก้ไขข้อความสรุปภาพรวม & ผู้ลงนาม (แบบ บส. 5)</span>
@@ -3304,13 +3379,14 @@ export default function RiskManagementView({
               <button
                 type="button"
                 onClick={() => setEditingBs5Summary(false)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1 rounded-lg"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                title="ปิดหน้าต่าง"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveBs5Summary} className="space-y-3.5 text-xs">
+            <form onSubmit={handleSaveBs5Summary} className="p-5 sm:p-6 overflow-y-auto space-y-3.5 text-xs flex-1">
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   ข้อความสรุปภาพรวมผลการดำเนินงานระดับองค์กร:
@@ -3388,11 +3464,11 @@ export default function RiskManagementView({
       ========================================================================= */}
       {showSmartAssistant && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs no-print">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-7 max-w-4xl w-full shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
-            {/* Header */}
-            <div className="flex items-start justify-between border-b border-slate-200/80 dark:border-slate-800 pb-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-4xl w-full shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            {/* Header - Fixed & Sticky */}
+            <div className="p-5 sm:p-6 pb-4 border-b border-slate-200/80 dark:border-slate-800 flex items-start justify-between bg-white dark:bg-slate-900 shrink-0 rounded-t-3xl z-10">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/20">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/20 shrink-0">
                   <Sparkles className="w-5 h-5 text-amber-300" />
                 </div>
                 <div>
@@ -3412,14 +3488,17 @@ export default function RiskManagementView({
               <button
                 type="button"
                 onClick={() => setShowSmartAssistant(false)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0 ml-2"
+                title="ปิดหน้าต่าง (Close)"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Filter & Action Controls */}
-            <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/80 space-y-3">
+            {/* Scrollable Content Body */}
+            <div className="p-5 sm:p-7 pt-4 overflow-y-auto space-y-5 flex-1">
+              {/* Filter & Action Controls */}
+              <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/80 space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 {/* Department Selection */}
                 <div className="flex items-center space-x-2 flex-1">
@@ -3596,34 +3675,35 @@ export default function RiskManagementView({
                 ));
               })()}
             </div>
+          </div>
 
-            {/* Bottom Footer */}
-            <div className="flex items-center justify-between pt-4 border-t border-slate-200/80 dark:border-slate-800">
-              <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                ข้อมูลยึดตามหลักเกณฑ์กระทรวงการคลัง พ.ศ. 2562 และหนังสือสั่งการ มท 0805.2/ว 3482 ลว. 18 สิงหาคม 2566
-              </span>
-              <button
-                type="button"
-                onClick={() => setShowSmartAssistant(false)}
-                className="px-5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs"
-              >
-                ปิดหน้าต่าง
-              </button>
-            </div>
+          {/* Bottom Footer (Pinned at bottom) */}
+          <div className="p-4 sm:px-6 border-t border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 shrink-0 rounded-b-3xl flex items-center justify-between z-10">
+            <span className="text-[11px] text-slate-500 dark:text-slate-400">
+              ข้อมูลยึดตามหลักเกณฑ์กระทรวงการคลัง พ.ศ. 2562 และหนังสือสั่งการ มท 0805.2/ว 3482 ลว. 18 สิงหาคม 2566
+            </span>
+            <button
+              type="button"
+              onClick={() => setShowSmartAssistant(false)}
+              className="px-5 py-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs border border-slate-200 dark:border-slate-700 shadow-2xs cursor-pointer"
+            >
+              ปิดหน้าต่าง
+            </button>
           </div>
         </div>
-      )}
+      </div>
+    )}
 
       {/* =========================================================================
           MODAL: COMPLIANCE AUDIT CHECKLIST (ว 3482)
       ========================================================================= */}
       {showAuditModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs no-print">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-7 max-w-2xl w-full shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
-            {/* Header */}
-            <div className="flex items-start justify-between border-b border-slate-200/80 dark:border-slate-800 pb-3">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-2xl w-full shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            {/* Header - Fixed & Sticky */}
+            <div className="p-5 sm:p-6 pb-4 border-b border-slate-200/80 dark:border-slate-800 flex items-start justify-between bg-white dark:bg-slate-900 shrink-0 rounded-t-3xl z-10">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-md">
+                <div className="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-md shrink-0">
                   <ShieldCheck className="w-5 h-5 text-white" />
                 </div>
                 <div>
@@ -3638,11 +3718,15 @@ export default function RiskManagementView({
               <button
                 type="button"
                 onClick={() => setShowAuditModal(false)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-1 rounded-lg"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0 ml-2"
+                title="ปิดหน้าต่าง (Close)"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
+
+            {/* Scrollable Content Body */}
+            <div className="p-5 sm:p-7 overflow-y-auto space-y-5 flex-1">
 
             {/* Overall Score Card */}
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50/70 dark:from-slate-800 dark:to-slate-850 p-5 rounded-2xl border border-blue-200 dark:border-blue-900/60 flex items-center justify-between">
@@ -3739,20 +3823,21 @@ export default function RiskManagementView({
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Footer */}
-            <div className="flex justify-end space-x-2 pt-2 border-t border-slate-200/80 dark:border-slate-800">
-              <button
-                type="button"
-                onClick={() => setShowAuditModal(false)}
-                className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs"
-              >
-                ปิด
-              </button>
-            </div>
+          {/* Footer - Pinned */}
+          <div className="p-4 sm:px-6 border-t border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 shrink-0 rounded-b-3xl flex justify-end z-10">
+            <button
+              type="button"
+              onClick={() => setShowAuditModal(false)}
+              className="px-5 py-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs border border-slate-200 dark:border-slate-700 shadow-2xs cursor-pointer"
+            >
+              ปิดหน้าต่าง
+            </button>
           </div>
         </div>
-      )}
+      </div>
+    )}
 
       {/* =========================================================================
           MODAL: CASCADE CONFIRMATION (ซิงค์ข้ามแบบฟอร์ม 1 ➜ 5)
