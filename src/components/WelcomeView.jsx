@@ -89,10 +89,16 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
     };
   }, []);
 
-  // Filter out internal audit and executive titles to get auditee departments (หน่วยรับตรวจ 5 หน่วย)
+  // Filter out internal audit, executive titles, and CDCs to get main auditee departments (5 กองหลัก)
   const auditeeDepartments = departments.filter(
-    (d) => d !== 'หน่วยตรวจสอบภายใน' && d !== 'ผู้บริหาร' && d !== 'ปลัด อบต.ฝางคำ'
+    (d) => d !== 'หน่วยตรวจสอบภายใน' && 
+           d !== 'ผู้บริหาร' && 
+           d !== 'ปลัด อบต.ฝางคำ' && 
+           !d.startsWith('ศพด.')
   );
+
+  // Child Development Centers (ศูนย์พัฒนาเด็กเล็กในสังกัด อบต.ฝางคำ)
+  const childDevelopmentCenters = ['ศพด.วัดเจริญทัศน์', 'ศพด.บ้านฝางเทิง'];
 
   const KNOWN_LABELS = {
     'สำนักปลัด': 'งานบริหารทั่วไปและนโยบาย',
@@ -101,6 +107,8 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
     'กองการศึกษา': 'ศูนย์พัฒนาเด็กเล็กและการศึกษา',
     'กองสวัสดิการสังคม': 'เบี้ยยังชีพและการพัฒนาชุมชน',
     'กองสาธารณสุขและสิ่งแวดล้อม': 'งานสาธารณสุขและสิ่งแวดล้อม',
+    'ศพด.วัดเจริญทัศน์': 'ศูนย์พัฒนาเด็กเล็กวัดเจริญทัศน์',
+    'ศพด.บ้านฝางเทิง': 'ศูนย์พัฒนาเด็กเล็กบ้านฝางเทิง',
     'ศพด.': 'ศูนย์พัฒนาเด็กเล็กตำบลฝางคำ',
     'ศูนย์พัฒนาเด็กเล็ก': 'ศูนย์พัฒนาเด็กเล็กตำบลฝางคำ'
   };
@@ -149,6 +157,27 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
     return {
       name: deptName,
       label: KNOWN_LABELS[deptName] || matchedUser?.position || 'งานในภารกิจและหน่วยรับตรวจ',
+      onClick: () => {
+        if (matchedUser) {
+          handleQuickSelect(matchedUser);
+        } else {
+          scrollToLogin();
+        }
+      }
+    };
+  });
+
+  const heroSubUnits = childDevelopmentCenters.map((cdcName) => {
+    const matchedUser = availableUsers.find(
+      (u) => (u.department && (u.department === cdcName || u.department.includes(cdcName))) ||
+             (u.displayName && (u.displayName === cdcName || u.displayName.includes(cdcName))) ||
+             (cdcName.includes('เจริญทัศน์') && u.username === 'cdc_charoen') ||
+             (cdcName.includes('ฝางเทิง') && u.username === 'cdc_fangthoeng')
+    );
+    return {
+      name: cdcName,
+      label: KNOWN_LABELS[cdcName] || matchedUser?.position || 'สถานศึกษา/ศูนย์พัฒนาเด็กเล็กในสังกัด',
+      icon: '🏫',
       onClick: () => {
         if (matchedUser) {
           handleQuickSelect(matchedUser);
@@ -370,13 +399,15 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
           executiveLeader={executiveLeaderPartner}
           permanentSecretary={permanentSecretaryPartner}
           partners={heroPartners}
+          subUnits={heroSubUnits}
+          subUnitsTitle="ศูนย์พัฒนาเด็กเล็กในสังกัด (CHILD DEVELOPMENT CENTERS)"
           badgeLabel="✨ Welcome"
           badgeText="Next-Gen Digital Governance & Internal Audit Platform"
           description=""
           partnersTitle={`โครงสร้าง ${auditeeDepartments.length} หน่วยรับตรวจที่เชื่อมโยงในระบบ (CONNECTED DEPARTMENTS)`}
           navLinks={[
             { label: "ภาพรวมระบบ", href: "#welcome-features", isActive: true },
-            { label: `หน่วยรับตรวจ ${auditeeDepartments.length} หน่วย`, href: "#departments" },
+            { label: `หน่วยรับตรวจและ ศพด.`, href: "#departments" },
             { label: "ฟังก์ชันการตรวจสอบ", href: "#modules" },
             { label: "คลังระเบียบ ว 614", href: "#standards" }
           ]}
@@ -495,7 +526,7 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {departments.map((dept) => {
+            {departments.filter((d) => !d.startsWith('ศพด.')).map((dept) => {
               const matchedUser = availableUsers.find((u) => u.department === dept);
               const isAudit = dept === 'หน่วยตรวจสอบภายใน';
 
@@ -551,6 +582,74 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
                 </div>
               );
             })}
+          </div>
+
+          {/* ศูนย์พัฒนาเด็กเล็กในสังกัด อบต.ฝางคำ (อยู่ใต้กองต่างๆ) */}
+          <div className="pt-6 border-t border-slate-200/80 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg font-bold shadow-2xs">
+                  🏫
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-slate-900 flex items-center space-x-2">
+                    <span>ศูนย์พัฒนาเด็กเล็กในสังกัด อบต.ฝางคำ</span>
+                  </h4>
+                  <p className="text-xs text-slate-500">
+                    สถานศึกษาปฐมวัยในสังกัดกองการศึกษา ศาสนา และวัฒนธรรม
+                  </p>
+                </div>
+              </div>
+              <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+                2 ศูนย์พัฒนาเด็กเล็ก
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {childDevelopmentCenters.map((cdc) => {
+                const matchedUser = availableUsers.find(
+                  (u) => u.department === cdc || 
+                         (cdc.includes('เจริญทัศน์') && u.username === 'cdc_charoen') || 
+                         (cdc.includes('ฝางเทิง') && u.username === 'cdc_fangthoeng')
+                );
+                return (
+                  <div
+                    key={cdc}
+                    onClick={() => {
+                      if (matchedUser) handleQuickSelect(matchedUser);
+                      else setShowLoginModal(true);
+                    }}
+                    className="p-5 rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50/50 via-white to-teal-50/20 hover:border-emerald-400 hover:shadow-md transition-all cursor-pointer group hover:scale-[1.01] flex flex-col justify-between"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg font-bold shadow-2xs group-hover:scale-105 transition-transform">
+                          🏫
+                        </div>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase bg-emerald-100 text-emerald-800 border border-emerald-200">
+                          สถานศึกษาในสังกัด
+                        </span>
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-base text-slate-900 group-hover:text-emerald-700 transition-colors">
+                          {cdc}
+                        </h4>
+                        <p className="text-xs text-slate-500 mt-1 line-clamp-2">
+                          {matchedUser?.position || 'หัวหน้าศูนย์พัฒนาเด็กเล็ก / ครูผู้ดูแลเด็ก'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 mt-4 border-t border-emerald-100 flex items-center justify-between text-xs text-emerald-700 group-hover:text-emerald-800 font-medium">
+                      <span>
+                        {matchedUser ? `เข้าใช้งานในฐานะ @${matchedUser.username}` : 'คลิกเพื่อเข้าสู่ระบบ'}
+                      </span>
+                      <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -758,7 +857,18 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
               <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pr-1">
                 {(() => {
                   const sorted = [...availableUsers].sort((a, b) => {
-                    const order = { mayor: 1, palat: 2, admin: 3, office: 4, finance: 5, engineering: 6, education: 7, health: 8 };
+                    const order = { 
+                      mayor: 1, 
+                      palat: 2, 
+                      admin: 3, 
+                      office: 4, 
+                      finance: 5, 
+                      engineering: 6, 
+                      education: 7, 
+                      health: 8,
+                      cdc_charoen: 9,
+                      cdc_fangthoeng: 10
+                    };
                     return (order[a.username] || 99) - (order[b.username] || 99);
                   });
                   return sorted.map((u) => {
@@ -773,6 +883,8 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
                     } else if (u.role === 'admin' || u.username === 'admin') {
                       icon = '👑 ';
                       label = 'หน่วยตรวจสอบฯ';
+                    } else if (u.username?.startsWith('cdc_') || label.includes('ศพด.')) {
+                      icon = '🏫 ';
                     } else if (label === 'กองสาธารณสุขและสิ่งแวดล้อม') {
                       label = 'กองสวัสดิการสังคม';
                     }

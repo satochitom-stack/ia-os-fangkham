@@ -48,6 +48,8 @@ export interface ResponsiveHeroBannerProps {
   permanentSecretary?: Partner;
   partnersTitle?: string;
   partners?: Partner[];
+  subUnitsTitle?: string;
+  subUnits?: Partner[];
   session?: any;
 }
 
@@ -82,6 +84,8 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
     { name: "กองการศึกษา", label: "ศูนย์พัฒนาเด็กเล็กและการศึกษา" },
     { name: "กองสวัสดิการสังคม", label: "เบี้ยยังชีพและการพัฒนาชุมชน" }
   ],
+  subUnitsTitle = "ศูนย์พัฒนาเด็กเล็กในสังกัด (CHILD DEVELOPMENT CENTERS)",
+  subUnits,
   session
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -432,6 +436,41 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
                 </div>
               ))}
             </div>
+
+            {/* 4. ศูนย์พัฒนาเด็กเล็กในสังกัด (ใต้กองต่างๆ) */}
+            {subUnits && subUnits.length > 0 && (
+              <div className="pt-3.5 sm:pt-4 border-t border-dashed border-slate-200/90 mt-4 sm:mt-5">
+                <p className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center animate-fade-slide-in-1">
+                  {subUnitsTitle}
+                </p>
+                <div 
+                  className="grid mt-2.5 gap-2.5 sm:gap-3 animate-fade-slide-in-2 justify-center max-w-lg mx-auto"
+                  style={{
+                    gridTemplateColumns: `repeat(auto-fit, minmax(160px, 1fr))`
+                  }}
+                >
+                  {subUnits.map((unit, index) => (
+                    <div
+                      key={index}
+                      onClick={unit.onClick}
+                      className="bg-white/90 hover:bg-emerald-50/90 border border-slate-200/80 hover:border-emerald-300 rounded-2xl p-2.5 sm:p-3 text-center transition-all shadow-2xs hover:shadow-xs cursor-pointer group"
+                    >
+                      <div className="w-7 h-7 rounded-xl bg-emerald-50 group-hover:bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-1 transition-colors text-sm shadow-2xs">
+                        {unit.icon || '🏫'}
+                      </div>
+                      <div className="text-xs font-bold text-slate-800 group-hover:text-emerald-700 transition-colors">
+                        {unit.name}
+                      </div>
+                      {unit.label && (
+                        <div className="text-[9px] text-slate-500 line-clamp-1 mt-0.5">
+                          {unit.label}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
       </div>
     </div>

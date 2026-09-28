@@ -43,7 +43,9 @@ export const DEFAULT_DEPARTMENTS = [
   'สำนักปลัด',
   'กองช่าง',
   'กองการศึกษา',
-  'กองสวัสดิการสังคม'
+  'กองสวัสดิการสังคม',
+  'ศพด.วัดเจริญทัศน์',
+  'ศพด.บ้านฝางเทิง'
 ];
 
 const DEPARTMENTS_KEY = 'ia_departments';
@@ -58,6 +60,14 @@ export function getDepartments() {
         const idx = parsed.indexOf('กองสาธารณสุขและสิ่งแวดล้อม');
         if (idx !== -1) {
           parsed[idx] = 'กองสวัสดิการสังคม';
+          changed = true;
+        }
+        if (!parsed.includes('ศพด.วัดเจริญทัศน์')) {
+          parsed.push('ศพด.วัดเจริญทัศน์');
+          changed = true;
+        }
+        if (!parsed.includes('ศพด.บ้านฝางเทิง')) {
+          parsed.push('ศพด.บ้านฝางเทิง');
           changed = true;
         }
         if (changed) {
@@ -338,6 +348,38 @@ export function autoRepairDataLinkages() {
       usersChanged = true;
     }
 
+    // 7.4 Ensure ศพด.วัดเจริญทัศน์ user exists
+    if (!users.some((u) => u.username === 'cdc_charoen' || (u.department === 'ศพด.วัดเจริญทัศน์' && u.role === 'user'))) {
+      users.push({
+        username: 'cdc_charoen',
+        displayName: 'ศพด.วัดเจริญทัศน์',
+        position: 'หัวหน้าศูนย์พัฒนาเด็กเล็กวัดเจริญทัศน์ / ครูผู้ดูแลเด็ก',
+        department: 'ศพด.วัดเจริญทัศน์',
+        role: 'user',
+        passwordText: '1234',
+        permissions: ['risk-management', 'forms'],
+        canManageUsers: false,
+        createdAt: Date.now()
+      });
+      usersChanged = true;
+    }
+
+    // 7.5 Ensure ศพด.บ้านฝางเทิง user exists
+    if (!users.some((u) => u.username === 'cdc_fangthoeng' || (u.department === 'ศพด.บ้านฝางเทิง' && u.role === 'user'))) {
+      users.push({
+        username: 'cdc_fangthoeng',
+        displayName: 'ศพด.บ้านฝางเทิง',
+        position: 'หัวหน้าศูนย์พัฒนาเด็กเล็กบ้านฝางเทิง / ครูผู้ดูแลเด็ก',
+        department: 'ศพด.บ้านฝางเทิง',
+        role: 'user',
+        passwordText: '1234',
+        permissions: ['risk-management', 'forms'],
+        canManageUsers: false,
+        createdAt: Date.now()
+      });
+      usersChanged = true;
+    }
+
     cascadeDepartmentRenameToStorage('กองสาธารณสุขและสิ่งแวดล้อม', 'กองสวัสดิการสังคม');
 
     // Also repair orgProfile auditorName if stored as former developer name
@@ -576,6 +618,28 @@ export const DEFAULT_INITIAL_USERS = [
     displayName: 'กองสวัสดิการสังคม',
     position: 'ผู้อำนวยการกองสวัสดิการสังคม / เจ้าหน้าที่',
     department: 'กองสวัสดิการสังคม',
+    role: 'user',
+    passwordText: '1234',
+    permissions: ['risk-management', 'forms'],
+    canManageUsers: false,
+    createdAt: Date.now()
+  },
+  {
+    username: 'cdc_charoen',
+    displayName: 'ศพด.วัดเจริญทัศน์',
+    position: 'หัวหน้าศูนย์พัฒนาเด็กเล็กวัดเจริญทัศน์ / ครูผู้ดูแลเด็ก',
+    department: 'ศพด.วัดเจริญทัศน์',
+    role: 'user',
+    passwordText: '1234',
+    permissions: ['risk-management', 'forms'],
+    canManageUsers: false,
+    createdAt: Date.now()
+  },
+  {
+    username: 'cdc_fangthoeng',
+    displayName: 'ศพด.บ้านฝางเทิง',
+    position: 'หัวหน้าศูนย์พัฒนาเด็กเล็กบ้านฝางเทิง / ครูผู้ดูแลเด็ก',
+    department: 'ศพด.บ้านฝางเทิง',
     role: 'user',
     passwordText: '1234',
     permissions: ['risk-management', 'forms'],
