@@ -72,7 +72,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   description = "",
   primaryButtonText = "เข้าสู่ระบบงาน (Sign In)",
   onPrimaryClick,
-  secondaryButtonText = "สำรวจฟังก์ชันระบบ",
+  secondaryButtonText = "",
   onSecondaryClick,
   executiveLeader,
   permanentSecretary,
@@ -336,14 +336,16 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
-            <button
-              type="button"
-              onClick={onSecondaryClick}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white/95 hover:bg-white text-slate-700 hover:text-blue-700 font-bold text-sm sm:text-base py-3 sm:py-3.5 px-7 sm:px-8 border border-slate-200/90 shadow-xs hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer"
-            >
-              <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 fill-blue-600" />
-              <span>{secondaryButtonText}</span>
-            </button>
+            {secondaryButtonText && onSecondaryClick && (
+              <button
+                type="button"
+                onClick={onSecondaryClick}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white/95 hover:bg-white text-slate-700 hover:text-blue-700 font-bold text-sm sm:text-base py-3 sm:py-3.5 px-7 sm:px-8 border border-slate-200/90 shadow-xs hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer"
+              >
+                <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 fill-blue-600" />
+                <span>{secondaryButtonText}</span>
+              </button>
+            )}
           </div>
 
           {/* Executive Leadership Hierarchy (บนสุดเป็น ผู้บริหาร ค่อยมาเป็น ปลัด อบต.ฝางคำ) */}

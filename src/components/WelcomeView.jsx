@@ -398,7 +398,6 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
         <ResponsiveHeroBanner
           session={session}
           onPrimaryClick={scrollToLogin}
-          onSecondaryClick={scrollToExplore}
           onCtaClick={scrollToLogin}
           executiveLeader={executiveLeaderPartner}
           permanentSecretary={permanentSecretaryPartner}
