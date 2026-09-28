@@ -18,7 +18,9 @@ import {
   Calculator,
   Clock,
   HardHat,
-  Building2
+  Building2,
+  Car,
+  BadgeDollarSign
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -29,10 +31,11 @@ export default function Sidebar({
   setActiveToolkitTab
 }) {
   const isAdmin = session?.role === 'admin';
+  const isExecutive = session?.role === 'executive';
   const userPermissions = session?.permissions || [];
   const [toolkitSubmenuOpen, setToolkitSubmenuOpen] = useState(true);
 
-  // Grouped Menu Structure organized into 5 Professional Pillars
+  // Grouped Menu Structure organized into 5 Professional Pillars + Department Workspaces
   const MENU_PILLARS = [
     {
       pillarId: 'pillar-1',
@@ -74,6 +77,17 @@ export default function Sidebar({
       ]
     },
     {
+      pillarId: 'pillar-dept',
+      pillarNumber: 'หมวดพื้นที่ทำงาน',
+      pillarTitle: 'ส่วนราชการ & กองต่าง ๆ (Workspaces)',
+      items: [
+        { id: 'dept-workspaces', label: 'ภาพรวมพื้นที่ทำงานส่วนราชการ', icon: Building2 },
+        { id: 'dept-office', label: 'สำนักปลัด (ยานพาหนะ/แผน/ร้องเรียน)', icon: Car },
+        { id: 'dept-finance', label: 'กองคลัง (จัดซื้อจัดจ้าง/ค่าปรับ/พัสดุ)', icon: BadgeDollarSign },
+        { id: 'dept-tech', label: 'กองช่าง (Factor F/คุมงาน/ใบอนุญาต)', icon: HardHat }
+      ]
+    },
+    {
       pillarId: 'pillar-4',
       pillarNumber: 'หมวดที่ 4',
       pillarTitle: 'ธรรมาภิบาล ควบคุมภายใน & LPA',
@@ -97,7 +111,20 @@ export default function Sidebar({
 
   const canAccessItem = (item) => {
     if (isAdmin) return true;
+    if (isExecutive) return true;
     if (item.adminOnly) return false;
+
+    // Automatic access for Department Workspaces according to role/dept
+    if (item.id === 'dept-office' && (session?.department?.includes('ปลัด') || session?.username === 'office')) return true;
+    if (item.id === 'dept-finance' && (session?.department?.includes('คลัง') || session?.username === 'finance')) return true;
+    if (item.id === 'dept-tech' && (session?.department?.includes('ช่าง') || session?.username === 'engineering' || session?.username === 'tech')) return true;
+    if (item.id === 'dept-workspaces' && (
+      session?.department?.includes('ปลัด') ||
+      session?.department?.includes('คลัง') ||
+      session?.department?.includes('ช่าง') ||
+      ['office', 'finance', 'engineering', 'tech'].includes(session?.username)
+    )) return true;
+
     return userPermissions.includes(item.id);
   };
 

@@ -18,6 +18,7 @@ import AuditRiskView, { defaultAuditUniverse } from './components/AuditRiskView'
 import EngagementPlanView from './components/EngagementPlanView';
 import UserManagementView from './components/UserManagementView';
 import TechnicalToolkitsView from './components/TechnicalToolkitsView';
+import DepartmentWorkspaceView from './components/DepartmentWorkspaceView';
 import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
 import { getSession, logout as authLogout, switchSessionTo, autoRepairDataLinkages, getUsers, saveUsers, getDepartments, saveDepartments } from './utils/auth';
 
@@ -640,13 +641,39 @@ export default function App() {
     else if (data.capaFindings) setCapaFindingsByYear({ [selectedYear]: data.capaFindings });
   };
 
+  // Helper: Default landing tab based on role and department
+  const getDefaultTabForUser = (s) => {
+    if (!s) return 'welcome';
+    if (s.role === 'admin' || s.role === 'executive') return 'dashboard';
+    if (s.department?.includes('ปลัด') || s.username === 'office') return 'dept-office';
+    if (s.department?.includes('คลัง') || s.username === 'finance') return 'dept-finance';
+    if (s.department?.includes('ช่าง') || s.username === 'engineering' || s.username === 'tech') return 'dept-tech';
+    return s.permissions?.[0] || 'dept-workspaces';
+  };
+
   // Route Guard: Ensure non-admin users only access allowed menu tabs
   useEffect(() => {
     if (!session) return;
     if (session.role === 'admin' || session.role === 'executive') return;
-    const allowed = [...(session.permissions || ['dashboard']), 'welcome'];
+
+    const deptAllowed = [];
+    if (session.department?.includes('ปลัด') || session.username === 'office') {
+      deptAllowed.push('dept-office', 'dept-workspaces');
+    }
+    if (session.department?.includes('คลัง') || session.username === 'finance') {
+      deptAllowed.push('dept-finance', 'dept-workspaces');
+    }
+    if (session.department?.includes('ช่าง') || session.username === 'engineering' || session.username === 'tech') {
+      deptAllowed.push('dept-tech', 'dept-workspaces');
+    }
+
+    const allowed = [...(session.permissions || ['dashboard']), ...deptAllowed, 'welcome'];
     if (!allowed.includes(currentTab)) {
-      setCurrentTab(allowed[0] || 'dashboard');
+      if (deptAllowed.length > 0 && !session.permissions?.includes(currentTab)) {
+        setCurrentTab(deptAllowed[0]);
+      } else {
+        setCurrentTab(allowed[0] || 'dashboard');
+      }
     }
   }, [session, currentTab]);
 
@@ -657,18 +684,15 @@ export default function App() {
         onLogin={(sess) => {
           const s = sess || getSession();
           setSession(s);
-          if (s?.role === 'admin' || s?.role === 'executive') {
-            setCurrentTab('dashboard');
-          } else {
-            setCurrentTab(s?.permissions?.[0] || 'risk-management');
-          }
+          setCurrentTab(getDefaultTabForUser(s));
         }}
         onEnterDashboard={() => {
           const s = getSession();
-          if (s?.role === 'admin' || s?.role === 'executive') {
-            setCurrentTab('dashboard');
+          if (s) {
+            setSession(s);
+            setCurrentTab(getDefaultTabForUser(s));
           } else {
-            setCurrentTab(s?.permissions?.[0] || 'risk-management');
+            setCurrentTab('dashboard');
           }
         }}
       />
@@ -682,18 +706,10 @@ export default function App() {
         onLogin={(sess) => {
           const s = sess || getSession();
           setSession(s);
-          if (s?.role === 'admin' || s?.role === 'executive') {
-            setCurrentTab('dashboard');
-          } else {
-            setCurrentTab(s?.permissions?.[0] || 'risk-management');
-          }
+          setCurrentTab(getDefaultTabForUser(s));
         }}
         onEnterDashboard={() => {
-          if (session?.role === 'admin' || session?.role === 'executive') {
-            setCurrentTab('dashboard');
-          } else {
-            setCurrentTab(session?.permissions?.[0] || 'risk-management');
-          }
+          setCurrentTab(getDefaultTabForUser(session));
         }}
       />
     );
@@ -866,6 +882,27 @@ export default function App() {
                 workingPapers={workingPapers}
                 capaFindings={capaFindings}
                 setCapaFindings={setCapaFindings}
+              />
+            )}
+
+            {(currentTab === 'dept-workspaces' || currentTab === 'dept-office' || currentTab === 'dept-finance' || currentTab === 'dept-tech') && (
+              <DepartmentWorkspaceView
+                key={`dept-${currentTab}-${selectedYear}`}
+                orgProfile={orgProfile}
+                selectedYear={selectedYear}
+                session={session}
+                capaFindings={capaFindings}
+                setCapaFindings={setCapaFindings}
+                initialDepartment={
+                  currentTab === 'dept-office'
+                    ? 'สำนักปลัด'
+                    : currentTab === 'dept-finance'
+                    ? 'กองคลัง'
+                    : currentTab === 'dept-tech'
+                    ? 'กองช่าง'
+                    : (session?.department?.includes('คลัง') ? 'กองคลัง' : session?.department?.includes('ช่าง') ? 'กองช่าง' : 'สำนักปลัด')
+                }
+                setCurrentTab={setCurrentTab}
               />
             )}
 

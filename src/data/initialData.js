@@ -1347,3 +1347,383 @@ export const initialCapaFindings = [
     executiveOrder: 'เห็นชอบตามข้อเสนอแนะ ให้รายงานความคืบหน้าทุกเดือน'
   }
 ];
+
+// =========================================================================
+// ข้อมูลสำหรับพื้นที่ทำงานเฉพาะส่วนราชการ (Department Workspaces Initial Data)
+// 1. สำนักปลัด (Office of the Municipal Clerk)
+// 2. กองคลัง (Finance & Treasury Division)
+// 3. กองช่าง (Civil Works Division)
+// =========================================================================
+
+export const initialOfficeWorkspaceData = {
+  // ยานพาหนะและสมุดบันทึกการใช้รถส่วนกลาง
+  vehicles: [
+    {
+      id: 'VEH-01',
+      plate: 'กข-4122 อุบลราชธานี',
+      type: 'รถกระบะ 4 ประตู (ดีเซล)',
+      brand: 'Toyota Hilux Revo',
+      driver: 'นายสมบัติ รักษาการ',
+      currentKm: 124580,
+      taxExpiryDate: '2569-12-15',
+      insuranceExpiryDate: '2569-11-20',
+      status: 'available'
+    },
+    {
+      id: 'VEH-02',
+      plate: 'นข-8841 อุบลราชธานี',
+      type: 'รถตู้ส่วนกลาง 12 ที่นั่ง (ดีเซล)',
+      brand: 'Toyota Commuter',
+      driver: 'นายวิชัย เดินทางดี',
+      currentKm: 89420,
+      taxExpiryDate: '2570-03-10',
+      insuranceExpiryDate: '2570-02-18',
+      status: 'available'
+    }
+  ],
+  vehicleLogs: [
+    {
+      id: 'VLOG-01',
+      vehicleId: 'VEH-01',
+      plate: 'กข-4122 อุบลราชธานี',
+      requestDate: '2026-09-20',
+      requester: 'หัวหน้าฝ่ายบริหารงานทั่วไป',
+      destination: 'ศาลากลางจังหวัดอุบลราชธานี เพื่อส่งเอกสารงบประมาณ',
+      startKm: 124350,
+      endKm: 124580,
+      totalKm: 230,
+      fuelVoucherNo: 'VOUCH-69-089',
+      fuelLiters: 25,
+      fuelCost: 825,
+      approvedBy: 'หัวหน้าสำนักปลัด',
+      status: 'approved'
+    },
+    {
+      id: 'VLOG-02',
+      vehicleId: 'VEH-02',
+      plate: 'นข-8841 อุบลราชธานี',
+      requestDate: '2026-09-18',
+      requester: 'นักพัฒนาชุมชน',
+      destination: 'ที่ว่าการอำเภอสิรินธร ประชุมหัวหน้าส่วนราชการ',
+      startKm: 89350,
+      endKm: 89420,
+      totalKm: 70,
+      fuelVoucherNo: 'VOUCH-69-085',
+      fuelLiters: 10,
+      fuelCost: 330,
+      approvedBy: 'หัวหน้าสำนักปลัด',
+      status: 'approved'
+    }
+  ],
+  developmentProjects: [
+    {
+      id: 'PLAN-OFF-01',
+      code: 'ยุทธศาสตร์ที่ 1 ด้านการบริหารจัดการบ้านเมืองที่ดี',
+      projectName: 'โครงการพัฒนาระบบสารบรรณอิเล็กทรอนิกส์และการคุ้มครองข้อมูลส่วนบุคคล (PDPA)',
+      budget: 50000,
+      source: 'ข้อบัญญัติงบประมาณรายจ่าย',
+      responsiblePerson: 'นักวิเคราะห์นโยบายและแผน',
+      quarter: 'ไตรมาส 1',
+      progress: 60,
+      status: 'in_progress'
+    },
+    {
+      id: 'PLAN-OFF-02',
+      code: 'ยุทธศาสตร์ที่ 4 ด้านการส่งเสริมประเพณีและวัฒนธรรม',
+      projectName: 'โครงการสืบสานงานประเพณีบุญบั้งไฟ อบต.ฝางคำ ประจำปี 2569',
+      budget: 150000,
+      source: 'ข้อบัญญัติงบประมาณรายจ่าย',
+      responsiblePerson: 'หัวหน้าฝ่ายบริหารงานทั่วไป',
+      quarter: 'ไตรมาส 3',
+      progress: 0,
+      status: 'pending'
+    },
+    {
+      id: 'PLAN-OFF-03',
+      code: 'ยุทธศาสตร์ที่ 1 ด้านความสงบเรียบร้อยและความปลอดภัย',
+      projectName: 'โครงการฝึกอบรมอาสาสมัครป้องกันภัยฝ่ายพลเรือน (อปพร.)',
+      budget: 65000,
+      source: 'ข้อบัญญัติงบประมาณรายจ่าย',
+      responsiblePerson: 'เจ้าพนักงานป้องกันและบรรเทาสาธารณภัย',
+      quarter: 'ไตรมาส 2',
+      progress: 100,
+      status: 'completed'
+    }
+  ],
+  sarabanBooks: [
+    {
+      id: 'SAR-IN-01',
+      type: 'inward',
+      bookNo: 'มท 0808.2/ว 3482',
+      bookDate: '2026-09-15',
+      from: 'กรมส่งเสริมการปกครองท้องถิ่น',
+      subject: 'แนวทางการบริหารความเสี่ยงและการควบคุมภายในของ อปท. ประจำปีงบประมาณ พ.ศ. 2570',
+      assignedTo: 'หัวหน้าฝ่ายบริหารงานทั่วไป / หน่วยตรวจสอบภายใน',
+      status: 'completed'
+    },
+    {
+      id: 'SAR-OUT-01',
+      type: 'outward',
+      bookNo: 'อบ 78401/452',
+      bookDate: '2026-09-22',
+      to: 'นายอำเภอสิรินธร',
+      subject: 'รายงานสถานการณ์สาธารณภัยและการช่วยเหลือผู้ประสบอุทกภัยในพื้นที่',
+      assignedTo: 'งานป้องกันและบรรเทาสาธารณภัย',
+      status: 'completed'
+    },
+    {
+      id: 'SAR-IN-02',
+      type: 'inward',
+      bookNo: 'อบ 0023.3/ว 1102',
+      bookDate: '2026-09-24',
+      from: 'สำนักงานส่งเสริมการปกครองท้องถิ่นจังหวัดอุบลราชธานี',
+      subject: 'แจ้งกำหนดการตรวจประเมินประสิทธิภาพขององค์กรปกครองส่วนท้องถิ่น (LPA) ประจำปี 2569',
+      assignedTo: 'หัวหน้าสำนักปลัด',
+      status: 'in_progress'
+    }
+  ],
+  complaints: [
+    {
+      id: 'CMP-69-01',
+      channel: 'ศูนย์ดำรงธรรม อบต.ฝางคำ / หน้าเว็บไซต์',
+      receivedDate: '2026-08-10',
+      complainant: 'ประชาชน หมู่ที่ 4 บ้านฝางคำ',
+      issue: 'ขอให้ซ่อมแซมไฟฟ้าสาธารณะส่องสว่างทางเข้าหมู่บ้าน ดับชำรุด 3 จุด',
+      assignedPerson: 'นิติกร / ประสานกองช่าง',
+      result: 'กองช่างเข้าตรวจสอบและเปลี่ยนหลอดไฟ LED ครบทั้ง 3 จุดเรียบร้อยแล้ว',
+      status: 'resolved'
+    },
+    {
+      id: 'CMP-69-02',
+      channel: 'ยื่นคำร้องด้วยตนเอง ณ สำนักปลัด',
+      receivedDate: '2026-09-12',
+      complainant: 'นายสมศักดิ์ มีสุข',
+      issue: 'กลิ่นเหม็นรบกวนจากการเลี้ยงสุกรในเขตชุมชนใกล้เคียง',
+      assignedPerson: 'นิติกร ร่วมกับเจ้าหน้าที่สาธารณสุข',
+      result: 'ลงพื้นที่ตรวจสอบข้อเท็จจริง แนะนำให้ทำบ่อบำบัดกลิ่นและฉีดพ่นน้ำหมักชีวภาพ นัดตรวจซ้ำใน 15 วัน',
+      status: 'investigating'
+    }
+  ]
+};
+
+export const initialFinanceWorkspaceData = {
+  contracts: [
+    {
+      id: 'CN-69-01',
+      contractNo: 'สัญญาเลขที่ 05/2569',
+      title: 'โครงการติดตั้งระบบกล้องโทรทัศน์วงจรปิด (CCTV) เพื่อความปลอดภัยในตำบล',
+      method: 'เฉพาะเจาะจง (มาตรา 56 (2) (ข))',
+      budget: 350000,
+      contractPrice: 345000,
+      contractor: 'ห้างหุ้นส่วนจำกัด สิรินธรซีเคียวริตี้ ซิสเต็มส์',
+      signedDate: '2026-03-10',
+      dueDate: '2026-05-09',
+      actualDeliveryDate: '2026-05-05',
+      warrantyExpiryDate: '2028-05-05',
+      guaranteeType: 'หนังสือค้ำประกันธนาคาร (LG)',
+      guaranteeAmount: 17250,
+      guaranteeBank: 'ธนาคารกรุงไทย สาขาพิบูลมังสาหาร',
+      status: 'completed'
+    },
+    {
+      id: 'CN-69-02',
+      contractNo: 'สัญญาเลขที่ 12/2569',
+      title: 'จัดซื้อวัสดุสำนักงานและกระดาษสำหรับทุกกอง ประจำปีงบประมาณ 2569',
+      method: 'เฉพาะเจาะจง',
+      budget: 85000,
+      contractPrice: 83400,
+      contractor: 'ร้านอุบลสเตชั่นเนอรี่',
+      signedDate: '2026-06-01',
+      dueDate: '2026-06-20',
+      actualDeliveryDate: '2026-06-18',
+      warrantyExpiryDate: '2026-12-18',
+      guaranteeType: 'เงินสด',
+      guaranteeAmount: 4170,
+      guaranteeBank: '-',
+      status: 'completed'
+    },
+    {
+      id: 'CN-69-03',
+      contractNo: 'สัญญาเลขที่ 18/2569',
+      title: 'โครงการพัฒนาระบบแผนที่ภาษีและทะเบียนทรัพย์สิน (LTAX 3000 / GIS)',
+      method: 'คัดเลือก',
+      budget: 250000,
+      contractPrice: 240000,
+      contractor: 'บริษัท จีไอเอส ไทยแลนด์ เทคโนโลยี จำกัด',
+      signedDate: '2026-07-01',
+      dueDate: '2026-10-31',
+      actualDeliveryDate: '',
+      warrantyExpiryDate: '2027-10-31',
+      guaranteeType: 'หนังสือค้ำประกันธนาคาร (LG)',
+      guaranteeAmount: 12000,
+      guaranteeBank: 'ธนาคารกสิกรไทย',
+      status: 'active'
+    }
+  ],
+  inventoryCheck: [
+    {
+      id: 'INV-69-01',
+      assetCode: 'ครุภัณฑ์สำนักงาน 416-65-0012',
+      assetName: 'เครื่องถ่ายเอกสารระบบมัลติฟังก์ชัน Fuji Xerox',
+      department: 'กองคลัง',
+      acquisitionDate: '2565-02-10',
+      costPrice: 65000,
+      condition: 'good',
+      committeeOpinion: 'สภาพใช้งานได้ดี มีการทำสัญญาบำรุงรักษาสม่ำเสมอ'
+    },
+    {
+      id: 'INV-69-02',
+      assetCode: 'ครุภัณฑ์คอมพิวเตอร์ 416-63-0045',
+      assetName: 'เครื่องคอมพิวเตอร์ประมวลผล All-in-One Dell',
+      department: 'กองคลัง',
+      acquisitionDate: '2563-08-15',
+      costPrice: 24000,
+      condition: 'deteriorated',
+      committeeOpinion: 'เครื่องเริ่มช้า เมนบอร์ดเสื่อมสภาพ แนะนำซ่อมบำรุงหรือตั้งแผนจัดซื้อทดแทนปี 2570'
+    },
+    {
+      id: 'INV-69-03',
+      assetCode: 'ครุภัณฑ์ยานพาหนะ 416-58-0004',
+      assetName: 'รถจักรยานยนต์ Honda Wave 110i สำหรับจัดเก็บรายได้',
+      department: 'กองคลัง',
+      acquisitionDate: '2558-05-20',
+      costPrice: 42000,
+      condition: 'good',
+      committeeOpinion: 'สภาพปกติ มีสมุดบันทึกการซ่อมบำรุง'
+    }
+  ],
+  loans: [
+    {
+      id: 'LOAN-69-01',
+      contractNo: 'สัญญายืมเงินเลขที่ 14/2569',
+      borrower: 'นางกานดา การเงินดี (เจ้าพนักงานการเงินและบัญชี)',
+      purpose: 'ยืมเงินเพื่อเป็นค่าใช้จ่ายในการจัดโครงการอบรมการเพิ่มประสิทธิภาพจัดเก็บภาษีท้องถิ่น',
+      amount: 45000,
+      borrowDate: '2026-08-01',
+      dueDate: '2026-08-31',
+      clearDate: '2026-08-28',
+      returnedAmount: 3200,
+      status: 'cleared'
+    },
+    {
+      id: 'LOAN-69-02',
+      contractNo: 'สัญญายืมเงินเลขที่ 22/2569',
+      borrower: 'นายประสิทธิ์ พัฒนาการ (นักวิชาการศึกษาปฏิบัติการ)',
+      purpose: 'ยืมเงินเพื่อนำนักเรียนศูนย์พัฒนาเด็กเล็กเข้าร่วมแข่งขันกีฬาระดับอำเภอสิรินธร',
+      amount: 30000,
+      borrowDate: '2026-08-25',
+      dueDate: '2026-09-24',
+      clearDate: '',
+      returnedAmount: 0,
+      status: 'overdue'
+    }
+  ]
+};
+
+export const initialTechWorkspaceData = {
+  constructionProjects: [
+    {
+      id: 'PRJ-CONST-01',
+      code: 'โครงการตามข้อบัญญัติงบประมาณ 2569',
+      projectName: 'โครงการก่อสร้างถนน ค.ส.ล. สายบ้านฝางคำ หมู่ที่ 3 เชื่อมต่อบ้านคำหนามแท่ง',
+      location: 'หมู่ที่ 3 ตำบลฝางคำ อำเภอสิรินธร',
+      budget: 1500000,
+      contractPrice: 1485000,
+      contractor: 'ห้างหุ้นส่วนจำกัด โขงเจียมคอนสตรัคชั่น',
+      startDate: '2026-01-15',
+      endDate: '2026-05-15',
+      engineerSupervisor: 'นายช่างโยธาปฏิบัติงาน (นายวิศวะ โยธาการ)',
+      inspectionCommittee: 'ปลัด อบต. (ประธาน), ผอ.กองช่าง, ตัวแทนประชาคม ม.3',
+      cylinderTest28Days: 'ผ่านเกณฑ์มาตรฐาน 240 ksc (ผลทดสอบ ลว. 10 เม.ย. 69)',
+      progress: 100,
+      status: 'completed'
+    },
+    {
+      id: 'PRJ-CONST-02',
+      code: 'โครงการตามข้อบัญญัติงบประมาณ 2569',
+      projectName: 'โครงการปรับปรุงและขยายท่อส่งน้ำประปาหมู่บ้าน หมู่ที่ 5 บ้านโนนสว่าง',
+      location: 'หมู่ที่ 5 ตำบลฝางคำ',
+      budget: 380000,
+      contractPrice: 375000,
+      contractor: 'ร้านสิรินธรการช่างและประปา',
+      startDate: '2026-06-01',
+      endDate: '2026-08-30',
+      engineerSupervisor: 'นายช่างโยธาชำนาญงาน',
+      inspectionCommittee: 'ผอ.กองช่าง (ประธาน), เจ้าหน้าที่กองช่าง, ผู้ใหญ่บ้าน ม.5',
+      cylinderTest28Days: '-',
+      progress: 75,
+      status: 'in_progress'
+    },
+    {
+      id: 'PRJ-CONST-03',
+      code: 'โครงการเงินอุดหนุนเฉพาะกิจ 2569',
+      projectName: 'โครงการก่อสร้างรางระบายน้ำ ค.ส.ล. รูปตัวยู พร้อมฝาปิด ค.ส.ล. ภายในหมู่บ้าน หมู่ที่ 1',
+      location: 'หมู่ที่ 1 ตำบลฝางคำ',
+      budget: 650000,
+      contractPrice: 642000,
+      contractor: 'ห้างหุ้นส่วนจำกัด อุบลศิลาการโยธา',
+      startDate: '2026-08-15',
+      endDate: '2026-11-15',
+      engineerSupervisor: 'นายช่างโยธาปฏิบัติงาน',
+      inspectionCommittee: 'คณะกรรมการตรวจรับพัสดุตามคำสั่งที่ 215/2569',
+      cylinderTest28Days: 'อยู่ระหว่างรอผลทดสอบอายุคอนกรีต 28 วัน',
+      progress: 40,
+      status: 'in_progress'
+    }
+  ],
+  buildingPermits: [
+    {
+      id: 'PERMIT-69-01',
+      requestNo: 'คำขอเลขที่ 02/2569 (แบบ ข.1)',
+      permitNo: 'ใบอนุญาตเลขที่ 02/2569 (แบบ อ.1)',
+      applicant: 'นายบุญเลิศ แสนสุข',
+      buildingType: 'บ้านพักอาศัย ค.ส.ล. 2 ชั้น',
+      areaSqM: 185,
+      location: 'เลขที่ 45 หมู่ที่ 2 ตำบลฝางคำ',
+      submissionDate: '2026-06-05',
+      deadline45Days: '2026-07-20',
+      approvedDate: '2026-06-25',
+      feeAmount: 185,
+      receiptNo: 'เล่มที่ 012 เลขที่ 15',
+      status: 'approved'
+    },
+    {
+      id: 'PERMIT-69-02',
+      requestNo: 'คำขอเลขที่ 05/2569 (แบบ ข.1)',
+      permitNo: 'อยู่ระหว่างตรวจแบบแปลน',
+      applicant: 'นางสมพร สว่างจิตร',
+      buildingType: 'อาคารพาณิชย์ ค.ส.ล. 1 ชั้น สำหรับจำหน่ายสินค้าชุมชน',
+      areaSqM: 120,
+      location: 'หมู่ที่ 4 ริมทางหลวงชนบท',
+      submissionDate: '2026-09-08',
+      deadline45Days: '2026-10-23',
+      approvedDate: '',
+      feeAmount: 120,
+      receiptNo: 'เล่มที่ 014 เลขที่ 02',
+      status: 'reviewing'
+    }
+  ],
+  machinery: [
+    {
+      id: 'MACH-01',
+      code: 'รถบรรทุกน้ำอเนกประสงค์ 6 ล้อ 6,000 ลิตร',
+      plate: '82-4512 อุบลราชธานี',
+      driver: 'นายชูศักดิ์ ขับคล่อง',
+      operatingHours: 1450,
+      currentStatus: 'active',
+      lastMaintenance: '2026-08-10',
+      note: 'ใช้ส่งน้ำอุปโภคบริโภคช่วยเหลือภัยแล้งและดับเพลิง'
+    },
+    {
+      id: 'MACH-02',
+      code: 'รถตักหน้าขุดหลัง (Backhoe Loader)',
+      plate: 'ตค-1024 อุบลราชธานี',
+      driver: 'นายทองดี ชำนาญการ',
+      operatingHours: 2180,
+      currentStatus: 'active',
+      lastMaintenance: '2026-07-15',
+      note: 'ใช้ขุดลอกคูคลองและปรับปรุงถนนลูกรัง'
+    }
+  ]
+};
+
