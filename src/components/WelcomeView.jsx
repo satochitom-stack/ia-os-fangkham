@@ -400,14 +400,14 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
           permanentSecretary={permanentSecretaryPartner}
           partners={heroPartners}
           subUnits={heroSubUnits}
-          subUnitsTitle="ศูนย์พัฒนาเด็กเล็กในสังกัด (CHILD DEVELOPMENT CENTERS)"
+          subUnitsTitle="หน่วยงานภายใต้สังกัด (AFFILIATED AGENCIES)"
           badgeLabel="✨ Welcome"
           badgeText="Next-Gen Digital Governance & Internal Audit Platform"
           description=""
           partnersTitle={`โครงสร้าง ${auditeeDepartments.length} หน่วยรับตรวจที่เชื่อมโยงในระบบ (CONNECTED DEPARTMENTS)`}
           navLinks={[
             { label: "ภาพรวมระบบ", href: "#welcome-features", isActive: true },
-            { label: `หน่วยรับตรวจและ ศพด.`, href: "#departments" },
+            { label: "หน่วยรับตรวจและหน่วยงานในสังกัด", href: "#departments" },
             { label: "ฟังก์ชันการตรวจสอบ", href: "#modules" },
             { label: "คลังระเบียบ ว 614", href: "#standards" }
           ]}
@@ -584,7 +584,7 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
             })}
           </div>
 
-          {/* ศูนย์พัฒนาเด็กเล็กในสังกัด อบต.ฝางคำ (อยู่ใต้กองต่างๆ) */}
+          {/* หน่วยงานภายใต้สังกัด อบต.ฝางคำ (อยู่ใต้กองต่างๆ) */}
           <div className="pt-6 border-t border-slate-200/80 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2.5">
@@ -593,15 +593,15 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
                 </div>
                 <div>
                   <h4 className="text-base font-bold text-slate-900 flex items-center space-x-2">
-                    <span>ศูนย์พัฒนาเด็กเล็กในสังกัด อบต.ฝางคำ</span>
+                    <span>หน่วยงานภายใต้สังกัด (AFFILIATED AGENCIES)</span>
                   </h4>
                   <p className="text-xs text-slate-500">
-                    สถานศึกษาปฐมวัยในสังกัดกองการศึกษา ศาสนา และวัฒนธรรม
+                    ศูนย์พัฒนาเด็กเล็กและสถานศึกษาในสังกัด อบต.ฝางคำ
                   </p>
                 </div>
               </div>
               <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
-                2 ศูนย์พัฒนาเด็กเล็ก
+                2 หน่วยงานภายใต้สังกัด
               </span>
             </div>
 

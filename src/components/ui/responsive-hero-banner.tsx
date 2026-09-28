@@ -84,7 +84,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
     { name: "กองการศึกษา", label: "ศูนย์พัฒนาเด็กเล็กและการศึกษา" },
     { name: "กองสวัสดิการสังคม", label: "เบี้ยยังชีพและการพัฒนาชุมชน" }
   ],
-  subUnitsTitle = "ศูนย์พัฒนาเด็กเล็กในสังกัด (CHILD DEVELOPMENT CENTERS)",
+  subUnitsTitle = "หน่วยงานภายใต้สังกัด (AFFILIATED AGENCIES)",
   subUnits,
   session
 }) => {
