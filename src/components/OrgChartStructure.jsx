@@ -198,23 +198,16 @@ export default function OrgChartStructure({
           {/* Central Vertical Connector line from ปลัด down to Trunk bar */}
           <div className="w-0.5 h-6 bg-emerald-600" />
 
-          {/* 3. Horizontal Trunk Bar (คานแยกส่วนราชการ 5 กอง) */}
-          <div className="w-[94%] max-w-[1040px] h-0.5 bg-emerald-600 relative">
-            {/* Connecting points down to each of the 5 divisions */}
-            <div className="absolute left-[10%] -top-1 w-2.5 h-2.5 rounded-full bg-emerald-600 -translate-x-1/2" />
-            <div className="absolute left-[30%] -top-1 w-2.5 h-2.5 rounded-full bg-emerald-600 -translate-x-1/2" />
-            <div className="absolute left-[50%] -top-1 w-2.5 h-2.5 rounded-full bg-emerald-600 -translate-x-1/2" />
-            <div className="absolute left-[70%] -top-1 w-2.5 h-2.5 rounded-full bg-emerald-600 -translate-x-1/2" />
-            <div className="absolute left-[90%] -top-1 w-2.5 h-2.5 rounded-full bg-emerald-600 -translate-x-1/2" />
-          </div>
-
           {/* 4. The 5 Main Divisions Columns (ตามข้อมูลจริงของ อบต.ฝางคำ) */}
-          <div className="grid grid-cols-5 gap-3 w-[98%] max-w-[1060px] pt-4">
+          <div className="grid grid-cols-5 gap-3 w-[98%] max-w-[1060px]">
             
             {/* COLUMN 1: สำนักปลัด (สีฟ้า สไตล์แบบเทศบาล) */}
-            <div className="flex flex-col items-center space-y-3">
-              {/* Drop line from trunk bar */}
-              <div className="w-0.5 h-4 bg-emerald-600 -mt-4 mb-0" />
+            <div className="flex flex-col items-center w-full">
+              {/* Top Branch Connector (หักฉาก 90 องศา จากกึ่งกลางไปทางขวา) */}
+              <div className="relative w-full h-5 flex justify-center">
+                <div className="absolute top-0 left-1/2 -right-3.5 h-0.5 bg-emerald-600" />
+                <div className="w-0.5 h-full bg-emerald-600" />
+              </div>
               
               {/* Division Header Box */}
               <div
@@ -233,7 +226,7 @@ export default function OrgChartStructure({
               </div>
 
               {/* Sub-boxes (ฝ่าย / งาน) */}
-              <div className="w-full space-y-2 text-left">
+              <div className="w-full space-y-2 text-left mt-3">
                 {/* ฝ่ายอำนวยการ */}
                 <div className="bg-sky-50/80 border border-sky-200/90 rounded-xl p-2 space-y-1 text-[11px]">
                   <div className="font-bold text-sky-950 pb-1 border-b border-sky-200/70 text-[11px]">
@@ -283,9 +276,12 @@ export default function OrgChartStructure({
             </div>
 
             {/* COLUMN 2: กองคลัง (สีม่วง/ชมพู สไตล์แบบเทศบาล) */}
-            <div className="flex flex-col items-center space-y-3">
-              {/* Drop line from trunk bar */}
-              <div className="w-0.5 h-4 bg-emerald-600 -mt-4 mb-0" />
+            <div className="flex flex-col items-center w-full">
+              {/* Top Branch Connector (เชื่อมแนวนอนผ่านซ้าย-ขวา พร้อมกิ่งลงกึ่งกลาง) */}
+              <div className="relative w-full h-5 flex justify-center">
+                <div className="absolute top-0 -left-3.5 -right-3.5 h-0.5 bg-emerald-600" />
+                <div className="w-0.5 h-full bg-emerald-600" />
+              </div>
               
               {/* Division Header Box */}
               <div
@@ -304,7 +300,7 @@ export default function OrgChartStructure({
               </div>
 
               {/* Sub-boxes (ฝ่าย / งาน) */}
-              <div className="w-full space-y-2 text-left">
+              <div className="w-full space-y-2 text-left mt-3">
                 {/* ฝ่ายบริหารงานคลัง */}
                 <div className="bg-fuchsia-50/80 border border-fuchsia-200/90 rounded-xl p-2 space-y-1 text-[11px]">
                   <div className="font-bold text-fuchsia-950 pb-1 border-b border-fuchsia-200/70 text-[11px]">
@@ -358,10 +354,13 @@ export default function OrgChartStructure({
               </div>
             </div>
 
-            {/* COLUMN 3: กองช่าง (สีน้ำตาล/ส้ม สไตล์แบบเทศบาล) */}
-            <div className="flex flex-col items-center space-y-3">
-              {/* Drop line from trunk bar */}
-              <div className="w-0.5 h-4 bg-emerald-600 -mt-4 mb-0" />
+            {/* COLUMN 3: กองช่าง (สีน้ำตาล/ส้ม สไตล์แบบเทศบาล - กลางแกนปลัด) */}
+            <div className="flex flex-col items-center w-full">
+              {/* Top Branch Connector (จุดตัดกึ่งกลาง รับเส้นตรงจากปลัด แล้วแยกซ้าย-ขวา-ลงล่าง) */}
+              <div className="relative w-full h-5 flex justify-center">
+                <div className="absolute top-0 -left-3.5 -right-3.5 h-0.5 bg-emerald-600" />
+                <div className="w-0.5 h-full bg-emerald-600" />
+              </div>
               
               {/* Division Header Box */}
               <div
@@ -380,7 +379,7 @@ export default function OrgChartStructure({
               </div>
 
               {/* Sub-boxes (ฝ่าย / งาน) */}
-              <div className="w-full space-y-2 text-left">
+              <div className="w-full space-y-2 text-left mt-3">
                 {/* ฝ่ายแบบแผนและก่อสร้าง */}
                 <div className="bg-amber-50/80 border border-amber-200/90 rounded-xl p-2 space-y-1 text-[11px]">
                   <div className="font-bold text-amber-950 pb-1 border-b border-amber-200/70 text-[11px]">
@@ -426,9 +425,12 @@ export default function OrgChartStructure({
             </div>
 
             {/* COLUMN 4: กองการศึกษา (สีเหลือง/ทอง สไตล์แบบเทศบาล) */}
-            <div className="flex flex-col items-center space-y-3">
-              {/* Drop line from trunk bar */}
-              <div className="w-0.5 h-4 bg-emerald-600 -mt-4 mb-0" />
+            <div className="flex flex-col items-center w-full">
+              {/* Top Branch Connector (เชื่อมแนวนอนผ่านซ้าย-ขวา พร้อมกิ่งลงกึ่งกลาง) */}
+              <div className="relative w-full h-5 flex justify-center">
+                <div className="absolute top-0 -left-3.5 -right-3.5 h-0.5 bg-emerald-600" />
+                <div className="w-0.5 h-full bg-emerald-600" />
+              </div>
               
               {/* Division Header Box */}
               <div
@@ -447,7 +449,7 @@ export default function OrgChartStructure({
               </div>
 
               {/* Sub-boxes (ฝ่าย / งาน) */}
-              <div className="w-full space-y-2 text-left">
+              <div className="w-full space-y-2 text-left mt-3">
                 {/* ฝ่ายส่งเสริมการศึกษา ศาสนาและวัฒนธรรม */}
                 <div className="bg-amber-50/80 border border-amber-200/90 rounded-xl p-2 space-y-1 text-[11px]">
                   <div className="font-bold text-amber-950 pb-1 border-b border-amber-200/70 text-[11px]">
@@ -475,15 +477,15 @@ export default function OrgChartStructure({
               </div>
 
               {/* Connecting line down to หน่วยงานภายใต้สังกัด (ศพด.) */}
-              <div className="flex flex-col items-center w-full pt-1">
-                <div className="w-0.5 h-3 bg-emerald-500" />
-                <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span className="text-[9px] font-bold text-emerald-800 uppercase tracking-tight mt-1 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+              <div className="flex flex-col items-center w-full pt-2">
+                <div className="w-0.5 h-3.5 bg-emerald-600" />
+                <span className="text-[9px] font-bold text-emerald-800 uppercase tracking-tight bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-300 shadow-2xs">
                   หน่วยงานภายใต้สังกัด
                 </span>
+                <div className="w-0.5 h-2.5 bg-emerald-600" />
                 
                 {/* 2 Child Development Centers */}
-                <div className="w-full space-y-1.5 mt-2">
+                <div className="w-full space-y-1.5 mt-0.5">
                   {/* ศพด.วัดเจริญทัศน์ */}
                   <div
                     onClick={() => handleBoxClick('cdc_charoen', 'ศพด.วัดเจริญทัศน์')}
@@ -521,9 +523,12 @@ export default function OrgChartStructure({
             </div>
 
             {/* COLUMN 5: กองสวัสดิการสังคม (สีเขียว สไตล์แบบเทศบาล) */}
-            <div className="flex flex-col items-center space-y-3">
-              {/* Drop line from trunk bar */}
-              <div className="w-0.5 h-4 bg-emerald-600 -mt-4 mb-0" />
+            <div className="flex flex-col items-center w-full">
+              {/* Top Branch Connector (หักฉาก 90 องศา จากทางซ้ายมาจบที่กึ่งกลางพอดี) */}
+              <div className="relative w-full h-5 flex justify-center">
+                <div className="absolute top-0 -left-3.5 right-1/2 h-0.5 bg-emerald-600" />
+                <div className="w-0.5 h-full bg-emerald-600" />
+              </div>
               
               {/* Division Header Box */}
               <div
@@ -542,7 +547,7 @@ export default function OrgChartStructure({
               </div>
 
               {/* Sub-boxes (ฝ่าย / งาน) */}
-              <div className="w-full space-y-2 text-left">
+              <div className="w-full space-y-2 text-left mt-3">
                 {/* ฝ่ายสังคมสงเคราะห์ */}
                 <div className="bg-emerald-50/80 border border-emerald-200/90 rounded-xl p-2 space-y-1 text-[11px]">
                   <div className="font-bold text-emerald-950 pb-1 border-b border-emerald-200/70 text-[11px]">
