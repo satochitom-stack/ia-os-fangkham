@@ -20,7 +20,11 @@ import {
   HardHat,
   Building2,
   Car,
-  BadgeDollarSign
+  BadgeDollarSign,
+  GraduationCap,
+  HeartHandshake,
+  Activity,
+  CalendarDays
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -40,9 +44,11 @@ export default function Sidebar({
     {
       pillarId: 'pillar-1',
       pillarNumber: 'หมวดที่ 1',
-      pillarTitle: 'การวางแผน & ประเมินความเสี่ยง',
+      pillarTitle: 'การวางแผน & ภาพรวมองค์กร',
       items: [
-        { id: 'dashboard', label: 'ภาพรวม & ปฏิทินงาน', icon: LayoutDashboard },
+        { id: 'executive-dashboard', label: 'ศูนย์บัญชาการผู้บริหาร', icon: LayoutDashboard },
+        { id: 'dashboard', label: 'แดชบอร์ดตรวจสอบภายใน', icon: ShieldAlert },
+        { id: 'central-calendar', label: 'ปฏิทินปฏิบัติงานส่วนกลาง', icon: CalendarDays },
         { id: 'audit-risk', label: 'การประเมินความเสี่ยงแผน', icon: ShieldAlert },
         { id: 'planning', label: 'แผนการตรวจสอบประจำปี', icon: FileText },
         { id: 'engagement-plan', label: 'แผนปฏิบัติการตรวจสอบ (ทุกมิติ)', icon: Sparkles },
@@ -84,7 +90,10 @@ export default function Sidebar({
         { id: 'dept-workspaces', label: 'ภาพรวมพื้นที่ทำงานส่วนราชการ', icon: Building2 },
         { id: 'dept-office', label: 'สำนักปลัด (ยานพาหนะ/แผน/ร้องเรียน)', icon: Car },
         { id: 'dept-finance', label: 'กองคลัง (จัดซื้อจัดจ้าง/ค่าปรับ/พัสดุ)', icon: BadgeDollarSign },
-        { id: 'dept-tech', label: 'กองช่าง (Factor F/คุมงาน/ใบอนุญาต)', icon: HardHat }
+        { id: 'dept-tech', label: 'กองช่าง (Factor F/คุมงาน/ใบอนุญาต)', icon: HardHat },
+        { id: 'dept-education', label: 'กองการศึกษา (อาหารกลางวัน/นม/สื่อ)', icon: GraduationCap },
+        { id: 'dept-welfare', label: 'กองสวัสดิการสังคม (เบี้ยยังชีพ/สงเคราะห์)', icon: HeartHandshake },
+        { id: 'dept-health', label: 'งานสาธารณสุขฯ (ขยะ/โรคติดต่อ/ตลาด)', icon: Activity }
       ]
     },
     {
@@ -115,14 +124,22 @@ export default function Sidebar({
     if (item.adminOnly) return false;
 
     // Automatic access for Department Workspaces according to role/dept
+    if (item.id === 'executive-dashboard') return true;
+    if (item.id === 'central-calendar') return true;
     if (item.id === 'dept-office' && (session?.department?.includes('ปลัด') || session?.username === 'office')) return true;
     if (item.id === 'dept-finance' && (session?.department?.includes('คลัง') || session?.username === 'finance')) return true;
     if (item.id === 'dept-tech' && (session?.department?.includes('ช่าง') || session?.username === 'engineering' || session?.username === 'tech')) return true;
+    if (item.id === 'dept-education' && (session?.department?.includes('การศึกษา') || session?.username === 'education')) return true;
+    if (item.id === 'dept-welfare' && (session?.department?.includes('สวัสดิการ') || session?.username === 'welfare')) return true;
+    if (item.id === 'dept-health' && (session?.department?.includes('สาธารณสุข') || session?.department?.includes('สิ่งแวดล้อม') || session?.username === 'health')) return true;
     if (item.id === 'dept-workspaces' && (
       session?.department?.includes('ปลัด') ||
       session?.department?.includes('คลัง') ||
       session?.department?.includes('ช่าง') ||
-      ['office', 'finance', 'engineering', 'tech'].includes(session?.username)
+      session?.department?.includes('การศึกษา') ||
+      session?.department?.includes('สวัสดิการ') ||
+      session?.department?.includes('สาธารณสุข') ||
+      ['office', 'finance', 'engineering', 'tech', 'education', 'welfare', 'health'].includes(session?.username)
     )) return true;
 
     return userPermissions.includes(item.id);

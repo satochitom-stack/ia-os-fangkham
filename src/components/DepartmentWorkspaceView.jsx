@@ -29,13 +29,27 @@ import {
   ExternalLink,
   ChevronRight,
   BookOpen,
-  Info
+  Info,
+  GraduationCap,
+  HeartHandshake,
+  Activity,
+  Send,
+  Apple,
+  Milk,
+  Baby,
+  Truck,
+  AlertOctagon,
+  Heart,
+  HelpCircle
 } from 'lucide-react';
 import ConfirmModal from './ConfirmModal';
 import {
   initialOfficeWorkspaceData,
   initialFinanceWorkspaceData,
-  initialTechWorkspaceData
+  initialTechWorkspaceData,
+  initialEducationWorkspaceData,
+  initialWelfareWorkspaceData,
+  initialPublicHealthWorkspaceData
 } from '../data/initialData';
 import { exportDepartmentWorkspacesExcel } from '../services/reportExportService';
 
@@ -56,6 +70,9 @@ export default function DepartmentWorkspaceView({
     if (!isAdmin) {
       if (userDept.includes('คลัง')) return 'กองคลัง';
       if (userDept.includes('ช่าง')) return 'กองช่าง';
+      if (userDept.includes('การศึกษา')) return 'กองการศึกษา';
+      if (userDept.includes('สวัสดิการ')) return 'กองสวัสดิการสังคม';
+      if (userDept.includes('สาธารณสุข') || userDept.includes('สิ่งแวดล้อม')) return 'งานสาธารณสุขและสิ่งแวดล้อม';
       return 'สำนักปลัด';
     }
     return initialDepartment || 'สำนักปลัด';
@@ -73,6 +90,9 @@ export default function DepartmentWorkspaceView({
   // สำนักปลัด: 'overview', 'vehicles', 'projects', 'saraban', 'complaints', 'capa'
   // กองคลัง: 'overview', 'contracts', 'penalty', 'inventory', 'loans', 'capa'
   // กองช่าง: 'overview', 'estimator', 'projects', 'permits', 'machinery', 'capa'
+  // กองการศึกษา: 'overview', 'lunch', 'materials', 'teachers', 'capa'
+  // กองสวัสดิการสังคม: 'overview', 'elderly', 'disability', 'relief', 'capa'
+  // งานสาธารณสุขฯ: 'overview', 'waste', 'disease', 'sanitation', 'capa'
   const [subTab, setSubTab] = useState('overview');
 
   // Reset sub-tab when department changes
@@ -111,6 +131,50 @@ export default function DepartmentWorkspaceView({
     return initialTechWorkspaceData;
   });
 
+  const [educationData, setEducationData] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ia_dept_education_data');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return initialEducationWorkspaceData;
+  });
+
+  const [welfareData, setWelfareData] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ia_dept_welfare_data');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return initialWelfareWorkspaceData;
+  });
+
+  const [publicHealthData, setPublicHealthData] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ia_dept_public_health_data');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return initialPublicHealthWorkspaceData;
+  });
+
+  // Executive Directives from LocalStorage
+  const [executiveDirectives, setExecutiveDirectives] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ia_executive_directives');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return [];
+  });
+
   // Save changes to LocalStorage
   useEffect(() => {
     localStorage.setItem('ia_dept_office_data', JSON.stringify(officeData));
@@ -123,6 +187,18 @@ export default function DepartmentWorkspaceView({
   useEffect(() => {
     localStorage.setItem('ia_dept_tech_data', JSON.stringify(techData));
   }, [techData]);
+
+  useEffect(() => {
+    localStorage.setItem('ia_dept_education_data', JSON.stringify(educationData));
+  }, [educationData]);
+
+  useEffect(() => {
+    localStorage.setItem('ia_dept_welfare_data', JSON.stringify(welfareData));
+  }, [welfareData]);
+
+  useEffect(() => {
+    localStorage.setItem('ia_dept_public_health_data', JSON.stringify(publicHealthData));
+  }, [publicHealthData]);
 
   // Toast State
   const [toastMessage, setToastMessage] = useState(null);
@@ -315,11 +391,14 @@ export default function DepartmentWorkspaceView({
           {/* Department Switcher Tabs & Excel Export Button */}
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             {isAdmin ? (
-              <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shrink-0">
+              <div className="flex flex-wrap items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shrink-0 gap-1">
                 {[
                   { id: 'สำนักปลัด', label: 'สำนักปลัด', icon: Building2 },
                   { id: 'กองคลัง', label: 'กองคลัง', icon: BadgeDollarSign },
-                  { id: 'กองช่าง', label: 'กองช่าง', icon: HardHat }
+                  { id: 'กองช่าง', label: 'กองช่าง', icon: HardHat },
+                  { id: 'กองการศึกษา', label: 'กองการศึกษา', icon: GraduationCap },
+                  { id: 'กองสวัสดิการสังคม', label: 'สวัสดิการฯ', icon: HeartHandshake },
+                  { id: 'งานสาธารณสุขและสิ่งแวดล้อม', label: 'สาธารณสุขฯ', icon: Activity }
                 ].map((d) => {
                   const isSelected = activeDept === d.id;
                   const Icon = d.icon;
@@ -327,13 +406,13 @@ export default function DepartmentWorkspaceView({
                     <button
                       key={d.id}
                       onClick={() => setActiveDept(d.id)}
-                      className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
                         isSelected
                           ? 'bg-blue-600 text-white shadow-xs'
                           : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                       }`}
                     >
-                      <Icon className="w-4 h-4" />
+                      <Icon className="w-3.5 h-3.5" />
                       <span>{d.label}</span>
                     </button>
                   );
@@ -548,8 +627,222 @@ export default function DepartmentWorkspaceView({
               </button>
             </>
           )}
+
+          {/* 4. กองการศึกษา ศาสนาและวัฒนธรรม Sub-Tabs */}
+          {activeDept === 'กองการศึกษา' && (
+            <>
+              <button
+                onClick={() => setSubTab('overview')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'overview' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>ภาพรวมกองการศึกษา</span>
+              </button>
+              <button
+                onClick={() => setSubTab('lunch')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'lunch' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <Apple className="w-3.5 h-3.5 text-emerald-500" />
+                <span>อาหารกลางวัน & นม ศพด.</span>
+              </button>
+              <button
+                onClick={() => setSubTab('materials')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'materials' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5 text-blue-500" />
+                <span>สื่อการเรียนการสอน ({educationData.educationalMaterials.length})</span>
+              </button>
+              <button
+                onClick={() => setSubTab('teachers')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'teachers' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <Users className="w-3.5 h-3.5" />
+                <span>ทะเบียนครูผู้ดูแลเด็ก ({educationData.cdcTeachers.length})</span>
+              </button>
+              <button
+                onClick={() => setSubTab('capa')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'capa' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
+                <span>ตอบข้อทักท้วง ({deptCapaFindings.length})</span>
+              </button>
+            </>
+          )}
+
+          {/* 5. กองสวัสดิการสังคม Sub-Tabs */}
+          {activeDept === 'กองสวัสดิการสังคม' && (
+            <>
+              <button
+                onClick={() => setSubTab('overview')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'overview' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>ภาพรวมกองสวัสดิการ</span>
+              </button>
+              <button
+                onClick={() => setSubTab('elderly')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'elderly' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <Heart className="w-3.5 h-3.5 text-rose-500" />
+                <span>เบี้ยยังชีพผู้สูงอายุ 4 ขั้น ({welfareData.summary.totalElderlyBeneficiaries})</span>
+              </button>
+              <button
+                onClick={() => setSubTab('disability')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'disability' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <HeartHandshake className="w-3.5 h-3.5 text-indigo-500" />
+                <span>เบี้ยความพิการ ({welfareData.summary.totalDisabilityBeneficiaries})</span>
+              </button>
+              <button
+                onClick={() => setSubTab('relief')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'relief' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <HelpCircle className="w-3.5 h-3.5 text-amber-500" />
+                <span>เงินสงเคราะห์ผู้ประสบภัย ({welfareData.emergencyRelief.length})</span>
+              </button>
+              <button
+                onClick={() => setSubTab('capa')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'capa' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
+                <span>ตอบข้อทักท้วง ({deptCapaFindings.length})</span>
+              </button>
+            </>
+          )}
+
+          {/* 6. งานสาธารณสุขและสิ่งแวดล้อม Sub-Tabs */}
+          {activeDept === 'งานสาธารณสุขและสิ่งแวดล้อม' && (
+            <>
+              <button
+                onClick={() => setSubTab('overview')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'overview' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>ภาพรวมงานสาธารณสุข</span>
+              </button>
+              <button
+                onClick={() => setSubTab('waste')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'waste' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <Truck className="w-3.5 h-3.5 text-blue-500" />
+                <span>ค่าธรรมเนียมขยะ 6 หมู่บ้าน ({publicHealthData.wasteManagement.length} หมู่บ้าน)</span>
+              </button>
+              <button
+                onClick={() => setSubTab('disease')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'disease' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <Activity className="w-3.5 h-3.5 text-rose-500" />
+                <span>ควบคุมโรคติดต่อ (ยุงลาย/พิษสุนัขบ้า)</span>
+              </button>
+              <button
+                onClick={() => setSubTab('sanitation')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'sanitation' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                <span>สุขาภิบาลอาหาร & ตลาดนัด</span>
+              </button>
+              <button
+                onClick={() => setSubTab('capa')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'capa' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
+                <span>ตอบข้อทักท้วง ({deptCapaFindings.length})</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
+
+      {/* EXECUTIVE DIRECTIVES CALLOUT BANNER (if any directive assigned to activeDept) */}
+      {(() => {
+        const relevant = executiveDirectives.filter((d) =>
+          d.department === activeDept ||
+          (activeDept === 'กองการศึกษา' && d.department?.includes('การศึกษา')) ||
+          (activeDept === 'กองสวัสดิการสังคม' && d.department?.includes('สวัสดิการ')) ||
+          (activeDept === 'งานสาธารณสุขและสิ่งแวดล้อม' && (d.department?.includes('สาธารณสุข') || d.department?.includes('สิ่งแวดล้อม')))
+        );
+
+        if (relevant.length === 0) return null;
+
+        return (
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/30 p-4 rounded-2xl border border-amber-300 dark:border-amber-800/60 shadow-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Send className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                <span className="text-xs font-bold text-amber-900 dark:text-amber-200 uppercase tracking-wider">
+                  ข้อสั่งการผู้บริหารส่งถึง {activeDept} ({relevant.length} เรื่อง)
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCurrentTab('executive-dashboard')}
+                className="text-[11px] font-bold text-amber-800 dark:text-amber-300 hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                <span>เปิดศูนย์สั่งการผู้บริหาร</span>
+                <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+
+            <div className="space-y-1.5">
+              {relevant.map((dir) => (
+                <div key={dir.id} className="bg-white/80 dark:bg-slate-900/80 p-3 rounded-xl border border-amber-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-slate-900 dark:text-slate-100">{dir.title}</span>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+                        {dir.urgency === 'urgent_high' ? '⚡ ด่วนที่สุด' : 'ด่วนมาก'}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-500">
+                      ผู้สั่งการ: <strong>{dir.issuer}</strong> • กำหนดรายงานผล: <strong className="text-rose-600">{dir.dueDate}</strong>
+                    </div>
+                  </div>
+
+                  <span className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border self-start sm:self-center ${
+                    dir.status === 'completed'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      : dir.status === 'reported'
+                      ? 'bg-blue-50 text-blue-700 border-blue-200'
+                      : 'bg-amber-100 text-amber-800 border-amber-300'
+                  }`}>
+                    {dir.status === 'completed' ? '✓ รายงานเสร็จสิ้น' : dir.status === 'reported' ? 'รายงานผลแล้ว' : '⏳ รอดำเนินการ'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* =========================================================================
           WORKSPACE CONTENT: 1. สำนักปลัด
@@ -1641,6 +1934,607 @@ export default function DepartmentWorkspaceView({
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* =========================================================================
+          WORKSPACE CONTENT: 4. กองการศึกษา ศาสนาและวัฒนธรรม
+      ========================================================================= */}
+      {activeDept === 'กองการศึกษา' && (
+        <div className="space-y-6">
+          {/* SubTab: Overview */}
+          {subTab === 'overview' && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">ศูนย์พัฒนาเด็กเล็กในสังกัด</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{educationData.centers.length} แห่ง</div>
+                  <div className="text-[11px] text-blue-600 font-bold">เด็กเล็กทั้งหมด {educationData.summary.totalStudents} คน</div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">อัตราอาหารกลางวันตามเกณฑ์</div>
+                  <div className="text-2xl font-black text-emerald-600">{educationData.summary.dailyLunchRatePerChild} ฿<span className="text-xs font-normal text-slate-500"> /คน/วัน</span></div>
+                  <div className="text-[11px] text-slate-500">มติ ครม. & ระเบียบ มท. 2562</div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">งบประมาณอาหารกลางวัน/เดือน</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{educationData.summary.monthlyLunchBudgetEstimate?.toLocaleString()} ฿</div>
+                  <div className="text-[11px] text-emerald-600 font-bold">นมโรงเรียน {educationData.summary.milkCartonsDaily} กล่อง/วัน</div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">ครูและผู้ดูแลเด็ก ศพด.</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{educationData.cdcTeachers.length} คน</div>
+                  <div className="text-[11px] text-purple-600 font-bold">มีใบอนุญาตประกอบวิชาชีพครบ</div>
+                </div>
+              </div>
+
+              {/* Child Development Centers Detail Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {educationData.centers.map((c) => (
+                  <div key={c.id} className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <span className="text-[11px] font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 px-2.5 py-0.5 rounded-full">
+                          {c.code}
+                        </span>
+                        <h4 className="text-base font-bold text-slate-900 dark:text-slate-100">{c.name}</h4>
+                        <p className="text-xs text-slate-500">{c.location}</p>
+                      </div>
+                      <span className="text-xs font-bold text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-lg border border-emerald-200">
+                        {c.studentsCount} คน
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <div>
+                        <span className="text-slate-400 block text-[11px]">หัวหน้าศูนย์:</span>
+                        <strong className="text-slate-800 dark:text-slate-200">{c.headTeacher}</strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block text-[11px]">ครูผู้ดูแลเด็ก:</span>
+                        <strong className="text-slate-800 dark:text-slate-200">{c.teachersCount} คน</strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block text-[11px]">อาหารกลางวัน:</span>
+                        <strong className="text-emerald-600">{c.lunchBudgetDaily?.toLocaleString()} ฿/วัน</strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block text-[11px]">นมโรงเรียน:</span>
+                        <strong className="text-blue-600">{c.milkBudgetDaily} กล่อง/วัน</strong>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: Lunch & Milk Calculator */}
+          {subTab === 'lunch' && (
+            <div className="space-y-6">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Apple className="w-5 h-5 text-emerald-600" />
+                    <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                      ระบบคำนวณและทะเบียนคุมเงินค่าอาหารกลางวันและนมโรงเรียน ศพด.
+                    </h3>
+                  </div>
+                  <span className="text-xs text-slate-500 font-bold bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-xl">
+                    เกณฑ์ 24 บาท/คน/วัน
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 bg-emerald-50/50 dark:bg-emerald-950/20 rounded-2xl border border-emerald-200 dark:border-emerald-900/50 text-xs">
+                  <div>
+                    <span className="text-slate-500 block">จำนวนเด็กทั้ง 2 ศูนย์:</span>
+                    <strong className="text-base text-emerald-800 dark:text-emerald-300">102 คน</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">งบอาหารกลางวันต่อวัน:</span>
+                    <strong className="text-base text-emerald-800 dark:text-emerald-300">2,448 บาท/วัน</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">งบอาหารกลางวัน 20 วันทำการ:</span>
+                    <strong className="text-base text-emerald-800 dark:text-emerald-300">48,960 บาท/เดือน</strong>
+                  </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs text-left">
+                    <thead className="bg-slate-50 dark:bg-slate-800/80 font-bold text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+                      <tr>
+                        <th className="py-3 px-3">ศูนย์พัฒนาเด็กเล็ก</th>
+                        <th className="py-3 px-3 text-center">จำนวนเด็ก</th>
+                        <th className="py-3 px-3 text-right">งบรายวัน (24 บ.)</th>
+                        <th className="py-3 px-3 text-right">งบรายเดือน (20 วัน)</th>
+                        <th className="py-3 px-3 text-center">นมพาสเจอร์ไรส์/ยูเอชที</th>
+                        <th className="py-3 px-3">คณะกรรมการตรวจรับ</th>
+                        <th className="py-3 px-3 text-center">สถานะ</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                      {educationData.centers.map((c) => (
+                        <tr key={c.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40">
+                          <td className="py-3 px-3 font-bold text-slate-900 dark:text-slate-100">{c.name}</td>
+                          <td className="py-3 px-3 text-center font-bold">{c.studentsCount} คน</td>
+                          <td className="py-3 px-3 text-right font-mono font-bold text-emerald-600">{c.lunchBudgetDaily?.toLocaleString()} ฿</td>
+                          <td className="py-3 px-3 text-right font-mono font-bold text-emerald-700">{(c.lunchBudgetDaily * 20)?.toLocaleString()} ฿</td>
+                          <td className="py-3 px-3 text-center font-mono">{c.milkBudgetDaily} กล่อง/วัน</td>
+                          <td className="py-3 px-3 text-slate-600 dark:text-slate-400">{c.headTeacher} และตัวแทนผู้ปกครอง</td>
+                          <td className="py-3 px-3 text-center">
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              ✓ ตรวจรับครบถ้วน
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: Educational Materials */}
+          {subTab === 'materials' && (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                  ทะเบียนคุมการจัดซื้อสื่อการเรียนการสอนและของเล่นเด็กปฐมวัย
+                </h3>
+                <span className="text-xs text-slate-500 font-bold">
+                  รวม {educationData.educationalMaterials.length} โครงการ
+                </span>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-slate-50 dark:bg-slate-800 font-bold text-slate-700 dark:text-slate-300">
+                    <tr>
+                      <th className="py-3 px-3">รหัสรายการ</th>
+                      <th className="py-3 px-3">ชื่อรายการจัดซื้อ</th>
+                      <th className="py-3 px-3">เป้าหมาย / ศูนย์</th>
+                      <th className="py-3 px-3 text-right">วงเงิน (บาท)</th>
+                      <th className="py-3 px-3">วันที่ตรวจรับ</th>
+                      <th className="py-3 px-3 text-center">สถานะ</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {educationData.educationalMaterials.map((m) => (
+                      <tr key={m.id} className="hover:bg-slate-50/50">
+                        <td className="py-3 px-3 font-mono font-bold text-blue-600">{m.id}</td>
+                        <td className="py-3 px-3 font-bold text-slate-800 dark:text-slate-200">{m.title}</td>
+                        <td className="py-3 px-3 text-slate-600 dark:text-slate-400">{m.targetCenter}</td>
+                        <td className="py-3 px-3 text-right font-mono font-bold text-slate-900 dark:text-slate-100">{m.budget?.toLocaleString()} ฿</td>
+                        <td className="py-3 px-3 text-slate-600">{m.verifiedDate}</td>
+                        <td className="py-3 px-3 text-center">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            ✓ ตรวจรับลงบัญชีแล้ว
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: Teachers */}
+          {subTab === 'teachers' && (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                  ทะเบียนครูผู้ดูแลเด็กและใบอนุญาตประกอบวิชาชีพทางการศึกษา
+                </h3>
+                <span className="text-xs text-slate-500">ตรวจสอบอายุใบอนุญาตและมาตรฐานวิชาชีพ</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {educationData.cdcTeachers.map((t) => (
+                  <div key={t.id} className="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">{t.name}</h4>
+                        <div className="text-xs text-blue-600 font-semibold">{t.position}</div>
+                      </div>
+                      <span className="text-xs font-mono font-bold text-slate-500 bg-white dark:bg-slate-900 px-2 py-0.5 rounded border">
+                        {t.id}
+                      </span>
+                    </div>
+
+                    <div className="text-xs text-slate-600 dark:text-slate-400 space-y-1 pt-1 border-t border-slate-200 dark:border-slate-700">
+                      <div>สังกัด: <strong>{t.facility}</strong></div>
+                      <div>ระดับชั้นที่ดูแล: <strong>{t.assignedClass}</strong></div>
+                      <div>เลขที่ใบอนุญาต: <strong className="font-mono">{t.licenseNo}</strong></div>
+                      <div>วันหมดอายุใบอนุญาต: <strong className="text-emerald-600">{t.licenseExpire}</strong></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: CAPA */}
+          {subTab === 'capa' && (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+              <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                ประเด็นข้อตรวจพบและข้อทักท้วง (CAPA) กองการศึกษา
+              </h3>
+              {deptCapaFindings.length === 0 ? (
+                <div className="p-8 text-center text-slate-400 text-xs">
+                  <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-500 mb-2" />
+                  <div>ไม่พบข้อทักท้วงคงค้างของกองการศึกษา การดำเนินงานเป็นไปตามระเบียบเรียบร้อย</div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {deptCapaFindings.map((f) => (
+                    <div key={f.id} className="p-4 rounded-xl border border-amber-200 bg-amber-50/30 text-xs space-y-2">
+                      <div className="font-bold text-slate-900">{f.title}</div>
+                      <div className="text-slate-600">การแก้ไข: {f.correctiveAction}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* =========================================================================
+          WORKSPACE CONTENT: 5. กองสวัสดิการสังคม
+      ========================================================================= */}
+      {activeDept === 'กองสวัสดิการสังคม' && (
+        <div className="space-y-6">
+          {/* SubTab: Overview */}
+          {subTab === 'overview' && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">ผู้สูงอายุรับเบี้ยยังชีพ (4 ขั้น)</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{welfareData.summary.totalElderlyBeneficiaries} ราย</div>
+                  <div className="text-[11px] text-blue-600 font-bold">ยอดเงิน 359,800 ฿/เดือน</div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">คนพิการรับเบี้ยความพิการ</div>
+                  <div className="text-2xl font-black text-indigo-600">{welfareData.summary.totalDisabilityBeneficiaries} ราย</div>
+                  <div className="text-[11px] text-slate-500">ยอดเงิน 55,600 ฿/เดือน</div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">ยอดเบิกจ่ายเบี้ยยังชีพรวม/เดือน</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{welfareData.summary.monthlyDisbursementAmount?.toLocaleString()} ฿</div>
+                  <div className="text-[11px] text-emerald-600 font-bold">e-Payment กรมบัญชีกลาง 100%</div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">เงินสงเคราะห์ผู้ประสบภัย/ยากไร้</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{welfareData.emergencyRelief.length} ราย</div>
+                  <div className="text-[11px] text-amber-600 font-bold">ระเบียบ มท. ช่วยเหลือประชาชน 2566</div>
+                </div>
+              </div>
+
+              {/* 4-Tier Elderly Breakdown */}
+              <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                    ตารางสรุปการจ่ายเงินเบี้ยยังชีพผู้สูงอายุ 4 ขั้นบันได (ระเบียบ มท. 2566)
+                  </h3>
+                  <span className="text-xs text-slate-500">ตัดยอดผู้เสียชีวิต/ย้ายที่อยู่ประจำเดือน</span>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs text-left">
+                    <thead className="bg-slate-50 dark:bg-slate-800 font-bold text-slate-700 dark:text-slate-300">
+                      <tr>
+                        <th className="py-3 px-3">ระดับช่วงอายุ</th>
+                        <th className="py-3 px-3 text-center">จำนวนผู้มีสิทธิ</th>
+                        <th className="py-3 px-3 text-right">ยอดเงินรายเดือน</th>
+                        <th className="py-3 px-3 text-right">ประมาณการต่อปี</th>
+                        <th className="py-3 px-3 text-center">ตัดยอดเสียชีวิตเดือนนี้</th>
+                        <th className="py-3 px-3">ช่องทางการจ่ายเงิน</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                      {welfareData.elderlyAllowances.map((el, idx) => (
+                        <tr key={idx} className="hover:bg-slate-50/50">
+                          <td className="py-3 px-3 font-bold text-slate-900 dark:text-slate-100">{el.tier}</td>
+                          <td className="py-3 px-3 text-center font-bold text-blue-600">{el.recipientCount} ราย</td>
+                          <td className="py-3 px-3 text-right font-mono font-bold text-slate-900 dark:text-slate-100">{el.monthlyTotal?.toLocaleString()} ฿</td>
+                          <td className="py-3 px-3 text-right font-mono text-slate-600 dark:text-slate-400">{el.annualEstimate?.toLocaleString()} ฿</td>
+                          <td className="py-3 px-3 text-center">
+                            {el.deceasedDeductionThisMonth > 0 ? (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                -{el.deceasedDeductionThisMonth} ราย (ตัดยอดแล้ว)
+                              </span>
+                            ) : (
+                              <span className="text-slate-400">0</span>
+                            )}
+                          </td>
+                          <td className="py-3 px-3 text-slate-500 text-[11px]">{el.paymentMethod}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: Elderly Allowances Detail */}
+          {subTab === 'elderly' && (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                  ทะเบียนคุมเบี้ยยังชีพผู้สูงอายุ (แบบ บย.01)
+                </h3>
+                <span className="text-xs text-slate-500 font-bold">ฐานข้อมูลผู้สูงอายุ {welfareData.summary.totalElderlyBeneficiaries} ราย</span>
+              </div>
+              <p className="text-xs text-slate-500">
+                การจ่ายเงินเบี้ยยังชีพผู้สูงอายุ ดำเนินการผ่านระบบบูรณาการฐานข้อมูลสวัสดิการสังคม (e-Payment) ของกรมบัญชีกลาง เข้าบัญชีเงินฝากธนาคารของผู้มีสิทธิโดยตรงทุกวันที่ 10 ของเดือน
+              </p>
+              <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 text-xs space-y-2">
+                <div className="font-bold text-blue-900 dark:text-blue-200">เกณฑ์การจ่ายตามระเบียบ มท. 2566:</div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-700 dark:text-slate-300">
+                  <div className="bg-white dark:bg-slate-900 p-2 rounded-lg border">อายุ 60-69 ปี: <strong>600 บาท</strong></div>
+                  <div className="bg-white dark:bg-slate-900 p-2 rounded-lg border">อายุ 70-79 ปี: <strong>700 บาท</strong></div>
+                  <div className="bg-white dark:bg-slate-900 p-2 rounded-lg border">อายุ 80-89 ปี: <strong>800 บาท</strong></div>
+                  <div className="bg-white dark:bg-slate-900 p-2 rounded-lg border">อายุ 90 ปีขึ้นไป: <strong>1,000 บาท</strong></div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: Disability Allowances */}
+          {subTab === 'disability' && (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+              <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                ทะเบียนคุมเบี้ยความพิการ กองสวัสดิการสังคม
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {welfareData.disabilityAllowances.map((d) => (
+                  <div key={d.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2 text-xs">
+                    <span className="font-bold text-indigo-600 block">{d.category}</span>
+                    <div className="text-xl font-bold text-slate-900 dark:text-slate-100">{d.recipientCount} ราย</div>
+                    <div className="text-slate-500">ยอดเบิกจ่ายรวม: <strong className="font-mono text-slate-900 dark:text-slate-100">{d.monthlyTotal?.toLocaleString()} ฿/เดือน</strong></div>
+                    <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      ✓ ตรวจสอบสิทธิกับ พม. เรียบร้อย
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: Emergency Relief */}
+          {subTab === 'relief' && (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+              <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                ทะเบียนคุมเงินสงเคราะห์ผู้ประสบภัยพิบัติและผู้ยากไร้
+              </h3>
+              <div className="space-y-3">
+                {welfareData.emergencyRelief.map((r) => (
+                  <div key={r.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <span className="font-mono text-[11px] text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded">{r.id}</span>
+                        <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100 mt-1">{r.caseName}</h4>
+                      </div>
+                      <span className="text-sm font-bold text-emerald-600 font-mono">{r.amount?.toLocaleString()} ฿</span>
+                    </div>
+                    <div className="text-slate-500">ผู้รับความช่วยเหลือ: <strong>{r.beneficiary}</strong> • วันที่จ่ายเงิน: {r.disbursedDate}</div>
+                    <div className="text-[11px] text-blue-600 font-medium">ระเบียบอ้างอิง: {r.ruleReference}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: CAPA */}
+          {subTab === 'capa' && (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+              <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                ประเด็นข้อตรวจพบและข้อทักท้วง (CAPA) กองสวัสดิการสังคม
+              </h3>
+              {deptCapaFindings.length === 0 ? (
+                <div className="p-8 text-center text-slate-400 text-xs">
+                  <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-500 mb-2" />
+                  <div>ไม่พบข้อทักท้วงคงค้างของกองสวัสดิการสังคม การเบิกจ่ายถูกต้องตามระเบียบ</div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {deptCapaFindings.map((f) => (
+                    <div key={f.id} className="p-4 rounded-xl border border-amber-200 bg-amber-50/30 text-xs space-y-2">
+                      <div className="font-bold text-slate-900">{f.title}</div>
+                      <div className="text-slate-600">การแก้ไข: {f.correctiveAction}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* =========================================================================
+          WORKSPACE CONTENT: 6. งานสาธารณสุขและสิ่งแวดล้อม
+      ========================================================================= */}
+      {activeDept === 'งานสาธารณสุขและสิ่งแวดล้อม' && (
+        <div className="space-y-6">
+          {/* SubTab: Overview */}
+          {subTab === 'overview' && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">ถังขยะลงทะเบียน (6 หมู่บ้าน)</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{publicHealthData.summary.wasteBinsRegistered} ถัง</div>
+                  <div className="text-[11px] text-blue-600 font-bold">จัดเก็บสัปดาห์ละ 2 ครั้ง</div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">ประมาณการค่าธรรมเนียมขยะ/เดือน</div>
+                  <div className="text-2xl font-black text-emerald-600">{publicHealthData.summary.monthlyWasteFeeEstimate?.toLocaleString()} ฿</div>
+                  <div className="text-[11px] text-slate-500">อัตรา 40 บาท/ถัง/เดือน</div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">การพ่นหมอกควันไข้เลือดออก</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{publicHealthData.summary.foggingCampaignsCompleted} ครั้ง</div>
+                  <div className="text-[11px] text-rose-600 font-bold">ครอบคลุม ศพด. และชุมชน</div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">วัคซีนป้องกันพิษสุนัขบ้า</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{publicHealthData.summary.rabiesVaccinatedAnimals} ตัว</div>
+                  <div className="text-[11px] text-emerald-600 font-bold">ร้อยละ 93 ของประชากรสัตว์</div>
+                </div>
+              </div>
+
+              {/* Waste Fees & Villages Summary Table */}
+              <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                    ข้อมูลการจัดเก็บขยะมูลฝอยและค่าธรรมเนียมรายหมู่บ้าน (พ.ร.บ. สาธารณสุข 2535)
+                  </h3>
+                  <span className="text-xs text-slate-500">ตำบลฝางคำ 6 หมู่บ้าน</span>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs text-left">
+                    <thead className="bg-slate-50 dark:bg-slate-800 font-bold text-slate-700 dark:text-slate-300">
+                      <tr>
+                        <th className="py-3 px-3">หมู่บ้าน</th>
+                        <th className="py-3 px-3 text-center">ครัวเรือน</th>
+                        <th className="py-3 px-3 text-center">จำนวนถังขยะ</th>
+                        <th className="py-3 px-3 text-right">ค่าธรรมเนียม/เดือน</th>
+                        <th className="py-3 px-3">ความถี่การจัดเก็บ</th>
+                        <th className="py-3 px-3 text-center">อัตราการชำระเงิน</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                      {publicHealthData.wasteManagement.map((w, idx) => (
+                        <tr key={idx} className="hover:bg-slate-50/50">
+                          <td className="py-3 px-3 font-bold text-slate-900 dark:text-slate-100">{w.village}</td>
+                          <td className="py-3 px-3 text-center">{w.households} ครัวเรือน</td>
+                          <td className="py-3 px-3 text-center font-bold text-blue-600">{w.binsCount} ถัง</td>
+                          <td className="py-3 px-3 text-right font-mono font-bold text-slate-900 dark:text-slate-100">{w.monthlyTotal?.toLocaleString()} ฿</td>
+                          <td className="py-3 px-3 text-slate-500">{w.collectionFrequency}</td>
+                          <td className="py-3 px-3 text-center font-bold text-emerald-600">{w.paymentComplianceRate}%</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: Waste Management Detail */}
+          {subTab === 'waste' && (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+              <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                ทะเบียนคุมค่าธรรมเนียมขยะมูลฝอยและจุดทิ้งขยะรวม
+              </h3>
+              <p className="text-xs text-slate-500">
+                ตามข้อบัญญัติองค์การบริหารส่วนตำบลฝางคำ เรื่อง การจัดการสิ่งปฏิกูลและมูลฝอย พ.ศ. 2562 กำหนดอัตราค่าธรรมเนียมการเก็บและขนมูลฝอย 40 บาทต่อถังต่อเดือน
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                  <span className="text-slate-400 block text-[11px]">ถังขยะทั้งหมด:</span>
+                  <strong className="text-lg text-slate-900 dark:text-slate-100">480 ถัง</strong>
+                </div>
+                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                  <span className="text-slate-400 block text-[11px]">จัดเก็บได้เฉลี่ย:</span>
+                  <strong className="text-lg text-emerald-600">90.2%</strong>
+                </div>
+                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                  <span className="text-slate-400 block text-[11px]">รถขยะปฏิบัติการ:</span>
+                  <strong className="text-lg text-blue-600">1 คัน (อัดท้าย 6 ล้อ)</strong>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: Disease Control */}
+          {subTab === 'disease' && (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+              <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                บันทึกโครงการควบคุมและป้องกันโรคติดต่อในพื้นที่
+              </h3>
+              <div className="space-y-3">
+                {publicHealthData.diseaseControl.map((d) => (
+                  <div key={d.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-2 text-xs">
+                    <div className="flex items-start justify-between">
+                      <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">{d.campaignName}</h4>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        ✓ ดำเนินการแล้วเสร็จ
+                      </span>
+                    </div>
+                    <div className="text-slate-500">กลุ่มเป้าหมาย: <strong>{d.target}</strong> ({d.achievedCount} / {d.targetCount})</div>
+                    <div className="text-slate-500">ช่วงเวลาดำเนินการ: <strong>{d.campaignPeriod}</strong></div>
+                    {d.vaccineBatch && <div className="text-blue-600 font-mono">Lot วัคซีน: {d.vaccineBatch}</div>}
+                    {d.chemicalType && <div className="text-amber-600 font-medium">สารเคมี: {d.chemicalType}</div>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: Food Sanitation */}
+          {subTab === 'sanitation' && (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+              <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                บันทึกการตรวจสุขาภิบาลอาหารและตลาดนัดชุมชน
+              </h3>
+              <div className="space-y-3">
+                {publicHealthData.foodSanitation.map((s) => (
+                  <div key={s.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-2 text-xs">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">{s.placeName}</h4>
+                        <div className="text-slate-500">{s.location}</div>
+                      </div>
+                      <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        ผ่านเกณฑ์ {s.passedStalls} / {s.stallsCount} แผง
+                      </span>
+                    </div>
+                    <div className="text-slate-600 pt-1 border-t border-slate-100 dark:border-slate-800">
+                      มาตรฐานที่ประเมิน: <strong>{s.sanitationStandard}</strong> • วันที่ตรวจ: {s.inspectionDate}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: CAPA */}
+          {subTab === 'capa' && (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+              <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                ประเด็นข้อตรวจพบและข้อทักท้วง (CAPA) งานสาธารณสุขและสิ่งแวดล้อม
+              </h3>
+              {deptCapaFindings.length === 0 ? (
+                <div className="p-8 text-center text-slate-400 text-xs">
+                  <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-500 mb-2" />
+                  <div>ไม่พบข้อทักท้วงคงค้างของงานสาธารณสุขและสิ่งแวดล้อม การปฏิบัติงานเป็นไปตามระเบียบ</div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {deptCapaFindings.map((f) => (
+                    <div key={f.id} className="p-4 rounded-xl border border-amber-200 bg-amber-50/30 text-xs space-y-2">
+                      <div className="font-bold text-slate-900">{f.title}</div>
+                      <div className="text-slate-600">การแก้ไข: {f.correctiveAction}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>

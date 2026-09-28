@@ -44,6 +44,7 @@ export const DEFAULT_DEPARTMENTS = [
   'กองช่าง',
   'กองการศึกษา',
   'กองสวัสดิการสังคม',
+  'งานสาธารณสุขและสิ่งแวดล้อม',
   'ศพด.วัดเจริญทัศน์',
   'ศพด.บ้านฝางเทิง'
 ];
@@ -60,6 +61,10 @@ export function getDepartments() {
         const idx = parsed.indexOf('กองสาธารณสุขและสิ่งแวดล้อม');
         if (idx !== -1) {
           parsed[idx] = 'กองสวัสดิการสังคม';
+          changed = true;
+        }
+        if (!parsed.includes('งานสาธารณสุขและสิ่งแวดล้อม')) {
+          parsed.push('งานสาธารณสุขและสิ่งแวดล้อม');
           changed = true;
         }
         if (!parsed.includes('ศพด.วัดเจริญทัศน์')) {
@@ -294,14 +299,50 @@ export function autoRepairDataLinkages() {
           usersChanged = true;
         }
       }
+
+      // 6.2 Synchronize Sprint 4 & 5 permissions (Executive Dashboard, Central Calendar, Education, Welfare, Public Health)
+      const SPRINT4_5_SYNC_KEY = 'ia_sprint4_5_sync_v3';
+      if (localStorage.getItem(SPRINT4_5_SYNC_KEY) !== 'synced') {
+        const allIds = ALL_MENU_IDS.map((m) => m.id);
+        const execPerms = ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
+
+        if (u.role === 'admin') {
+          u.permissions = Array.from(new Set([...(u.permissions || []), ...allIds]));
+          usersChanged = true;
+        } else if (u.role === 'executive') {
+          u.permissions = Array.from(new Set([...(u.permissions || []), ...execPerms]));
+          usersChanged = true;
+        } else if (u.department === 'สำนักปลัด' || u.username === 'office') {
+          u.permissions = Array.from(new Set([...(u.permissions || []), 'dept-workspaces', 'dept-office', 'central-calendar']));
+          usersChanged = true;
+        } else if (u.department === 'กองคลัง' || u.username === 'finance') {
+          u.permissions = Array.from(new Set([...(u.permissions || []), 'dept-workspaces', 'dept-finance', 'central-calendar']));
+          usersChanged = true;
+        } else if (u.department === 'กองช่าง' || u.username === 'engineering' || u.username === 'tech') {
+          u.permissions = Array.from(new Set([...(u.permissions || []), 'dept-workspaces', 'dept-tech', 'central-calendar']));
+          usersChanged = true;
+        } else if (u.department === 'กองการศึกษา' || u.username === 'education') {
+          u.permissions = Array.from(new Set([...(u.permissions || []), 'dept-workspaces', 'dept-education', 'central-calendar']));
+          usersChanged = true;
+        } else if (u.department === 'กองสวัสดิการสังคม' || u.username === 'welfare') {
+          u.permissions = Array.from(new Set([...(u.permissions || []), 'dept-workspaces', 'dept-welfare', 'central-calendar']));
+          usersChanged = true;
+        } else if (u.department === 'งานสาธารณสุขและสิ่งแวดล้อม' || u.username === 'health') {
+          u.permissions = Array.from(new Set([...(u.permissions || []), 'dept-workspaces', 'dept-health', 'central-calendar']));
+          usersChanged = true;
+        }
+      }
     });
 
     if (localStorage.getItem(SPRINT3_SYNC_KEY) !== 'synced') {
       localStorage.setItem(SPRINT3_SYNC_KEY, 'synced');
     }
+    if (localStorage.getItem('ia_sprint4_5_sync_v3') !== 'synced') {
+      localStorage.setItem('ia_sprint4_5_sync_v3', 'synced');
+    }
 
     // 7. Ensure Executive accounts exist (ผู้บริหาร & ปลัด อบต.ฝางคำ) and สำนักปลัด is distinct
-    const executivePerms = ['dashboard', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
+    const executivePerms = ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
     
     // 7.1 Ensure mayor (ผู้บริหาร) exists
     if (!users.some((u) => u.username === 'mayor')) {
@@ -354,7 +395,7 @@ export function autoRepairDataLinkages() {
         department: 'สำนักปลัด',
         role: 'user',
         passwordText: '1234',
-        permissions: ['dept-workspaces', 'dept-office', 'risk-management', 'forms'],
+        permissions: ['dept-workspaces', 'dept-office', 'central-calendar', 'risk-management', 'forms'],
         canManageUsers: false,
         createdAt: Date.now()
       });
@@ -370,7 +411,7 @@ export function autoRepairDataLinkages() {
         department: 'ศพด.วัดเจริญทัศน์',
         role: 'user',
         passwordText: '1234',
-        permissions: ['risk-management', 'forms'],
+        permissions: ['central-calendar', 'risk-management', 'forms'],
         canManageUsers: false,
         createdAt: Date.now()
       });
@@ -386,7 +427,70 @@ export function autoRepairDataLinkages() {
         department: 'ศพด.บ้านฝางเทิง',
         role: 'user',
         passwordText: '1234',
-        permissions: ['risk-management', 'forms'],
+        permissions: ['central-calendar', 'risk-management', 'forms'],
+        canManageUsers: false,
+        createdAt: Date.now()
+      });
+      usersChanged = true;
+    }
+
+    // 7.6 Ensure welfare user exists
+    if (!users.some((u) => u.username === 'welfare' || (u.department === 'กองสวัสดิการสังคม' && u.role === 'user'))) {
+      users.push({
+        username: 'welfare',
+        displayName: 'กองสวัสดิการสังคม',
+        position: 'ผู้อำนวยการกองสวัสดิการสังคม / เจ้าหน้าที่',
+        department: 'กองสวัสดิการสังคม',
+        role: 'user',
+        passwordText: '1234',
+        permissions: ['dept-workspaces', 'dept-welfare', 'central-calendar', 'risk-management', 'forms'],
+        canManageUsers: false,
+        createdAt: Date.now()
+      });
+      usersChanged = true;
+    }
+
+    // 7.7 Ensure health user is for งานสาธารณสุขและสิ่งแวดล้อม
+    const healthUser = users.find((u) => u.username === 'health');
+    if (healthUser) {
+      if (healthUser.department !== 'งานสาธารณสุขและสิ่งแวดล้อม') {
+        healthUser.department = 'งานสาธารณสุขและสิ่งแวดล้อม';
+        healthUser.displayName = 'งานสาธารณสุขและสิ่งแวดล้อม';
+        healthUser.position = 'เจ้าหน้าที่งานสาธารณสุขและสิ่งแวดล้อม';
+        healthUser.permissions = ['dept-workspaces', 'dept-health', 'central-calendar', 'risk-management', 'forms'];
+        usersChanged = true;
+      }
+    } else {
+      users.push({
+        username: 'health',
+        displayName: 'งานสาธารณสุขและสิ่งแวดล้อม',
+        position: 'เจ้าหน้าที่งานสาธารณสุขและสิ่งแวดล้อม',
+        department: 'งานสาธารณสุขและสิ่งแวดล้อม',
+        role: 'user',
+        passwordText: '1234',
+        permissions: ['dept-workspaces', 'dept-health', 'central-calendar', 'risk-management', 'forms'],
+        canManageUsers: false,
+        createdAt: Date.now()
+      });
+      usersChanged = true;
+    }
+
+    // 7.8 Ensure education user exists with workspace permissions
+    const eduUser = users.find((u) => u.username === 'education' || u.department === 'กองการศึกษา');
+    if (eduUser) {
+      if (!eduUser.permissions?.includes('dept-education')) {
+        eduUser.permissions = Array.from(new Set([...(eduUser.permissions || []), 'dept-workspaces', 'dept-education', 'central-calendar']));
+        usersChanged = true;
+      }
+    } else {
+      users.push({
+        username: 'education',
+        displayName: 'กองการศึกษา',
+        position: 'ผู้อำนวยการกองการศึกษา / นักวิชาการศึกษา',
+        department: 'กองการศึกษา',
+        role: 'user',
+        passwordText: '1234',
+        permissions: ['dept-workspaces', 'dept-education', 'central-calendar', 'risk-management', 'forms'],
         canManageUsers: false,
         createdAt: Date.now()
       });
@@ -419,16 +523,6 @@ export function autoRepairDataLinkages() {
         currentSession.displayName = 'หน่วยตรวจสอบฯ';
         sessChanged = true;
       }
-      if (currentSession.username === 'health' || currentSession.department === 'กองสาธารณสุขและสิ่งแวดล้อม') {
-        if (currentSession.displayName === 'กองสาธารณสุขและสิ่งแวดล้อม') {
-          currentSession.displayName = 'กองสวัสดิการสังคม';
-          sessChanged = true;
-        }
-        if (currentSession.department === 'กองสาธารณสุขและสิ่งแวดล้อม') {
-          currentSession.department = 'กองสวัสดิการสังคม';
-          sessChanged = true;
-        }
-      }
       if (Array.isArray(currentSession.permissions) && currentSession.permissions.includes('control-risk')) {
         const set = new Set(currentSession.permissions.filter((p) => p !== 'control-risk'));
         set.add('internal-control');
@@ -436,26 +530,38 @@ export function autoRepairDataLinkages() {
         currentSession.permissions = Array.from(set);
         sessChanged = true;
       }
-      if (localStorage.getItem('ia_dept_session_sprint3') !== 'synced') {
+      if (localStorage.getItem('ia_dept_session_sprint4_5') !== 'synced') {
+        const allIds = ALL_MENU_IDS.map((m) => m.id);
+        const execPerms = ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
+
         if (currentSession.role === 'admin') {
-          const allIds = ALL_MENU_IDS.map((m) => m.id);
           currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), ...allIds]));
           sessChanged = true;
         } else if (currentSession.role === 'executive') {
-          const execPerms = ['dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech'];
           currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), ...execPerms]));
           sessChanged = true;
-        } else if (currentSession.department === 'สำนักปลัด' || currentSession.username === 'office') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'dept-workspaces', 'dept-office']));
+        } else if (currentSession.department?.includes('ปลัด') || currentSession.username === 'office') {
+          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'dept-workspaces', 'dept-office', 'central-calendar']));
           sessChanged = true;
-        } else if (currentSession.department === 'กองคลัง' || currentSession.username === 'finance') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'dept-workspaces', 'dept-finance']));
+        } else if (currentSession.department?.includes('คลัง') || currentSession.username === 'finance') {
+          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'dept-workspaces', 'dept-finance', 'central-calendar']));
           sessChanged = true;
-        } else if (currentSession.department === 'กองช่าง' || currentSession.username === 'engineering' || currentSession.username === 'tech') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'dept-workspaces', 'dept-tech']));
+        } else if (currentSession.department?.includes('ช่าง') || currentSession.username === 'engineering' || currentSession.username === 'tech') {
+          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'dept-workspaces', 'dept-tech', 'central-calendar']));
+          sessChanged = true;
+        } else if (currentSession.department?.includes('การศึกษา') || currentSession.username === 'education') {
+          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'dept-workspaces', 'dept-education', 'central-calendar']));
+          sessChanged = true;
+        } else if (currentSession.department?.includes('สวัสดิการ') || currentSession.username === 'welfare') {
+          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'dept-workspaces', 'dept-welfare', 'central-calendar']));
+          sessChanged = true;
+        } else if (currentSession.department?.includes('สาธารณสุข') || currentSession.username === 'health') {
+          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'dept-workspaces', 'dept-health', 'central-calendar']));
           sessChanged = true;
         }
-        localStorage.setItem('ia_dept_session_sprint3', 'synced');
+        currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'central-calendar']));
+        sessChanged = true;
+        localStorage.setItem('ia_dept_session_sprint4_5', 'synced');
       }
       if (sessChanged) {
         localStorage.setItem(SESSION_KEY, JSON.stringify(currentSession));
@@ -549,17 +655,22 @@ export function deleteDepartment(name) {
 const DEFAULT_SESSION_MS = 24 * 60 * 60 * 1000; // 24 ชั่วโมง
 
 export const ALL_MENU_IDS = [
-  { id: 'dashboard', label: 'ภาพรวม & ปฏิทินงาน', icon: 'LayoutDashboard', desc: 'แดชบอร์ดสรุปและปฏิทินงานตรวจสอบ' },
+  { id: 'executive-dashboard', label: 'ศูนย์บัญชาการผู้บริหาร', icon: 'LayoutDashboard', desc: 'แดชบอร์ดภาพรวมการเงิน ผลการตรวจ การสั่งการ และนาฬิกานับถอยหลังกฎหมาย' },
+  { id: 'dashboard', label: 'แดชบอร์ดตรวจสอบภายใน', icon: 'ShieldAlert', desc: 'แดชบอร์ดสรุปและปฏิทินงานตรวจสอบ' },
+  { id: 'central-calendar', label: 'ปฏิทินปฏิบัติงานส่วนกลาง', icon: 'CalendarDays', desc: 'ปฏิทินบูรณาการร่วมทุกสำนัก/กอง และกำหนดการตรวจ' },
   { id: 'audit-risk', label: 'การประเมินความเสี่ยง', icon: 'ShieldAlert', desc: 'วิเคราะห์ SOFCK และจัดลำดับความเสี่ยง 21 กิจกรรม' },
   { id: 'planning', label: 'แผน & นโยบายตรวจ', icon: 'FileText', desc: 'แผนการตรวจสอบประจำปีและกฎบัตร' },
   { id: 'engagement-plan', label: 'แผนปฏิบัติงานตรวจ (ว 614)', icon: 'Sparkles', desc: 'แผนปฏิบัติงานรายกิจกรรมและแนวการตรวจด้วย AI' },
   { id: 'execution', label: 'ปฏิบัติการตรวจ & กระดาษทำการ', icon: 'ClipboardCheck', desc: 'ลงมือตรวจจริง สุ่มตรวจ และบันทึกกระดาษทำการ' },
   { id: 'audit-toolkits', label: 'เครื่องมือช่วยตรวจเชิงเทคนิค (ปี 70)', icon: 'Wrench', desc: 'เครื่องมือคำนวณราคากลาง Factor F, ค่าปรับ, ค่าธรรมเนียมอาคาร และข้อบัญญัติ' },
-  { id: 'reporting', label: 'รายงาน & ติดตามผล', icon: 'FileSpreadsheet', desc: 'รายงานผลการตรวจสอบและติดตามข้อเสนอแนะ' },
-  { id: 'dept-workspaces', label: 'พื้นที่ทำงานสำนัก/กอง (Workspaces)', icon: 'Building2', desc: 'ค็อกพิทและเครื่องมือเฉพาะทางสำหรับแต่ละกอง (สำนักปลัด, กองคลัง, กองช่าง)' },
+  { id: 'reporting', label: 'รายงาน & ติดตามผล (CAPA)', icon: 'FileSpreadsheet', desc: 'รายงานผลการตรวจสอบและติดตามข้อเสนอแนะ' },
+  { id: 'dept-workspaces', label: 'พื้นที่ทำงานสำนัก/กอง (Workspaces)', icon: 'Building2', desc: 'ค็อกพิทและเครื่องมือเฉพาะทางสำหรับแต่ละกอง' },
   { id: 'dept-office', label: 'สำนักปลัด (ยานพาหนะ/แผน/ร้องเรียน)', icon: 'Car', desc: 'ทะเบียนคุมรถยนต์และน้ำมัน แผนพัฒนาท้องถิ่น งานสารบรรณ และเรื่องร้องเรียน' },
   { id: 'dept-finance', label: 'กองคลัง (จัดซื้อจัดจ้าง/ค่าปรับ/พัสดุ ว 184)', icon: 'BadgeDollarSign', desc: 'ทะเบียนคุมสัญญา คำนวณค่าปรับ ตรวจสอบพัสดุประจำปี และลูกหนี้เงินยืม' },
   { id: 'dept-tech', label: 'กองช่าง (Factor F/คุมงาน/ใบอนุญาต)', icon: 'HardHat', desc: 'คำนวณราคากลาง Factor F & ปร.5 ทะเบียนคุมงานก่อสร้าง และขออนุญาตอาคาร 45 วัน' },
+  { id: 'dept-education', label: 'กองการศึกษา (อาหารกลางวัน/นม/สื่อ)', icon: 'GraduationCap', desc: 'ทะเบียนอาหารกลางวัน นมโรงเรียน พัสดุสื่อการเรียนการสอน และ ศพด.' },
+  { id: 'dept-welfare', label: 'กองสวัสดิการสังคม (เบี้ยยังชีพ/สงเคราะห์)', icon: 'HeartHandshake', desc: 'ทะเบียนคุมเบี้ยยังชีพผู้สูงอายุ 4 ขั้นบันได คนพิการ ผู้ป่วยเอดส์ และสงเคราะห์' },
+  { id: 'dept-health', label: 'งานสาธารณสุขฯ (ขยะ/โรคติดต่อ/ตลาด)', icon: 'Activity', desc: 'ทะเบียนค่าธรรมเนียมขยะมูลฝอย ควบคุมโรคระบาด และสุขาภิบาลอาหาร/ตลาด' },
   { id: 'internal-control', label: 'การควบคุมภายใน', icon: 'ShieldCheck', desc: 'บันทึกแบบ ปค.1, ปค.4, ปค.5 ตามหลักเกณฑ์ กค. พ.ศ. 2561 ของแต่ละกอง' },
   { id: 'risk-management', label: 'การบริหารความเสี่ยง', icon: 'AlertTriangle', desc: 'บันทึกแบบ บส.1 - บส.5 และ Matrix ระดับความเสี่ยง 5x5 ของแต่ละกอง' },
   { id: 'lpa', label: 'เตรียมรับประเมิน LPA', icon: 'Award', desc: 'เช็กลิสต์และหลักฐานเตรียมรับประเมิน LPA' },
@@ -587,7 +698,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'ผู้บริหาร',
     role: 'executive',
     passwordText: '1234',
-    permissions: ['dashboard', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
+    permissions: ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -598,7 +709,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'ปลัด อบต.ฝางคำ',
     role: 'executive',
     passwordText: '1234',
-    permissions: ['dashboard', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
+    permissions: ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -609,7 +720,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'สำนักปลัด',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dept-workspaces', 'dept-office', 'risk-management', 'forms'],
+    permissions: ['dept-workspaces', 'dept-office', 'central-calendar', 'risk-management', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -620,7 +731,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองคลัง',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dept-workspaces', 'dept-finance', 'risk-management', 'forms'],
+    permissions: ['dept-workspaces', 'dept-finance', 'central-calendar', 'risk-management', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -631,7 +742,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองช่าง',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dept-workspaces', 'dept-tech', 'risk-management', 'forms'],
+    permissions: ['dept-workspaces', 'dept-tech', 'central-calendar', 'risk-management', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -642,18 +753,29 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองการศึกษา',
     role: 'user',
     passwordText: '1234',
-    permissions: ['risk-management', 'forms'],
+    permissions: ['dept-workspaces', 'dept-education', 'central-calendar', 'risk-management', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
   {
-    username: 'health',
+    username: 'welfare',
     displayName: 'กองสวัสดิการสังคม',
     position: 'ผู้อำนวยการกองสวัสดิการสังคม / เจ้าหน้าที่',
     department: 'กองสวัสดิการสังคม',
     role: 'user',
     passwordText: '1234',
-    permissions: ['risk-management', 'forms'],
+    permissions: ['dept-workspaces', 'dept-welfare', 'central-calendar', 'risk-management', 'forms'],
+    canManageUsers: false,
+    createdAt: Date.now()
+  },
+  {
+    username: 'health',
+    displayName: 'งานสาธารณสุขและสิ่งแวดล้อม',
+    position: 'เจ้าหน้าที่งานสาธารณสุขและสิ่งแวดล้อม',
+    department: 'งานสาธารณสุขและสิ่งแวดล้อม',
+    role: 'user',
+    passwordText: '1234',
+    permissions: ['dept-workspaces', 'dept-health', 'central-calendar', 'risk-management', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -664,7 +786,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'ศพด.วัดเจริญทัศน์',
     role: 'user',
     passwordText: '1234',
-    permissions: ['risk-management', 'forms'],
+    permissions: ['central-calendar', 'risk-management', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -675,7 +797,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'ศพด.บ้านฝางเทิง',
     role: 'user',
     passwordText: '1234',
-    permissions: ['risk-management', 'forms'],
+    permissions: ['central-calendar', 'risk-management', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   }

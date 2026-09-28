@@ -668,3 +668,504 @@ export function exportMasterEnterpriseExcel({
 
   return downloadMultiSheetExcel(sheets, `ชุดข้อมูลหลัก_Master_Workbook_${selectedYear}_${orgName}`);
 }
+
+/**
+ * 6. ส่งออกเอกสารราชการเป็นไฟล์ Microsoft Word (.doc) มาตรฐาน A4
+ * รองรับฟอนต์ราชการไทย (TH Sarabun New), ขอบกระดาษ 2.5 ซม. / 2 ซม., ตาราง และการจัดย่อหน้า
+ */
+export function exportToWordDoc(title, htmlBody, fileName = 'เอกสารราชการ_อปท') {
+  try {
+    const fullHtml = `<!DOCTYPE html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset='utf-8'>
+<title>${title || 'เอกสารราชการ'}</title>
+<!--[if gte mso 9]>
+<xml>
+<w:WordDocument>
+<w:View>Print</w:View>
+<w:Zoom>100</w:Zoom>
+<w:DoNotOptimizeForBrowser/>
+</w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+  @page Section1 {
+    size: 210mm 297mm;
+    margin: 2.5cm 2.0cm 2.0cm 2.5cm;
+    mso-header-margin: 36pt;
+    mso-footer-margin: 36pt;
+    mso-paper-source: 0;
+  }
+  div.Section1 { page: Section1; }
+  body {
+    font-family: 'TH Sarabun New', 'TH SarabunPSK', 'Angsana New', 'Cordia New', sans-serif;
+    font-size: 16pt;
+    line-height: 1.25;
+    color: #000;
+  }
+  h1 { font-size: 20pt; font-weight: bold; text-align: center; margin: 0 0 10pt 0; }
+  h2 { font-size: 18pt; font-weight: bold; text-align: center; margin: 8pt 0 6pt 0; }
+  h3 { font-size: 16pt; font-weight: bold; margin: 8pt 0 4pt 0; }
+  p { margin: 0 0 6pt 0; text-align: justify; text-justify: inter-cluster; text-indent: 1.5cm; }
+  p.no-indent { text-indent: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 8pt 0; font-size: 15pt; }
+  table, th, td { border: 1pt solid #333; }
+  th { background-color: #f2f2f2; font-weight: bold; padding: 5pt 4pt; text-align: center; }
+  td { padding: 4pt 6pt; vertical-align: top; }
+  .text-center { text-align: center; }
+  .text-right { text-align: right; }
+  .text-left { text-align: left; }
+  .font-bold { font-weight: bold; }
+  .signature-table { border: none !important; width: 100%; margin-top: 35pt; }
+  .signature-table td { border: none !important; text-align: center; padding: 12pt 5pt; }
+</style>
+</head>
+<body>
+<div class="Section1">
+  ${htmlBody}
+</div>
+</body>
+</html>`;
+
+    const blob = new Blob(['\ufeff', fullHtml], {
+      type: 'application/msword;charset=utf-8'
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const cleanFileName = `${fileName}_${new Date().toISOString().slice(0, 10)}.doc`;
+    link.download = cleanFileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    return true;
+  } catch (err) {
+    console.error('Word Export Error:', err);
+    return false;
+  }
+}
+
+/**
+ * 7. ดาวน์โหลดแบบฟอร์มทางการราชการเป็น Word (.doc)
+ */
+export function downloadOfficialFormWord(formId, orgProfile = {}) {
+  const orgName = orgProfile.name || 'องค์การบริหารส่วนตำบลฝางคำ';
+  const palatName = orgProfile.palatName || 'ปลัดองค์การบริหารส่วนตำบลฝางคำ';
+  const approverName = orgProfile.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ';
+  const auditorName = orgProfile.auditorName || 'ผู้ตรวจสอบภายใน';
+  const currentYear = '2569';
+
+  switch (formId) {
+    case 'FORM-PK-01': {
+      const body = `
+        <div class="text-right font-bold">แบบ ปค. 1</div>
+        <h2>หนังสือรับรองการประเมินผลการควบคุมภายใน</h2>
+        <p class="text-center font-bold no-indent">${orgName}</p>
+        <p class="text-center no-indent">สำหรับงวดตั้งแต่วันที่ 1 ตุลาคม 2568 ถึงวันที่ 30 กันยายน 2569</p>
+        <br/>
+        <p>เรียน ผู้ว่าราชการจังหวัดอุบลราชธานี / สำนักงานการตรวจเงินแผ่นดิน</p>
+        <p>${orgName} ได้ประเมินผลการควบคุมภายในของหน่วยงาน สำหรับงวดตั้งแต่วันที่ 1 ตุลาคม 2568 ถึงวันที่ 30 กันยายน 2569 ด้วยเกณฑ์มาตรฐานตามหลักเกณฑ์กระทรวงการคลังว่าด้วยมาตรฐานและหลักเกณฑ์ปฏิบัติการควบคุมภายในสำหรับหน่วยงานของรัฐ พ.ศ. 2561</p>
+        <p>จากผลการประเมินดังกล่าว ${orgName} มีความเห็นว่า ระบบการควบคุมภายในของหน่วยงานมีความเพียงพอและมีประสิทธิผล สามารถให้ความมั่นใจอย่างสมเหตุสมผลว่า การดำเนินงานสามารถบรรลุวัตถุประสงค์ด้านการดำเนินงาน ด้านการรายงานทางการเงิน และด้านการปฏิบัติตามกฎหมายและระเบียบที่เกี่ยวข้อง</p>
+        <p>อย่างไรก็ดี ยังมีข้อตรวจพบและการปรับปรุงที่ต้องดำเนินการติดตามอย่างต่อเนื่องตามที่ระบุไว้ในแบบ ปค. 5</p>
+        
+        <table class="signature-table">
+          <tr>
+            <td style="width: 50%;"></td>
+            <td style="width: 50%;">
+              ลงชื่อ...................................................<br/>
+              ( ${approverName} )<br/>
+              ตำแหน่ง นายก${orgName}<br/>
+              วันที่ ........ เดือน .................... พ.ศ. ${currentYear}
+            </td>
+          </tr>
+        </table>
+      `;
+      return exportToWordDoc('แบบ ปค.1', body, `แบบ_ปค1_หนังสือรับรองการควบคุมภายใน_${orgName}`);
+    }
+
+    case 'FORM-PK-04': {
+      const body = `
+        <div class="text-right font-bold">แบบ ปค. 4</div>
+        <h2>รายงานการประเมินองค์ประกอบของการควบคุมภายใน</h2>
+        <p class="text-center font-bold no-indent">${orgName}</p>
+        <p class="text-center no-indent">ประจำปีงบประมาณ พ.ศ. ${currentYear}</p>
+        <br/>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 25%;">องค์ประกอบของการควบคุมภายใน</th>
+              <th style="width: 45%;">ผลการประเมิน / การปฏิบัติจริง</th>
+              <th style="width: 30%;">ข้อเสนอแนะในการปรับปรุง</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="font-bold">1. สภาพแวดล้อมการควบคุม (Control Environment)</td>
+              <td>หน่วยงานมีโครงสร้างการแบ่งส่วนราชการชัดเจน มีข้อบังคับจริยธรรม และมอบหมายหน้าที่เป็นลายลักษณ์อักษร</td>
+              <td>ควรจัดการอบรมเสริมสร้างวินัยทางการเงินการคลังแก่เจ้าหน้าที่บรรจุใหม่อย่างสม่ำเสมอ</td>
+            </tr>
+            <tr>
+              <td class="font-bold">2. การประเมินความเสี่ยง (Risk Assessment)</td>
+              <td>มีการระบุและวิเคราะห์ความเสี่ยงระดับองค์กรตามหนังสือสั่งการ ว 3482 และจัดทำแผนบริหารความเสี่ยงครบถ้วน</td>
+              <td>ควรทบทวนปัจจัยเสี่ยงด้านเทคโนโลยีสารสนเทศและการคุ้มครองข้อมูลส่วนบุคคล (PDPA) เพิ่มเติม</td>
+            </tr>
+            <tr>
+              <td class="font-bold">3. กิจกรรมการควบคุม (Control Activities)</td>
+              <td>มีระบบการแบ่งแยกหน้าที่ระหว่างผู้อนุมัติ ผู้ถือเงิน และผู้บันทึกบัญชีตามระเบียบ มท. รับจ่ายเงิน 2566</td>
+              <td>กำชับการตรวจสอบเอกสารหลักฐานประกอบฎีกาให้ครบถ้วนก่อนส่งเบิกจ่าย</td>
+            </tr>
+            <tr>
+              <td class="font-bold">4. สารสนเทศและการสื่อสาร (Information & Communication)</td>
+              <td>ใช้ระบบ e-LAAS, ระบบจัดซื้อ e-GP และสื่อสารข้อมูลผ่านระบบไลน์กลุ่มทางการและเว็บไซต์ อปท.</td>
+              <td>พัฒนาการสำรองข้อมูลอัตโนมัติภายนอกสถานที่ (Off-site Backup) เพื่อความปลอดภัย</td>
+            </tr>
+            <tr>
+              <td class="font-bold">5. กิจกรรมการติดตามผล (Monitoring Activities)</td>
+              <td>มีหน่วยตรวจสอบภายในดำเนินการตรวจสอบตามแผนประจำปี และติดตามผลการแก้ไขข้อทักท้วง (CAPA) ใน 60 วัน</td>
+              <td>ให้ทุกสำนัก/กองรายงานผลการปฏิบัติตามแผน ปค.5 ต่อผู้บริหารทุกไตรมาส</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <table class="signature-table">
+          <tr>
+            <td style="width: 50%;">
+              ลงชื่อ...................................................<br/>
+              ( ${auditorName} )<br/>
+              ผู้ตรวจสอบภายใน
+            </td>
+            <td style="width: 50%;">
+              ลงชื่อ...................................................<br/>
+              ( ${palatName} )<br/>
+              ปลัด${orgName}
+            </td>
+          </tr>
+        </table>
+      `;
+      return exportToWordDoc('แบบ ปค.4', body, `แบบ_ปค4_ประเมิน5องค์ประกอบ_${orgName}`);
+    }
+
+    case 'FORM-PK-05': {
+      const body = `
+        <div class="text-right font-bold">แบบ ปค. 5</div>
+        <h2>รายงานการประเมินผลการควบคุมภายในภาพรวมองค์กร</h2>
+        <p class="text-center font-bold no-indent">${orgName}</p>
+        <p class="text-center no-indent">สำหรับงวดตั้งแต่วันที่ 1 ตุลาคม 2568 ถึงวันที่ 30 กันยายน 2569</p>
+        <br/>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 8%;">ลำดับ</th>
+              <th style="width: 25%;">ความเสี่ยง / ข้อตรวจพบสำคัญ</th>
+              <th style="width: 32%;">การควบคุมภายในที่มีอยู่ / การปรับปรุง</th>
+              <th style="width: 20%;">หน่วยงานรับผิดชอบ</th>
+              <th style="width: 15%;">กำหนดเสร็จ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-center">1</td>
+              <td>การจัดเก็บภาษีที่ดินและสิ่งปลูกสร้างนอกสถานที่อาจออกใบเสร็จล่าช้า</td>
+              <td>นำระบบ Mobile e-Receipt และระบบชำระเงิน QR Code มาใช้ กระทบยอดทันทีสิ้นวัน</td>
+              <td>กองคลัง</td>
+              <td class="text-center">ไตรมาสที่ 2</td>
+            </tr>
+            <tr>
+              <td class="text-center">2</td>
+              <td>การควบคุมพัสดุครุภัณฑ์และการจำหน่ายพัสดุชำรุดค้างปี (ว 184)</td>
+              <td>แต่งตั้งคณะกรรมการตรวจสอบพัสดุประจำปีและบันทึกตัดบัญชีพัสดุตามระเบียบ</td>
+              <td>กองคลัง / ทุกส่วนราชการ</td>
+              <td class="text-center">มีนาคม 2569</td>
+            </tr>
+            <tr>
+              <td class="text-center">3</td>
+              <td>การเบิกจ่ายเงินเบี้ยยังชีพกรณีผู้มีสิทธิเสียชีวิตระหว่างเดือน</td>
+              <td>ประสานข้อมูลทะเบียนราษฎรและ อสม. ตัดยอด Real-time ก่อนประมวลผลเบิกจ่าย</td>
+              <td>กองสวัสดิการสังคม</td>
+              <td class="text-center">ต่อเนื่องทุกเดือน</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <table class="signature-table">
+          <tr>
+            <td style="width: 50%;">
+              ลงชื่อ...................................................<br/>
+              ( ${palatName} )<br/>
+              ปลัด${orgName}
+            </td>
+            <td style="width: 50%;">
+              ลงชื่อ...................................................<br/>
+              ( ${approverName} )<br/>
+              นายก${orgName}
+            </td>
+          </tr>
+        </table>
+      `;
+      return exportToWordDoc('แบบ ปค.5', body, `แบบ_ปค5_ภาพรวมองค์กร_${orgName}`);
+    }
+
+    case 'FORM-PENALTY': {
+      const body = `
+        <div class="text-right font-bold">แบบ คป.01</div>
+        <p class="text-center font-bold no-indent" style="font-size: 18pt;">บันทึกข้อความ</p>
+        <p class="no-indent"><strong>ส่วนราชการ:</strong> กองคลัง / งานพัสดุ ${orgName}</p>
+        <p class="no-indent"><strong>ที่:</strong> อบ 77602 / .................................... <strong>วันที่:</strong> ...................................................</p>
+        <p class="no-indent"><strong>เรื่อง:</strong> รายงานการส่งมอบงานล่าช้าและการคำนวณเงินค่าปรับตามสัญญา</p>
+        <hr style="border: 0.5pt solid #333; margin: 8pt 0;" />
+        <p><strong>เรียน</strong> นายก${orgName}</p>
+        <p>ตามที่ ${orgName} ได้จัดทำสัญญาจัดซื้อ/จ้าง เลขที่ ......................... ลงวันที่ ......................... กับ ..................................................... ในวงเงินตามสัญญา ................................. บาท กำหนดส่งมอบงานภายในวันที่ ......................... นั้น</p>
+        <p>ปรากฏว่าคู่สัญญาได้ส่งมอบงานเมื่อวันที่ ......................... ซึ่งล่วงเลยกำหนดระยะเวลาตามสัญญาเป็นเวลา .................. วัน ทางพัสดุได้ตรวจสอบแล้วเห็นควรดำเนินการคิดค่าปรับตาม พ.ร.บ. การจัดซื้อจัดจ้างและการบริหารพัสดุภาครัฐ พ.ศ. 2560 มาตรา 102 ดังตารางต่อไปนี้:</p>
+        
+        <table>
+          <thead>
+            <tr>
+              <th>รายการ</th>
+              <th>รายละเอียด / การคำนวณ</th>
+              <th>จำนวนเงิน (บาท)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1. วงเงินตามสัญญาจัดซื้อ/จัดจ้าง</td>
+              <td>มูลค่ารวมภาษีมูลค่าเพิ่ม</td>
+              <td class="text-right font-bold">1,200,000.00</td>
+            </tr>
+            <tr>
+              <td>2. อัตราค่าปรับต่อวัน</td>
+              <td>อัตราร้อยละ 0.1 ต่อวัน (งานจ้างก่อสร้าง/พัสดุ)</td>
+              <td class="text-right">1,200.00 บาท/วัน</td>
+            </tr>
+            <tr>
+              <td>3. จำนวนวันที่ส่งมอบงานล่าช้า</td>
+              <td>ตั้งแต่วันถัดจากวันครบกำหนดสัญญา ถึงวันส่งมอบงาน</td>
+              <td class="text-right">10 วัน</td>
+            </tr>
+            <tr>
+              <td>4. หัก: วันหยุดราชการ (ถ้ามีตามระเบียบ)</td>
+              <td>กรณีส่งมอบของในวันทำการแรกหลังวันหยุด</td>
+              <td class="text-right">0 วัน</td>
+            </tr>
+            <tr>
+              <td class="font-bold">5. รวมเงินค่าปรับทั้งสิ้น</td>
+              <td class="font-bold">1,200 บาท x 10 วัน</td>
+              <td class="text-right font-bold" style="color: #c00;">12,000.00</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <p>จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติให้หักเงินค่าปรับจำนวน 12,000.00 บาท (หนึ่งหมื่นสองพันบาทถ้วน) จากการเบิกจ่ายเงินตามสัญญาต่อไป</p>
+        
+        <table class="signature-table">
+          <tr>
+            <td style="width: 50%;">
+              ลงชื่อ...................................................<br/>
+              ( ................................................... )<br/>
+              เจ้าหน้าที่พัสดุ
+            </td>
+            <td style="width: 50%;">
+              ลงชื่อ...................................................<br/>
+              ( ................................................... )<br/>
+              ผู้อำนวยการกองคลัง
+            </td>
+          </tr>
+        </table>
+      `;
+      return exportToWordDoc('แบบ คป.01 คิดค่าปรับ', body, `แบบ_คป01_คำนวณค่าปรับสัญญา_${orgName}`);
+    }
+
+    case 'FORM-V184': {
+      const body = `
+        <div class="text-right font-bold">แบบ ว 184</div>
+        <h2>รายงานผลการตรวจสอบพัสดุประจำปีงบประมาณ พ.ศ. ${currentYear}</h2>
+        <p class="text-center font-bold no-indent">${orgName}</p>
+        <p class="text-center no-indent">ตามระเบียบกระทรวงการคลังว่าด้วยการจัดซื้อจัดจ้างฯ พ.ศ. 2560 และ ว 184</p>
+        <br/>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 8%;">ลำดับ</th>
+              <th style="width: 18%;">หมายเลขครุภัณฑ์</th>
+              <th style="width: 25%;">รายการครุภัณฑ์</th>
+              <th style="width: 14%;">สภาพการใช้งาน</th>
+              <th style="width: 20%;">สถานที่เก็บ/ผู้ครอบครอง</th>
+              <th style="width: 15%;">ความเห็นกรรมการ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-center">1</td>
+              <td>7440-001-0012/62</td>
+              <td>เครื่องคอมพิวเตอร์ประมวลผล</td>
+              <td class="text-center">ใช้การได้ปกติ</td>
+              <td>สำนักปลัด</td>
+              <td>ให้ใช้งานต่อไป</td>
+            </tr>
+            <tr>
+              <td class="text-center">2</td>
+              <td>7450-002-0045/58</td>
+              <td>เครื่องพิมพ์มัลติฟังก์ชัน</td>
+              <td class="text-center" style="color: #b45309;">ชำรุดรอซ่อม</td>
+              <td>กองคลัง</td>
+              <td>ส่งซ่อมบำรุง</td>
+            </tr>
+            <tr>
+              <td class="text-center">3</td>
+              <td>7730-004-0003/52</td>
+              <td>เครื่องตัดหญ้าสะพายบ่า</td>
+              <td class="text-center" style="color: #dc2626;">ชำรุดเสื่อมสภาพ</td>
+              <td>กองช่าง</td>
+              <td>เสนอจำหน่ายขายทอดตลาด</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="font-bold">สรุปภาพรวมการตรวจสอบพัสดุ:</p>
+        <p>คณะกรรมการได้ตรวจสอบพัสดุคงเหลือ ณ วันสิ้นปีงบประมาณ พบว่าพัสดุส่วนใหญ่มีการเก็บรักษาและลงบัญชีคุมถูกต้อง มีพัสดุชำรุดเสื่อมสภาพที่เห็นควรดำเนินการจำหน่ายออกจากบัญชีตามระเบียบฯ</p>
+        
+        <table class="signature-table">
+          <tr>
+            <td style="width: 33%;">
+              ลงชื่อ......................................<br/>
+              ( ...................................... )<br/>
+              ประธานกรรมการ
+            </td>
+            <td style="width: 33%;">
+              ลงชื่อ......................................<br/>
+              ( ...................................... )<br/>
+              กรรมการ
+            </td>
+            <td style="width: 33%;">
+              ลงชื่อ......................................<br/>
+              ( ...................................... )<br/>
+              กรรมการและเลขานุการ
+            </td>
+          </tr>
+        </table>
+      `;
+      return exportToWordDoc('แบบ ว 184', body, `แบบ_ว184_ตรวจสอบพัสดุประจำปี_${orgName}`);
+    }
+
+    default: {
+      // General Template for other forms
+      const body = `
+        <div class="text-right font-bold">${formId}</div>
+        <h2>แบบฟอร์มมาตรฐานสำหรับองค์กรปกครองส่วนท้องถิ่น</h2>
+        <p class="text-center font-bold no-indent">${orgName}</p>
+        <p class="text-center no-indent">ประจำปีงบประมาณ พ.ศ. ${currentYear}</p>
+        <br/>
+        <p>เอกสารแบบฟอร์มนี้จัดทำขึ้นตามระเบียบกระทรวงมหาดไทยและกฎหมายที่เกี่ยวข้อง เพื่อใช้ประกอบการปฏิบัติงานและตรวจสอบภายในของ ${orgName}</p>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 10%;">ลำดับ</th>
+              <th style="width: 45%;">หัวข้อ / สาระสำคัญ</th>
+              <th style="width: 45%;">ผลการปฏิบัติ / หมายเหตุ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-center">1</td>
+              <td>การตรวจสอบความถูกต้องของเอกสารหลักฐาน</td>
+              <td>ครบถ้วน ถูกต้องตามระเบียบ</td>
+            </tr>
+            <tr>
+              <td class="text-center">2</td>
+              <td>การอนุมัติและการลงนามตามลำดับชั้น</td>
+              <td>ดำเนินการตามขั้นตอนอำนาจสั่งการ</td>
+            </tr>
+            <tr>
+              <td class="text-center">3</td>
+              <td>การลงทะเบียนคุมและจัดเก็บเอกสาร</td>
+              <td>บันทึกในระบบและสมุดคุมเรียบร้อย</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <table class="signature-table">
+          <tr>
+            <td style="width: 50%;">
+              ลงชื่อ...................................................<br/>
+              ( ${palatName} )<br/>
+              ปลัด${orgName}
+            </td>
+            <td style="width: 50%;">
+              ลงชื่อ...................................................<br/>
+              ( ${approverName} )<br/>
+              นายก${orgName}
+            </td>
+          </tr>
+        </table>
+      `;
+      return exportToWordDoc(formId, body, `แบบฟอร์ม_${formId}_${orgName}`);
+    }
+  }
+}
+
+/**
+ * 8. ดาวน์โหลดแบบฟอร์มทางการราชการเป็น Excel (.xlsx)
+ */
+export function downloadOfficialFormExcel(formId, orgProfile = {}) {
+  const orgName = orgProfile.name || 'องค์การบริหารส่วนตำบลฝางคำ';
+  const currentYear = '2569';
+
+  switch (formId) {
+    case 'FORM-PK-05': {
+      const aoa = [
+        [`แบบ ปค. 5: รายงานการประเมินผลการควบคุมภายในภาพรวมองค์กร`],
+        [`${orgName} • ประจำปีงบประมาณ พ.ศ. ${currentYear}`],
+        [],
+        ['ลำดับ', 'กระบวนการ/งานที่ประเมิน', 'ความเสี่ยง/จุดอ่อนที่พบ', 'กิจกรรมการควบคุมที่มีอยู่/ต้องปรับปรุง', 'ผู้รับผิดชอบ', 'กำหนดเสร็จ', 'สถานะ'],
+        [1, 'การจัดเก็บภาษีที่ดินและสิ่งปลูกสร้าง', 'การออกใบเสร็จนอกสถานที่ล่าช้า', 'นำระบบ Mobile e-Receipt และ QR Code Payment มาใช้', 'ผู้อำนวยการกองคลัง', 'มีนาคม 2569', 'อยู่ระหว่างดำเนินการ'],
+        [2, 'การเบิกจ่ายเงินเบี้ยยังชีพ', 'ข้อมูลผู้เสียชีวิตปลายเดือนล่าช้า', 'เชื่อมโยงข้อมูลกับ รพ.สต. และฝ่ายทะเบียนราษฎร', 'ผู้อำนวยการกองสวัสดิการ', 'ต่อเนื่องทุกเดือน', 'ดำเนินการแล้วเสร็จ'],
+        [3, 'การจัดซื้อจัดจ้างและตรวจรับพัสดุ', 'การส่งมอบงานก่อสร้างช่างคุมงานขาดส่งบันทึก', 'จัดทำแบบรายงานช่างคุมงานประจำวันรายสัปดาห์', 'ผู้อำนวยการกองช่าง', 'ไตรมาสที่ 2', 'อยู่ระหว่างดำเนินการ']
+      ];
+      return downloadMultiSheetExcel([{ sheetName: 'แบบ_ปค5', data: aoa, colWidths: [{ wch: 8 }, { wch: 28 }, { wch: 32 }, { wch: 38 }, { wch: 22 }, { wch: 16 }, { wch: 18 }] }], `แบบ_ปค5_การควบคุมภายใน_${orgName}`);
+    }
+
+    case 'FORM-PENALTY': {
+      const aoa = [
+        [`แบบ คป.01: แบบคำนวณและแจ้งคิดค่าปรับตามสัญญาจัดซื้อจัดจ้าง (Penalty Sheet)`],
+        [`${orgName} • ตาม พ.ร.บ. จัดซื้อจัดจ้าง พ.ศ. 2560 มาตรา 102`],
+        [],
+        ['รายการคำนวณค่าปรับ', 'รายละเอียด', 'หน่วย/ตัวเลข', 'ยอดเงิน (บาท)', 'หมายเหตุ'],
+        ['เลขที่สัญญา', 'จ้างก่อสร้างถนน คสล. บ้านฝางเทิง', 'CN-69/004', '-', 'คู่สัญญา: หจก. สิรินธรการโยธา'],
+        ['วงเงินตามสัญญา', 'รวมภาษีมูลค่าเพิ่ม 7%', '-', 1200000, 'เบิกจ่ายงบประมาณ อปท.'],
+        ['กำหนดส่งมอบตามสัญญา', 'ครบกำหนดระยะเวลาตามสัญญา', '15 ม.ค. 2569', '-', ''],
+        ['วันที่ส่งมอบงานจริง', 'ส่งมอบ ณ สำนักงาน อปท.', '25 ม.ค. 2569', '-', 'ล่าช้า 10 วัน'],
+        ['อัตราค่าปรับต่อวัน', 'อัตราร้อยละ 0.1 ของวงเงินสัญญา', '0.1%', 1200, 'คำนวณจากยอด 1,200,000'],
+        ['จำนวนวันคิดค่าปรับ', 'นับตั้งแต่วันถัดจากวันครบกำหนด', '10 วัน', '-', 'หักวันหยุดตามระเบียบแล้ว'],
+        ['รวมเงินค่าปรับสุทธิ', 'หักจากเงินค่าจ้างก่อนเบิกจ่าย', '-', 12000, 'บันทึกลดหนี้/หักเงินฎีกา']
+      ];
+      return downloadMultiSheetExcel([{ sheetName: 'แบบ_คป01_คิดค่าปรับ', data: aoa, colWidths: [{ wch: 24 }, { wch: 32 }, { wch: 18 }, { wch: 18 }, { wch: 28 }] }], `แบบ_คป01_คิดค่าปรับตามสัญญา_${orgName}`);
+    }
+
+    case 'FORM-V184': {
+      const aoa = [
+        [`แบบ ว 184: รายงานผลการตรวจสอบพัสดุและครุภัณฑ์ประจำปี`],
+        [`${orgName} • ประจำปีงบประมาณ พ.ศ. ${currentYear}`],
+        [],
+        ['ลำดับ', 'หมายเลขครุภัณฑ์', 'ชื่อรายการพัสดุครุภัณฑ์', 'ปีที่ได้มา', 'ราคาทุน (บาท)', 'สภาพปัจจุบัน', 'หน่วยงานผู้ครอบครอง', 'ความเห็นคณะกรรมการ'],
+        [1, '7440-001-0012/62', 'เครื่องคอมพิวเตอร์ประมวลผล All-in-One', '2562', 28000, 'ใช้การได้ปกติ', 'สำนักปลัด', 'ให้ใช้งานต่อไป'],
+        [2, '7450-002-0045/58', 'เครื่องพิมพ์เลเซอร์มัลติฟังก์ชัน', '2558', 16500, 'ชำรุดรอซ่อม', 'กองคลัง', 'ส่งซ่อมบำรุง'],
+        [3, '7730-004-0003/52', 'เครื่องตัดหญ้าสะพายบ่า', '2552', 8900, 'ชำรุดเสื่อมสภาพ', 'กองช่าง', 'เสนอจำหน่ายขายทอดตลาด'],
+        [4, '4110-003-0008/60', 'โต๊ะทำงานระดับ 3-6', '2560', 4500, 'ใช้การได้ปกติ', 'กองการศึกษา', 'ให้ใช้งานต่อไป']
+      ];
+      return downloadMultiSheetExcel([{ sheetName: 'แบบ_ว184_พัสดุ', data: aoa, colWidths: [{ wch: 8 }, { wch: 20 }, { wch: 35 }, { wch: 12 }, { wch: 16 }, { wch: 18 }, { wch: 20 }, { wch: 28 }] }], `แบบ_ว184_ตรวจสอบพัสดุประจำปี_${orgName}`);
+    }
+
+    default: {
+      const aoa = [
+        [`แบบฟอร์มมาตรฐาน: ${formId}`],
+        [`${orgName} • ปีงบประมาณ พ.ศ. ${currentYear}`],
+        [],
+        ['ลำดับ', 'รายการ / กิจกรรม', 'จำนวน / ปริมาณ', 'สถานะการดำเนินงาน', 'หมายเหตุ'],
+        [1, 'การตรวจสอบเอกสารและข้อมูลพื้นฐาน', 1, 'ครบถ้วนถูกต้อง', ''],
+        [2, 'การบันทึกรายการในทะเบียนคุม', 1, 'บันทึกเรียบร้อย', '']
+      ];
+      return downloadMultiSheetExcel([{ sheetName: formId.slice(0, 30), data: aoa, colWidths: [{ wch: 8 }, { wch: 35 }, { wch: 16 }, { wch: 20 }, { wch: 25 }] }], `แบบฟอร์ม_${formId}_${orgName}`);
+    }
+  }
+}
+

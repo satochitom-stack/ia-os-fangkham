@@ -1727,3 +1727,521 @@ export const initialTechWorkspaceData = {
   ]
 };
 
+// 4. ฐานข้อมูลเฉพาะพื้นที่ทำงาน กองการศึกษา ศาสนาและวัฒนธรรม (Sprint 4)
+export const initialEducationWorkspaceData = {
+  summary: {
+    totalStudents: 128,
+    totalCdcChildren: 63,
+    totalCdcTeachers: 6,
+    lunchBudgetYear: 450000,
+    milkBudgetYear: 280000
+  },
+  schoolLunchMilk: [
+    {
+      id: 'LUNCH-01',
+      facilityName: 'ศพด.วัดเจริญทัศน์ (ศูนย์พัฒนาเด็กเล็ก)',
+      targetGroup: 'เด็กเล็กอายุ 2-5 ขวบ',
+      studentCount: 35,
+      ratePerHeadPerDay: 24,
+      daysCount: 50,
+      totalAmount: 42000,
+      milkType: 'นมพาสเจอร์ไรส์ รสจืด 200 มล.',
+      milkStatus: 'ได้รับนมครบตามรอบ',
+      inspectionCommittee: 'ครูผู้ดูแลเด็ก, ตัวแทนผู้ปกครอง',
+      hygieneAuditStatus: 'ผ่านเกณฑ์สุขาภิบาลอาหาร',
+      status: 'active'
+    },
+    {
+      id: 'LUNCH-02',
+      facilityName: 'ศพด.บ้านฝางเทิง (ศูนย์พัฒนาเด็กเล็ก)',
+      targetGroup: 'เด็กเล็กอายุ 2-5 ขวบ',
+      studentCount: 28,
+      ratePerHeadPerDay: 24,
+      daysCount: 50,
+      totalAmount: 33600,
+      milkType: 'นมยูเอชที รสจืด 200 มล.',
+      milkStatus: 'ได้รับนมครบตามรอบ',
+      inspectionCommittee: 'ครูผู้ดูแลเด็ก, ผู้นำชุมชน',
+      hygieneAuditStatus: 'ผ่านเกณฑ์สุขาภิบาลอาหาร',
+      status: 'active'
+    },
+    {
+      id: 'LUNCH-03',
+      facilityName: 'โรงเรียนบ้านฝางคำ (เงินอุดหนุน อปท.)',
+      targetGroup: 'นักเรียนชั้นอนุบาล 1 - ป.6',
+      studentCount: 65,
+      ratePerHeadPerDay: 22,
+      daysCount: 100,
+      totalAmount: 143000,
+      milkType: 'นมพาสเจอร์ไรส์/ยูเอชที',
+      milkStatus: 'ส่งมอบครบถ้วน',
+      inspectionCommittee: 'กรรมการตรวจรับเงินอุดหนุนโรงเรียน',
+      hygieneAuditStatus: 'ผ่านการสุ่มตรวจ',
+      status: 'active'
+    }
+  ],
+  educationalMaterials: [
+    {
+      id: 'MAT-01',
+      title: 'โครงการจัดซื้อสื่อการเรียนการสอนและเครื่องเล่นพัฒนาการเด็ก ศพด.วัดเจริญทัศน์',
+      budget: 35000,
+      procurementDate: '2026-06-15',
+      supplier: 'ร้านศึกษาภัณฑ์อุบลพานิชย์',
+      status: 'delivered',
+      verifiedDate: '2026-06-25'
+    },
+    {
+      id: 'MAT-02',
+      title: 'โครงการจัดซื้อชุดเครื่องนอนและของใช้ประจำตัวเด็กเล็ก ศพด.บ้านฝางเทิง',
+      budget: 28000,
+      procurementDate: '2026-07-10',
+      supplier: 'ห้างหุ้นส่วนจำกัด วารินการค้า',
+      status: 'delivered',
+      verifiedDate: '2026-07-20'
+    }
+  ],
+  cdcTeachers: [
+    {
+      id: 'TCH-01',
+      name: 'นางสายใจ รักเด็ก',
+      position: 'ครูผู้ดูแลเด็ก (วิทยฐานะชำนาญการ)',
+      facility: 'ศพด.วัดเจริญทัศน์',
+      licenseNo: '6210900014258',
+      licenseExpire: '2028-05-15',
+      assignedClass: 'เตรียมอนุบาล (2-3 ขวบ)'
+    },
+    {
+      id: 'TCH-02',
+      name: 'นางสาวรัชนี อ่อนหวาน',
+      position: 'ผู้ดูแลเด็ก (พนักงานจ้างตามภารกิจ)',
+      facility: 'ศพด.บ้านฝางเทิง',
+      licenseNo: '6520900032145',
+      licenseExpire: '2029-08-20',
+      assignedClass: 'อนุบาลเด็กเล็ก (3-4 ขวบ)'
+    }
+  ]
+};
+
+// 5. ฐานข้อมูลเฉพาะพื้นที่ทำงาน กองสวัสดิการสังคม (Sprint 4)
+export const initialWelfareWorkspaceData = {
+  summary: {
+    totalElderlyBeneficiaries: 540,
+    totalDisabilityBeneficiaries: 68,
+    totalHivBeneficiaries: 6,
+    monthlyDisbursementAmount: 382400
+  },
+  elderlyAllowances: [
+    {
+      tier: 'อายุ 60 - 69 ปี (600 บาท/เดือน)',
+      recipientCount: 295,
+      monthlyTotal: 177000,
+      annualEstimate: 2124000,
+      deceasedDeductionThisMonth: 1,
+      paymentMethod: 'โอนผ่านระบบ KTB เข้าพร้อมเพย์/บัญชีธนาคาร (92%), เงินสด (8%)'
+    },
+    {
+      tier: 'อายุ 70 - 79 ปี (700 บาท/เดือน)',
+      recipientCount: 162,
+      monthlyTotal: 113400,
+      annualEstimate: 1360800,
+      deceasedDeductionThisMonth: 0,
+      paymentMethod: 'โอนผ่านระบบ KTB (95%), เงินสด (5%)'
+    },
+    {
+      tier: 'อายุ 80 - 89 ปี (800 บาท/เดือน)',
+      recipientCount: 68,
+      monthlyTotal: 54400,
+      annualEstimate: 652800,
+      deceasedDeductionThisMonth: 1,
+      paymentMethod: 'โอนผ่านระบบ KTB (88%), มอบอำนาจรับเงินสด (12%)'
+    },
+    {
+      tier: 'อายุ 90 ปีขึ้นไป (1,000 บาท/เดือน)',
+      recipientCount: 15,
+      monthlyTotal: 15000,
+      annualEstimate: 180000,
+      deceasedDeductionThisMonth: 0,
+      paymentMethod: 'โอนผ่านระบบ KTB (80%), มอบอำนาจรับเงินสด (20%)'
+    }
+  ],
+  disabilityAllowances: [
+    {
+      id: 'DIS-01',
+      category: 'คนพิการทั่วไป (อายุ 18 ปีขึ้นไป รับ 800 บาท/เดือน)',
+      recipientCount: 62,
+      monthlyTotal: 49600,
+      status: 'verified_with_dms'
+    },
+    {
+      id: 'DIS-02',
+      category: 'เด็กพิการ (อายุต่ำกว่า 18 ปี รับ 1,000 บาท/เดือน)',
+      recipientCount: 6,
+      monthlyTotal: 6000,
+      status: 'verified_with_dms'
+    }
+  ],
+  emergencyRelief: [
+    {
+      id: 'RELIEF-69-01',
+      caseName: 'สงเคราะห์ช่วยเหลือผู้ประสบอัคคีภัย ไฟไหม้บ้านเรือนเสียหายบางส่วน ม.3',
+      beneficiary: 'นายคำดี มีทรัพย์',
+      amount: 15000,
+      disbursedDate: '2026-05-18',
+      ruleReference: 'ระเบียบกระทรวงมหาดไทยว่าด้วยค่าใช้จ่ายเพื่อช่วยเหลือประชาชนตามอำนาจหน้าที่ พ.ศ. 2566',
+      status: 'approved_disbursed'
+    },
+    {
+      id: 'RELIEF-69-02',
+      caseName: 'เงินสงเคราะห์ผู้มีรายได้น้อยและไร้ที่พึ่ง ผู้ป่วยติดเตียง ม.5',
+      beneficiary: 'นางสมจิตต์ บุญมา',
+      amount: 3000,
+      disbursedDate: '2026-07-22',
+      ruleReference: 'ระเบียบ มท. ช่วยเหลือประชาชน พ.ศ. 2566',
+      status: 'approved_disbursed'
+    }
+  ]
+};
+
+// 6. ฐานข้อมูลเฉพาะพื้นที่ทำงาน งานสาธารณสุขและสิ่งแวดล้อม (Sprint 4)
+export const initialPublicHealthWorkspaceData = {
+  summary: {
+    wasteBinsRegistered: 480,
+    monthlyWasteFeeEstimate: 19200,
+    foggingCampaignsCompleted: 8,
+    rabiesVaccinatedAnimals: 650
+  },
+  wasteManagement: [
+    {
+      village: 'หมู่ที่ 1 บ้านฝางคำ',
+      households: 110,
+      binsCount: 95,
+      monthlyFeePerBin: 40,
+      monthlyTotal: 3800,
+      collectionFrequency: 'สัปดาห์ละ 2 ครั้ง (อังคาร, ศุกร์)',
+      paymentComplianceRate: 94
+    },
+    {
+      village: 'หมู่ที่ 2 บ้านหนองผือ',
+      households: 85,
+      binsCount: 75,
+      monthlyFeePerBin: 40,
+      monthlyTotal: 3000,
+      collectionFrequency: 'สัปดาห์ละ 2 ครั้ง (จันทร์, พฤหัสบดี)',
+      paymentComplianceRate: 88
+    },
+    {
+      village: 'หมู่ที่ 3 บ้านดอนชาด',
+      households: 95,
+      binsCount: 80,
+      monthlyFeePerBin: 40,
+      monthlyTotal: 3200,
+      collectionFrequency: 'สัปดาห์ละ 2 ครั้ง (จันทร์, พฤหัสบดี)',
+      paymentComplianceRate: 91
+    },
+    {
+      village: 'หมู่ที่ 4 บ้านนาจาน',
+      households: 105,
+      binsCount: 90,
+      monthlyFeePerBin: 40,
+      monthlyTotal: 3600,
+      collectionFrequency: 'สัปดาห์ละ 2 ครั้ง (อังคาร, ศุกร์)',
+      paymentComplianceRate: 92
+    },
+    {
+      village: 'หมู่ที่ 5 บ้านคำหอย',
+      households: 80,
+      binsCount: 70,
+      monthlyFeePerBin: 40,
+      monthlyTotal: 2800,
+      collectionFrequency: 'สัปดาห์ละ 2 ครั้ง (พุธ, เสาร์)',
+      paymentComplianceRate: 86
+    },
+    {
+      village: 'หมู่ที่ 6 บ้านห้วยยาง',
+      households: 82,
+      binsCount: 70,
+      monthlyFeePerBin: 40,
+      monthlyTotal: 2800,
+      collectionFrequency: 'สัปดาห์ละ 2 ครั้ง (พุธ, เสาร์)',
+      paymentComplianceRate: 89
+    }
+  ],
+  diseaseControl: [
+    {
+      id: 'EPID-01',
+      campaignName: 'โครงการรณรงค์ฉีดวัคซีนป้องกันโรคพิษสุนัขบ้า ประจำปี 2569 (สัตว์ปลอดโรค คนปลอดภัย)',
+      target: 'สุนัขและแมวในเขตพื้นที่ 6 หมู่บ้าน',
+      targetCount: 700,
+      achievedCount: 650,
+      vaccineBatch: 'RAB-69-UBL-04',
+      campaignPeriod: 'มีนาคม - เมษายน 2569',
+      status: 'completed'
+    },
+    {
+      id: 'EPID-02',
+      campaignName: 'โครงการป้องกันและควบคุมโรคไข้เลือดออก (พ่นหมอกควันและใส่ทรายอะเบท)',
+      target: 'ศูนย์พัฒนาเด็กเล็ก, โรงเรียน และชุมชนทั้ง 6 หมู่บ้าน',
+      targetCount: 6,
+      achievedCount: 6,
+      chemicalType: 'สารเคมีกำจัดยุงลาย เดลทาเมทริน และทรายทีมีฟอส (ทรายอะเบท)',
+      campaignPeriod: 'พฤษภาคม - สิงหาคม 2569 (ช่วงฤดูฝน)',
+      status: 'completed'
+    }
+  ],
+  foodSanitation: [
+    {
+      id: 'FOOD-01',
+      placeName: 'ตลาดนัดชุมชนตำบลฝางคำ',
+      location: 'บริเวณหน้า อบต.ฝางคำ',
+      stallsCount: 38,
+      inspectionDate: '2026-08-12',
+      passedStalls: 36,
+      sanitationStandard: 'มาตรฐานอาหารสะอาด รสชาติอร่อย (Clean Food Good Taste)',
+      status: 'passed'
+    },
+    {
+      id: 'FOOD-02',
+      placeName: 'โรงอาหาร ศพด.วัดเจริญทัศน์ และ ศพด.บ้านฝางเทิง',
+      location: 'ศพด. ในสังกัด อบต.ฝางคำ',
+      stallsCount: 2,
+      inspectionDate: '2026-07-05',
+      passedStalls: 2,
+      sanitationStandard: 'สุขาภิบาลอาหารโรงเรียนและศูนย์เด็กเล็กตามเกณฑ์กรมอนามัย',
+      status: 'passed'
+    }
+  ]
+};
+
+// 7. ฐานข้อมูลปฏิทินส่วนกลางและการปฏิบัติงาน อปท. (Central Hub Calendar - Sprint 5)
+export const initialCentralCalendarEvents = [
+  {
+    id: 'EVT-01',
+    title: 'ตรวจสอบระบบควบคุมการใช้รถยนต์ส่วนกลางและน้ำมันเชื้อเพลิง',
+    department: 'สำนักปลัด',
+    category: 'audit',
+    startDate: '2026-10-15',
+    endDate: '2026-10-25',
+    responsible: 'หน่วยตรวจสอบภายใน',
+    location: 'ห้องประชุมสำนักปลัด',
+    status: 'completed',
+    priority: 'high',
+    desc: 'สุ่มตรวจสมุดคุมรถยนต์ ใบสั่งจ่ายน้ำมัน และอัตราสิ้นเปลืองน้ำมันเฉลี่ยรายเดือน'
+  },
+  {
+    id: 'EVT-02',
+    title: 'ตรวจสอบระบบจัดซื้อจัดจ้างและการบริหารสัญญาตาม พ.ร.บ. 2560',
+    department: 'กองคลัง',
+    category: 'audit',
+    startDate: '2026-11-05',
+    endDate: '2026-11-20',
+    responsible: 'หน่วยตรวจสอบภายใน',
+    location: 'กองคลัง อบต.ฝางคำ',
+    status: 'completed',
+    priority: 'high',
+    desc: 'ตรวจสอบสัญญา e-bidding, การคิดค่าปรับ และการคืนหลักประกันสัญญา'
+  },
+  {
+    id: 'EVT-03',
+    title: 'วันครบกำหนดรายงานผลการตรวจสอบพัสดุประจำปีตาม ว 184',
+    department: 'กองคลัง',
+    category: 'deadline',
+    startDate: '2026-10-31',
+    endDate: '2026-10-31',
+    responsible: 'คณะกรรมการตรวจพัสดุประจำปี / กองคลัง',
+    location: 'เสนอ นายก อบต.ฝางคำ',
+    status: 'urgent',
+    priority: 'high',
+    desc: 'ต้องส่งรายงานผลการตรวจสอบพัสดุประจำปีภายในเดือนตุลาคมของทุกปี'
+  },
+  {
+    id: 'EVT-04',
+    title: 'ตรวจสอบการจัดทำราคากลาง Factor F และการควบคุมงานก่อสร้าง',
+    department: 'กองช่าง',
+    category: 'audit',
+    startDate: '2026-12-01',
+    endDate: '2026-12-15',
+    responsible: 'หน่วยตรวจสอบภายใน',
+    location: 'กองช่าง และสถานที่ก่อสร้างจริง',
+    status: 'completed',
+    priority: 'high',
+    desc: 'สุ่มตรวจแบบ ปร.4/ปร.5, การคุมงานก่อสร้าง และผลทดสอบคอนกรีต 28 วัน'
+  },
+  {
+    id: 'EVT-05',
+    title: 'วันครบกำหนดส่งแบบรายงานการควบคุมภายใน (ปค.4/ปค.5)',
+    department: 'ทุกสำนัก/กอง',
+    category: 'deadline',
+    startDate: '2026-12-29',
+    endDate: '2026-12-29',
+    responsible: 'ทุกสำนัก/กอง เสนอ ผู้บริหาร',
+    location: 'สำนักงาน อบต.ฝางคำ',
+    status: 'urgent',
+    priority: 'high',
+    desc: 'ครบกำหนด 90 วัน นับจากสิ้นปีงบประมาณ ตามหลักเกณฑ์กระทรวงการคลัง พ.ศ. 2561'
+  },
+  {
+    id: 'EVT-06',
+    title: 'ตรวจสอบเงินอุดหนุนอาหารกลางวันและนมโรงเรียน ศพด.',
+    department: 'กองการศึกษา',
+    category: 'audit',
+    startDate: '2027-01-10',
+    endDate: '2027-01-20',
+    responsible: 'หน่วยตรวจสอบภายใน',
+    location: 'ศพด.วัดเจริญทัศน์ และ ศพด.บ้านฝางเทิง',
+    status: 'upcoming',
+    priority: 'medium',
+    desc: 'ตรวจนับยอดเด็กจริง สุ่มตรวจการจัดซื้อวัตถุดิบอาหาร และการส่งมอบนม'
+  },
+  {
+    id: 'EVT-07',
+    title: 'ประชุมคณะกรรมการบริหารจัดการความเสี่ยงองค์กร อบต.ฝางคำ',
+    department: 'ทุกสำนัก/กอง',
+    category: 'meeting',
+    startDate: '2027-02-15',
+    endDate: '2027-02-15',
+    responsible: 'ปลัด อบต. / คณะทำงานบริหารความเสี่ยง',
+    location: 'ห้องประชุมสภา อบต.ฝางคำ',
+    status: 'upcoming',
+    priority: 'medium',
+    desc: 'ทบทวน Matrix 5x5 และติดตามผลการปฏิบัติงานตามแบบ บส.5'
+  },
+  {
+    id: 'EVT-08',
+    title: 'ตรวจสอบการเบิกจ่ายเบี้ยยังชีพผู้สูงอายุและคนพิการ',
+    department: 'กองสวัสดิการสังคม',
+    category: 'audit',
+    startDate: '2027-03-01',
+    endDate: '2027-03-12',
+    responsible: 'หน่วยตรวจสอบภายใน',
+    location: 'กองสวัสดิการสังคม',
+    status: 'upcoming',
+    priority: 'medium',
+    desc: 'ตรวจสอบการตัดยอดผู้เสียชีวิต/ย้ายที่อยู่ และความถูกต้องของบัญชีธนาคาร'
+  }
+];
+
+// 8. ฐานข้อมูลคลังแบบฟอร์มทางการพร้อมดาวน์โหลด Word / Excel / PDF (Central Forms Repository - Sprint 5)
+export const initialOfficialDownloadableForms = [
+  {
+    id: 'FORM-BS-01',
+    code: 'แบบ บส.1',
+    title: 'แบบระบุและวิเคราะห์ความเสี่ยงของหน่วยงาน (Risk Identification)',
+    category: 'risk',
+    categoryName: 'การบริหารจัดการความเสี่ยง (ว 3482)',
+    standardRef: 'หนังสือกระทรวงการคลัง ด่วนที่สุด ที่ กค 0409.4/ว 3482',
+    desc: 'ตารางระบุความเสี่ยงตามวัตถุประสงค์ 4 ด้าน (Strategy, Operation, Finance, Compliance) และปัจจัยเสี่ยงภายใน-ภายนอก',
+    formats: ['word', 'excel', 'pdf']
+  },
+  {
+    id: 'FORM-BS-02',
+    code: 'แบบ บส.2',
+    title: 'แบบประเมินระดับความเสี่ยง (Risk Assessment Matrix 5x5)',
+    category: 'risk',
+    categoryName: 'การบริหารจัดการความเสี่ยง (ว 3482)',
+    standardRef: 'หนังสือกระทรวงการคลัง ด่วนที่สุด ที่ กค 0409.4/ว 3482',
+    desc: 'ตารางคำนวณคะแนนโอกาสเกิด (Likelihood 1-5) x ความรุนแรงผลกระทบ (Impact 1-5) พร้อม Heatmap สี เขียว-เหลือง-ส้ม-แดง',
+    formats: ['word', 'excel', 'pdf']
+  },
+  {
+    id: 'FORM-BS-05',
+    code: 'แบบ บส.5',
+    title: 'แผนบริหารจัดการความเสี่ยงและมาตรการควบคุม (Risk Response Plan)',
+    category: 'risk',
+    categoryName: 'การบริหารจัดการความเสี่ยง (ว 3482)',
+    standardRef: 'หนังสือกระทรวงการคลัง ด่วนที่สุด ที่ กค 0409.4/ว 3482',
+    desc: 'แผนปฏิบัติการจัดการความเสี่ยง กิจกรรมควบคุม ผู้รับผิดชอบ และกรอบระยะเวลาดำเนินงาน',
+    formats: ['word', 'excel', 'pdf']
+  },
+  {
+    id: 'FORM-PK-04',
+    code: 'แบบ ปค.4',
+    title: 'รายงานการประเมินองค์ประกอบของการควบคุมภายใน (ระดับส่วนงานย่อย)',
+    category: 'control',
+    categoryName: 'การควบคุมภายใน (กค. 2561)',
+    standardRef: 'หลักเกณฑ์กระทรวงการคลังว่าด้วยการควบคุมภายในสำหรับหน่วยงานของรัฐ พ.ศ. 2561',
+    desc: 'แบบประเมิน 5 องค์ประกอบ COSO (สภาพแวดล้อม, การประเมินความเสี่ยง, กิจกรรมควบคุม, สารสนเทศ, การติดตาม) ของแต่ละสำนัก/กอง',
+    formats: ['word', 'pdf']
+  },
+  {
+    id: 'FORM-PK-05',
+    code: 'แบบ ปค.5',
+    title: 'รายงานการประเมินผลการควบคุมภายในภาพรวมองค์กร',
+    category: 'control',
+    categoryName: 'การควบคุมภายใน (กค. 2561)',
+    standardRef: 'หลักเกณฑ์กระทรวงการคลังว่าด้วยการควบคุมภายในสำหรับหน่วยงานของรัฐ พ.ศ. 2561',
+    desc: 'รายงานสรุปผลการควบคุมภายในภาพรวมของ อปท. เสนอนายก อปท. ผู้ว่าราชการจังหวัด และสำนักงานการตรวจเงินแผ่นดิน (สตง.)',
+    formats: ['word', 'excel', 'pdf']
+  },
+  {
+    id: 'FORM-PENALTY',
+    code: 'แบบ คป.01',
+    title: 'บันทึกข้อความคำนวณและแจ้งคิดค่าปรับตามสัญญาพัสดุ (Penalty Calculation Sheet)',
+    category: 'procurement',
+    categoryName: 'งานพัสดุและจัดซื้อจัดจ้าง (พ.ร.บ. 2560)',
+    standardRef: 'พ.ร.บ. การจัดซื้อจัดจ้างและการบริหารพัสดุภาครัฐ พ.ศ. 2560 มาตรา 102',
+    desc: 'แบบบันทึกข้อความคิดค่าปรับอัตรา 0.1% หรือ 0.2% ต่อวัน หักวันหยุดราชการ พร้อมตารางคำนวณเงินค่าปรับสุทธิ',
+    formats: ['word', 'excel', 'pdf']
+  },
+  {
+    id: 'FORM-V184',
+    code: 'แบบ ว 184',
+    title: 'รายงานผลการตรวจสอบพัสดุประจำปีของ อปท. (Annual Inventory Report)',
+    category: 'procurement',
+    categoryName: 'งานพัสดุและจัดซื้อจัดจ้าง (พ.ร.บ. 2560)',
+    standardRef: 'หนังสือกรมส่งเสริมการปกครองท้องถิ่น ที่ มท 0808.2/ว 184',
+    desc: 'แบบฟอร์มตรวจสอบสภาพพัสดุครุภัณฑ์ (ใช้การได้ปกติ, ชำรุดรอซ่อม, ชำรุดเสื่อมสภาพจำหน่าย) พร้อมความเห็นคณะกรรมการ',
+    formats: ['word', 'excel', 'pdf']
+  },
+  {
+    id: 'FORM-PR4-PR5',
+    code: 'แบบ ปร.4 / ปร.5',
+    title: 'แบบสรุปการคำนวณราคากลางงานก่อสร้างอาคารและทาง (Factor F Estimator)',
+    category: 'civil',
+    categoryName: 'งานโยธาและราคากลางช่าง',
+    standardRef: 'หลักเกณฑ์และตารางคำนวณราคากลางงานก่อสร้างของราชการ (กรมบัญชีกลาง)',
+    desc: 'ตารางคำนวณต้นทุนงาน ค่างานต้นทุน x Factor F ดอกเบี้ย เงินล่วงหน้า เงินประกันผลงาน และภาษีมูลค่าเพิ่ม 7%',
+    formats: ['word', 'excel', 'pdf']
+  },
+  {
+    id: 'FORM-VEHICLE-LOG',
+    code: 'แบบ คย.01',
+    title: 'สมุดทะเบียนคุมการใช้รถยนต์ส่วนกลางและใบสั่งจ่ายน้ำมันเชื้อเพลิง',
+    category: 'clerk',
+    categoryName: 'งานสำนักปลัดและยานพาหนะ',
+    standardRef: 'ระเบียบกระทรวงมหาดไทยว่าด้วยการใช้และรักษารถยนต์ของ อปท. พ.ศ. 2548',
+    desc: 'แบบบันทึกการขอใช้รถ วัตถุประสงค์ เลขกิโลเมตรเริ่ม-สิ้นสุด ใบสั่งจ่ายน้ำมัน และอัตราสิ้นเปลืองกิโลเมตรต่อลิตร',
+    formats: ['word', 'excel', 'pdf']
+  },
+  {
+    id: 'FORM-BUILDING-PERMIT',
+    code: 'แบบ ข.1 / อ.1',
+    title: 'คำขออนุญาตก่อสร้าง ดัดแปลง รื้อถอนอาคาร (พ.ร.บ. ควบคุมอาคาร พ.ศ. 2522)',
+    category: 'civil',
+    categoryName: 'งานโยธาและควบคุมอาคาร',
+    standardRef: 'พ.ร.บ. ควบคุมอาคาร พ.ศ. 2522 และกฎกระทรวงที่เกี่ยวข้อง',
+    desc: 'แบบคำขอใบอนุญาต (แบบ ข.1), ตรวจสอบแบบแปลน, คิดค่าธรรมเนียม และใบอนุญาต (แบบ อ.1) ภายใน 45 วัน',
+    formats: ['word', 'pdf']
+  },
+  {
+    id: 'FORM-ELDERLY-REGISTER',
+    code: 'แบบ บย.01',
+    title: 'แบบคำขอลงทะเบียนรับเงินเบี้ยยังชีพผู้สูงอายุและคนพิการ',
+    category: 'welfare',
+    categoryName: 'งานสวัสดิการสังคมและเบี้ยยังชีพ',
+    standardRef: 'ระเบียบกระทรวงมหาดไทยว่าด้วยหลักเกณฑ์การจ่ายเงินเบี้ยยังชีพผู้สูงอายุของ อปท. พ.ศ. 2566',
+    desc: 'แบบคำขอขึ้นทะเบียนผู้สูงอายุ ตรวจสอบคุณสมบัติ หลักฐานสำเนาบัตรประชาชน/ทะเบียนบ้าน และช่องทางการรับเงิน',
+    formats: ['word', 'pdf']
+  },
+  {
+    id: 'FORM-SCHOOL-LUNCH',
+    code: 'แบบ อก.01',
+    title: 'แบบตรวจรับและรายงานการจัดซื้ออาหารกลางวันและนมโรงเรียน ศพด.',
+    category: 'education',
+    categoryName: 'งานการศึกษาและศูนย์เด็กเล็ก',
+    standardRef: 'ระเบียบกระทรวงมหาดไทยว่าด้วยรายได้และการจ่ายเงินของสถานศึกษาสังกัด อปท. พ.ศ. 2562',
+    desc: 'บันทึกการตรวจรับอาหารกลางวันรายวัน (24 บาท/คน/วัน) และการตรวจรับนมโรงเรียนตามคุณลักษณะเฉพาะ',
+    formats: ['word', 'excel', 'pdf']
+  }
+];
+
+

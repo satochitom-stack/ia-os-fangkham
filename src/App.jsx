@@ -19,6 +19,8 @@ import EngagementPlanView from './components/EngagementPlanView';
 import UserManagementView from './components/UserManagementView';
 import TechnicalToolkitsView from './components/TechnicalToolkitsView';
 import DepartmentWorkspaceView from './components/DepartmentWorkspaceView';
+import ExecutiveDashboardView from './components/ExecutiveDashboardView';
+import CentralCalendarView from './components/CentralCalendarView';
 import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
 import { getSession, logout as authLogout, switchSessionTo, autoRepairDataLinkages, getUsers, saveUsers, getDepartments, saveDepartments } from './utils/auth';
 
@@ -644,10 +646,14 @@ export default function App() {
   // Helper: Default landing tab based on role and department
   const getDefaultTabForUser = (s) => {
     if (!s) return 'welcome';
-    if (s.role === 'admin' || s.role === 'executive') return 'dashboard';
+    if (s.role === 'admin') return 'dashboard';
+    if (s.role === 'executive') return 'executive-dashboard';
     if (s.department?.includes('ปลัด') || s.username === 'office') return 'dept-office';
     if (s.department?.includes('คลัง') || s.username === 'finance') return 'dept-finance';
     if (s.department?.includes('ช่าง') || s.username === 'engineering' || s.username === 'tech') return 'dept-tech';
+    if (s.department?.includes('การศึกษา') || s.username === 'education') return 'dept-education';
+    if (s.department?.includes('สวัสดิการ') || s.username === 'welfare') return 'dept-welfare';
+    if (s.department?.includes('สาธารณสุข') || s.username === 'health') return 'dept-health';
     return s.permissions?.[0] || 'dept-workspaces';
   };
 
@@ -666,6 +672,16 @@ export default function App() {
     if (session.department?.includes('ช่าง') || session.username === 'engineering' || session.username === 'tech') {
       deptAllowed.push('dept-tech', 'dept-workspaces');
     }
+    if (session.department?.includes('การศึกษา') || session.username === 'education') {
+      deptAllowed.push('dept-education', 'dept-workspaces');
+    }
+    if (session.department?.includes('สวัสดิการ') || session.username === 'welfare') {
+      deptAllowed.push('dept-welfare', 'dept-workspaces');
+    }
+    if (session.department?.includes('สาธารณสุข') || session.username === 'health') {
+      deptAllowed.push('dept-health', 'dept-workspaces');
+    }
+    deptAllowed.push('central-calendar');
 
     const allowed = [...(session.permissions || ['dashboard']), ...deptAllowed, 'welcome'];
     if (!allowed.includes(currentTab)) {
@@ -888,7 +904,35 @@ export default function App() {
               />
             )}
 
-            {(currentTab === 'dept-workspaces' || currentTab === 'dept-office' || currentTab === 'dept-finance' || currentTab === 'dept-tech') && (
+            {currentTab === 'executive-dashboard' && (
+              <ExecutiveDashboardView
+                key={`executive-dashboard-${selectedYear}`}
+                orgProfile={orgProfile}
+                selectedYear={selectedYear}
+                annualPlans={annualPlans}
+                workingPapers={workingPapers}
+                capaFindings={capaFindings}
+                setCurrentTab={setCurrentTab}
+              />
+            )}
+
+            {currentTab === 'central-calendar' && (
+              <CentralCalendarView
+                key={`central-calendar-${selectedYear}`}
+                selectedYear={selectedYear}
+                annualPlans={annualPlans}
+                session={session}
+                setCurrentTab={setCurrentTab}
+              />
+            )}
+
+            {(currentTab === 'dept-workspaces' ||
+              currentTab === 'dept-office' ||
+              currentTab === 'dept-finance' ||
+              currentTab === 'dept-tech' ||
+              currentTab === 'dept-education' ||
+              currentTab === 'dept-welfare' ||
+              currentTab === 'dept-health') && (
               <DepartmentWorkspaceView
                 key={`dept-${currentTab}-${selectedYear}`}
                 orgProfile={orgProfile}
@@ -903,7 +947,23 @@ export default function App() {
                     ? 'กองคลัง'
                     : currentTab === 'dept-tech'
                     ? 'กองช่าง'
-                    : (session?.department?.includes('คลัง') ? 'กองคลัง' : session?.department?.includes('ช่าง') ? 'กองช่าง' : 'สำนักปลัด')
+                    : currentTab === 'dept-education'
+                    ? 'กองการศึกษา'
+                    : currentTab === 'dept-welfare'
+                    ? 'กองสวัสดิการสังคม'
+                    : currentTab === 'dept-health'
+                    ? 'งานสาธารณสุขและสิ่งแวดล้อม'
+                    : (session?.department?.includes('คลัง')
+                        ? 'กองคลัง'
+                        : session?.department?.includes('ช่าง')
+                        ? 'กองช่าง'
+                        : session?.department?.includes('การศึกษา')
+                        ? 'กองการศึกษา'
+                        : session?.department?.includes('สวัสดิการ')
+                        ? 'กองสวัสดิการสังคม'
+                        : session?.department?.includes('สาธารณสุข')
+                        ? 'งานสาธารณสุขและสิ่งแวดล้อม'
+                        : 'สำนักปลัด')
                 }
                 setCurrentTab={setCurrentTab}
               />
