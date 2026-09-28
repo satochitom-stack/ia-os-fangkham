@@ -37,6 +37,7 @@ import {
   initialFinanceWorkspaceData,
   initialTechWorkspaceData
 } from '../data/initialData';
+import { exportDepartmentWorkspacesExcel } from '../services/reportExportService';
 
 export default function DepartmentWorkspaceView({
   orgProfile = {},
@@ -311,38 +312,59 @@ export default function DepartmentWorkspaceView({
             </p>
           </div>
 
-          {/* Department Switcher Tabs (For Admin/Executive or permitted viewers) */}
-          {isAdmin ? (
-            <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shrink-0">
-              {[
-                { id: 'สำนักปลัด', label: 'สำนักปลัด', icon: Building2 },
-                { id: 'กองคลัง', label: 'กองคลัง', icon: BadgeDollarSign },
-                { id: 'กองช่าง', label: 'กองช่าง', icon: HardHat }
-              ].map((d) => {
-                const isSelected = activeDept === d.id;
-                const Icon = d.icon;
-                return (
-                  <button
-                    key={d.id}
-                    onClick={() => setActiveDept(d.id)}
-                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
-                      isSelected
-                        ? 'bg-blue-600 text-white shadow-xs'
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span>{d.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold px-3.5 py-2 rounded-xl flex items-center space-x-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>เข้าสู่ระบบในฐานะ: {session?.displayName || userDept}</span>
-            </div>
-          )}
+          {/* Department Switcher Tabs & Excel Export Button */}
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {isAdmin ? (
+              <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shrink-0">
+                {[
+                  { id: 'สำนักปลัด', label: 'สำนักปลัด', icon: Building2 },
+                  { id: 'กองคลัง', label: 'กองคลัง', icon: BadgeDollarSign },
+                  { id: 'กองช่าง', label: 'กองช่าง', icon: HardHat }
+                ].map((d) => {
+                  const isSelected = activeDept === d.id;
+                  const Icon = d.icon;
+                  return (
+                    <button
+                      key={d.id}
+                      onClick={() => setActiveDept(d.id)}
+                      className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                        isSelected
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span>{d.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold px-3.5 py-2 rounded-xl flex items-center space-x-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <span>เข้าสู่ระบบในฐานะ: {session?.displayName || userDept}</span>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => {
+                exportDepartmentWorkspacesExcel({
+                  officeData,
+                  financeData,
+                  techData,
+                  orgProfile,
+                  selectedYear
+                });
+                showToast(`📗 ส่งออกข้อมูล Excel ของ ${activeDept} เรียบร้อยแล้ว`);
+              }}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer transition-colors shrink-0"
+              title="ส่งออกข้อมูลสำนัก/กอง เป็น Excel (.xlsx)"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5" />
+              <span>ส่งออก Excel</span>
+            </button>
+          </div>
         </div>
 
         {/* Sub-Tabs Navigation for Active Department */}

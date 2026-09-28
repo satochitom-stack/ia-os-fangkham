@@ -882,6 +882,9 @@ export default function App() {
                 workingPapers={workingPapers}
                 capaFindings={capaFindings}
                 setCapaFindings={setCapaFindings}
+                auditUniverse={auditUniverse}
+                engagementPlans={engagementPlans}
+                session={session}
               />
             )}
 

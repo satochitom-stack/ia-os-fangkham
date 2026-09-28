@@ -28,6 +28,8 @@ import {
   Scale
 } from 'lucide-react';
 import ConfirmModal from './ConfirmModal';
+import AnnualAuditReportView from './AnnualAuditReportView';
+import ReportExportHubModal from './ReportExportHubModal';
 import { initialCapaFindings } from '../data/initialData';
 
 export default function ReportingView({
@@ -36,9 +38,13 @@ export default function ReportingView({
   workingPapers = [],
   selectedYear = '2569',
   capaFindings = [],
-  setCapaFindings = () => {}
+  setCapaFindings = () => {},
+  auditUniverse = [],
+  engagementPlans = [],
+  session = null
 }) {
-  const [activeTab, setActiveTab] = useState('report'); // 'report', 'exit', 'capa'
+  const [activeTab, setActiveTab] = useState('annual-report'); // 'annual-report', 'report', 'exit', 'capa'
+  const [showExportHubModal, setShowExportHubModal] = useState(false);
   const [selectedWpId, setSelectedWpId] = useState(() => workingPapers[0]?.id || '');
 
   useEffect(() => {
@@ -276,6 +282,18 @@ export default function ReportingView({
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-3">
         <div className="flex flex-wrap gap-2">
           <button
+            onClick={() => setActiveTab('annual-report')}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-2 ${
+              activeTab === 'annual-report'
+                ? 'bg-blue-600 text-white shadow-xs'
+                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>รายงานผลการตรวจสอบประจำปี (Annual Report)</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('report')}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-2 ${
               activeTab === 'report'
@@ -284,7 +302,7 @@ export default function ReportingView({
             }`}
           >
             <FileText className="w-3.5 h-3.5" />
-            <span>ร่างรายงานผลการตรวจสอบ (Audit Report)</span>
+            <span>รายงานผลรายกิจกรรม (WP Report)</span>
           </button>
 
           <button
@@ -313,7 +331,7 @@ export default function ReportingView({
         </div>
 
         {/* Global Tab Actions */}
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-2">
           {activeTab === 'report' && workingPapers.length > 0 && (
             <select
               value={selectedWpId}
@@ -372,6 +390,15 @@ export default function ReportingView({
           )}
 
           <button
+            type="button"
+            onClick={() => setShowExportHubModal(true)}
+            className="no-print bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer transition-colors"
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5" />
+            <span>ส่งออก Excel ทางการ (.xlsx)</span>
+          </button>
+
+          <button
             onClick={() => window.print()}
             className="no-print bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer"
           >
@@ -380,6 +407,19 @@ export default function ReportingView({
           </button>
         </div>
       </div>
+
+      {/* =========================================================================
+          TAB 0: ANNUAL AUDIT REPORT (รายงานผลการตรวจสอบภายในประจำปีงบประมาณ)
+      ========================================================================= */}
+      {activeTab === 'annual-report' && (
+        <AnnualAuditReportView
+          orgProfile={orgProfile}
+          selectedYear={selectedYear}
+          annualPlans={annualPlans}
+          workingPapers={workingPapers}
+          capaFindings={findingsList}
+        />
+      )}
 
       {/* =========================================================================
           TAB 1: AUDIT REPORT DOCUMENT (บันทึกข้อความรายงานผลการตรวจสอบ)
@@ -1268,6 +1308,19 @@ export default function ReportingView({
         type={confirmModalConfig.type}
         onConfirm={confirmModalConfig.onConfirm}
         onClose={() => setConfirmModalConfig((prev) => ({ ...prev, isOpen: false }))}
+      />
+
+      {/* Enterprise Report & Excel Export Hub Modal */}
+      <ReportExportHubModal
+        isOpen={showExportHubModal}
+        onClose={() => setShowExportHubModal(false)}
+        orgProfile={orgProfile}
+        selectedYear={selectedYear}
+        annualPlans={annualPlans}
+        workingPapers={workingPapers}
+        capaFindings={findingsList}
+        auditUniverse={auditUniverse}
+        engagementPlans={engagementPlans}
       />
     </div>
   );
