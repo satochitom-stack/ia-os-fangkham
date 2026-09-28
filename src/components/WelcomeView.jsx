@@ -89,8 +89,10 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
     };
   }, []);
 
-  // Filter out internal audit to get auditee departments (หน่วยรับตรวจ)
-  const auditeeDepartments = departments.filter((d) => d !== 'หน่วยตรวจสอบภายใน');
+  // Filter out internal audit and executive titles to get auditee departments (หน่วยรับตรวจ 5 หน่วย)
+  const auditeeDepartments = departments.filter(
+    (d) => d !== 'หน่วยตรวจสอบภายใน' && d !== 'ผู้บริหาร' && d !== 'ปลัด อบต.ฝางคำ'
+  );
 
   const KNOWN_LABELS = {
     'สำนักปลัด': 'งานบริหารทั่วไปและนโยบาย',
@@ -101,6 +103,42 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
     'กองสาธารณสุขและสิ่งแวดล้อม': 'งานสาธารณสุขและสิ่งแวดล้อม',
     'ศพด.': 'ศูนย์พัฒนาเด็กเล็กตำบลฝางคำ',
     'ศูนย์พัฒนาเด็กเล็ก': 'ศูนย์พัฒนาเด็กเล็กตำบลฝางคำ'
+  };
+
+  const executiveLeaderPartner = {
+    name: 'ผู้บริหาร',
+    label: 'นายก อบต.ฝางคำ',
+    onClick: () => {
+      const user = availableUsers.find(
+        (u) => u.username === 'mayor' || (u.role === 'executive' && u.username !== 'palat') || u.displayName === 'ผู้บริหาร'
+      );
+      if (user) {
+        handleQuickSelect(user);
+      } else {
+        setUsername('mayor');
+        setPassword('');
+        setError('');
+        setShowLoginModal(true);
+      }
+    }
+  };
+
+  const permanentSecretaryPartner = {
+    name: 'ปลัด อบต.ฝางคำ',
+    label: 'การบริหารราชการและกำกับดูแลภาพรวม',
+    onClick: () => {
+      const user = availableUsers.find(
+        (u) => u.username === 'palat' || u.displayName?.includes('ปลัด') || u.position?.includes('ปลัด')
+      );
+      if (user) {
+        handleQuickSelect(user);
+      } else {
+        setUsername('palat');
+        setPassword('');
+        setError('');
+        setShowLoginModal(true);
+      }
+    }
   };
 
   const heroPartners = auditeeDepartments.map((deptName) => {
@@ -329,6 +367,8 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
           onPrimaryClick={scrollToLogin}
           onSecondaryClick={scrollToExplore}
           onCtaClick={scrollToLogin}
+          executiveLeader={executiveLeaderPartner}
+          permanentSecretary={permanentSecretaryPartner}
           partners={heroPartners}
           badgeLabel="✨ Welcome"
           badgeText="Next-Gen Digital Governance & Internal Audit Platform"
@@ -358,20 +398,99 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
           </p>
         </div>
 
-        {/* 4. Departments Grid (หน่วยรับตรวจ) */}
+        {/* 4. Departments Grid (หน่วยรับตรวจและโครงสร้างฝ่ายบริหาร) */}
         <div id="departments" className="space-y-6 pt-4">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-2 border-b border-slate-200 pb-4">
             <div>
               <h3 className="text-lg md:text-xl font-bold text-slate-900 flex items-center space-x-2">
                 <Building className="w-5 h-5 text-blue-600" />
-                <span>โครงสร้างหน่วยรับตรวจและผู้ใช้งานรายกอง ({departments.length} สำนัก/กอง/หน่วย)</span>
+                <span>โครงสร้างฝ่ายบริหารและหน่วยรับตรวจ ({departments.length} สำนัก/กอง/หน่วย)</span>
               </h3>
               <p className="text-xs text-slate-500 mt-1">
-                กำหนดสิทธิ์การมองเห็นและการปฏิบัติงานแยกอิสระตามภารกิจของแต่ละกอง
+                กำหนดสิทธิ์การมองเห็นและการปฏิบัติงานแยกอิสระตามภารกิจของฝ่ายบริหารและแต่ละกอง
               </p>
             </div>
             <div className="text-xs text-slate-400">
               องค์การบริหารส่วนตำบลฝางคำ อำเภอสิรินธร จ.อุบลราชธานี
+            </div>
+          </div>
+
+          {/* Executive Leadership Cards (ระดับนโยบายและบริหารงานประจำ) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
+            {/* 1. ผู้บริหาร */}
+            <div
+              onClick={() => {
+                const user = availableUsers.find(
+                  (u) => u.username === 'mayor' || (u.role === 'executive' && u.username !== 'palat') || u.displayName === 'ผู้บริหาร'
+                );
+                if (user) handleQuickSelect(user);
+                else {
+                  setUsername('mayor');
+                  setShowLoginModal(true);
+                }
+              }}
+              className="p-5 rounded-2xl border border-amber-200/90 bg-gradient-to-br from-amber-50/70 via-white to-amber-50/30 hover:border-amber-400 hover:shadow-md transition-all cursor-pointer group hover:scale-[1.01] flex flex-col justify-between"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-lg font-bold shadow-2xs group-hover:scale-105 transition-transform">
+                    👑
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase bg-amber-100 text-amber-800 border border-amber-200">
+                    EXECUTIVE: ฝ่ายบริหาร
+                  </span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-base text-slate-900 group-hover:text-amber-800 transition-colors flex items-center space-x-1.5">
+                    <span>ผู้บริหาร (นายก อบต.ฝางคำ)</span>
+                  </h4>
+                  <p className="text-xs text-slate-500 mt-1">
+                    นายกองค์การบริหารส่วนตำบลฝางคำ • กำหนดนโยบาย ยุทธศาสตร์ และการบริหารงานภาพรวม
+                  </p>
+                </div>
+              </div>
+              <div className="pt-4 mt-4 border-t border-amber-100 flex items-center justify-between text-xs text-amber-700 font-medium">
+                <span>เข้าสู่ระบบในฐานะ @mayor</span>
+                <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+
+            {/* 2. ปลัด อบต.ฝางคำ */}
+            <div
+              onClick={() => {
+                const user = availableUsers.find(
+                  (u) => u.username === 'palat' || u.displayName?.includes('ปลัด') || u.position?.includes('ปลัด')
+                );
+                if (user) handleQuickSelect(user);
+                else {
+                  setUsername('palat');
+                  setShowLoginModal(true);
+                }
+              }}
+              className="p-5 rounded-2xl border border-indigo-200/90 bg-gradient-to-br from-indigo-50/70 via-white to-indigo-50/30 hover:border-indigo-400 hover:shadow-md transition-all cursor-pointer group hover:scale-[1.01] flex flex-col justify-between"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg font-bold shadow-2xs group-hover:scale-105 transition-transform">
+                    🏛️
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase bg-indigo-100 text-indigo-800 border border-indigo-200">
+                    CHIEF ADMINISTRATIVE OFFICER
+                  </span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-base text-slate-900 group-hover:text-indigo-800 transition-colors flex items-center space-x-1.5">
+                    <span>ปลัด อบต.ฝางคำ</span>
+                  </h4>
+                  <p className="text-xs text-slate-500 mt-1">
+                    นักบริหารงานท้องถิ่นระดับกลาง • หัวหน้าส่วนราชการประจำ บังคับบัญชาข้าราชการและกำกับดูแลทุกกอง
+                  </p>
+                </div>
+              </div>
+              <div className="pt-4 mt-4 border-t border-indigo-100 flex items-center justify-between text-xs text-indigo-700 font-medium">
+                <span>เข้าสู่ระบบในฐานะ @palat</span>
+                <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+              </div>
             </div>
           </div>
 
@@ -634,32 +753,46 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
             {/* Quick account selector chips */}
             <div className="pt-3 border-t border-slate-100 space-y-2 text-xs">
               <span className="text-[11px] text-slate-500 block font-medium">
-                เลือกเข้าสู่ระบบด่วนตามกอง:
+                เลือกเข้าสู่ระบบด่วนตามบทบาท / กอง:
               </span>
-              <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1">
-                {availableUsers.map((u) => {
-                  let label = u.displayName || u.username;
-                  if (u.role === 'admin' && (label === 'นายศุภมงคล ธรรมพิทักษ์' || !label || label === 'admin')) {
-                    label = 'หน่วยตรวจสอบฯ';
-                  } else if (label === 'กองสาธารณสุขและสิ่งแวดล้อม') {
-                    label = 'กองสวัสดิการสังคม';
-                  }
-                  return (
-                    <button
-                      key={u.username}
-                      type="button"
-                      onClick={() => handleQuickSelect(u)}
-                      className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
-                        username.toLowerCase() === u.username.toLowerCase()
-                          ? 'bg-blue-600 text-white font-bold shadow-xs'
-                          : 'bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-700'
-                      }`}
-                    >
-                      {u.role === 'admin' ? '👑 ' : '🏢 '}
-                      {label}
-                    </button>
-                  );
-                })}
+              <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pr-1">
+                {(() => {
+                  const sorted = [...availableUsers].sort((a, b) => {
+                    const order = { mayor: 1, palat: 2, admin: 3, office: 4, finance: 5, engineering: 6, education: 7, health: 8 };
+                    return (order[a.username] || 99) - (order[b.username] || 99);
+                  });
+                  return sorted.map((u) => {
+                    let label = u.displayName || u.username;
+                    let icon = '🏢 ';
+                    if (u.username === 'mayor' || (u.role === 'executive' && u.username !== 'palat') || label === 'ผู้บริหาร') {
+                      icon = '👑 ';
+                      label = 'ผู้บริหาร';
+                    } else if (u.username === 'palat' || label.includes('ปลัด')) {
+                      icon = '🏛️ ';
+                      label = 'ปลัด อบต.ฝางคำ';
+                    } else if (u.role === 'admin' || u.username === 'admin') {
+                      icon = '👑 ';
+                      label = 'หน่วยตรวจสอบฯ';
+                    } else if (label === 'กองสาธารณสุขและสิ่งแวดล้อม') {
+                      label = 'กองสวัสดิการสังคม';
+                    }
+                    return (
+                      <button
+                        key={u.username}
+                        type="button"
+                        onClick={() => handleQuickSelect(u)}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
+                          username.toLowerCase() === u.username.toLowerCase()
+                            ? 'bg-blue-600 text-white font-bold shadow-xs'
+                            : 'bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-700'
+                        }`}
+                      >
+                        {icon}
+                        {label}
+                      </button>
+                    );
+                  });
+                })()}
               </div>
             </div>
 

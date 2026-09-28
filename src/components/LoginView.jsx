@@ -254,34 +254,56 @@ export default function LoginView({ onLogin }) {
 
             {showQuickLogin && (
               <div className="grid grid-cols-2 gap-1.5 max-h-48 overflow-y-auto pr-1">
-                {availableUsers.map((u) => {
-                  const isSelected = username.toLowerCase() === u.username.toLowerCase();
-                  const isAdmin = u.role === 'admin';
-                  return (
-                    <button
-                      key={u.username}
-                      type="button"
-                      onClick={() => handleQuickSelect(u)}
-                      className={`text-left p-2 rounded-lg border text-xs transition-all cursor-pointer flex flex-col justify-between ${
-                        isSelected
-                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 font-semibold ring-1 ring-blue-500/30'
-                          : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-1">
-                        <span>{isAdmin ? '👑' : '🏢'}</span>
-                        <span className="truncate font-bold">
-                          {isAdmin && (u.displayName === 'นายศุภมงคล ธรรมพิทักษ์' || !u.displayName || u.displayName === 'admin')
-                            ? 'หน่วยตรวจสอบฯ'
-                            : (u.displayName === 'กองสาธารณสุขและสิ่งแวดล้อม' ? 'กองสวัสดิการสังคม' : (u.displayName || u.username))}
-                        </span>
-                      </div>
-                      <div className="text-[10px] text-slate-400 font-mono mt-0.5">
-                        @{u.username}
-                      </div>
-                    </button>
-                  );
-                })}
+                {(() => {
+                  const sorted = [...availableUsers].sort((a, b) => {
+                    const order = { mayor: 1, palat: 2, admin: 3, office: 4, finance: 5, engineering: 6, education: 7, health: 8 };
+                    return (order[a.username] || 99) - (order[b.username] || 99);
+                  });
+                  return sorted.map((u) => {
+                    const isSelected = username.toLowerCase() === u.username.toLowerCase();
+                    const isAdmin = u.role === 'admin' || u.username === 'admin';
+                    const isMayor = u.username === 'mayor' || (u.role === 'executive' && u.username !== 'palat') || u.displayName === 'ผู้บริหาร';
+                    const isPalat = u.username === 'palat' || u.displayName?.includes('ปลัด');
+
+                    let icon = '🏢';
+                    let displayTitle = u.displayName || u.username;
+                    if (isMayor) {
+                      icon = '👑';
+                      displayTitle = 'ผู้บริหาร';
+                    } else if (isPalat) {
+                      icon = '🏛️';
+                      displayTitle = 'ปลัด อบต.ฝางคำ';
+                    } else if (isAdmin) {
+                      icon = '👑';
+                      displayTitle = 'หน่วยตรวจสอบฯ';
+                    } else if (displayTitle === 'กองสาธารณสุขและสิ่งแวดล้อม') {
+                      displayTitle = 'กองสวัสดิการสังคม';
+                    }
+
+                    return (
+                      <button
+                        key={u.username}
+                        type="button"
+                        onClick={() => handleQuickSelect(u)}
+                        className={`text-left p-2 rounded-lg border text-xs transition-all cursor-pointer flex flex-col justify-between ${
+                          isSelected
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 font-semibold ring-1 ring-blue-500/30'
+                            : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-1">
+                          <span>{icon}</span>
+                          <span className="truncate font-bold">
+                            {displayTitle}
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                          @{u.username}
+                        </div>
+                      </button>
+                    );
+                  });
+                })()}
               </div>
             )}
           </div>

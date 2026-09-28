@@ -593,7 +593,7 @@ export default function App() {
   // Route Guard: Ensure non-admin users only access allowed menu tabs
   useEffect(() => {
     if (!session) return;
-    if (session.role === 'admin') return;
+    if (session.role === 'admin' || session.role === 'executive') return;
     const allowed = [...(session.permissions || ['dashboard']), 'welcome'];
     if (!allowed.includes(currentTab)) {
       setCurrentTab(allowed[0] || 'dashboard');
@@ -607,7 +607,7 @@ export default function App() {
         onLogin={(sess) => {
           const s = sess || getSession();
           setSession(s);
-          if (s?.role === 'admin') {
+          if (s?.role === 'admin' || s?.role === 'executive') {
             setCurrentTab('dashboard');
           } else {
             setCurrentTab(s?.permissions?.[0] || 'risk-management');
@@ -615,7 +615,7 @@ export default function App() {
         }}
         onEnterDashboard={() => {
           const s = getSession();
-          if (s?.role === 'admin') {
+          if (s?.role === 'admin' || s?.role === 'executive') {
             setCurrentTab('dashboard');
           } else {
             setCurrentTab(s?.permissions?.[0] || 'risk-management');
@@ -632,14 +632,14 @@ export default function App() {
         onLogin={(sess) => {
           const s = sess || getSession();
           setSession(s);
-          if (s?.role === 'admin') {
+          if (s?.role === 'admin' || s?.role === 'executive') {
             setCurrentTab('dashboard');
           } else {
             setCurrentTab(s?.permissions?.[0] || 'risk-management');
           }
         }}
         onEnterDashboard={() => {
-          if (session?.role === 'admin') {
+          if (session?.role === 'admin' || session?.role === 'executive') {
             setCurrentTab('dashboard');
           } else {
             setCurrentTab(session?.permissions?.[0] || 'risk-management');

@@ -266,15 +266,76 @@ export function autoRepairDataLinkages() {
       // (as specified by Admin in the Permissions Matrix: only การบริหารความเสี่ยง and แบบฟอร์มมาตรฐาน)
       const DEPT_PERMS_V4_KEY = 'ia_dept_perms_v4_twomenus';
       if (localStorage.getItem(DEPT_PERMS_V4_KEY) !== 'synced') {
-        if (u.role !== 'admin') {
+        if (u.role === 'user') {
           u.permissions = ['risk-management', 'forms'];
           usersChanged = true;
         }
       }
     });
 
-    if (localStorage.getItem('ia_dept_perms_v4_twomenus') !== 'synced') {
-      localStorage.setItem('ia_dept_perms_v4_twomenus', 'synced');
+    if (localStorage.getItem(DEPT_PERMS_V4_KEY) !== 'synced') {
+      localStorage.setItem(DEPT_PERMS_V4_KEY, 'synced');
+    }
+
+    // 7. Ensure Executive accounts exist (ผู้บริหาร & ปลัด อบต.ฝางคำ) and สำนักปลัด is distinct
+    const executivePerms = ['dashboard', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
+    
+    // 7.1 Ensure mayor (ผู้บริหาร) exists
+    if (!users.some((u) => u.username === 'mayor')) {
+      users.push({
+        username: 'mayor',
+        displayName: 'ผู้บริหาร',
+        position: 'นายกองค์การบริหารส่วนตำบลฝางคำ / คณะผู้บริหาร',
+        department: 'ผู้บริหาร',
+        role: 'executive',
+        passwordText: '1234',
+        permissions: executivePerms,
+        canManageUsers: false,
+        createdAt: Date.now()
+      });
+      usersChanged = true;
+    }
+
+    // 7.2 Update palat to be ปลัด อบต.ฝางคำ (Executive)
+    const palatIdx = users.findIndex((u) => u.username === 'palat');
+    if (palatIdx !== -1) {
+      if (users[palatIdx].displayName === 'สำนักปลัด' || users[palatIdx].role !== 'executive') {
+        users[palatIdx].displayName = 'ปลัด อบต.ฝางคำ';
+        users[palatIdx].position = 'ปลัดองค์การบริหารส่วนตำบลฝางคำ';
+        users[palatIdx].department = 'ปลัด อบต.ฝางคำ';
+        users[palatIdx].role = 'executive';
+        users[palatIdx].permissions = executivePerms;
+        usersChanged = true;
+      }
+    } else {
+      users.push({
+        username: 'palat',
+        displayName: 'ปลัด อบต.ฝางคำ',
+        position: 'ปลัดองค์การบริหารส่วนตำบลฝางคำ',
+        department: 'ปลัด อบต.ฝางคำ',
+        role: 'executive',
+        passwordText: '1234',
+        permissions: executivePerms,
+        canManageUsers: false,
+        createdAt: Date.now()
+      });
+      usersChanged = true;
+    }
+
+    // 7.3 Ensure สำนักปลัด has its own auditee user (office)
+    if (!users.some((u) => u.username === 'office' || (u.department === 'สำนักปลัด' && u.role === 'user'))) {
+      users.push({
+        username: 'office',
+        displayName: 'สำนักปลัด',
+        position: 'หัวหน้าสำนักปลัด / เจ้าหน้าที่สำนักปลัด',
+        department: 'สำนักปลัด',
+        role: 'user',
+        passwordText: '1234',
+        permissions: ['risk-management', 'forms'],
+        canManageUsers: false,
+        createdAt: Date.now()
+      });
+      usersChanged = true;
     }
 
     cascadeDepartmentRenameToStorage('กองสาธารณสุขและสิ่งแวดล้อม', 'กองสวัสดิการสังคม');
@@ -445,10 +506,32 @@ export const DEFAULT_INITIAL_USERS = [
     createdAt: Date.now()
   },
   {
-    username: 'finance',
-    displayName: 'กองคลัง',
-    position: 'ผู้อำนวยการกองคลัง / เจ้าหน้าที่กองคลัง',
-    department: 'กองคลัง',
+    username: 'mayor',
+    displayName: 'ผู้บริหาร',
+    position: 'นายกองค์การบริหารส่วนตำบลฝางคำ / คณะผู้บริหาร',
+    department: 'ผู้บริหาร',
+    role: 'executive',
+    passwordText: '1234',
+    permissions: ['dashboard', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
+    canManageUsers: false,
+    createdAt: Date.now()
+  },
+  {
+    username: 'palat',
+    displayName: 'ปลัด อบต.ฝางคำ',
+    position: 'ปลัดองค์การบริหารส่วนตำบลฝางคำ',
+    department: 'ปลัด อบต.ฝางคำ',
+    role: 'executive',
+    passwordText: '1234',
+    permissions: ['dashboard', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
+    canManageUsers: false,
+    createdAt: Date.now()
+  },
+  {
+    username: 'office',
+    displayName: 'สำนักปลัด',
+    position: 'หัวหน้าสำนักปลัด / เจ้าหน้าที่สำนักปลัด',
+    department: 'สำนักปลัด',
     role: 'user',
     passwordText: '1234',
     permissions: ['risk-management', 'forms'],
@@ -456,10 +539,10 @@ export const DEFAULT_INITIAL_USERS = [
     createdAt: Date.now()
   },
   {
-    username: 'palat',
-    displayName: 'สำนักปลัด',
-    position: 'หัวหน้าสำนักปลัด / เจ้าหน้าที่สำนักปลัด',
-    department: 'สำนักปลัด',
+    username: 'finance',
+    displayName: 'กองคลัง',
+    position: 'ผู้อำนวยการกองคลัง / เจ้าหน้าที่กองคลัง',
+    department: 'กองคลัง',
     role: 'user',
     passwordText: '1234',
     permissions: ['risk-management', 'forms'],

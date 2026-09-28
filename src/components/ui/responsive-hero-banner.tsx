@@ -44,6 +44,8 @@ export interface ResponsiveHeroBannerProps {
   onPrimaryClick?: () => void;
   secondaryButtonText?: string;
   onSecondaryClick?: () => void;
+  executiveLeader?: Partner;
+  permanentSecretary?: Partner;
   partnersTitle?: string;
   partners?: Partner[];
   session?: any;
@@ -70,6 +72,8 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   onPrimaryClick,
   secondaryButtonText = "สำรวจฟังก์ชันระบบ",
   onSecondaryClick,
+  executiveLeader,
+  permanentSecretary,
   partnersTitle = "โครงสร้างหน่วยรับตรวจที่เชื่อมโยงในระบบ (CONNECTED DEPARTMENTS)",
   partners = [
     { name: "สำนักปลัด", label: "งานบริหารทั่วไปและนโยบาย" },
@@ -338,37 +342,97 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             </button>
           </div>
 
-          <div className="pt-4 sm:pt-5 border-t border-slate-200/80">
-          <p className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center animate-fade-slide-in-1">
-            {partnersTitle}
-          </p>
-          <div 
-            className="grid mt-4 gap-2.5 sm:gap-3 animate-fade-slide-in-2 justify-center"
-            style={{
-              gridTemplateColumns: `repeat(auto-fit, minmax(135px, 1fr))`
-            }}
-          >
-            {partners.map((partner, index) => (
-              <div
-                key={index}
-                onClick={partner.onClick}
-                className="bg-white/85 hover:bg-blue-50/90 border border-slate-200/80 hover:border-blue-300 rounded-2xl p-2.5 sm:p-3 text-center transition-all shadow-2xs hover:shadow-xs cursor-pointer group"
-              >
-                <div className="w-7 h-7 rounded-xl bg-blue-50 group-hover:bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-1 transition-colors">
-                  <Building2 className="w-3.5 h-3.5" />
-                </div>
-                <div className="text-xs font-bold text-slate-800 group-hover:text-blue-700 transition-colors">
-                  {partner.name}
-                </div>
-                {partner.label && (
-                  <div className="text-[9px] text-slate-500 line-clamp-1 mt-0.5">
-                    {partner.label}
+          {/* Executive Leadership Hierarchy (บนสุดเป็น ผู้บริหาร ค่อยมาเป็น ปลัด อบต.ฝางคำ) */}
+          {(executiveLeader || permanentSecretary) && (
+            <div className="pt-4 sm:pt-5 border-t border-slate-200/80 mb-5 sm:mb-6">
+              <div className="flex flex-col items-center space-y-2.5 animate-fade-slide-in-1">
+                {/* 1. บนสุดเป็น ผู้บริหาร */}
+                {executiveLeader && (
+                  <div className="flex flex-col items-center w-full max-w-xs">
+                    <div
+                      onClick={executiveLeader.onClick}
+                      className="w-full sm:w-64 bg-white/90 hover:bg-amber-50/80 border border-slate-200/90 hover:border-amber-400 rounded-2xl p-2.5 sm:p-3 text-center transition-all shadow-2xs hover:shadow-xs cursor-pointer group"
+                    >
+                      <div className="w-7 h-7 rounded-xl bg-amber-50 group-hover:bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-1 transition-colors text-sm shadow-2xs">
+                        {executiveLeader.icon || '👑'}
+                      </div>
+                      <div className="text-xs font-bold text-slate-800 group-hover:text-amber-700 transition-colors">
+                        {executiveLeader.name}
+                      </div>
+                      {executiveLeader.label && (
+                        <div className="text-[9px] text-slate-500 line-clamp-1 mt-0.5">
+                          {executiveLeader.label}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Subtle vertical connector between ผู้บริหาร and ปลัด */}
+                {executiveLeader && permanentSecretary && (
+                  <div className="flex flex-col items-center -my-1 text-slate-400">
+                    <div className="w-[1.5px] h-3 bg-gradient-to-b from-amber-300 to-indigo-300"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>
+                  </div>
+                )}
+
+                {/* 2. ค่อยมาเป็น ปลัด อบต.ฝางคำ */}
+                {permanentSecretary && (
+                  <div className="flex flex-col items-center w-full max-w-xs">
+                    <div
+                      onClick={permanentSecretary.onClick}
+                      className="w-full sm:w-64 bg-white/90 hover:bg-indigo-50/80 border border-slate-200/90 hover:border-indigo-400 rounded-2xl p-2.5 sm:p-3 text-center transition-all shadow-2xs hover:shadow-xs cursor-pointer group"
+                    >
+                      <div className="w-7 h-7 rounded-xl bg-indigo-50 group-hover:bg-indigo-100 text-indigo-600 flex items-center justify-center mx-auto mb-1 transition-colors text-sm shadow-2xs">
+                        {permanentSecretary.icon || '🏛️'}
+                      </div>
+                      <div className="text-xs font-bold text-slate-800 group-hover:text-indigo-700 transition-colors">
+                        {permanentSecretary.name}
+                      </div>
+                      {permanentSecretary.label && (
+                        <div className="text-[9px] text-slate-500 line-clamp-1 mt-0.5">
+                          {permanentSecretary.label}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
-            ))}
+            </div>
+          )}
+
+          {/* 3. โครงสร้างหน่วยรับตรวจ (กองต่างๆ) อยู่ด้านล่าง */}
+          <div className={`${(executiveLeader || permanentSecretary) ? 'pt-2' : 'pt-4 sm:pt-5 border-t border-slate-200/80'}`}>
+            <p className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center animate-fade-slide-in-1">
+              {partnersTitle}
+            </p>
+            <div 
+              className="grid mt-4 gap-2.5 sm:gap-3 animate-fade-slide-in-2 justify-center"
+              style={{
+                gridTemplateColumns: `repeat(auto-fit, minmax(135px, 1fr))`
+              }}
+            >
+              {partners.map((partner, index) => (
+                <div
+                  key={index}
+                  onClick={partner.onClick}
+                  className="bg-white/85 hover:bg-blue-50/90 border border-slate-200/80 hover:border-blue-300 rounded-2xl p-2.5 sm:p-3 text-center transition-all shadow-2xs hover:shadow-xs cursor-pointer group"
+                >
+                  <div className="w-7 h-7 rounded-xl bg-blue-50 group-hover:bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-1 transition-colors">
+                    {partner.icon || <Building2 className="w-3.5 h-3.5" />}
+                  </div>
+                  <div className="text-xs font-bold text-slate-800 group-hover:text-blue-700 transition-colors">
+                    {partner.name}
+                  </div>
+                  {partner.label && (
+                    <div className="text-[9px] text-slate-500 line-clamp-1 mt-0.5">
+                      {partner.label}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
       </div>
     </div>
   </section>
