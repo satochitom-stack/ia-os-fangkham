@@ -138,12 +138,15 @@ export default function OrgChartStructure({
           </div>
 
           {/* MIDDLE TIER: 2. ปลัด อบต.ฝางคำ & หน่วยตรวจสอบภายใน (กิ่งแยกด้านขวา) */}
-          <div className="relative flex items-center justify-center w-full max-w-2xl mb-1">
+          <div className="flex items-center justify-center w-full mb-1">
             
+            {/* Left Spacer to perfectly balance the right side so ปลัด remains exactly in the center */}
+            <div className="w-72 shrink-0 hidden md:block" />
+
             {/* Center Box: ปลัด อบต.ฝางคำ (สีเขียวแบบตัวอย่างเทศบาล) */}
             <div
               onClick={() => handleBoxClick('palat', 'ปลัด อบต.ฝางคำ')}
-              className="w-72 bg-gradient-to-br from-emerald-50 via-white to-emerald-100/60 border-2 border-emerald-500 hover:border-emerald-600 rounded-2xl p-3 text-center transition-all shadow-xs hover:shadow-md cursor-pointer group hover:scale-[1.02] z-10"
+              className="w-72 bg-gradient-to-br from-emerald-50 via-white to-emerald-100/60 border-2 border-emerald-500 hover:border-emerald-600 rounded-2xl p-3 text-center transition-all shadow-xs hover:shadow-md cursor-pointer group hover:scale-[1.02] shrink-0 z-10"
             >
               <div className="flex items-center justify-center space-x-1 mb-1">
                 <span className="text-base">🏛️</span>
@@ -162,15 +165,15 @@ export default function OrgChartStructure({
               </div>
             </div>
 
-            {/* Horizontal branch line to หน่วยตรวจสอบภายใน (อยู่ทางขวา ตรงตามแบบราชการ) */}
-            <div className="absolute right-[calc(50%-144px-180px)] top-1/2 -translate-y-1/2 flex items-center">
+            {/* Right Side: Connector Line & หน่วยตรวจสอบภายใน */}
+            <div className="flex items-center w-72 shrink-0">
               {/* Connector line */}
-              <div className="w-12 h-0.5 bg-blue-500" />
+              <div className="w-10 h-0.5 bg-blue-500 shrink-0" />
               
               {/* Box: หน่วยตรวจสอบภายใน (กล่องขาว ขอบน้ำเงิน สไตล์ราชการ) */}
               <div
                 onClick={() => handleBoxClick('admin', 'หน่วยตรวจสอบภายใน')}
-                className="w-56 bg-white border-2 border-blue-600 hover:border-blue-700 rounded-2xl p-2.5 text-center transition-all shadow-xs hover:shadow-md cursor-pointer group hover:scale-[1.02]"
+                className="w-60 bg-white border-2 border-blue-600 hover:border-blue-700 rounded-2xl p-2.5 text-center transition-all shadow-xs hover:shadow-md cursor-pointer group hover:scale-[1.02] shrink-0"
               >
                 <div className="flex items-center justify-center space-x-1 mb-1">
                   <span className="text-xs">🛡️</span>
