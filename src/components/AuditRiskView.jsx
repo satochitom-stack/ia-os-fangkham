@@ -1124,11 +1124,25 @@ export default function AuditRiskView({
       return;
     }
 
-    const yearSuffix = (selectedYear || '2568').slice(-2);
+    const yearSuffix = (selectedYear || '2569').slice(-2);
     const newPlanId = `PLAN-${yearSuffix}-0${annualPlans.length + 1}`;
+
+    // Infer audit dimension based on activity keywords
+    let dim = 'compliance';
+    if (item.activity.includes('บัญชี') || item.activity.includes('การเงิน') || item.activity.includes('เงินฝาก') || item.activity.includes('เบิกจ่าย')) {
+      dim = 'financial';
+    } else if (item.activity.includes('สารสนเทศ') || item.activity.includes('คอมพิวเตอร์') || item.activity.includes('IT')) {
+      dim = 'it_audit';
+    } else if (item.activity.includes('อาหารกลางวัน') || item.activity.includes('เบี้ยยังชีพ') || item.activity.includes('ผลสัมฤทธิ์')) {
+      dim = 'performance';
+    } else if (item.activity.includes('รถ') || item.activity.includes('น้ำมัน') || item.activity.includes('สืบสวน')) {
+      dim = 'special';
+    }
+
     const newPlan = {
       id: newPlanId,
       title: item.activity,
+      dimension: dim,
       department: item.department,
       quarter: `ไตรมาส 1 (ต.ค. - ธ.ค. ${yearSuffix})`,
       period: `พ.ศ. ${selectedYear}`,

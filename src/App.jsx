@@ -34,7 +34,9 @@ import {
   initialRiskManagement,
   createEmptyRiskManagement,
   initialLpaIndicators,
-  initialKnowledgeBase
+  initialKnowledgeBase,
+  initialStrategicPlan,
+  initialCapaFindings
 } from './data/initialData';
 
 // Run auto-repair of department linkages and user accounts synchronously before state initialization
@@ -316,6 +318,32 @@ export default function App() {
     }
   });
 
+  // Strategic Multi-Year Audit Plan (3 - 5 ปี) state
+  const [strategicPlan, setStrategicPlan] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ia_strategic_plan');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return initialStrategicPlan;
+  });
+
+  // CAPA Findings Tracker state isolated by fiscal year
+  const [capaFindingsByYear, setCapaFindingsByYear] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ia_capa_findings_by_year');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (!parsed['2569']) parsed['2569'] = initialCapaFindings;
+        return parsed;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return { '2569': initialCapaFindings, '2570': initialCapaFindings };
+  });
+
   const [knowledgeBase, setKnowledgeBase] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_knowledge_base');
@@ -365,6 +393,14 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('ia_engagement_plans_by_year', JSON.stringify(engagementPlansByYear));
   }, [engagementPlansByYear]);
+
+  useEffect(() => {
+    localStorage.setItem('ia_strategic_plan', JSON.stringify(strategicPlan));
+  }, [strategicPlan]);
+
+  useEffect(() => {
+    localStorage.setItem('ia_capa_findings_by_year', JSON.stringify(capaFindingsByYear));
+  }, [capaFindingsByYear]);
 
   const reloadDataFromStorage = () => {
     try {
@@ -466,6 +502,15 @@ export default function App() {
     });
   };
 
+  const capaFindings = capaFindingsByYear[selectedYear] || initialCapaFindings;
+  const setCapaFindings = (updaterOrValue) => {
+    setCapaFindingsByYear((prev) => {
+      const current = prev[selectedYear] || initialCapaFindings;
+      const updated = typeof updaterOrValue === 'function' ? updaterOrValue(current) : updaterOrValue;
+      return { ...prev, [selectedYear]: updated };
+    });
+  };
+
   // Actions
   const handleSaveProfile = (newProfile) => {
     setOrgProfile(newProfile);
@@ -553,7 +598,9 @@ export default function App() {
       internalControlsByYear,
       riskManagementByYear,
       lpaIndicatorsByYear,
-      auditCharterByYear
+      auditCharterByYear,
+      strategicPlan,
+      capaFindingsByYear
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -588,6 +635,9 @@ export default function App() {
     else if (data.lpaIndicators) setLpaIndicatorsByYear({ [selectedYear]: data.lpaIndicators });
     if (data.auditCharterByYear) setAuditCharterByYear(data.auditCharterByYear);
     else if (data.auditCharter) setAuditCharterByYear({ [selectedYear]: data.auditCharter });
+    if (data.strategicPlan && Array.isArray(data.strategicPlan)) setStrategicPlan(data.strategicPlan);
+    if (data.capaFindingsByYear) setCapaFindingsByYear(data.capaFindingsByYear);
+    else if (data.capaFindings) setCapaFindingsByYear({ [selectedYear]: data.capaFindings });
   };
 
   // Route Guard: Ensure non-admin users only access allowed menu tabs
@@ -760,7 +810,14 @@ export default function App() {
                 setAnnualPlans={setAnnualPlans}
                 riskAssessments={riskAssessments}
                 setRiskAssessments={setRiskAssessments}
+                auditUniverse={auditUniverse}
+                setAuditUniverse={setAuditUniverse}
+                engagementPlans={engagementPlans}
+                setEngagementPlans={setEngagementPlans}
+                strategicPlan={strategicPlan}
+                setStrategicPlan={setStrategicPlan}
                 orgProfile={orgProfile}
+                setCurrentTab={setCurrentTab}
               />
             )}
 
@@ -807,6 +864,8 @@ export default function App() {
                 orgProfile={orgProfile}
                 annualPlans={annualPlans}
                 workingPapers={workingPapers}
+                capaFindings={capaFindings}
+                setCapaFindings={setCapaFindings}
               />
             )}
 

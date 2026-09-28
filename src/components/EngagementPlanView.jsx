@@ -23,6 +23,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import {
+  AUDIT_DIMENSIONS,
   ENGAGEMENT_TYPES,
   INITIAL_ENGAGEMENT_PLANS,
   generateEngagementPlanWithAI
@@ -39,14 +40,16 @@ export default function EngagementPlanView({
   setEngagementPlans
 }) {
   const [activeTab, setActiveTab] = useState('list'); // 'list', 'ai-copilot', 'detail', 'communication'
-  const [selectedPlanId, setSelectedPlanId] = useState(engagementPlans[0]?.id || 'ENG-68-01');
+  const [selectedPlanId, setSelectedPlanId] = useState(engagementPlans[0]?.id || 'ENG-FIN-01');
   const [serviceTypeFilter, setServiceTypeFilter] = useState('all');
+  const [dimensionFilter, setDimensionFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
   // AI Generator Form States
   const [aiDepartment, setAiDepartment] = useState('กองคลัง');
   const [aiActivity, setAiActivity] = useState('การจัดทำบัญชีและรายงานการเงิน');
   const [aiServiceType, setAiServiceType] = useState('assurance');
+  const [aiDimension, setAiDimension] = useState('financial');
   const [aiCustomNotes, setAiCustomNotes] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedPreview, setGeneratedPreview] = useState(null);
@@ -63,16 +66,27 @@ export default function EngagementPlanView({
 
   const selectedPlan = engagementPlans.find((p) => p.id === selectedPlanId) || engagementPlans[0] || null;
 
-  // Filtered Plans
+  // Filtered Plans by Year, Service Type, Dimension, and Search
   const filteredPlans = engagementPlans.filter((p) => {
     const matchYear = !p.fiscalYear || p.fiscalYear === selectedYear;
     const matchType = serviceTypeFilter === 'all' || p.serviceType === serviceTypeFilter;
+    const matchDimension =
+      dimensionFilter === 'all' ||
+      p.dimension === dimensionFilter ||
+      (dimensionFilter === 'financial' && (p.serviceSubtype?.includes('การเงิน') || p.title?.includes('การเงิน') || p.title?.includes('บัญชี'))) ||
+      (dimensionFilter === 'compliance' && (p.serviceSubtype?.includes('ระเบียบ') || p.title?.includes('จัดซื้อ') || p.title?.includes('พัสดุ') || p.title?.includes('สัญญา'))) ||
+      (dimensionFilter === 'performance' && (p.serviceSubtype?.includes('ผลสัมฤทธิ์') || p.serviceSubtype?.includes('คุ้มค่า') || p.title?.includes('อาหาร') || p.title?.includes('เด็ก'))) ||
+      (dimensionFilter === 'it_audit' && (p.serviceSubtype?.includes('สารสนเทศ') || p.title?.includes('ไอที') || p.title?.includes('คอมพิวเตอร์'))) ||
+      (dimensionFilter === 'special' && (p.serviceSubtype?.includes('พิเศษ') || p.title?.includes('รถ') || p.title?.includes('น้ำมัน'))) ||
+      (dimensionFilter === 'followup' && (p.serviceSubtype?.includes('ติดตาม') || p.title?.includes('ข้อทักท้วง') || p.title?.includes('สตง') || p.title?.includes('CAPA'))) ||
+      (dimensionFilter === 'consulting' && (p.serviceType === 'consulting' || p.serviceSubtype?.includes('ปรึกษา')));
+
     const matchSearch =
       !searchTerm ||
       p.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.department?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.activityName?.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchYear && matchType && matchSearch;
+    return matchYear && matchType && matchDimension && matchSearch;
   });
 
   // AI Generation Handler
@@ -83,9 +97,10 @@ export default function EngagementPlanView({
         activityName: aiActivity,
         department: aiDepartment,
         serviceType: aiServiceType,
+        dimension: aiDimension,
         year: selectedYear,
         orgName: orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ',
-        auditorName: orgProfile?.auditorName || 'นายศุภมงคล ธรรมพิทักษ์',
+        auditorName: orgProfile?.auditorName || 'หน่วยตรวจสอบภายใน',
         auditorPosition: orgProfile?.auditorPosition || 'นักวิชาการตรวจสอบภายในปฏิบัติการ',
         customGoal: aiCustomNotes
       });
@@ -295,29 +310,54 @@ export default function EngagementPlanView({
       {activeTab === 'list' && (
         <div className="space-y-4 print:hidden">
           {/* Filter Bar */}
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-3 items-center justify-between">
-            <div className="relative w-full sm:w-80">
-              <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="ค้นหากิจกรรม, กอง, หรือเรื่องที่ตรวจ..."
-                className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
+            <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+              <div className="relative w-full sm:w-80">
+                <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="ค้นหากิจกรรม, กอง, หรือเรื่องที่ตรวจ..."
+                  className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="flex items-center space-x-2 w-full sm:w-auto">
+                <span className="text-xs text-slate-500 font-medium shrink-0">บริการ:</span>
+                <select
+                  value={serviceTypeFilter}
+                  onChange={(e) => setServiceTypeFilter(e.target.value)}
+                  className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="all">ทุกประเภทบริการ</option>
+                  <option value="assurance">งานบริการให้ความเชื่อมั่น (Assurance)</option>
+                  <option value="consulting">งานบริการให้คำปรึกษา (Consulting)</option>
+                </select>
+              </div>
             </div>
 
-            <div className="flex items-center space-x-2 w-full sm:w-auto">
-              <span className="text-xs text-slate-500 font-medium shrink-0">ประเภทงาน ว 614:</span>
-              <select
-                value={serviceTypeFilter}
-                onChange={(e) => setServiceTypeFilter(e.target.value)}
-                className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">ทั้งหมด</option>
-                <option value="assurance">งานบริการให้ความเชื่อมั่น (Assurance)</option>
-                <option value="consulting">งานบริการให้คำปรึกษา (Consulting)</option>
-              </select>
+            {/* Dimension Filter Chips */}
+            <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 pt-1 text-xs">
+              <span className="text-slate-400 font-medium shrink-0 mr-1 text-[11px]">มิติงานตรวจ:</span>
+              {AUDIT_DIMENSIONS.map((dim) => {
+                const isActive = dimensionFilter === dim.id;
+                return (
+                  <button
+                    key={dim.id}
+                    type="button"
+                    onClick={() => setDimensionFilter(dim.id)}
+                    className={`px-2.5 py-1 rounded-lg font-bold shrink-0 transition-all cursor-pointer flex items-center space-x-1 text-xs ${
+                      isActive
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    }`}
+                  >
+                    <span className="font-mono text-[10px] opacity-80">[{dim.badge}]</span>
+                    <span>{dim.label.split('(')[0].trim()}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -329,7 +369,7 @@ export default function EngagementPlanView({
                   <th className="py-3.5 px-4 w-32">รหัสแผน</th>
                   <th className="py-3.5 px-4">ชื่อเรื่อง / กิจกรรมตรวจสอบ</th>
                   <th className="py-3.5 px-4 w-36">หน่วยรับตรวจ</th>
-                  <th className="py-3.5 px-4 w-44">ประเภทงาน (ว 614)</th>
+                  <th className="py-3.5 px-4 w-48">มิติ & ประเภทงานตรวจ</th>
                   <th className="py-3.5 px-4 w-32">ระยะเวลาเข้าตรวจ</th>
                   <th className="py-3.5 px-4 w-28 text-center">ขั้นตอนตรวจ</th>
                   <th className="py-3.5 px-4 w-36 text-center">การจัดการ</th>
@@ -364,16 +404,22 @@ export default function EngagementPlanView({
                           {plan.department}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4">
-                        {plan.serviceType === 'assurance' ? (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                            ให้ความเชื่อมั่น (Assurance)
+                      <td className="py-3.5 px-4 space-y-1">
+                        <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
+                          <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
+                            {plan.dimension ? plan.dimension.toUpperCase() : 'AUDIT'}
                           </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                            ให้คำปรึกษา (Consulting)
-                          </span>
-                        )}
+                          {plan.serviceType === 'assurance' ? (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                              ให้ความเชื่อมั่น
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                              ให้คำปรึกษา
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-slate-500 line-clamp-1">{plan.serviceSubtype}</div>
                       </td>
                       <td className="py-3.5 px-4 text-xs text-slate-600 dark:text-slate-400">
                         {plan.fieldworkPeriod || plan.period || '-'}
@@ -500,10 +546,30 @@ export default function EngagementPlanView({
               />
             </div>
 
+            {/* Audit Dimension */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                มิติงานตรวจสอบ (Audit Dimension):
+              </label>
+              <select
+                value={aiDimension}
+                onChange={(e) => setAiDimension(e.target.value)}
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="financial">💰 การเงิน & บัญชี (Financial Audit: เงินสด, ฎีกา, KTB, e-LAAS)</option>
+                <option value="compliance">📜 การปฏิบัติตามกฎหมายและระเบียบ (Compliance Audit: พัสดุฯ, ก่อสร้าง, ว 184)</option>
+                <option value="performance">📈 การดำเนินงาน & ความคุ้มค่า 3Es (Performance Audit: ศพด., โครงการตามแผน)</option>
+                <option value="it_audit">💻 ระบบเทคโนโลยีสารสนเทศ (IT Audit: สิทธิ์ระบบ, รหัสผ่าน, สำรองข้อมูล)</option>
+                <option value="special">🔍 กรณีพิเศษ & สืบสวนทุจริต (Special Investigation: ข้อร้องเรียน, รถส่วนกลาง, น้ำมัน)</option>
+                <option value="followup">🔄 ติดตามผลข้อทักท้วง (Follow-up Audit / CAPA: สตง., ผู้ตรวจภายใน)</option>
+                <option value="consulting">🤝 บริการให้คำปรึกษา (Consulting Services: ปค.4/ปค.5, ออกแบบการควบคุม)</option>
+              </select>
+            </div>
+
             {/* Service Type per W614 */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                ประเภทงานตามหนังสือ ว 614:
+                ประเภทงานบริการตรวจสอบ:
               </label>
               <div className="grid grid-cols-2 gap-2">
                 <button

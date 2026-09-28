@@ -42,7 +42,7 @@ export default function Sidebar({
         { id: 'dashboard', label: 'ภาพรวม & ปฏิทินงาน', icon: LayoutDashboard },
         { id: 'audit-risk', label: 'การประเมินความเสี่ยงแผน', icon: ShieldAlert },
         { id: 'planning', label: 'แผนการตรวจสอบประจำปี', icon: FileText },
-        { id: 'engagement-plan', label: 'แผนปฏิบัติงานตรวจ (ว 614)', icon: Sparkles }
+        { id: 'engagement-plan', label: 'แผนปฏิบัติการตรวจสอบ (ทุกมิติ)', icon: Sparkles },
       ]
     },
     {
@@ -70,7 +70,7 @@ export default function Sidebar({
       pillarNumber: 'หมวดที่ 3',
       pillarTitle: 'รายงานผล สรุปตรวจพบ & ติดตาม',
       items: [
-        { id: 'reporting', label: 'รายงานผล & ติดตามข้อเสนอแนะ', icon: FileSpreadsheet }
+        { id: 'reporting', label: 'รายงานผล & ติดตามข้อทักท้วง (CAPA)', icon: FileSpreadsheet }
       ]
     },
     {
