@@ -2,10 +2,20 @@
 // รองรับบัญชี ADMIN (หน่วยตรวจสอบภายใน) และ USER (รายกอง/สำนัก)
 // จัดเก็บใน LocalStorage ปลอดภัย และพร้อมสำหรับการเชื่อมต่อ Cloud Database ต่อไป
 
+import { getSupabaseClient, isSupabaseConfigured } from '../services/supabaseClient';
+
 const USERS_KEY = 'ia_auth_users';
 const SESSION_KEY = 'ia_auth_session';
 const OLD_ACCOUNT_KEY = 'ia_auth_account';
 export const LAST_USERNAME_KEY = 'ia_last_username';
+export const PENDING_USERS_KEY = 'ia_pending_users';
+
+export const ENTERPRISE_ROLES = [
+  { id: 'admin', label: 'ผู้ตรวจสอบภายใน (Super Admin)', desc: 'จัดการระบบ, กำหนดสิทธิ์, ตรวจสอบและเข้าถึงทุกโมดูล' },
+  { id: 'executive', label: 'ผู้บริหาร (Executive - นายก/ปลัด)', desc: 'ดูข้อมูลภาพรวมทุกกอง, ให้ข้อสั่งการ และรับทราบรายงาน' },
+  { id: 'dept_head', label: 'หัวหน้าสำนัก / ผู้อำนวยการกอง (Dept Head)', desc: 'บริหารจัดการข้อมูลภายในกองตนเอง และส่งรายงานการควบคุม' },
+  { id: 'staff', label: 'เจ้าหน้าที่ผู้ปฏิบัติงาน (Staff)', desc: 'บันทึกข้อมูลและแบบประเมินความเสี่ยงประจำวัน' }
+];
 
 export function getLastUsername() {
   try {
@@ -619,13 +629,180 @@ export async function addUser({ username, displayName, position, department, rol
     salt,
     hash,
     passwordText: password, // For easy admin viewing/recovery in local system
-    permissions: permissions || ['dashboard', 'internal-control', 'risk-management', 'knowledge'],
+    permissions: permissions || ['risk-management', 'forms'],
     canManageUsers: role === 'admin',
     createdAt: Date.now()
   };
   users.push(newUser);
   saveUsers(users);
   return newUser;
+}
+
+// -------------------------------------------------------------
+// Pending User Registration & Approval Workflow
+// -------------------------------------------------------------
+
+export function getPendingUsers() {
+  try {
+    const raw = localStorage.getItem(PENDING_USERS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return [];
+}
+
+export function savePendingUsers(list) {
+  localStorage.setItem(PENDING_USERS_KEY, JSON.stringify(list));
+  try {
+    window.dispatchEvent(new CustomEvent('ia-pending-users-changed'));
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export async function registerUser({ username, displayName, department, position, role = 'staff', password, email }) {
+  const cleanUsername = username.trim().toLowerCase();
+  const cleanDept = department.trim();
+  const cleanDisplayName = displayName.trim();
+  const cleanPosition = position ? position.trim() : '';
+
+  if (!cleanUsername) throw new Error('กรุณาระบุชื่อผู้ใช้งาน');
+  if (!cleanDisplayName) throw new Error('กรุณาระบุชื่อ-นามสกุล');
+  if (!password || password.length < 4) throw new Error('รหัสผ่านต้องมีความยาวอย่างน้อย 4 ตัวอักษร');
+
+  const existingUsers = getUsers();
+  if (existingUsers.some((u) => u.username.toLowerCase() === cleanUsername)) {
+    throw new Error(`ชื่อผู้ใช้ "${username}" มีอยู่ในระบบแล้ว`);
+  }
+
+  const pendingList = getPendingUsers();
+  if (pendingList.some((p) => p.username.toLowerCase() === cleanUsername)) {
+    throw new Error(`ชื่อผู้ใช้ "${username}" ได้ส่งคำขอลงทะเบียนไว้แล้ว (อยู่ระหว่างรอผู้ดูแลระบบอนุมัติ)`);
+  }
+
+  // If Supabase is configured, register user in Supabase Auth
+  let supabaseId = null;
+  if (isSupabaseConfigured()) {
+    try {
+      const client = getSupabaseClient();
+      const userEmail = email && email.includes('@') ? email.trim() : `${cleanUsername}@local.ia-os`;
+      const { data, error } = await client.auth.signUp({
+        email: userEmail,
+        password: password,
+        options: {
+          data: {
+            username: cleanUsername,
+            display_name: cleanDisplayName,
+            department: cleanDept,
+            position: cleanPosition,
+            role: role
+          }
+        }
+      });
+      if (error) {
+        console.warn('Supabase signUp notice:', error.message);
+      } else if (data?.user?.id) {
+        supabaseId = data.user.id;
+      }
+    } catch (err) {
+      console.warn('Supabase registration sync warning:', err);
+    }
+  }
+
+  const salt = generateSalt();
+  const hash = await hashPassword(password, salt);
+
+  const pendingEntry = {
+    id: supabaseId || 'pend_' + Date.now(),
+    username: cleanUsername,
+    displayName: cleanDisplayName,
+    department: cleanDept,
+    position: cleanPosition,
+    role: role || 'staff',
+    email: email || `${cleanUsername}@local.ia-os`,
+    salt,
+    hash,
+    passwordText: password,
+    requestedAt: Date.now(),
+    status: 'pending'
+  };
+
+  pendingList.push(pendingEntry);
+  savePendingUsers(pendingList);
+  return pendingEntry;
+}
+
+export async function approvePendingUser(pendingId, approvedRole = null, customPermissions = null) {
+  const pendingList = getPendingUsers();
+  const idx = pendingList.findIndex((p) => p.id === pendingId || p.username === pendingId);
+  if (idx === -1) throw new Error('ไม่พบรายการคำขอลงทะเบียนนี้');
+
+  const pending = pendingList[idx];
+  const targetRole = approvedRole || pending.role || 'staff';
+
+  let permissions = customPermissions;
+  if (!permissions) {
+    if (targetRole === 'admin') {
+      permissions = ALL_MENU_IDS.map((m) => m.id);
+    } else if (targetRole === 'executive') {
+      permissions = ['dashboard', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
+    } else {
+      permissions = ['risk-management', 'forms'];
+    }
+  }
+
+  const users = getUsers();
+  const existingIdx = users.findIndex((u) => u.username.toLowerCase() === pending.username.toLowerCase());
+
+  const newUser = {
+    username: pending.username,
+    displayName: pending.displayName,
+    department: pending.department,
+    position: pending.position,
+    role: targetRole,
+    salt: pending.salt,
+    hash: pending.hash,
+    passwordText: pending.passwordText,
+    permissions,
+    canManageUsers: targetRole === 'admin',
+    createdAt: Date.now()
+  };
+
+  if (existingIdx !== -1) {
+    users[existingIdx] = newUser;
+  } else {
+    users.push(newUser);
+  }
+  saveUsers(users);
+
+  // If Supabase configured, update profile status to active in Cloud
+  if (isSupabaseConfigured()) {
+    try {
+      const client = getSupabaseClient();
+      await client.from('profiles').update({
+        status: 'active',
+        role: targetRole,
+        permissions
+      }).eq('username', pending.username);
+    } catch (e) {
+      console.warn('Supabase profile activation sync:', e);
+    }
+  }
+
+  // Remove from pending list
+  pendingList.splice(idx, 1);
+  savePendingUsers(pendingList);
+  return newUser;
+}
+
+export function rejectPendingUser(pendingId) {
+  const pendingList = getPendingUsers();
+  const filtered = pendingList.filter((p) => p.id !== pendingId && p.username !== pendingId);
+  savePendingUsers(filtered);
 }
 
 export async function updateUser(username, updates) {

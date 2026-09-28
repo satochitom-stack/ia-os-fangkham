@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Users,
   ShieldCheck,
@@ -20,8 +20,16 @@ import {
   HelpCircle,
   CheckSquare,
   Square,
-  Save
+  Save,
+  Cloud,
+  Database,
+  ExternalLink,
+  Copy,
+  Check,
+  Clock,
+  RefreshCw
 } from 'lucide-react';
+import { SUPABASE_SCHEMA_SQL } from '../data/supabaseSchemaSql';
 import ConfirmModal from './ConfirmModal';
 import {
   ALL_MENU_IDS,
@@ -36,14 +44,36 @@ import {
   getDepartments,
   addDepartment,
   updateDepartment,
-  deleteDepartment
+  deleteDepartment,
+  getPendingUsers,
+  approvePendingUser,
+  rejectPendingUser,
+  ENTERPRISE_ROLES
 } from '../utils/auth';
+import {
+  isSupabaseConfigured,
+  getSupabaseConfig,
+  saveSupabaseConfig,
+  testSupabaseConnection
+} from '../services/supabaseClient';
 
 export default function UserManagementView({ currentSession, onSwitchSession, onRefreshUser }) {
   const [users, setUsers] = useState(() => getUsers());
   const [departments, setDepartments] = useState(() => getDepartments());
-  const [activeTab, setActiveTab] = useState('matrix'); // 'matrix', 'accounts', 'departments'
+  const [pendingUsers, setPendingUsers] = useState(() => getPendingUsers());
+  const [activeTab, setActiveTab] = useState('matrix'); // 'matrix', 'accounts', 'departments', 'pending', 'cloud'
   const [toastMessage, setToastMessage] = useState('');
+
+  // Supabase Cloud Configuration States
+  const [cloudUrl, setCloudUrl] = useState(() => getSupabaseConfig().url);
+  const [cloudAnonKey, setCloudAnonKey] = useState(() => getSupabaseConfig().anonKey);
+  const [isCloudConfigured, setIsCloudConfigured] = useState(() => isSupabaseConfigured());
+  const [testingConnection, setTestingConnection] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState(null); // { success: boolean, message: string }
+  const [copiedSql, setCopiedSql] = useState(false);
+
+  // Pending user role selection map { [pendingId]: role }
+  const [selectedPendingRoles, setSelectedPendingRoles] = useState({});
 
   // Confirm Modal State
   const [confirmModalConfig, setConfirmModalConfig] = useState({
@@ -96,7 +126,128 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
   const refreshList = () => {
     setUsers(getUsers());
     setDepartments(getDepartments());
+    setPendingUsers(getPendingUsers());
+    setIsCloudConfigured(isSupabaseConfigured());
     if (onRefreshUser) onRefreshUser();
+  };
+
+  useEffect(() => {
+    const handlePendingChange = () => setPendingUsers(getPendingUsers());
+    const handleCloudChange = () => {
+      setIsCloudConfigured(isSupabaseConfigured());
+      setCloudUrl(getSupabaseConfig().url);
+      setCloudAnonKey(getSupabaseConfig().anonKey);
+    };
+    window.addEventListener('ia-pending-users-changed', handlePendingChange);
+    window.addEventListener('ia-supabase-config-changed', handleCloudChange);
+    return () => {
+      window.removeEventListener('ia-pending-users-changed', handlePendingChange);
+      window.removeEventListener('ia-supabase-config-changed', handleCloudChange);
+    };
+  }, []);
+
+  const handleApproveUser = (pending) => {
+    const roleToAssign = selectedPendingRoles[pending.id] || pending.role || 'staff';
+    openConfirmModal({
+      title: 'อนุมัติการเข้าใช้งาน',
+      message: `ยืนยันการอนุมัติบัญชี "${pending.displayName}" (@${pending.username}) สังกัด "${pending.department}" ในบทบาท "${roleToAssign}" ใช่หรือไม่? ผู้ใช้จะสามารถเข้าสู่ระบบและปฏิบัติงานได้ทันที`,
+      confirmText: 'อนุมัติผู้ใช้งาน',
+      type: 'info',
+      onConfirm: async () => {
+        try {
+          await approvePendingUser(pending.id, roleToAssign);
+          refreshList();
+          showToast(`✓ อนุมัติผู้ใช้งาน @${pending.username} เรียบร้อยแล้ว`);
+        } catch (err) {
+          showToast(`เกิดข้อผิดพลาด: ${err.message}`);
+        }
+      }
+    });
+  };
+
+  const handleRejectUser = (pending) => {
+    openConfirmModal({
+      title: 'ปฏิเสธคำขอลงทะเบียน',
+      message: `คุณต้องการปฏิเสธคำขอลงทะเบียนของ "${pending.displayName}" (@${pending.username}) ใช่หรือไม่?`,
+      confirmText: 'ปฏิเสธคำขอ',
+      type: 'danger',
+      onConfirm: () => {
+        rejectPendingUser(pending.id);
+        refreshList();
+        showToast(`ปฏิเสธคำขอของ @${pending.username} แล้ว`);
+      }
+    });
+  };
+
+  const handleTestCloudConnection = async () => {
+    setTestingConnection(true);
+    setConnectionStatus(null);
+    try {
+      const res = await testSupabaseConnection(cloudUrl, cloudAnonKey);
+      setConnectionStatus(res);
+      if (res.success) {
+        showToast(res.message);
+      } else {
+        showToast(`เชื่อมต่อไม่สำเร็จ: ${res.message}`);
+      }
+    } catch (err) {
+      setConnectionStatus({ success: false, message: err.message });
+    } finally {
+      setTestingConnection(false);
+    }
+  };
+
+  const handleSaveCloudConfig = async () => {
+    if (!cloudUrl.trim() || !cloudAnonKey.trim()) {
+      showToast('กรุณาระบุทั้ง Project URL และ Anon Key');
+      return;
+    }
+    setTestingConnection(true);
+    const res = await testSupabaseConnection(cloudUrl, cloudAnonKey);
+    setTestingConnection(false);
+    setConnectionStatus(res);
+
+    if (res.success) {
+      saveSupabaseConfig(cloudUrl, cloudAnonKey);
+      setIsCloudConfigured(true);
+      showToast('✓ บันทึกการเชื่อมต่อ Supabase เรียบร้อยแล้ว!');
+    } else {
+      openConfirmModal({
+        title: 'ยืนยันบันทึกแม้การทดสอบไม่ผ่าน',
+        message: `ระบบทดสอบเชื่อมต่อไปยัง Supabase ไม่สำเร็จ (${res.message}) ต้องการบันทึกข้อมูลนี้ไว้หรือไม่?`,
+        confirmText: 'บันทึกต่อไป',
+        type: 'danger',
+        onConfirm: () => {
+          saveSupabaseConfig(cloudUrl, cloudAnonKey);
+          setIsCloudConfigured(true);
+          showToast('บันทึกการตั้งค่าแล้ว');
+        }
+      });
+    }
+  };
+
+  const handleDisconnectCloud = () => {
+    openConfirmModal({
+      title: 'ยกเลิกการเชื่อมต่อ Cloud',
+      message: 'ต้องการตัดการเชื่อมต่อจาก Supabase และสลับกลับไปใช้โหมด Local Storage ในเครื่องใช่หรือไม่?',
+      confirmText: 'ตัดการเชื่อมต่อ',
+      type: 'danger',
+      onConfirm: () => {
+        saveSupabaseConfig('', '');
+        setCloudUrl('');
+        setCloudAnonKey('');
+        setIsCloudConfigured(false);
+        setConnectionStatus(null);
+        showToast('สลับกลับสู่โหมด Local Storage แล้ว');
+      }
+    });
+  };
+
+  const handleCopySql = () => {
+    navigator.clipboard.writeText(SUPABASE_SCHEMA_SQL);
+    setCopiedSql(true);
+    showToast('📋 คัดลอกสคริปต์ SQL เรียบร้อยแล้ว! นำไปวางใน SQL Editor บน Supabase ได้ทันที');
+    setTimeout(() => setCopiedSql(false), 3000);
   };
 
   // Pending permissions map { [username]: string[] } to prevent auto-saving on click
@@ -489,41 +640,75 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 dark:border-slate-800 space-x-4">
+      <div className="flex border-b border-slate-200 dark:border-slate-800 space-x-2 sm:space-x-4 overflow-x-auto custom-scrollbar">
         <button
           onClick={() => setActiveTab('matrix')}
-          className={`pb-3 px-3 text-sm font-semibold flex items-center space-x-2 border-b-2 transition-all cursor-pointer ${
+          className={`pb-3 px-3 text-sm font-semibold flex items-center space-x-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'matrix'
               ? 'border-blue-600 text-blue-600 dark:text-blue-400'
               : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
           }`}
         >
           <CheckSquare className="w-4 h-4" />
-          <span>เมทริกซ์กำหนดสิทธิ์รายเมนู (Permissions Matrix)</span>
+          <span>กำหนดสิทธิ์รายเมนู (Matrix)</span>
         </button>
 
         <button
           onClick={() => setActiveTab('accounts')}
-          className={`pb-3 px-3 text-sm font-semibold flex items-center space-x-2 border-b-2 transition-all cursor-pointer ${
+          className={`pb-3 px-3 text-sm font-semibold flex items-center space-x-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'accounts'
               ? 'border-blue-600 text-blue-600 dark:text-blue-400'
               : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
           }`}
         >
           <Key className="w-4 h-4" />
-          <span>จัดการบัญชีและรหัสผ่าน ({users.length})</span>
+          <span>บัญชีผู้ใช้งาน ({users.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('pending')}
+          className={`pb-3 px-3 text-sm font-semibold flex items-center space-x-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+            activeTab === 'pending'
+              ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
+          }`}
+        >
+          <UserCheck className="w-4 h-4" />
+          <span>คำขอรออนุมัติ</span>
+          {pendingUsers.length > 0 && (
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white animate-pulse">
+              {pendingUsers.length}
+            </span>
+          )}
         </button>
 
         <button
           onClick={() => setActiveTab('departments')}
-          className={`pb-3 px-3 text-sm font-semibold flex items-center space-x-2 border-b-2 transition-all cursor-pointer ${
+          className={`pb-3 px-3 text-sm font-semibold flex items-center space-x-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'departments'
               ? 'border-blue-600 text-blue-600 dark:text-blue-400'
               : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
           }`}
         >
           <Building className="w-4 h-4" />
-          <span>จัดการสำนัก / กอง ({departments.length})</span>
+          <span>สำนัก / กอง ({departments.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('cloud')}
+          className={`pb-3 px-3 text-sm font-semibold flex items-center space-x-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+            activeTab === 'cloud'
+              ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
+          }`}
+        >
+          <Cloud className="w-4 h-4" />
+          <span>เชื่อมต่อ Cloud (Supabase)</span>
+          {isCloudConfigured ? (
+            <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+          ) : (
+            <span className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 inline-block"></span>
+          )}
         </button>
       </div>
 
@@ -1032,6 +1217,364 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          TAB 4: คำขอรออนุมัติ (Pending Approvals Workflow)
+      ========================================================================= */}
+      {activeTab === 'pending' && (
+        <div className="space-y-6">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center space-x-2">
+                <UserCheck className="w-4 h-4 text-amber-500" />
+                <span>คำขอลงทะเบียนเข้าใช้งานระบบ (รออนุมัติโดย ADMIN)</span>
+                <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                  {pendingUsers.length} รายการ
+                </span>
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                บุคลากรที่ลงทะเบียนผ่านหน้าแรกจะปรากฏในรายการนี้ ผู้ดูแลระบบสามารถตรวจสอบสังกัด กำหนดบทบาทที่เหมาะสม และกดอนุมัติเพื่อให้สามารถเข้าสู่ระบบได้ทันที
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={refreshList}
+              className="inline-flex items-center space-x-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-medium transition-all cursor-pointer"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>รีเฟรชข้อมูล</span>
+            </button>
+          </div>
+
+          {pendingUsers.length === 0 ? (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 p-12 text-center space-y-3">
+              <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                <CheckCircle2 className="w-7 h-7" />
+              </div>
+              <h4 className="font-bold text-slate-800 dark:text-slate-200 text-sm">
+                ไม่มีคำขอรออนุมัติในขณะนี้
+              </h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
+                ทุกคำขอได้รับการอนุมัติหรือจัดการเรียบร้อยแล้ว เมื่อมีบุคลากรใหม่กดลงทะเบียนจากหน้าเข้าสู่ระบบ รายการจะถูกส่งมาแสดงที่นี่โดยอัตโนมัติ
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {pendingUsers.map((pending) => {
+                const assignedRole = selectedPendingRoles[pending.id] || pending.role || 'staff';
+                const roleObj = ENTERPRISE_ROLES.find((r) => r.id === assignedRole) || ENTERPRISE_ROLES[3];
+
+                return (
+                  <div
+                    key={pending.id}
+                    className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-xs space-y-4 flex flex-col justify-between"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-sm">
+                            👤
+                          </div>
+                          <div>
+                            <div className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center space-x-1.5">
+                              <span>{pending.displayName}</span>
+                            </div>
+                            <div className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+                              @{pending.username} • {pending.email || 'ไม่มีอีเมล'}
+                            </div>
+                          </div>
+                        </div>
+
+                        <span className="inline-flex items-center space-x-1 bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
+                          <Clock className="w-3 h-3" />
+                          <span>รออนุมัติ</span>
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
+                        <div>
+                          <span className="text-slate-400 block text-[10px]">สังกัด / กอง:</span>
+                          <span className="font-semibold text-slate-700 dark:text-slate-200">
+                            {pending.department || '-'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[10px]">ตำแหน่ง:</span>
+                          <span className="font-semibold text-slate-700 dark:text-slate-200">
+                            {pending.position || '-'}
+                          </span>
+                        </div>
+                        <div className="col-span-2 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
+                          <span className="text-slate-400 block text-[10px]">วันที่ส่งคำขอ:</span>
+                          <span className="text-slate-600 dark:text-slate-300">
+                            {pending.requestedAt ? new Date(pending.requestedAt).toLocaleString('th-TH') : '-'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Role Assignment Selector */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center justify-between">
+                          <span>กำหนดบทบาทในการใช้งาน:</span>
+                          <span className="text-[10px] text-blue-600 dark:text-blue-400">
+                            {roleObj.label.split('(')[0]}
+                          </span>
+                        </label>
+                        <select
+                          value={assignedRole}
+                          onChange={(e) =>
+                            setSelectedPendingRoles((prev) => ({
+                              ...prev,
+                              [pending.id]: e.target.value
+                            }))
+                          }
+                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium cursor-pointer"
+                        >
+                          {ENTERPRISE_ROLES.map((r) => (
+                            <option key={r.id} value={r.id}>
+                              {r.label}
+                            </option>
+                          ))}
+                        </select>
+                        <p className="text-[11px] text-slate-400 leading-tight">
+                          {roleObj.desc}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center space-x-2">
+                      <button
+                        type="button"
+                        onClick={() => handleApproveUser(pending)}
+                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 px-3 rounded-xl flex items-center justify-center space-x-1.5 transition-all shadow-xs cursor-pointer"
+                      >
+                        <Check className="w-4 h-4" />
+                        <span>อนุมัติการใช้งาน (Activate)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleRejectUser(pending)}
+                        className="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl border border-rose-200 dark:border-rose-900/50 transition-all cursor-pointer"
+                        title="ปฏิเสธคำขอนี้"
+                      >
+                        <UserX className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* =========================================================================
+          TAB 5: เชื่อมต่อ Cloud (Supabase PostgreSQL Integration)
+      ========================================================================= */}
+      {activeTab === 'cloud' && (
+        <div className="space-y-6">
+          {/* Status Banner */}
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-xs">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center space-x-3.5">
+                <div
+                  className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl shrink-0 ${
+                    isCloudConfigured
+                      ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 ring-2 ring-emerald-500/20'
+                      : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                  }`}
+                >
+                  <Cloud className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <h3 className="font-bold text-slate-800 dark:text-slate-100 text-base">
+                      สถานะการเชื่อมต่อฐานข้อมูล Cloud (Supabase)
+                    </h3>
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        isCloudConfigured
+                          ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                          : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                      }`}
+                    >
+                      {isCloudConfigured ? '🟢 ออนไลน์ (Connected)' : '⚪ ออฟไลน์ (Local Mode)'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    {isCloudConfigured
+                      ? 'ระบบเชื่อมต่อกับคลาวด์ดาต้าเบส Supabase แล้ว ข้อมูลสิทธิ์และผู้ใช้งานจะถูกซิงก์แบบเรียลไทม์ระหว่างอุปกรณ์'
+                      : 'ระบบกำลังทำงานในโหมดจัดเก็บข้อมูลในเครื่อง (LocalStorage) ไม่ต้องใช้อินเทอร์เน็ต สามารถเชื่อมต่อ Supabase ได้ทุกเมื่อที่ต้องการใช้งานหลายคน'}
+                  </p>
+                </div>
+              </div>
+
+              {isCloudConfigured && (
+                <button
+                  type="button"
+                  onClick={handleDisconnectCloud}
+                  className="px-3.5 py-2 text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 rounded-xl transition-all cursor-pointer shrink-0 border border-rose-200 dark:border-rose-900/50"
+                >
+                  ตัดการเชื่อมต่อ Cloud
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Connection Setup Form */}
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-xs space-y-4">
+            <div className="space-y-1">
+              <h4 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center space-x-2">
+                <Database className="w-4 h-4 text-blue-600" />
+                <span>กำหนดค่าการเชื่อมต่อ (Supabase API Credentials)</span>
+              </h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                นำ Project URL และ Anon Key จากหน้า Project Settings บน Supabase ของท่านมากรอกที่นี่
+              </p>
+            </div>
+
+            <div className="space-y-3 max-w-3xl">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  Supabase Project URL:
+                </label>
+                <input
+                  type="text"
+                  value={cloudUrl}
+                  onChange={(e) => setCloudUrl(e.target.value)}
+                  placeholder="https://xyzcompany.supabase.co"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  Supabase Anon Public API Key:
+                </label>
+                <input
+                  type="password"
+                  value={cloudAnonKey}
+                  onChange={(e) => setCloudAnonKey(e.target.value)}
+                  placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                />
+              </div>
+
+              {connectionStatus && (
+                <div
+                  className={`p-3 rounded-xl text-xs font-medium flex items-center space-x-2 ${
+                    connectionStatus.success
+                      ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900'
+                      : 'bg-rose-50 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-200 dark:border-rose-900'
+                  }`}
+                >
+                  {connectionStatus.success ? (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  ) : (
+                    <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                  )}
+                  <span>{connectionStatus.message}</span>
+                </div>
+              )}
+
+              <div className="flex flex-wrap items-center gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={handleTestCloudConnection}
+                  disabled={testingConnection || !cloudUrl.trim() || !cloudAnonKey.trim()}
+                  className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${testingConnection ? 'animate-spin' : ''}`} />
+                  <span>{testingConnection ? 'กำลังทดสอบการเชื่อมต่อ...' : 'ทดสอบการเชื่อมต่อ'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleSaveCloudConfig}
+                  className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center space-x-1.5"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  <span>บันทึกและเปิดใช้งาน Cloud</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Setup Guide & One-Click SQL Schema */}
+          <div className="bg-slate-900 text-white rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div>
+                <h4 className="font-bold text-sm text-slate-100 flex items-center space-x-2">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span>คู่มือเริ่มต้นใช้งาน Supabase (ฟรีตลอดชีพ) ใน 3 ขั้นตอน</span>
+                </h4>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  หากยังไม่เคยสมัคร Supabase สามารถทำตามขั้นตอนนี้ได้ง่ายๆ ภายใน 3 นาที
+                </p>
+              </div>
+
+              <a
+                href="https://supabase.com"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center space-x-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition-all cursor-pointer shrink-0"
+              >
+                <span>เปิดเว็บไซต์ Supabase</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700/60 space-y-1.5">
+                <div className="font-bold text-emerald-400">1. สมัครและสร้าง Project</div>
+                <p className="text-slate-300 leading-relaxed text-[11px]">
+                  เข้าสู่ระบบ Supabase ด้วยบัญชี GitHub หรือ Google แล้วกด <strong>"New project"</strong> ตั้งชื่อโปรเจกต์ (เช่น ia-os-local) และเลือก Region เป็น <strong>Singapore</strong>
+                </p>
+              </div>
+
+              <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700/60 space-y-1.5">
+                <div className="font-bold text-blue-400">2. ติดตั้งโครงสร้างฐานข้อมูล</div>
+                <p className="text-slate-300 leading-relaxed text-[11px]">
+                  ไปที่เมนู <strong>SQL Editor</strong> ทางซ้ายมือ กดปุ่ม <strong>"+ New query"</strong> นำสคริปต์ SQL ด้านล่างนี้ไปวางแล้วกดปุ่ม <strong>RUN</strong>
+                </p>
+              </div>
+
+              <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700/60 space-y-1.5">
+                <div className="font-bold text-amber-400">3. คัดลอก API Keys</div>
+                <p className="text-slate-300 leading-relaxed text-[11px]">
+                  ไปที่ <strong>Project Settings</strong> (ไอคอนฟันเฟืองล่างซ้าย) &rarr; เมนู <strong>API</strong> คัดลอก <strong>Project URL</strong> และ <strong>anon / public key</strong> มากรอกในช่องด้านบน
+                </p>
+              </div>
+            </div>
+
+            {/* SQL Script Box with Copy Button */}
+            <div className="pt-2 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-slate-300">
+                  สคริปต์ SQL สำหรับสร้างตารางอัตโนมัติ (Copy & Run in Supabase SQL Editor):
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCopySql}
+                  className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    copiedSql
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                  }`}
+                >
+                  {copiedSql ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedSql ? '✓ คัดลอกเรียบร้อยแล้ว!' : 'คัดลอกสคริปต์ SQL ทั้งหมด'}</span>
+                </button>
+              </div>
+
+              <pre className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 text-[11px] font-mono text-emerald-400 max-h-48 overflow-y-auto custom-scrollbar select-all">
+                {SUPABASE_SCHEMA_SQL}
+              </pre>
+            </div>
           </div>
         </div>
       )}
