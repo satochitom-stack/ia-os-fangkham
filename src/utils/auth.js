@@ -222,6 +222,9 @@ export function autoRepairDataLinkages() {
     const users = JSON.parse(raw);
     if (!Array.isArray(users) || users.length === 0) return;
 
+    const DEPT_PERMS_V4_KEY = 'ia_dept_perms_v4_twomenus';
+    const isDeptPermsSynced = localStorage.getItem(DEPT_PERMS_V4_KEY) === 'synced';
+
     let usersChanged = false;
     users.forEach((u) => {
       // 1. Admin display name: change to หน่วยตรวจสอบฯ
@@ -342,7 +345,7 @@ export function autoRepairDataLinkages() {
     }
 
     // 7. Ensure Executive accounts exist (ผู้บริหาร & ปลัด อบต.ฝางคำ) and สำนักปลัด is distinct
-    const executivePerms = ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
+    const executivePerms = ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
     
     // 7.1 Ensure mayor (ผู้บริหาร) exists
     if (!users.some((u) => u.username === 'mayor')) {
@@ -358,12 +361,18 @@ export function autoRepairDataLinkages() {
         createdAt: Date.now()
       });
       usersChanged = true;
+    } else {
+      const mayor = users.find((u) => u.username === 'mayor');
+      if (mayor && (!mayor.permissions?.includes('execution') || !mayor.permissions?.includes('audit-toolkits'))) {
+        mayor.permissions = executivePerms;
+        usersChanged = true;
+      }
     }
 
     // 7.2 Update palat to be ปลัด อบต.ฝางคำ (Executive)
     const palatIdx = users.findIndex((u) => u.username === 'palat');
     if (palatIdx !== -1) {
-      if (users[palatIdx].displayName === 'สำนักปลัด' || users[palatIdx].role !== 'executive') {
+      if (users[palatIdx].displayName === 'สำนักปลัด' || users[palatIdx].role !== 'executive' || !users[palatIdx].permissions?.includes('execution')) {
         users[palatIdx].displayName = 'ปลัด อบต.ฝางคำ';
         users[palatIdx].position = 'ปลัดองค์การบริหารส่วนตำบลฝางคำ';
         users[palatIdx].department = 'ปลัด อบต.ฝางคำ';
@@ -697,8 +706,7 @@ export const DEFAULT_INITIAL_USERS = [
     position: 'นายกองค์การบริหารส่วนตำบลฝางคำ / คณะผู้บริหาร',
     department: 'ผู้บริหาร',
     role: 'executive',
-    passwordText: '1234',
-    permissions: ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
+    permissions: ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -709,7 +717,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'ปลัด อบต.ฝางคำ',
     role: 'executive',
     passwordText: '1234',
-    permissions: ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
+    permissions: ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -1051,7 +1059,7 @@ export async function approvePendingUser(pendingId, approvedRole = null, customP
     if (targetRole === 'admin') {
       permissions = ALL_MENU_IDS.map((m) => m.id);
     } else if (targetRole === 'executive') {
-      permissions = ['dashboard', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
+      permissions = ['dashboard', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
     } else {
       permissions = ['risk-management', 'forms'];
     }

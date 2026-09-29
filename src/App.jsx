@@ -21,6 +21,7 @@ import TechnicalToolkitsView from './components/TechnicalToolkitsView';
 import DepartmentWorkspaceView from './components/DepartmentWorkspaceView';
 import ExecutiveDashboardView from './components/ExecutiveDashboardView';
 import CentralCalendarView from './components/CentralCalendarView';
+import ErrorBoundary from './components/ErrorBoundary';
 import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
 import { getSession, logout as authLogout, switchSessionTo, autoRepairDataLinkages, getUsers, saveUsers, getDepartments, saveDepartments } from './utils/auth';
 
@@ -805,6 +806,7 @@ export default function App() {
 
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50/70 dark:bg-slate-950">
           <div className="max-w-7xl mx-auto">
+            <ErrorBoundary key={currentTab} onReset={() => setCurrentTab('dashboard')}>
             {currentTab === 'dashboard' && (
               <DashboardView
                 key={`dashboard-${selectedYear}`}
@@ -1034,6 +1036,7 @@ export default function App() {
                 }}
               />
             )}
+            </ErrorBoundary>
           </div>
         </main>
       </div>

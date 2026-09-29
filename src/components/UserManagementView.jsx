@@ -256,7 +256,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
   // Check if there are unsaved permission changes
   const hasUnsavedChanges = useMemo(() => {
     return Object.keys(pendingPermissions).some((uname) => {
-      const target = users.find((u) => u.username.toLowerCase() === uname.toLowerCase());
+      const target = users.find((u) => (u.username || '').toLowerCase() === (uname || '').toLowerCase());
       if (!target) return false;
       const orig = [...(target.permissions || [])].sort();
       const curr = [...pendingPermissions[uname]].sort();
@@ -267,7 +267,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
 
   const modifiedUsersCount = useMemo(() => {
     return Object.keys(pendingPermissions).filter((uname) => {
-      const target = users.find((u) => u.username.toLowerCase() === uname.toLowerCase());
+      const target = users.find((u) => (u.username || '').toLowerCase() === (uname || '').toLowerCase());
       if (!target) return false;
       const orig = [...(target.permissions || [])].sort();
       const curr = [...pendingPermissions[uname]].sort();
@@ -278,7 +278,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
 
   // Toggle permission for a user (stages change, does not auto-save)
   const handleTogglePermission = (username, menuId) => {
-    const target = users.find((u) => u.username.toLowerCase() === username.toLowerCase());
+    const target = users.find((u) => (u.username || '').toLowerCase() === (username || '').toLowerCase());
     if (!target) return;
     if (target.role === 'admin' && menuId === 'users') {
       showToast('⚠️ ไม่สามารถปิดสิทธิ์เมนูผู้ดูแลระบบของบัญชี ADMIN ได้');
@@ -304,7 +304,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
 
   // Quick Preset Permissions (also stages to pendingPermissions)
   const handleApplyPreset = (username, presetType) => {
-    const target = users.find((u) => u.username.toLowerCase() === username.toLowerCase());
+    const target = users.find((u) => (u.username || '').toLowerCase() === (username || '').toLowerCase());
     if (!target) return;
 
     let perms = [];
@@ -812,7 +812,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                   const userPerms = pendingPermissions[user.username] !== undefined
                     ? pendingPermissions[user.username]
                     : (user.permissions || []);
-                  const isCurrent = currentSession?.username.toLowerCase() === user.username.toLowerCase();
+                  const isCurrent = Boolean(currentSession?.username && user?.username && currentSession.username.toLowerCase() === user.username.toLowerCase());
                   
                   const isUserModified = pendingPermissions[user.username] !== undefined && (() => {
                     const orig = [...(user.permissions || [])].sort();

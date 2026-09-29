@@ -936,7 +936,7 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
                         type="button"
                         onClick={() => handleQuickSelect(u)}
                         className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
-                          username.toLowerCase() === u.username.toLowerCase()
+                          Boolean(username && u.username && username.toLowerCase() === u.username.toLowerCase())
                             ? 'bg-blue-600 text-white font-bold shadow-xs'
                             : 'bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-700'
                         }`}

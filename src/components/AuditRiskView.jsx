@@ -1016,7 +1016,7 @@ export default function AuditRiskView({
     return scoredActivities.filter((item) => {
       if (departmentFilter !== 'all' && item.department !== departmentFilter) return false;
       if (riskLevelFilter !== 'all' && item.level !== riskLevelFilter) return false;
-      if (searchQuery.trim() && !item.activity.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      if (searchQuery.trim() && !(item.activity || '').toLowerCase().includes(searchQuery.toLowerCase())) return false;
       return true;
     });
   }, [scoredActivities, departmentFilter, riskLevelFilter, searchQuery]);

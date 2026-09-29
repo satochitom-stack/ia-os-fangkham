@@ -111,7 +111,7 @@ export default function ExecutionView({
   const handleToggleChecklist = (checkId) => {
     const updated = workingPapers.map((wp) => {
       if (wp.id === currentWp.id) {
-        const nextChecklist = wp.checklist.map((item) => {
+        const nextChecklist = (wp.checklist || []).map((item) => {
           if (item.id === checkId) {
             let nextResult = 'passed';
             if (item.result === 'passed') nextResult = 'failed';
@@ -414,13 +414,13 @@ export default function ExecutionView({
               </button>
             )}
             <span className="text-xs font-bold text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700">
-              {currentWp.checklist.filter((c) => c.result === 'passed').length} / {currentWp.checklist.length} ผ่านเกณฑ์
+              {(currentWp.checklist || []).filter((c) => c.result === 'passed').length} / {(currentWp.checklist || []).length} ผ่านเกณฑ์
             </span>
           </div>
         </div>
 
         <div className="divide-y divide-slate-100 dark:divide-slate-800">
-          {currentWp.checklist.map((item, idx) => {
+          {(currentWp.checklist || []).map((item, idx) => {
             const isPassed = item.result === 'passed';
             const isFailed = item.result === 'failed';
             const hasGuidance = Boolean(item.guidance?.trim());

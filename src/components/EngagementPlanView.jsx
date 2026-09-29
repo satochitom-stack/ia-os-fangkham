@@ -747,6 +747,29 @@ export default function EngagementPlanView({
         </div>
       )}
 
+      {/* Empty State when no plan is selected or available for detail / communication tabs */}
+      {(activeTab === 'detail' || activeTab === 'communication') && !selectedPlan && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-12 text-center border border-slate-200 dark:border-slate-800 shadow-sm max-w-lg mx-auto space-y-4 print:hidden">
+          <div className="w-14 h-14 bg-blue-50 dark:bg-blue-950/60 text-blue-600 rounded-2xl mx-auto flex items-center justify-center">
+            <Sparkles className="w-7 h-7" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">
+              ยังไม่มีแผนปฏิบัติงานตรวจสอบ (ว 614) ในปีนี้
+            </h3>
+            <p className="text-xs text-slate-500">
+              กรุณาเลือกหรือสร้างแผนการปฏิบัติงานตรวจสอบใหม่ในแท็บ "รายการแผนงานตรวจ" หรือใช้ระบบสร้างด้วย AI
+            </p>
+          </div>
+          <button
+            onClick={() => setActiveTab('list')}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+          >
+            ไปที่แท็บรายการแผนงานตรวจ
+          </button>
+        </div>
+      )}
+
       {/* =========================================================================
           TAB 3: แนวการตรวจ & กระดาษทำการ (Audit Program Detail)
       ========================================================================= */}

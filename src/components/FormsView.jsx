@@ -234,10 +234,10 @@ export default function FormsView({
   }, [selectedFormCategory, formSearchQuery]);
 
   const filteredDocs = documents.filter((doc) => {
-    const q = searchTerm.toLowerCase();
+    const q = (searchTerm || '').toLowerCase();
     return (
-      doc.code.toLowerCase().includes(q) ||
-      doc.title.toLowerCase().includes(q) ||
+      (doc.code || '').toLowerCase().includes(q) ||
+      (doc.title || '').toLowerCase().includes(q) ||
       (doc.topic && doc.topic.toLowerCase().includes(q)) ||
       (doc.description && doc.description.toLowerCase().includes(q))
     );

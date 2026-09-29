@@ -271,7 +271,7 @@ export default function LoginView({ onLogin }) {
                     return (order[a.username] || 99) - (order[b.username] || 99);
                   });
                   return sorted.map((u) => {
-                    const isSelected = username.toLowerCase() === u.username.toLowerCase();
+                    const isSelected = Boolean(username && u.username && username.toLowerCase() === u.username.toLowerCase());
                     const isAdmin = u.role === 'admin' || u.username === 'admin';
                     const isMayor = u.username === 'mayor' || (u.role === 'executive' && u.username !== 'palat') || u.displayName === 'ผู้บริหาร';
                     const isPalat = u.username === 'palat' || u.displayName?.includes('ปลัด');

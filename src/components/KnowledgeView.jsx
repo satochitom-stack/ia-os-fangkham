@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   BookOpen,
   Search,
@@ -29,10 +29,11 @@ export default function KnowledgeView({
   const filteredItems = knowledgeBase.filter((item) => {
     const matchCat =
       selectedCategory === 'all' || item.category === selectedCategory;
+    const q = (searchTerm || '').toLowerCase();
     const matchSearch =
-      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.topic.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.summary.toLowerCase().includes(searchTerm.toLowerCase());
+      (item.title || '').toLowerCase().includes(q) ||
+      (item.topic || '').toLowerCase().includes(q) ||
+      (item.summary || '').toLowerCase().includes(q);
     return matchCat && matchSearch;
   });
 
