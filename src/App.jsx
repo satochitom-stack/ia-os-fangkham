@@ -246,6 +246,15 @@ export default function App() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (!parsed['2569'] && parsed['2568']) parsed['2569'] = parsed['2568'];
+        // Restore initialRiskManagement if 2569 is empty
+        if (!parsed['2569'] || !parsed['2569'].bs1 || parsed['2569'].bs1.length === 0) {
+          parsed['2569'] = initialRiskManagement;
+          try {
+            localStorage.setItem('ia_risk_management_by_year', JSON.stringify(parsed));
+          } catch (err) {
+            console.error(err);
+          }
+        }
         // Detect if 2570 was poisoned with exact duplicate of 2569 seed data
         if (parsed['2570']?.bs1?.length === 5 && parsed['2570'].bs1[0]?.id === 'BS1-01' && parsed['2570'].bs1[0]?.riskCode === 'RSK-01') {
           parsed['2570'] = createEmptyRiskManagement();
