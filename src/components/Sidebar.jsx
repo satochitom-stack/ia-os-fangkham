@@ -24,7 +24,8 @@ import {
   GraduationCap,
   HeartHandshake,
   Activity,
-  CalendarDays
+  CalendarDays,
+  Globe
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -46,7 +47,7 @@ export default function Sidebar({
       pillarNumber: 'หมวดที่ 1',
       pillarTitle: 'การวางแผน & ภาพรวมองค์กร',
       items: [
-        { id: 'executive-dashboard', label: 'ศูนย์บัญชาการผู้บริหาร', icon: LayoutDashboard },
+        { id: 'executive-dashboard', label: 'แดชบอร์ดผู้บริหาร', icon: LayoutDashboard },
         { id: 'dashboard', label: 'แดชบอร์ดตรวจสอบภายใน', icon: ShieldAlert },
         { id: 'central-calendar', label: 'ปฏิทินปฏิบัติงานส่วนกลาง', icon: CalendarDays },
         { id: 'audit-risk', label: 'การประเมินความเสี่ยงแผน', icon: ShieldAlert },
@@ -88,12 +89,11 @@ export default function Sidebar({
       pillarTitle: 'ส่วนราชการ & กองต่าง ๆ (Workspaces)',
       items: [
         { id: 'dept-workspaces', label: 'ภาพรวมพื้นที่ทำงานส่วนราชการ', icon: Building2 },
-        { id: 'dept-office', label: 'สำนักปลัด (ยานพาหนะ/แผน/ร้องเรียน)', icon: Car },
+        { id: 'dept-office', label: 'สำนักปลัด (รวมงานสาธารณสุขฯ)', icon: Building2 },
         { id: 'dept-finance', label: 'กองคลัง (จัดซื้อจัดจ้าง/ค่าปรับ/พัสดุ)', icon: BadgeDollarSign },
         { id: 'dept-tech', label: 'กองช่าง (Factor F/คุมงาน/ใบอนุญาต)', icon: HardHat },
         { id: 'dept-education', label: 'กองการศึกษา (อาหารกลางวัน/นม/สื่อ)', icon: GraduationCap },
-        { id: 'dept-welfare', label: 'กองสวัสดิการสังคม (เบี้ยยังชีพ/สงเคราะห์)', icon: HeartHandshake },
-        { id: 'dept-health', label: 'งานสาธารณสุขฯ (ขยะ/โรคติดต่อ/ตลาด)', icon: Activity }
+        { id: 'dept-welfare', label: 'กองสวัสดิการสังคม (เบี้ยยังชีพ/สงเคราะห์)', icon: HeartHandshake }
       ]
     },
     {
@@ -119,6 +119,7 @@ export default function Sidebar({
   ];
 
   const canAccessItem = (item) => {
+    if (item.id === 'public-overview') return true;
     if (session?.role === 'guest') {
       return userPermissions.includes(item.id);
     }
@@ -129,12 +130,11 @@ export default function Sidebar({
     // Automatic access for Department Workspaces according to role/dept
     if (item.id === 'executive-dashboard') return true;
     if (item.id === 'central-calendar') return true;
-    if (item.id === 'dept-office' && (session?.department?.includes('ปลัด') || session?.username === 'office')) return true;
+    if (item.id === 'dept-office' && (session?.department?.includes('ปลัด') || session?.department?.includes('สาธารณสุข') || session?.department?.includes('สิ่งแวดล้อม') || session?.username === 'office' || session?.username === 'health')) return true;
     if (item.id === 'dept-finance' && (session?.department?.includes('คลัง') || session?.username === 'finance')) return true;
     if (item.id === 'dept-tech' && (session?.department?.includes('ช่าง') || session?.username === 'engineering' || session?.username === 'tech')) return true;
     if (item.id === 'dept-education' && (session?.department?.includes('การศึกษา') || session?.username === 'education')) return true;
     if (item.id === 'dept-welfare' && (session?.department?.includes('สวัสดิการ') || session?.username === 'welfare')) return true;
-    if (item.id === 'dept-health' && (session?.department?.includes('สาธารณสุข') || session?.department?.includes('สิ่งแวดล้อม') || session?.username === 'health')) return true;
     if (item.id === 'dept-workspaces' && (
       session?.department?.includes('ปลัด') ||
       session?.department?.includes('คลัง') ||
@@ -189,6 +189,21 @@ export default function Sidebar({
           <div className="flex items-center space-x-2.5">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             <span>หน้าแรก / หน้าต้อนรับ</span>
+          </div>
+        </button>
+
+        {/* Public Overview Button */}
+        <button
+          onClick={() => setCurrentTab('public-overview')}
+          className={`w-full flex items-center px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            currentTab === 'public-overview'
+              ? 'bg-blue-600 text-white shadow-xs'
+              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+          }`}
+        >
+          <div className="flex items-center space-x-2.5">
+            <Globe className="w-3.5 h-3.5 text-emerald-500" />
+            <span>ภาพรวม</span>
           </div>
         </button>
 

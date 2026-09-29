@@ -21,6 +21,7 @@ import TechnicalToolkitsView from './components/TechnicalToolkitsView';
 import DepartmentWorkspaceView from './components/DepartmentWorkspaceView';
 import ExecutiveDashboardView from './components/ExecutiveDashboardView';
 import CentralCalendarView from './components/CentralCalendarView';
+import PublicOverviewView from './components/PublicOverviewView';
 import ErrorBoundary from './components/ErrorBoundary';
 import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
 import { getSession, loginAsGuest, logout as authLogout, switchSessionTo, autoRepairDataLinkages, getUsers, saveUsers, getDepartments, saveDepartments } from './utils/auth';
@@ -356,6 +357,25 @@ export default function App() {
       const saved = localStorage.getItem('ia_capa_findings_by_year');
       if (saved) {
         const parsed = JSON.parse(saved);
+        const sampleCapaIds = [
+          'CAPA-OAG-69-01', 'CAPA-IA-69-01', 'CAPA-INSP-69-01', 'CAPA-FIN-69-01', 'CAPA-ENG-69-01',
+          'CAPA-2569-001', 'CAPA-2569-002', 'CAPA-2569-003'
+        ];
+        Object.keys(parsed).forEach((yr) => {
+          if (Array.isArray(parsed[yr])) {
+            parsed[yr] = parsed[yr].filter(
+              (c) => !sampleCapaIds.includes(c?.id) &&
+                     !sampleCapaIds.includes(c?.code) &&
+                     !c?.id?.startsWith('CAPA-IA-') &&
+                     !c?.id?.startsWith('CAPA-INSP-') &&
+                     !c?.id?.startsWith('CAPA-OAG-') &&
+                     !c?.title?.includes('งบกระทบยอดเงินฝาก') &&
+                     !c?.title?.includes('แผนที่ภาษี') &&
+                     !c?.title?.includes('ค่าเบี้ยยังชีพ') &&
+                     !c?.title?.includes('ค่าปรับ')
+            );
+          }
+        });
         if (!parsed['2569']) parsed['2569'] = [];
         return parsed;
       }
@@ -664,7 +684,7 @@ export default function App() {
   // Helper: Default landing tab based on role and department
   const getDefaultTabForUser = (s) => {
     if (!s) return 'welcome';
-    if (s.role === 'guest') return s.permissions?.[0] || 'dashboard';
+    if (s.role === 'guest') return s.permissions?.[0] || 'public-overview';
     if (s.role === 'admin') return 'dashboard';
     if (s.role === 'executive') return 'executive-dashboard';
     if (s.department?.includes('ปลัด') || s.username === 'office') return 'dept-office';
@@ -672,8 +692,8 @@ export default function App() {
     if (s.department?.includes('ช่าง') || s.username === 'engineering' || s.username === 'tech') return 'dept-tech';
     if (s.department?.includes('การศึกษา') || s.username === 'education') return 'dept-education';
     if (s.department?.includes('สวัสดิการ') || s.username === 'welfare') return 'dept-welfare';
-    if (s.department?.includes('สาธารณสุข') || s.username === 'health') return 'dept-health';
-    return s.permissions?.[0] || 'dept-workspaces';
+    if (s.department?.includes('สาธารณสุข') || s.username === 'health') return 'dept-office';
+    return s.permissions?.[0] || 'public-overview';
   };
 
   // Route Guard: Ensure non-admin users only access allowed menu tabs
@@ -682,15 +702,15 @@ export default function App() {
     if (session.role === 'admin' || session.role === 'executive') return;
 
     if (session.role === 'guest') {
-      const allowed = [...(session.permissions || ['dashboard']), 'welcome'];
+      const allowed = [...(session.permissions || ['public-overview']), 'welcome', 'public-overview'];
       if (!allowed.includes(currentTab)) {
-        setCurrentTab(allowed[0] || 'dashboard');
+        setCurrentTab(allowed[0] || 'public-overview');
       }
       return;
     }
 
     const deptAllowed = [];
-    if (session.department?.includes('ปลัด') || session.username === 'office') {
+    if (session.department?.includes('ปลัด') || session.username === 'office' || session.department?.includes('สาธารณสุข') || session.username === 'health') {
       deptAllowed.push('dept-office', 'dept-workspaces');
     }
     if (session.department?.includes('คลัง') || session.username === 'finance') {
@@ -705,17 +725,14 @@ export default function App() {
     if (session.department?.includes('สวัสดิการ') || session.username === 'welfare') {
       deptAllowed.push('dept-welfare', 'dept-workspaces');
     }
-    if (session.department?.includes('สาธารณสุข') || session.username === 'health') {
-      deptAllowed.push('dept-health', 'dept-workspaces');
-    }
     deptAllowed.push('central-calendar');
 
-    const allowed = [...(session.permissions || ['dashboard']), ...deptAllowed, 'welcome'];
+    const allowed = [...(session.permissions || ['public-overview']), ...deptAllowed, 'welcome', 'public-overview'];
     if (!allowed.includes(currentTab)) {
       if (deptAllowed.length > 0 && !session.permissions?.includes(currentTab)) {
         setCurrentTab(deptAllowed[0]);
       } else {
-        setCurrentTab(allowed[0] || 'dashboard');
+        setCurrentTab(allowed[0] || 'public-overview');
       }
     }
   }, [session, currentTab]);
@@ -940,6 +957,15 @@ export default function App() {
               />
             )}
 
+            {currentTab === 'public-overview' && (
+              <PublicOverviewView
+                key={`public-overview-${selectedYear}`}
+                orgProfile={orgProfile}
+                selectedYear={selectedYear}
+                setCurrentTab={setCurrentTab}
+              />
+            )}
+
             {currentTab === 'executive-dashboard' && (
               <ExecutiveDashboardView
                 key={`executive-dashboard-${selectedYear}`}
@@ -967,8 +993,7 @@ export default function App() {
               currentTab === 'dept-finance' ||
               currentTab === 'dept-tech' ||
               currentTab === 'dept-education' ||
-              currentTab === 'dept-welfare' ||
-              currentTab === 'dept-health') && (
+              currentTab === 'dept-welfare') && (
               <DepartmentWorkspaceView
                 key={`dept-${currentTab}-${selectedYear}`}
                 orgProfile={orgProfile}
@@ -987,8 +1012,6 @@ export default function App() {
                     ? 'กองการศึกษา'
                     : currentTab === 'dept-welfare'
                     ? 'กองสวัสดิการสังคม'
-                    : currentTab === 'dept-health'
-                    ? 'งานสาธารณสุขและสิ่งแวดล้อม'
                     : (session?.department?.includes('คลัง')
                         ? 'กองคลัง'
                         : session?.department?.includes('ช่าง')
@@ -997,8 +1020,6 @@ export default function App() {
                         ? 'กองการศึกษา'
                         : session?.department?.includes('สวัสดิการ')
                         ? 'กองสวัสดิการสังคม'
-                        : session?.department?.includes('สาธารณสุข')
-                        ? 'งานสาธารณสุขและสิ่งแวดล้อม'
                         : 'สำนักปลัด')
                 }
                 setCurrentTab={setCurrentTab}

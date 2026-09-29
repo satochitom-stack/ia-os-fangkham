@@ -570,7 +570,7 @@ export function autoRepairDataLinkages() {
       }
       if (localStorage.getItem('ia_dept_session_sprint4_5') !== 'synced') {
         const allIds = ALL_MENU_IDS.map((m) => m.id);
-        const execPerms = ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
+        const execPerms = ['public-overview', 'executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
 
         if (currentSession.role === 'admin') {
           currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), ...allIds]));
@@ -579,25 +579,26 @@ export function autoRepairDataLinkages() {
           currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), ...execPerms]));
           sessChanged = true;
         } else if (currentSession.department?.includes('ปลัด') || currentSession.username === 'office') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'dept-workspaces', 'dept-office', 'central-calendar']));
+          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'public-overview', 'dept-workspaces', 'dept-office', 'central-calendar']));
           sessChanged = true;
         } else if (currentSession.department?.includes('คลัง') || currentSession.username === 'finance') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'dept-workspaces', 'dept-finance', 'central-calendar']));
+          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'public-overview', 'dept-workspaces', 'dept-finance', 'central-calendar']));
           sessChanged = true;
         } else if (currentSession.department?.includes('ช่าง') || currentSession.username === 'engineering' || currentSession.username === 'tech') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'dept-workspaces', 'dept-tech', 'central-calendar']));
+          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'public-overview', 'dept-workspaces', 'dept-tech', 'central-calendar']));
           sessChanged = true;
         } else if (currentSession.department?.includes('การศึกษา') || currentSession.username === 'education') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'dept-workspaces', 'dept-education', 'central-calendar']));
+          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'public-overview', 'dept-workspaces', 'dept-education', 'central-calendar']));
           sessChanged = true;
         } else if (currentSession.department?.includes('สวัสดิการ') || currentSession.username === 'welfare') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'dept-workspaces', 'dept-welfare', 'central-calendar']));
+          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'public-overview', 'dept-workspaces', 'dept-welfare', 'central-calendar']));
           sessChanged = true;
         } else if (currentSession.department?.includes('สาธารณสุข') || currentSession.username === 'health') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'dept-workspaces', 'dept-health', 'central-calendar']));
+          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'public-overview', 'dept-workspaces', 'dept-office', 'central-calendar']));
+          currentSession.department = 'สำนักปลัด';
           sessChanged = true;
         }
-        currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'central-calendar']));
+        currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'public-overview', 'central-calendar']));
         sessChanged = true;
         localStorage.setItem('ia_dept_session_sprint4_5', 'synced');
       }
@@ -606,8 +607,8 @@ export function autoRepairDataLinkages() {
       }
     }
 
-    // 9. Systematic purge of mock/sample data across entire system (ia_purge_dummy_data_v2026)
-    const PURGE_MOCK_KEY = 'ia_purge_dummy_data_v2026_complete';
+    // 9. Systematic purge of mock/sample data across entire system (ia_purge_dummy_data_v2026_strict_clean_v5)
+    const PURGE_MOCK_KEY = 'ia_purge_dummy_data_v2026_strict_clean_v5';
     if (localStorage.getItem(PURGE_MOCK_KEY) !== 'purged') {
       try {
         // Directives
@@ -620,16 +621,26 @@ export function autoRepairDataLinkages() {
           }
         }
 
-        // CAPA Findings
+        // CAPA Findings (Unconditional strict purge of all dummy/sample findings)
         const rawCapa = localStorage.getItem('ia_capa_findings_by_year');
         if (rawCapa) {
           const parsed = JSON.parse(rawCapa);
+          const sampleCapaIds = [
+            'CAPA-OAG-69-01', 'CAPA-IA-69-01', 'CAPA-INSP-69-01', 'CAPA-FIN-69-01', 'CAPA-ENG-69-01',
+            'CAPA-2569-001', 'CAPA-2569-002', 'CAPA-2569-003'
+          ];
           Object.keys(parsed).forEach((yr) => {
             if (Array.isArray(parsed[yr])) {
               parsed[yr] = parsed[yr].filter(
-                (c) => !['CAPA-OAG-69-01', 'CAPA-FIN-69-01', 'CAPA-ENG-69-01'].includes(c.id) &&
-                       !['CAPA-OAG-69-01', 'CAPA-FIN-69-01', 'CAPA-ENG-69-01'].includes(c.code) &&
-                       !c.title?.includes('ค่าเบี้ยยังชีพคนชราและผู้ป่วยติดเตียง')
+                (c) => !sampleCapaIds.includes(c.id) &&
+                       !sampleCapaIds.includes(c.code) &&
+                       !c.id?.startsWith('CAPA-IA-') &&
+                       !c.id?.startsWith('CAPA-INSP-') &&
+                       !c.id?.startsWith('CAPA-OAG-') &&
+                       !c.title?.includes('งบกระทบยอดเงินฝาก') &&
+                       !c.title?.includes('แผนที่ภาษี') &&
+                       !c.title?.includes('ค่าเบี้ยยังชีพ') &&
+                       !c.title?.includes('ค่าปรับ')
               );
             }
           });
@@ -831,7 +842,8 @@ export function deleteDepartment(name) {
 const DEFAULT_SESSION_MS = 24 * 60 * 60 * 1000; // 24 ชั่วโมง
 
 export const ALL_MENU_IDS = [
-  { id: 'executive-dashboard', label: 'ศูนย์บัญชาการผู้บริหาร', icon: 'LayoutDashboard', desc: 'แดชบอร์ดภาพรวมการเงิน ผลการตรวจ การสั่งการ และนาฬิกานับถอยหลังกฎหมาย' },
+  { id: 'public-overview', label: 'ภาพรวม', icon: 'Globe', desc: 'ภาพรวมองค์กร อบต.ฝางคำ การให้บริการประชาชน ข้อมูลสาธารณะ และช่องทางติดต่อ' },
+  { id: 'executive-dashboard', label: 'แดชบอร์ดผู้บริหาร', icon: 'LayoutDashboard', desc: 'แดชบอร์ดภาพรวมการเงิน ผลการตรวจ การสั่งการ และนาฬิกานับถอยหลังกฎหมาย' },
   { id: 'dashboard', label: 'แดชบอร์ดตรวจสอบภายใน', icon: 'ShieldAlert', desc: 'แดชบอร์ดสรุปและปฏิทินงานตรวจสอบ' },
   { id: 'central-calendar', label: 'ปฏิทินปฏิบัติงานส่วนกลาง', icon: 'CalendarDays', desc: 'ปฏิทินบูรณาการร่วมทุกสำนัก/กอง และกำหนดการตรวจ' },
   { id: 'audit-risk', label: 'การประเมินความเสี่ยง', icon: 'ShieldAlert', desc: 'วิเคราะห์ SOFCK และจัดลำดับความเสี่ยง 21 กิจกรรม' },
@@ -841,12 +853,11 @@ export const ALL_MENU_IDS = [
   { id: 'audit-toolkits', label: 'เครื่องมือช่วยตรวจเชิงเทคนิค (ปี 70)', icon: 'Wrench', desc: 'เครื่องมือคำนวณราคากลาง Factor F, ค่าปรับ, ค่าธรรมเนียมอาคาร และข้อบัญญัติ' },
   { id: 'reporting', label: 'รายงาน & ติดตามผล (CAPA)', icon: 'FileSpreadsheet', desc: 'รายงานผลการตรวจสอบและติดตามข้อเสนอแนะ' },
   { id: 'dept-workspaces', label: 'พื้นที่ทำงานสำนัก/กอง (Workspaces)', icon: 'Building2', desc: 'ค็อกพิทและเครื่องมือเฉพาะทางสำหรับแต่ละกอง' },
-  { id: 'dept-office', label: 'สำนักปลัด (ยานพาหนะ/แผน/ร้องเรียน)', icon: 'Car', desc: 'ทะเบียนคุมรถยนต์และน้ำมัน แผนพัฒนาท้องถิ่น งานสารบรรณ และเรื่องร้องเรียน' },
+  { id: 'dept-office', label: 'สำนักปลัด (รวมงานสาธารณสุขฯ)', icon: 'Building2', desc: 'งานสารบรรณ ทะเบียนคุมรถและน้ำมัน แผนพัฒนาท้องถิ่น เรื่องร้องเรียน และงานสาธารณสุขและสิ่งแวดล้อม' },
   { id: 'dept-finance', label: 'กองคลัง (จัดซื้อจัดจ้าง/ค่าปรับ/พัสดุ ว 184)', icon: 'BadgeDollarSign', desc: 'ทะเบียนคุมสัญญา คำนวณค่าปรับ ตรวจสอบพัสดุประจำปี และลูกหนี้เงินยืม' },
   { id: 'dept-tech', label: 'กองช่าง (Factor F/คุมงาน/ใบอนุญาต)', icon: 'HardHat', desc: 'คำนวณราคากลาง Factor F & ปร.5 ทะเบียนคุมงานก่อสร้าง และขออนุญาตอาคาร 45 วัน' },
   { id: 'dept-education', label: 'กองการศึกษา (อาหารกลางวัน/นม/สื่อ)', icon: 'GraduationCap', desc: 'ทะเบียนอาหารกลางวัน นมโรงเรียน พัสดุสื่อการเรียนการสอน และ ศพด.' },
   { id: 'dept-welfare', label: 'กองสวัสดิการสังคม (เบี้ยยังชีพ/สงเคราะห์)', icon: 'HeartHandshake', desc: 'ทะเบียนคุมเบี้ยยังชีพผู้สูงอายุ 4 ขั้นบันได คนพิการ ผู้ป่วยเอดส์ และสงเคราะห์' },
-  { id: 'dept-health', label: 'งานสาธารณสุขฯ (ขยะ/โรคติดต่อ/ตลาด)', icon: 'Activity', desc: 'ทะเบียนค่าธรรมเนียมขยะมูลฝอย ควบคุมโรคระบาด และสุขาภิบาลอาหาร/ตลาด' },
   { id: 'internal-control', label: 'การควบคุมภายใน', icon: 'ShieldCheck', desc: 'บันทึกแบบ ปค.1, ปค.4, ปค.5 ตามหลักเกณฑ์ กค. พ.ศ. 2561 ของแต่ละกอง' },
   { id: 'risk-management', label: 'การบริหารความเสี่ยง', icon: 'AlertTriangle', desc: 'บันทึกแบบ บส.1 - บส.5 และ Matrix ระดับความเสี่ยง 5x5 ของแต่ละกอง' },
   { id: 'lpa', label: 'เตรียมรับประเมิน LPA', icon: 'Award', desc: 'เช็กลิสต์และหลักฐานเตรียมรับประเมิน LPA' },
@@ -946,11 +957,11 @@ export const DEFAULT_INITIAL_USERS = [
   {
     username: 'health',
     displayName: 'งานสาธารณสุขและสิ่งแวดล้อม',
-    position: 'เจ้าหน้าที่งานสาธารณสุขและสิ่งแวดล้อม',
-    department: 'งานสาธารณสุขและสิ่งแวดล้อม',
+    position: 'เจ้าหน้าที่งานสาธารณสุขและสิ่งแวดล้อม (สำนักปลัด)',
+    department: 'สำนักปลัด',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dept-workspaces', 'dept-health', 'central-calendar', 'risk-management', 'forms'],
+    permissions: ['public-overview', 'dept-workspaces', 'dept-office', 'central-calendar', 'risk-management', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -983,7 +994,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'ผู้เยี่ยมชม',
     role: 'guest',
     passwordText: '',
-    permissions: ['dashboard'],
+    permissions: ['public-overview'],
     canManageUsers: false,
     createdAt: Date.now()
   }
@@ -1425,16 +1436,14 @@ export function loginAsGuest() {
       department: 'ผู้เยี่ยมชม',
       role: 'guest',
       passwordText: '',
-      permissions: ['dashboard'],
+      permissions: ['public-overview'],
       canManageUsers: false,
       createdAt: Date.now()
     };
     users.push(guestUser);
     saveUsers(users);
   }
-  if (!Array.isArray(guestUser.permissions) || guestUser.permissions.length === 0) {
-    guestUser.permissions = ['dashboard'];
-  }
+  guestUser.permissions = ['public-overview'];
   return startSession(guestUser, false);
 }
 

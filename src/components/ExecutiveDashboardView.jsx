@@ -133,16 +133,16 @@ export default function ExecutiveDashboardView({
     return [
       {
         id: 'สำนักปลัด',
-        name: 'สำนักปลัด',
+        name: 'สำนักปลัด (รวมงานสาธารณสุขและสิ่งแวดล้อม)',
         code: 'clerk',
         tabKey: 'dept-office',
         head: 'หัวหน้าสำนักปลัด',
         complianceScore: null,
         riskTier: 'รอการประเมิน',
-        openIssues: capaFindings.filter((c) => c.department === 'สำนักปลัด' && c.status !== 'verified_closed').length,
+        openIssues: capaFindings.filter((c) => (c.department === 'สำนักปลัด' || c.department?.includes('สาธารณสุข') || c.department?.includes('สิ่งแวดล้อม')) && c.status !== 'verified_closed').length,
         budgetAllocated: 0,
         budgetSpent: 0,
-        keyArea: 'การใช้รถยนต์และน้ำมัน (คย.01), งานสารบรรณ, นิติการ'
+        keyArea: 'การใช้รถยนต์และน้ำมัน (คย.01), งานสารบรรณ, นิติการ, ขยะมูลฝอย 6 หมู่บ้าน, ควบคุมโรคติดต่อ, สุขาภิบาลอาหาร'
       },
       {
         id: 'กองคลัง',
@@ -195,19 +195,6 @@ export default function ExecutiveDashboardView({
         budgetAllocated: 0,
         budgetSpent: 0,
         keyArea: 'เบี้ยยังชีพ 4 ขั้น (600-1000 บาท), คนพิการ, สงเคราะห์ผู้ประสบภัย'
-      },
-      {
-        id: 'งานสาธารณสุขและสิ่งแวดล้อม',
-        name: 'งานสาธารณสุขและสิ่งแวดล้อม',
-        code: 'health',
-        tabKey: 'dept-health',
-        head: 'หัวหน้างานสาธารณสุข',
-        complianceScore: null,
-        riskTier: 'รอการประเมิน',
-        openIssues: capaFindings.filter((c) => (c.department?.includes('สาธารณสุข') || c.department?.includes('สิ่งแวดล้อม')) && c.status !== 'verified_closed').length,
-        budgetAllocated: 0,
-        budgetSpent: 0,
-        keyArea: 'ค่าธรรมเนียมขยะ 6 หมู่บ้าน, ควบคุมไข้เลือดออก, ตรวจตลาดนัด'
       }
     ];
   }, [capaFindings]);
@@ -266,13 +253,13 @@ export default function ExecutiveDashboardView({
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/80 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-400/30 text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>ศูนย์บัญชาการและรายงานภาพรวมสำหรับผู้บริหาร (Executive Governance Cockpit)</span>
+              <span>แดชบอร์ดและรายงานภาพรวมสำหรับผู้บริหาร (Executive Governance Cockpit)</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
               แดชบอร์ดผู้บริหาร {orgProfile.name || 'อบต.ฝางคำ'}
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
-              ติดตามสถานะความเสี่ยงองค์กร 6 สำนัก/กอง, วินัยการเงินการคลัง, กรอบเวลากฎหมายสำคัญ 
+              ติดตามสถานะความเสี่ยงองค์กร 5 สำนัก/กอง, วินัยการเงินการคลัง, กรอบเวลากฎหมายสำคัญ 
               และระบบสั่งการมอบหมายงานผู้บริหาร (Executive Directives)
             </p>
           </div>
@@ -480,7 +467,7 @@ export default function ExecutiveDashboardView({
           }`}
         >
           <Layers className="w-4 h-4" />
-          <span>คะแนนประเมินและสถานะ 6 สำนัก/กอง</span>
+          <span>คะแนนประเมินและสถานะ 5 สำนัก/กอง</span>
         </button>
 
         <button
@@ -503,7 +490,7 @@ export default function ExecutiveDashboardView({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                ดัชนีชี้วัดการปฏิบัติตามระเบียบและระดับความเสี่ยง (Department Governance Scorecard)
+                ดัชนีชี้วัดการปฏิบัติตามระเบียบและระดับความเสี่ยง 5 ส่วนราชการ (Department Governance Scorecard)
               </h3>
               <span className="text-xs text-slate-500">คลิกที่ส่วนราชการเพื่อเปิด Workspace เฉพาะทาง</span>
             </div>
@@ -735,12 +722,11 @@ export default function ExecutiveDashboardView({
                 className="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs text-slate-900 dark:text-slate-100 font-bold"
               >
                 <option value="all">ทุกสำนัก/กอง ({directives.length})</option>
-                <option value="สำนักปลัด">สำนักปลัด</option>
+                <option value="สำนักปลัด">สำนักปลัด (รวมงานสาธารณสุขฯ)</option>
                 <option value="กองคลัง">กองคลัง</option>
                 <option value="กองช่าง">กองช่าง</option>
                 <option value="กองการศึกษา">กองการศึกษา</option>
                 <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
-                <option value="งานสาธารณสุขและสิ่งแวดล้อม">งานสาธารณสุขฯ</option>
               </select>
             </div>
 
@@ -925,12 +911,11 @@ export default function ExecutiveDashboardView({
                     onChange={(e) => setNewDirective({ ...newDirective, department: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-bold"
                   >
-                    <option value="สำนักปลัด">สำนักปลัด</option>
+                    <option value="สำนักปลัด">สำนักปลัด (รวมงานสาธารณสุขและสิ่งแวดล้อม)</option>
                     <option value="กองคลัง">กองคลัง</option>
                     <option value="กองช่าง">กองช่าง</option>
                     <option value="กองการศึกษา">กองการศึกษา</option>
                     <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
-                    <option value="งานสาธารณสุขและสิ่งแวดล้อม">งานสาธารณสุขและสิ่งแวดล้อม</option>
                   </select>
                 </div>
 

@@ -72,7 +72,7 @@ export default function DepartmentWorkspaceView({
       if (userDept.includes('ช่าง')) return 'กองช่าง';
       if (userDept.includes('การศึกษา')) return 'กองการศึกษา';
       if (userDept.includes('สวัสดิการ')) return 'กองสวัสดิการสังคม';
-      if (userDept.includes('สาธารณสุข') || userDept.includes('สิ่งแวดล้อม')) return 'งานสาธารณสุขและสิ่งแวดล้อม';
+      if (userDept.includes('สาธารณสุข') || userDept.includes('สิ่งแวดล้อม')) return 'สำนักปลัด';
       return 'สำนักปลัด';
     }
     return initialDepartment || 'สำนักปลัด';
@@ -437,12 +437,11 @@ export default function DepartmentWorkspaceView({
             {isAdmin ? (
               <div className="flex flex-wrap items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shrink-0 gap-1">
                 {[
-                  { id: 'สำนักปลัด', label: 'สำนักปลัด', icon: Building2 },
+                  { id: 'สำนักปลัด', label: 'สำนักปลัด (รวมงานสาธารณสุขฯ)', icon: Building2 },
                   { id: 'กองคลัง', label: 'กองคลัง', icon: BadgeDollarSign },
                   { id: 'กองช่าง', label: 'กองช่าง', icon: HardHat },
                   { id: 'กองการศึกษา', label: 'กองการศึกษา', icon: GraduationCap },
-                  { id: 'กองสวัสดิการสังคม', label: 'สวัสดิการฯ', icon: HeartHandshake },
-                  { id: 'งานสาธารณสุขและสิ่งแวดล้อม', label: 'สาธารณสุขฯ', icon: Activity }
+                  { id: 'กองสวัสดิการสังคม', label: 'สวัสดิการฯ', icon: HeartHandshake }
                 ].map((d) => {
                   const isSelected = activeDept === d.id;
                   const Icon = d.icon;
@@ -539,6 +538,15 @@ export default function DepartmentWorkspaceView({
               >
                 <ShieldAlert className="w-3.5 h-3.5" />
                 <span>เรื่องร้องเรียน & นิติการ ({officeData.complaints.length})</span>
+              </button>
+              <button
+                onClick={() => setSubTab('health')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'health' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <Activity className="w-3.5 h-3.5 text-teal-500" />
+                <span>งานสาธารณสุขและสิ่งแวดล้อม ({publicHealthData?.wasteManagement?.length || 0} ม.)</span>
               </button>
               <button
                 onClick={() => setSubTab('capa')}
@@ -774,56 +782,6 @@ export default function DepartmentWorkspaceView({
             </>
           )}
 
-          {/* 6. งานสาธารณสุขและสิ่งแวดล้อม Sub-Tabs */}
-          {activeDept === 'งานสาธารณสุขและสิ่งแวดล้อม' && (
-            <>
-              <button
-                onClick={() => setSubTab('overview')}
-                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
-                  subTab === 'overview' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
-                }`}
-              >
-                <Layers className="w-3.5 h-3.5" />
-                <span>ภาพรวมงานสาธารณสุข</span>
-              </button>
-              <button
-                onClick={() => setSubTab('waste')}
-                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
-                  subTab === 'waste' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
-                }`}
-              >
-                <Truck className="w-3.5 h-3.5 text-blue-500" />
-                <span>ค่าธรรมเนียมขยะ 6 หมู่บ้าน ({publicHealthData?.wasteManagement?.length || 0} หมู่บ้าน)</span>
-              </button>
-              <button
-                onClick={() => setSubTab('disease')}
-                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
-                  subTab === 'disease' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
-                }`}
-              >
-                <Activity className="w-3.5 h-3.5 text-rose-500" />
-                <span>ควบคุมโรคติดต่อ (ยุงลาย/พิษสุนัขบ้า)</span>
-              </button>
-              <button
-                onClick={() => setSubTab('sanitation')}
-                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
-                  subTab === 'sanitation' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
-                }`}
-              >
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                <span>สุขาภิบาลอาหาร & ตลาดนัด</span>
-              </button>
-              <button
-                onClick={() => setSubTab('capa')}
-                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
-                  subTab === 'capa' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
-                }`}
-              >
-                <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
-                <span>ตอบข้อทักท้วง ({deptCapaFindings.length})</span>
-              </button>
-            </>
-          )}
         </div>
       </div>
 
@@ -831,9 +789,9 @@ export default function DepartmentWorkspaceView({
       {(() => {
         const relevant = executiveDirectives.filter((d) =>
           d.department === activeDept ||
+          (activeDept === 'สำนักปลัด' && (d.department?.includes('ปลัด') || d.department?.includes('สาธารณสุข') || d.department?.includes('สิ่งแวดล้อม'))) ||
           (activeDept === 'กองการศึกษา' && d.department?.includes('การศึกษา')) ||
-          (activeDept === 'กองสวัสดิการสังคม' && d.department?.includes('สวัสดิการ')) ||
-          (activeDept === 'งานสาธารณสุขและสิ่งแวดล้อม' && (d.department?.includes('สาธารณสุข') || d.department?.includes('สิ่งแวดล้อม')))
+          (activeDept === 'กองสวัสดิการสังคม' && d.department?.includes('สวัสดิการ'))
         );
 
         if (relevant.length === 0) return null;
@@ -1228,6 +1186,161 @@ export default function DepartmentWorkspaceView({
                   ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* SubTab: Health & Environment (งานสาธารณสุขและสิ่งแวดล้อม ภายใต้สำนักปลัด) */}
+          {subTab === 'health' && (
+            <div className="space-y-6">
+              {/* Quick Stat Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">ถังขยะลงทะเบียน (6 หมู่บ้าน)</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{publicHealthData?.summary?.wasteBinsRegistered || 0} ถัง</div>
+                  <div className="text-[11px] text-blue-600 font-bold">จัดเก็บสัปดาห์ละ 2 ครั้ง</div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">ประมาณการค่าธรรมเนียมขยะ/เดือน</div>
+                  <div className="text-2xl font-black text-emerald-600">{(publicHealthData?.summary?.monthlyWasteFeeEstimate || 0)?.toLocaleString()} ฿</div>
+                  <div className="text-[11px] text-slate-500">อัตรา 40 บาท/ถัง/เดือน</div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">การพ่นหมอกควันไข้เลือดออก</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{publicHealthData?.summary?.foggingCampaignsCompleted || 0} ครั้ง</div>
+                  <div className="text-[11px] text-rose-600 font-bold">ครอบคลุม ศพด. และชุมชน</div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">วัคซีนป้องกันพิษสุนัขบ้า</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{publicHealthData?.summary?.rabiesVaccinatedAnimals || 0} ตัว</div>
+                  <div className="text-[11px] text-emerald-600 font-bold">ร้อยละ 93 ของประชากรสัตว์</div>
+                </div>
+              </div>
+
+              {/* Waste Fees & Villages Summary Table */}
+              <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                      ข้อมูลการจัดเก็บขยะมูลฝอยและค่าธรรมเนียมรายหมู่บ้าน (พ.ร.บ. สาธารณสุข 2535)
+                    </h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                      ส่วนหนึ่งของงานสาธารณสุขและสิ่งแวดล้อม ภายใต้การกำกับดูแลของสำนักปลัด
+                    </p>
+                  </div>
+                  <span className="text-xs text-slate-500">ตำบลฝางคำ 6 หมู่บ้าน</span>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs text-left">
+                    <thead className="bg-slate-50 dark:bg-slate-800 font-bold text-slate-700 dark:text-slate-300">
+                      <tr>
+                        <th className="py-3 px-3">หมู่บ้าน</th>
+                        <th className="py-3 px-3 text-center">ครัวเรือน</th>
+                        <th className="py-3 px-3 text-center">จำนวนถังขยะ</th>
+                        <th className="py-3 px-3 text-right">ค่าธรรมเนียม/เดือน</th>
+                        <th className="py-3 px-3">ความถี่การจัดเก็บ</th>
+                        <th className="py-3 px-3 text-center">อัตราการชำระเงิน</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                      {(publicHealthData?.wasteManagement || []).length > 0 ? (
+                        publicHealthData.wasteManagement.map((w, idx) => (
+                          <tr key={idx} className="hover:bg-slate-50/50">
+                            <td className="py-3 px-3 font-bold text-slate-900 dark:text-slate-100">{w.village}</td>
+                            <td className="py-3 px-3 text-center">{w.households} ครัวเรือน</td>
+                            <td className="py-3 px-3 text-center font-bold text-blue-600">{w.binsCount} ถัง</td>
+                            <td className="py-3 px-3 text-right font-mono font-bold text-slate-900 dark:text-slate-100">{w.monthlyTotal?.toLocaleString()} ฿</td>
+                            <td className="py-3 px-3 text-slate-500">{w.collectionFrequency}</td>
+                            <td className="py-3 px-3 text-center font-bold text-emerald-600">{w.paymentComplianceRate}%</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={6} className="py-8 text-center text-slate-400">ยังไม่มีข้อมูลการจัดเก็บขยะ</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                  <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                    <span className="text-slate-400 block text-[11px]">ถังขยะทั้งหมด:</span>
+                    <strong className="text-lg text-slate-900 dark:text-slate-100">{publicHealthData?.summary?.wasteBinsRegistered || 0} ถัง</strong>
+                  </div>
+                  <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                    <span className="text-slate-400 block text-[11px]">จัดเก็บได้เฉลี่ย:</span>
+                    <strong className="text-lg text-emerald-600">90.2%</strong>
+                  </div>
+                  <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                    <span className="text-slate-400 block text-[11px]">รถขยะปฏิบัติการ:</span>
+                    <strong className="text-lg text-blue-600">1 คัน (อัดท้าย 6 ล้อ)</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Disease Control Projects */}
+              <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+                <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                  บันทึกโครงการควบคุมและป้องกันโรคติดต่อในพื้นที่
+                </h3>
+                {(publicHealthData?.diseaseControl || []).length > 0 ? (
+                  <div className="space-y-3">
+                    {publicHealthData.diseaseControl.map((d) => (
+                      <div key={d.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-2 text-xs">
+                        <div className="flex items-start justify-between">
+                          <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">{d.campaignName}</h4>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            ✓ ดำเนินการแล้วเสร็จ
+                          </span>
+                        </div>
+                        <div className="text-slate-500">กลุ่มเป้าหมาย: <strong>{d.target}</strong> ({d.achievedCount} / {d.targetCount})</div>
+                        <div className="text-slate-500">ช่วงเวลาดำเนินการ: <strong>{d.campaignPeriod}</strong></div>
+                        {d.vaccineBatch && <div className="text-blue-600 font-mono">Lot วัคซีน: {d.vaccineBatch}</div>}
+                        {d.chemicalType && <div className="text-amber-600 font-medium">สารเคมี: {d.chemicalType}</div>}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="py-8 text-center text-slate-400 bg-slate-50 dark:bg-slate-800/50 rounded-xl text-xs">
+                    ยังไม่มีบันทึกโครงการควบคุมและป้องกันโรคติดต่อในระบบ
+                  </div>
+                )}
+              </div>
+
+              {/* Food Sanitation */}
+              <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+                <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                  บันทึกการตรวจสุขาภิบาลอาหารและตลาดนัดชุมชน
+                </h3>
+                {(publicHealthData?.foodSanitation || []).length > 0 ? (
+                  <div className="space-y-3">
+                    {publicHealthData.foodSanitation.map((s) => (
+                      <div key={s.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-2 text-xs">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">{s.placeName}</h4>
+                            <div className="text-slate-500">{s.location}</div>
+                          </div>
+                          <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            ผ่านเกณฑ์ {s.passedStalls} / {s.stallsCount} แผง
+                          </span>
+                        </div>
+                        <div className="text-slate-600 pt-1 border-t border-slate-100 dark:border-slate-800">
+                          มาตรฐานที่ประเมิน: <strong>{s.sanitationStandard}</strong> • วันที่ตรวจ: {s.inspectionDate}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="py-8 text-center text-slate-400 bg-slate-50 dark:bg-slate-800/50 rounded-xl text-xs">
+                    ยังไม่มีบันทึกการตรวจสุขาภิบาลอาหารและตลาดนัดในระบบ
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -2391,203 +2504,6 @@ export default function DepartmentWorkspaceView({
                 <div className="p-8 text-center text-slate-400 text-xs">
                   <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-500 mb-2" />
                   <div>ไม่พบข้อทักท้วงคงค้างของกองสวัสดิการสังคม การเบิกจ่ายถูกต้องตามระเบียบ</div>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {deptCapaFindings.map((f) => (
-                    <div key={f.id} className="p-4 rounded-xl border border-amber-200 bg-amber-50/30 text-xs space-y-2">
-                      <div className="font-bold text-slate-900">{f.title}</div>
-                      <div className="text-slate-600">การแก้ไข: {f.correctiveAction}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* =========================================================================
-          WORKSPACE CONTENT: 6. งานสาธารณสุขและสิ่งแวดล้อม
-      ========================================================================= */}
-      {activeDept === 'งานสาธารณสุขและสิ่งแวดล้อม' && (
-        <div className="space-y-6">
-          {/* SubTab: Overview */}
-          {subTab === 'overview' && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
-                  <div className="text-xs text-slate-500 font-medium">ถังขยะลงทะเบียน (6 หมู่บ้าน)</div>
-                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{publicHealthData?.summary?.wasteBinsRegistered || 0} ถัง</div>
-                  <div className="text-[11px] text-blue-600 font-bold">จัดเก็บสัปดาห์ละ 2 ครั้ง</div>
-                </div>
-
-                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
-                  <div className="text-xs text-slate-500 font-medium">ประมาณการค่าธรรมเนียมขยะ/เดือน</div>
-                  <div className="text-2xl font-black text-emerald-600">{(publicHealthData?.summary?.monthlyWasteFeeEstimate || 0)?.toLocaleString()} ฿</div>
-                  <div className="text-[11px] text-slate-500">อัตรา 40 บาท/ถัง/เดือน</div>
-                </div>
-
-                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
-                  <div className="text-xs text-slate-500 font-medium">การพ่นหมอกควันไข้เลือดออก</div>
-                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{publicHealthData?.summary?.foggingCampaignsCompleted || 0} ครั้ง</div>
-                  <div className="text-[11px] text-rose-600 font-bold">ครอบคลุม ศพด. และชุมชน</div>
-                </div>
-
-                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
-                  <div className="text-xs text-slate-500 font-medium">วัคซีนป้องกันพิษสุนัขบ้า</div>
-                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{publicHealthData?.summary?.rabiesVaccinatedAnimals || 0} ตัว</div>
-                  <div className="text-[11px] text-emerald-600 font-bold">ร้อยละ 93 ของประชากรสัตว์</div>
-                </div>
-              </div>
-
-              {/* Waste Fees & Villages Summary Table */}
-              <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
-                    ข้อมูลการจัดเก็บขยะมูลฝอยและค่าธรรมเนียมรายหมู่บ้าน (พ.ร.บ. สาธารณสุข 2535)
-                  </h3>
-                  <span className="text-xs text-slate-500">ตำบลฝางคำ 6 หมู่บ้าน</span>
-                </div>
-
-                <div className="overflow-x-auto">
-                  <table className="w-full text-xs text-left">
-                    <thead className="bg-slate-50 dark:bg-slate-800 font-bold text-slate-700 dark:text-slate-300">
-                      <tr>
-                        <th className="py-3 px-3">หมู่บ้าน</th>
-                        <th className="py-3 px-3 text-center">ครัวเรือน</th>
-                        <th className="py-3 px-3 text-center">จำนวนถังขยะ</th>
-                        <th className="py-3 px-3 text-right">ค่าธรรมเนียม/เดือน</th>
-                        <th className="py-3 px-3">ความถี่การจัดเก็บ</th>
-                        <th className="py-3 px-3 text-center">อัตราการชำระเงิน</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                      {(publicHealthData?.wasteManagement || []).length > 0 ? (
-                        publicHealthData.wasteManagement.map((w, idx) => (
-                          <tr key={idx} className="hover:bg-slate-50/50">
-                            <td className="py-3 px-3 font-bold text-slate-900 dark:text-slate-100">{w.village}</td>
-                            <td className="py-3 px-3 text-center">{w.households} ครัวเรือน</td>
-                            <td className="py-3 px-3 text-center font-bold text-blue-600">{w.binsCount} ถัง</td>
-                            <td className="py-3 px-3 text-right font-mono font-bold text-slate-900 dark:text-slate-100">{w.monthlyTotal?.toLocaleString()} ฿</td>
-                            <td className="py-3 px-3 text-slate-500">{w.collectionFrequency}</td>
-                            <td className="py-3 px-3 text-center font-bold text-emerald-600">{w.paymentComplianceRate}%</td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan="6" className="py-8 text-center text-slate-400">
-                            ยังไม่มีข้อมูลการจัดเก็บขยะมูลฝอย (บันทึกข้อมูลเพื่อเริ่มต้นใช้งาน)
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* SubTab: Waste Management Detail */}
-          {subTab === 'waste' && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-              <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
-                ทะเบียนคุมค่าธรรมเนียมขยะมูลฝอยและจุดทิ้งขยะรวม
-              </h3>
-              <p className="text-xs text-slate-500">
-                ตามข้อบัญญัติองค์การบริหารส่วนตำบลฝางคำ เรื่อง การจัดการสิ่งปฏิกูลและมูลฝอย พ.ศ. 2562 กำหนดอัตราค่าธรรมเนียมการเก็บและขนมูลฝอย 40 บาทต่อถังต่อเดือน
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
-                  <span className="text-slate-400 block text-[11px]">ถังขยะทั้งหมด:</span>
-                  <strong className="text-lg text-slate-900 dark:text-slate-100">{publicHealthData?.summary?.wasteBinsRegistered || 0} ถัง</strong>
-                </div>
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
-                  <span className="text-slate-400 block text-[11px]">จัดเก็บได้เฉลี่ย:</span>
-                  <strong className="text-lg text-emerald-600">90.2%</strong>
-                </div>
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
-                  <span className="text-slate-400 block text-[11px]">รถขยะปฏิบัติการ:</span>
-                  <strong className="text-lg text-blue-600">1 คัน (อัดท้าย 6 ล้อ)</strong>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* SubTab: Disease Control */}
-          {subTab === 'disease' && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-              <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
-                บันทึกโครงการควบคุมและป้องกันโรคติดต่อในพื้นที่
-              </h3>
-              {(publicHealthData?.diseaseControl || []).length > 0 ? (
-                <div className="space-y-3">
-                  {publicHealthData.diseaseControl.map((d) => (
-                    <div key={d.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-2 text-xs">
-                      <div className="flex items-start justify-between">
-                        <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">{d.campaignName}</h4>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          ✓ ดำเนินการแล้วเสร็จ
-                        </span>
-                      </div>
-                      <div className="text-slate-500">กลุ่มเป้าหมาย: <strong>{d.target}</strong> ({d.achievedCount} / {d.targetCount})</div>
-                      <div className="text-slate-500">ช่วงเวลาดำเนินการ: <strong>{d.campaignPeriod}</strong></div>
-                      {d.vaccineBatch && <div className="text-blue-600 font-mono">Lot วัคซีน: {d.vaccineBatch}</div>}
-                      {d.chemicalType && <div className="text-amber-600 font-medium">สารเคมี: {d.chemicalType}</div>}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="py-8 text-center text-slate-400 bg-slate-50 dark:bg-slate-800/50 rounded-xl text-xs">
-                  ยังไม่มีบันทึกโครงการควบคุมและป้องกันโรคติดต่อในระบบ
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* SubTab: Food Sanitation */}
-          {subTab === 'sanitation' && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-              <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
-                บันทึกการตรวจสุขาภิบาลอาหารและตลาดนัดชุมชน
-              </h3>
-              {(publicHealthData?.foodSanitation || []).length > 0 ? (
-                <div className="space-y-3">
-                  {publicHealthData.foodSanitation.map((s) => (
-                    <div key={s.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-2 text-xs">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">{s.placeName}</h4>
-                          <div className="text-slate-500">{s.location}</div>
-                        </div>
-                        <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          ผ่านเกณฑ์ {s.passedStalls} / {s.stallsCount} แผง
-                        </span>
-                      </div>
-                      <div className="text-slate-600 pt-1 border-t border-slate-100 dark:border-slate-800">
-                        มาตรฐานที่ประเมิน: <strong>{s.sanitationStandard}</strong> • วันที่ตรวจ: {s.inspectionDate}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="py-8 text-center text-slate-400 bg-slate-50 dark:bg-slate-800/50 rounded-xl text-xs">
-                  ยังไม่มีบันทึกการตรวจสุขาภิบาลอาหารและตลาดนัดในระบบ
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* SubTab: CAPA */}
-          {subTab === 'capa' && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-              <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
-                ประเด็นข้อตรวจพบและข้อทักท้วง (CAPA) งานสาธารณสุขและสิ่งแวดล้อม
-              </h3>
-              {deptCapaFindings.length === 0 ? (
-                <div className="p-8 text-center text-slate-400 text-xs">
-                  <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-500 mb-2" />
-                  <div>ไม่พบข้อทักท้วงคงค้างของงานสาธารณสุขและสิ่งแวดล้อม การปฏิบัติงานเป็นไปตามระเบียบ</div>
                 </div>
               ) : (
                 <div className="space-y-3">
