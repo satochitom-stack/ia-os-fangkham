@@ -224,6 +224,10 @@ export function autoRepairDataLinkages() {
 
     const DEPT_PERMS_V4_KEY = 'ia_dept_perms_v4_twomenus';
     const isDeptPermsSynced = localStorage.getItem(DEPT_PERMS_V4_KEY) === 'synced';
+    const SPRINT3_SYNC_KEY = 'ia_sprint3_workspaces_v1';
+    const isSprint3Synced = localStorage.getItem(SPRINT3_SYNC_KEY) === 'synced';
+    const SPRINT4_5_SYNC_KEY = 'ia_sprint4_5_sync_v3';
+    const isSprint4_5Synced = localStorage.getItem(SPRINT4_5_SYNC_KEY) === 'synced';
 
     let usersChanged = false;
     users.forEach((u) => {
@@ -281,8 +285,7 @@ export function autoRepairDataLinkages() {
       }
 
       // 6. Synchronize default department permissions to include specialized workspaces
-      const SPRINT3_SYNC_KEY = 'ia_sprint3_workspaces_v1';
-      if (localStorage.getItem(SPRINT3_SYNC_KEY) !== 'synced') {
+      if (!isSprint3Synced) {
         if (u.role === 'admin') {
           const allIds = ALL_MENU_IDS.map((m) => m.id);
           u.permissions = Array.from(new Set([...(u.permissions || []), ...allIds]));
@@ -304,10 +307,9 @@ export function autoRepairDataLinkages() {
       }
 
       // 6.2 Synchronize Sprint 4 & 5 permissions (Executive Dashboard, Central Calendar, Education, Welfare, Public Health)
-      const SPRINT4_5_SYNC_KEY = 'ia_sprint4_5_sync_v3';
-      if (localStorage.getItem(SPRINT4_5_SYNC_KEY) !== 'synced') {
+      if (!isSprint4_5Synced) {
         const allIds = ALL_MENU_IDS.map((m) => m.id);
-        const execPerms = ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
+        const execPerms = ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
 
         if (u.role === 'admin') {
           u.permissions = Array.from(new Set([...(u.permissions || []), ...allIds]));
@@ -337,11 +339,11 @@ export function autoRepairDataLinkages() {
       }
     });
 
-    if (localStorage.getItem(SPRINT3_SYNC_KEY) !== 'synced') {
+    if (!isSprint3Synced) {
       localStorage.setItem(SPRINT3_SYNC_KEY, 'synced');
     }
-    if (localStorage.getItem('ia_sprint4_5_sync_v3') !== 'synced') {
-      localStorage.setItem('ia_sprint4_5_sync_v3', 'synced');
+    if (!isSprint4_5Synced) {
+      localStorage.setItem(SPRINT4_5_SYNC_KEY, 'synced');
     }
 
     // 7. Ensure Executive accounts exist (ผู้บริหาร & ปลัด อบต.ฝางคำ) and สำนักปลัด is distinct
