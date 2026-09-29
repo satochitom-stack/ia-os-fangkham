@@ -1062,6 +1062,11 @@ export function getUsers() {
               u.permissions.push('forms');
               changed = true;
             }
+            // Strip executive-dashboard from non-admin / non-executive accounts
+            if (u.role !== 'admin' && u.role !== 'executive' && u.permissions.includes('executive-dashboard')) {
+              u.permissions = u.permissions.filter((p) => p !== 'executive-dashboard');
+              changed = true;
+            }
           }
         });
         if (changed) {
@@ -1484,6 +1489,9 @@ export function getSession() {
     if (session.permissions && Array.isArray(session.permissions)) {
       if (session.permissions.includes('knowledge') && !session.permissions.includes('forms')) {
         session.permissions.push('forms');
+      }
+      if (session.role !== 'admin' && session.role !== 'executive') {
+        session.permissions = session.permissions.filter((p) => p !== 'executive-dashboard');
       }
     }
     return session;

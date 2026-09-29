@@ -684,16 +684,10 @@ export default function App() {
   // Helper: Default landing tab based on role and department
   const getDefaultTabForUser = (s) => {
     if (!s) return 'welcome';
-    if (s.role === 'guest') return s.permissions?.[0] || 'public-overview';
     if (s.role === 'admin') return 'dashboard';
     if (s.role === 'executive') return 'executive-dashboard';
-    if (s.department?.includes('ปลัด') || s.username === 'office') return 'dept-office';
-    if (s.department?.includes('คลัง') || s.username === 'finance') return 'dept-finance';
-    if (s.department?.includes('ช่าง') || s.username === 'engineering' || s.username === 'tech') return 'dept-tech';
-    if (s.department?.includes('การศึกษา') || s.username === 'education') return 'dept-education';
-    if (s.department?.includes('สวัสดิการ') || s.username === 'welfare') return 'dept-welfare';
-    if (s.department?.includes('สาธารณสุข') || s.username === 'health') return 'dept-office';
-    return s.permissions?.[0] || 'public-overview';
+    // ปรับหน้าแรกทุกกอง เข้าใช้งานครั้งแรก ไปที่หน้า ภาพรวม ทั้งหมด
+    return 'public-overview';
   };
 
   // Route Guard: Ensure non-admin users only access allowed menu tabs
@@ -704,7 +698,7 @@ export default function App() {
     if (session.role === 'guest') {
       const allowed = [...(session.permissions || ['public-overview']), 'welcome', 'public-overview'];
       if (!allowed.includes(currentTab)) {
-        setCurrentTab(allowed[0] || 'public-overview');
+        setCurrentTab('public-overview');
       }
       return;
     }
@@ -729,11 +723,7 @@ export default function App() {
 
     const allowed = [...(session.permissions || ['public-overview']), ...deptAllowed, 'welcome', 'public-overview'];
     if (!allowed.includes(currentTab)) {
-      if (deptAllowed.length > 0 && !session.permissions?.includes(currentTab)) {
-        setCurrentTab(deptAllowed[0]);
-      } else {
-        setCurrentTab(allowed[0] || 'public-overview');
-      }
+      setCurrentTab('public-overview');
     }
   }, [session, currentTab]);
 
@@ -1083,7 +1073,7 @@ export default function App() {
                 onSwitchSession={(newSession) => {
                   setSession(newSession);
                   if (newSession.role !== 'admin') {
-                    setCurrentTab('dashboard');
+                    setCurrentTab(getDefaultTabForUser(newSession));
                   }
                 }}
                 onRefreshUser={() => {

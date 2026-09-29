@@ -127,8 +127,8 @@ export default function Sidebar({
     if (isExecutive) return true;
     if (item.adminOnly) return false;
 
-    // Automatic access for Department Workspaces according to role/dept
-    if (item.id === 'executive-dashboard') return true;
+    // แดชบอร์ดผู้บริหาร: สงวนเฉพาะ Admin และ ผู้บริหาร (Executive) เท่านั้น กอง/ส่วนราชการอื่น ๆ จะมองไม่เห็น
+    if (item.id === 'executive-dashboard') return false;
     if (item.id === 'central-calendar') return true;
     if (item.id === 'dept-office' && (session?.department?.includes('ปลัด') || session?.department?.includes('สาธารณสุข') || session?.department?.includes('สิ่งแวดล้อม') || session?.username === 'office' || session?.username === 'health')) return true;
     if (item.id === 'dept-finance' && (session?.department?.includes('คลัง') || session?.username === 'finance')) return true;
