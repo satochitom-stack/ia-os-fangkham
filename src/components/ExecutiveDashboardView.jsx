@@ -24,53 +24,7 @@ import {
 } from 'lucide-react';
 import ConfirmModal from './ConfirmModal';
 
-const INITIAL_DIRECTIVES = [
-  {
-    id: 'DIR-2569-001',
-    code: 'ขสก.01/2569',
-    title: 'เร่งรัดติดตามการส่งใช้ใบเสร็จลูกหนี้เงินยืมโครงการอบรมฯ ให้ทันภายใน 30 วัน',
-    department: 'สำนักปลัด',
-    issuer: 'นายก อปท.',
-    issuerRole: 'นายกองค์การบริหารส่วนตำบลฝางคำ',
-    assignedDate: '2026-02-15',
-    dueDate: '2026-03-15',
-    urgency: 'urgent_high', // urgent_high (ด่วนที่สุด), urgent (ด่วนมาก), normal (ด่วน)
-    status: 'in_progress', // in_progress, reported, completed
-    detail: 'ตามระเบียบกระทรวงมหาดไทยว่าด้วยการรับเงิน การเบิกจ่ายเงินฯ พ.ศ. 2566 ข้อ 94 ให้สำนักปลัดเร่งรัดผู้ยืมเงินนำส่งใบเสร็จล้างหนี้เงินยืมทดรองราชการโดยเร็ว เพื่อป้องกันข้อทักท้วง สตง.',
-    departmentResponse: 'อยู่ระหว่างรวบรวมใบเสร็จค่าเบี้ยเลี้ยงและค่าน้ำมัน คาดว่าจะส่งคืนภายใน 10 มี.ค. 2569',
-    legalRef: 'ระเบียบ มท. รับจ่ายเงิน 2566 ข้อ 94'
-  },
-  {
-    id: 'DIR-2569-002',
-    code: 'ขสก.02/2569',
-    title: 'เตรียมการแต่งตั้งคณะกรรมการตรวจสอบพัสดุประจำปี พ.ศ. 2569 ตามหนังสือสั่งการ ว 184',
-    department: 'กองคลัง',
-    issuer: 'ปลัด อปท.',
-    issuerRole: 'ปลัดองค์การบริหารส่วนตำบลฝางคำ',
-    assignedDate: '2026-02-20',
-    dueDate: '2026-03-31',
-    urgency: 'urgent_high',
-    status: 'in_progress',
-    detail: 'ให้กองคลังจัดทำคำสั่งแต่งตั้งคณะกรรมการตรวจสอบพัสดุประจำปี และเตรียมจัดทำทะเบียนคุมพัสดุเพื่อเริ่มการสุ่มตรวจสภาพครุภัณฑ์ทุกกอง',
-    departmentResponse: 'ยกร่างคำสั่งแต่งตั้งคณะกรรมการแล้ว เสนอปลัด อปท. พิจารณาลงนาม',
-    legalRef: 'หนังสือสั่งการ มท 0808.2/ว 184'
-  },
-  {
-    id: 'DIR-2569-003',
-    code: 'ขสก.03/2569',
-    title: 'ตรวจสอบและกระทบยอดบัญชีรายชื่อผู้มีสิทธิรับเบี้ยยังชีพผู้สูงอายุและคนพิการประจำเดือน',
-    department: 'กองสวัสดิการสังคม',
-    issuer: 'ปลัด อปท.',
-    issuerRole: 'ปลัดองค์การบริหารส่วนตำบลฝางคำ',
-    assignedDate: '2026-02-01',
-    dueDate: '2026-02-25',
-    urgency: 'urgent',
-    status: 'completed',
-    detail: 'ประสานงาน รพ.สต. และสำนักทะเบียนราษฎร ตรวจสอบยอดผู้เสียชีวิตหรือย้ายถิ่นที่อยู่ เพื่อตัดยอดก่อนส่งประมวลผล e-Payment กรมบัญชีกลาง',
-    departmentResponse: 'กระทบยอดครบ 100% พบผู้เสียชีวิต 2 ราย ได้ระงับการจ่ายและบันทึกในระบบ e-Payment แล้ว',
-    legalRef: 'ระเบียบ มท. เบี้ยยังชีพ 2566'
-  }
-];
+const INITIAL_DIRECTIVES = [];
 
 export default function ExecutiveDashboardView({
   session,
@@ -85,7 +39,10 @@ export default function ExecutiveDashboardView({
       const saved = localStorage.getItem('ia_executive_directives');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const realOnes = parsed.filter((d) => !d.id?.startsWith('DIR-2569-00'));
+          return realOnes;
+        }
       }
     } catch (e) {
       console.error(e);
@@ -168,20 +125,20 @@ export default function ExecutiveDashboardView({
     }
   };
 
-  // Department statistics and scorecard
+  // Department statistics and scorecard based on real data
   const departmentsData = useMemo(() => {
     return [
       {
         id: 'สำนักปลัด',
         name: 'สำนักปลัด',
         code: 'clerk',
-        tabKey: 'dept-clerk',
+        tabKey: 'dept-office',
         head: 'หัวหน้าสำนักปลัด',
-        complianceScore: 94,
-        riskTier: 'ต่ำ',
+        complianceScore: null,
+        riskTier: 'รอการประเมิน',
         openIssues: capaFindings.filter((c) => c.department === 'สำนักปลัด' && c.status !== 'verified_closed').length,
-        budgetAllocated: 8500000,
-        budgetSpent: 5950000,
+        budgetAllocated: 0,
+        budgetSpent: 0,
         keyArea: 'การใช้รถยนต์และน้ำมัน (คย.01), งานสารบรรณ, นิติการ'
       },
       {
@@ -190,11 +147,11 @@ export default function ExecutiveDashboardView({
         code: 'finance',
         tabKey: 'dept-finance',
         head: 'ผู้อำนวยการกองคลัง',
-        complianceScore: 89,
-        riskTier: 'ปานกลาง',
+        complianceScore: null,
+        riskTier: 'รอการประเมิน',
         openIssues: capaFindings.filter((c) => c.department === 'กองคลัง' && c.status !== 'verified_closed').length,
-        budgetAllocated: 14200000,
-        budgetSpent: 10650000,
+        budgetAllocated: 0,
+        budgetSpent: 0,
         keyArea: 'สัญญาจัดซื้อจัดจ้าง (พ.ร.บ. 2560), ลูกหนี้เงินยืม, ภาษีที่ดิน'
       },
       {
@@ -203,11 +160,11 @@ export default function ExecutiveDashboardView({
         code: 'tech',
         tabKey: 'dept-tech',
         head: 'ผู้อำนวยการกองช่าง',
-        complianceScore: 86,
-        riskTier: 'สูง',
+        complianceScore: null,
+        riskTier: 'รอการประเมิน',
         openIssues: capaFindings.filter((c) => c.department === 'กองช่าง' && c.status !== 'verified_closed').length,
-        budgetAllocated: 18500000,
-        budgetSpent: 12950000,
+        budgetAllocated: 0,
+        budgetSpent: 0,
         keyArea: 'ราคากลาง Factor F, ทดสอบคอนกรีต 28 วัน, ขออนุญาตก่อสร้าง 45 วัน'
       },
       {
@@ -216,11 +173,11 @@ export default function ExecutiveDashboardView({
         code: 'education',
         tabKey: 'dept-education',
         head: 'ผู้อำนวยการกองการศึกษา',
-        complianceScore: 92,
-        riskTier: 'ปานกลาง',
+        complianceScore: null,
+        riskTier: 'รอการประเมิน',
         openIssues: capaFindings.filter((c) => c.department?.includes('การศึกษา') && c.status !== 'verified_closed').length,
-        budgetAllocated: 6800000,
-        budgetSpent: 4760000,
+        budgetAllocated: 0,
+        budgetSpent: 0,
         keyArea: 'อาหารกลางวัน ศพด. (24 บาท), นมโรงเรียน, จัดซื้อสื่อการสอน'
       },
       {
@@ -229,11 +186,11 @@ export default function ExecutiveDashboardView({
         code: 'welfare',
         tabKey: 'dept-welfare',
         head: 'ผู้อำนวยการกองสวัสดิการสังคม',
-        complianceScore: 96,
-        riskTier: 'ต่ำ',
+        complianceScore: null,
+        riskTier: 'รอการประเมิน',
         openIssues: capaFindings.filter((c) => c.department?.includes('สวัสดิการ') && c.status !== 'verified_closed').length,
-        budgetAllocated: 4200000,
-        budgetSpent: 3360000,
+        budgetAllocated: 0,
+        budgetSpent: 0,
         keyArea: 'เบี้ยยังชีพ 4 ขั้น (600-1000 บาท), คนพิการ, สงเคราะห์ผู้ประสบภัย'
       },
       {
@@ -242,20 +199,53 @@ export default function ExecutiveDashboardView({
         code: 'health',
         tabKey: 'dept-health',
         head: 'หัวหน้างานสาธารณสุข',
-        complianceScore: 91,
-        riskTier: 'ต่ำ',
+        complianceScore: null,
+        riskTier: 'รอการประเมิน',
         openIssues: capaFindings.filter((c) => (c.department?.includes('สาธารณสุข') || c.department?.includes('สิ่งแวดล้อม')) && c.status !== 'verified_closed').length,
-        budgetAllocated: 2800000,
-        budgetSpent: 1820000,
+        budgetAllocated: 0,
+        budgetSpent: 0,
         keyArea: 'ค่าธรรมเนียมขยะ 6 หมู่บ้าน, ควบคุมไข้เลือดออก, ตรวจตลาดนัด'
       }
     ];
   }, [capaFindings]);
 
-  // Overall financial sums
-  const totalBudget = departmentsData.reduce((sum, d) => sum + d.budgetAllocated, 0);
-  const totalSpent = departmentsData.reduce((sum, d) => sum + d.budgetSpent, 0);
-  const spentPercent = ((totalSpent / totalBudget) * 100).toFixed(1);
+  // Overall financial sums (based on recorded data)
+  const totalBudget = orgProfile?.annualBudget || departmentsData.reduce((sum, d) => sum + (d.budgetAllocated || 0), 0);
+  const totalSpent = orgProfile?.budgetSpent || departmentsData.reduce((sum, d) => sum + (d.budgetSpent || 0), 0);
+  const spentPercent = totalBudget > 0 ? ((totalSpent / totalBudget) * 100).toFixed(1) : '0.0';
+
+  // Real Legal Countdown telemetry from actual recorded data
+  const oagFindings = useMemo(() => {
+    return capaFindings.filter(
+      (c) => (c.source === 'oag' || c.sourceName?.includes('สตง') || c.sourceName?.includes('ตสน')) && c.status !== 'verified_closed'
+    );
+  }, [capaFindings]);
+
+  const financeLoans = useMemo(() => {
+    try {
+      const f = JSON.parse(localStorage.getItem('ia_dept_finance_data') || '{}');
+      if (Array.isArray(f.loans)) return f.loans;
+    } catch (_) {}
+    return [];
+  }, []);
+  const overdueLoans = financeLoans.filter((l) => l.status === 'overdue' || (l.status !== 'cleared' && !l.clearDate));
+
+  const techPermits = useMemo(() => {
+    try {
+      const t = JSON.parse(localStorage.getItem('ia_dept_tech_data') || '{}');
+      if (Array.isArray(t.buildingPermits)) return t.buildingPermits;
+    } catch (_) {}
+    return [];
+  }, []);
+  const pendingPermits = techPermits.filter((p) => p.status === 'reviewing' || p.status === 'pending');
+
+  const inventoryItems = useMemo(() => {
+    try {
+      const f = JSON.parse(localStorage.getItem('ia_dept_finance_data') || '{}');
+      if (Array.isArray(f.inventoryCheck)) return f.inventoryCheck;
+    } catch (_) {}
+    return [];
+  }, []);
 
   // Filtered Directives
   const filteredDirectives = directives.filter((d) => {
@@ -312,10 +302,18 @@ export default function ExecutiveDashboardView({
               <span>งบประมาณรวมทั้งสิ้น</span>
             </div>
             <div className="text-xl sm:text-2xl font-bold text-white">
-              {(totalBudget / 1000000).toFixed(2)} <span className="text-xs font-normal text-slate-400">ลบ.</span>
+              {totalBudget > 0 ? (
+                <>
+                  {(totalBudget / 1000000).toFixed(2)} <span className="text-xs font-normal text-slate-400">ลบ.</span>
+                </>
+              ) : (
+                <>
+                  0.00 <span className="text-xs font-normal text-slate-400">บาท</span>
+                </>
+              )}
             </div>
             <div className="text-[11px] text-slate-400 mt-1">
-              ปีงบประมาณ พ.ศ. 2569
+              {totalBudget > 0 ? 'ปีงบประมาณ พ.ศ. 2569' : 'รอการบันทึกงบประมาณ'}
             </div>
           </div>
 
@@ -328,7 +326,7 @@ export default function ExecutiveDashboardView({
               {spentPercent}%
             </div>
             <div className="text-[11px] text-slate-400 mt-1">
-              เบิกจ่าย {(totalSpent / 1000000).toFixed(2)} ลบ.
+              {totalSpent > 0 ? `เบิกจ่าย ${(totalSpent / 1000000).toFixed(2)} ลบ.` : 'เบิกจ่าย 0.00 บาท'}
             </div>
           </div>
 
@@ -341,7 +339,7 @@ export default function ExecutiveDashboardView({
               {capaFindings.filter((c) => c.status !== 'verified_closed').length} <span className="text-xs font-normal text-slate-400">ข้อ</span>
             </div>
             <div className="text-[11px] text-slate-400 mt-1">
-              อยู่ในกรอบ 60 วัน
+              {capaFindings.filter((c) => c.status !== 'verified_closed').length > 0 ? 'อยู่ในกรอบ 60 วัน' : 'ไม่มีข้อทักท้วงคงค้าง'}
             </div>
           </div>
 
@@ -354,7 +352,7 @@ export default function ExecutiveDashboardView({
               {directives.filter((d) => d.status === 'in_progress').length} <span className="text-xs font-normal text-slate-400">เรื่องรอดำเนินการ</span>
             </div>
             <div className="text-[11px] text-emerald-400 mt-1">
-              เสร็จสิ้น {directives.filter((d) => d.status === 'completed').length} เรื่อง
+              {directives.length > 0 ? `เสร็จสิ้น ${directives.filter((d) => d.status === 'completed').length} เรื่อง` : 'ไม่มีข้อสั่งการคงค้าง'}
             </div>
           </div>
         </div>
@@ -389,9 +387,9 @@ export default function ExecutiveDashboardView({
               ตาม พ.ร.บ. วินัยการเงินการคลัง พ.ศ. 2561 ต้องรายงานผลการแก้ไขข้อสังเกตภายใน 60 วัน
             </p>
             <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
-              <span className="text-slate-500">คงเหลือกรอบเวลา:</span>
-              <span className="font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded">
-                เหลือ 18 วัน (ครบ 18 มี.ค.)
+              <span className="text-slate-500">สถานะข้อสังเกต:</span>
+              <span className={`font-bold px-2 py-0.5 rounded ${oagFindings.length > 0 ? 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40' : 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40'}`}>
+                {oagFindings.length > 0 ? `คงค้าง ${oagFindings.length} ข้อ` : 'ไม่มีข้อทักท้วง สตง. คงค้าง'}
               </span>
             </div>
           </div>
@@ -413,8 +411,8 @@ export default function ExecutiveDashboardView({
             </p>
             <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
               <span className="text-slate-500">ลูกหนี้ค้างส่งใช้:</span>
-              <span className="font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded">
-                1 ราย (เหลือ 9 วัน)
+              <span className={`font-bold px-2 py-0.5 rounded ${overdueLoans.length > 0 ? 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40' : 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40'}`}>
+                {overdueLoans.length > 0 ? `${overdueLoans.length} ราย (รอดำเนินการ)` : 'ไม่มีลูกหนี้ค้างส่งใช้'}
               </span>
             </div>
           </div>
@@ -436,8 +434,8 @@ export default function ExecutiveDashboardView({
             </p>
             <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
               <span className="text-slate-500">คำขอรอพิจารณา:</span>
-              <span className="font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded">
-                2 คำขอ (ปกติทุกราย)
+              <span className={`font-bold px-2 py-0.5 rounded ${pendingPermits.length > 0 ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40' : 'text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800'}`}>
+                {pendingPermits.length > 0 ? `${pendingPermits.length} คำขอ` : 'ไม่มีคำขอค้างพิจารณา'}
               </span>
             </div>
           </div>
@@ -459,8 +457,8 @@ export default function ExecutiveDashboardView({
             </p>
             <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
               <span className="text-slate-500">สถานะดำเนินการ:</span>
-              <span className="font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded">
-                เตรียมแต่งตั้งกรรมการ
+              <span className={`font-bold px-2 py-0.5 rounded ${inventoryItems.length > 0 ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40' : 'text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800'}`}>
+                {inventoryItems.length > 0 ? `บันทึกแล้ว ${inventoryItems.length} รายการ` : 'รอการบันทึกข้อมูลประจำปี'}
               </span>
             </div>
           </div>
@@ -513,7 +511,11 @@ export default function ExecutiveDashboardView({
                   ? 'text-rose-600 bg-rose-50 border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/50'
                   : dept.riskTier === 'ปานกลาง'
                   ? 'text-amber-600 bg-amber-50 border-amber-200 dark:bg-amber-950/40 dark:border-amber-900/50'
-                  : 'text-emerald-600 bg-emerald-50 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-900/50';
+                  : dept.riskTier === 'ต่ำ'
+                  ? 'text-emerald-600 bg-emerald-50 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-900/50'
+                  : 'text-slate-600 bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700';
+
+              const riskLabel = dept.riskTier === 'รอการประเมิน' ? 'รอการประเมิน' : `เสี่ยง${dept.riskTier}`;
 
               return (
                 <div
@@ -532,7 +534,7 @@ export default function ExecutiveDashboardView({
                         </h4>
                       </div>
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${riskColor}`}>
-                        เสี่ยง{dept.riskTier}
+                        {riskLabel}
                       </span>
                     </div>
 
@@ -544,7 +546,9 @@ export default function ExecutiveDashboardView({
                     <div className="space-y-1">
                       <div className="flex justify-between text-xs">
                         <span className="text-slate-500">คะแนนความโปร่งใส/ระเบียบ:</span>
-                        <span className="font-bold text-slate-800 dark:text-slate-200">{dept.complianceScore}%</span>
+                        <span className="font-bold text-slate-800 dark:text-slate-200">
+                          {dept.complianceScore !== null && dept.complianceScore !== undefined ? `${dept.complianceScore}%` : 'รอการประเมิน'}
+                        </span>
                       </div>
                       <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
                         <div
@@ -553,9 +557,11 @@ export default function ExecutiveDashboardView({
                               ? 'bg-emerald-500'
                               : dept.complianceScore >= 80
                               ? 'bg-blue-500'
-                              : 'bg-amber-500'
+                              : dept.complianceScore > 0
+                              ? 'bg-amber-500'
+                              : 'bg-transparent'
                           }`}
-                          style={{ width: `${dept.complianceScore}%` }}
+                          style={{ width: `${dept.complianceScore || 0}%` }}
                         />
                       </div>
                     </div>
@@ -565,7 +571,7 @@ export default function ExecutiveDashboardView({
                       <div>
                         <div className="text-slate-400 text-[11px]">งบประมาณจัดสรร</div>
                         <div className="font-semibold text-slate-800 dark:text-slate-200">
-                          {(dept.budgetAllocated / 1000000).toFixed(2)} ลบ.
+                          {dept.budgetAllocated > 0 ? `${(dept.budgetAllocated / 1000000).toFixed(2)} ลบ.` : 'รอการบันทึก'}
                         </div>
                       </div>
                       <div>

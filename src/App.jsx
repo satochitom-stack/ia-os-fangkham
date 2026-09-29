@@ -339,13 +339,13 @@ export default function App() {
       const saved = localStorage.getItem('ia_capa_findings_by_year');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (!parsed['2569']) parsed['2569'] = initialCapaFindings;
+        if (!parsed['2569']) parsed['2569'] = [];
         return parsed;
       }
     } catch (e) {
       console.error(e);
     }
-    return { '2569': initialCapaFindings, '2570': initialCapaFindings };
+    return { '2569': [], '2570': [] };
   });
 
   const [knowledgeBase, setKnowledgeBase] = useState(() => {

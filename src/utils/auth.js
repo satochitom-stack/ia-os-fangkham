@@ -605,6 +605,122 @@ export function autoRepairDataLinkages() {
         localStorage.setItem(SESSION_KEY, JSON.stringify(currentSession));
       }
     }
+
+    // 9. Systematic purge of mock/sample data across entire system (ia_purge_dummy_data_v2026)
+    const PURGE_MOCK_KEY = 'ia_purge_dummy_data_v2026_complete';
+    if (localStorage.getItem(PURGE_MOCK_KEY) !== 'purged') {
+      try {
+        // Directives
+        const rawDir = localStorage.getItem('ia_executive_directives');
+        if (rawDir) {
+          const list = JSON.parse(rawDir);
+          if (Array.isArray(list)) {
+            const realDir = list.filter((d) => !['DIR-2569-001', 'DIR-2569-002', 'DIR-2569-003'].includes(d.code) && !['DIR-2569-001', 'DIR-2569-002', 'DIR-2569-003'].includes(d.id));
+            localStorage.setItem('ia_executive_directives', JSON.stringify(realDir));
+          }
+        }
+
+        // CAPA Findings
+        const rawCapa = localStorage.getItem('ia_capa_findings_by_year');
+        if (rawCapa) {
+          const parsed = JSON.parse(rawCapa);
+          Object.keys(parsed).forEach((yr) => {
+            if (Array.isArray(parsed[yr])) {
+              parsed[yr] = parsed[yr].filter(
+                (c) => !['CAPA-OAG-69-01', 'CAPA-FIN-69-01', 'CAPA-ENG-69-01'].includes(c.id) &&
+                       !['CAPA-OAG-69-01', 'CAPA-FIN-69-01', 'CAPA-ENG-69-01'].includes(c.code) &&
+                       !c.title?.includes('ค่าเบี้ยยังชีพคนชราและผู้ป่วยติดเตียง')
+              );
+            }
+          });
+          localStorage.setItem('ia_capa_findings_by_year', JSON.stringify(parsed));
+        }
+
+        // Internal Controls
+        const rawIc = localStorage.getItem('ia_internal_controls_by_year');
+        if (rawIc) {
+          const parsed = JSON.parse(rawIc);
+          Object.keys(parsed).forEach((yr) => {
+            if (parsed[yr]?.pk4?.some((p) => p.id === 'PK4-01' || p.department === 'สำนักปลัด')) {
+              parsed[yr] = { pk1: { status: 'ยังไม่ได้รับรอง', docNo: '', signDate: '', signer: '', position: '' }, pk4: [], pk5: [] };
+            }
+          });
+          localStorage.setItem('ia_internal_controls_by_year', JSON.stringify(parsed));
+        }
+
+        // Risk Management
+        const rawRm = localStorage.getItem('ia_risk_management_by_year');
+        if (rawRm) {
+          const parsed = JSON.parse(rawRm);
+          Object.keys(parsed).forEach((yr) => {
+            if (parsed[yr]?.bs1?.some((b) => b.id === 'BS1-01' || b.riskCode === 'RSK-01')) {
+              parsed[yr] = { bs1: [], bs2: [], bs3: [], bs4: [], bs5: { period: 'รอบ 12 เดือน', evaluator: 'คณะทำงานบริหารจัดการความเสี่ยง อปท.', evaluationDate: '', summaryNotes: '', items: [] } };
+            }
+          });
+          localStorage.setItem('ia_risk_management_by_year', JSON.stringify(parsed));
+        }
+
+        // Department Workspaces
+        const rawOffice = localStorage.getItem('ia_dept_office_data');
+        if (rawOffice && (rawOffice.includes('VEH-01') || rawOffice.includes('กค-1234'))) {
+          localStorage.setItem('ia_dept_office_data', JSON.stringify({ vehicleBookings: [], complaints: [] }));
+        }
+
+        const rawFin = localStorage.getItem('ia_dept_finance_data');
+        if (rawFin && (rawFin.includes('CN-69-01') || rawFin.includes('LN-69-01'))) {
+          localStorage.setItem('ia_dept_finance_data', JSON.stringify({ contractManagement: [], advanceLoans: [], inventoryCheck: [] }));
+        }
+
+        const rawTech = localStorage.getItem('ia_dept_tech_data');
+        if (rawTech && (rawTech.includes('BP-69-001') || rawTech.includes('PRJ-69-01'))) {
+          localStorage.setItem('ia_dept_tech_data', JSON.stringify({ buildingPermits: [], infrastructureProjects: [], waterMaintenance: [] }));
+        }
+
+        const rawEdu = localStorage.getItem('ia_dept_education_data');
+        if (rawEdu && (rawEdu.includes('LCH-69-01') || rawEdu.includes('CDC-ATT-01'))) {
+          localStorage.setItem('ia_dept_education_data', JSON.stringify({ schoolLunch: [], cdcAttendance: [], subsidies: [] }));
+        }
+
+        const rawWel = localStorage.getItem('ia_dept_welfare_data');
+        if (rawWel && (rawWel.includes('WEL-69-001') || rawWel.includes('EMG-69-01'))) {
+          localStorage.setItem('ia_dept_welfare_data', JSON.stringify({ allowanceRecipients: [], emergencyAssistance: [], medicalDevices: [] }));
+        }
+
+        const rawHealth = localStorage.getItem('ia_dept_health_data');
+        if (rawHealth && (rawHealth.includes('WR-01') || rawHealth.includes('SAN-69-01'))) {
+          localStorage.setItem('ia_dept_health_data', JSON.stringify({ wasteRoutes: [], healthSanitation: [], pesticideControls: [] }));
+        }
+
+        // Central Calendar Events
+        const rawEvents = localStorage.getItem('ia_central_calendar_events');
+        if (rawEvents && (rawEvents.includes('EVT-01') || rawEvents.includes('EVT-02'))) {
+          localStorage.setItem('ia_central_calendar_events', JSON.stringify([]));
+        }
+
+        // Annual Plans
+        const rawAp = localStorage.getItem('ia_annual_plans_by_year');
+        if (rawAp) {
+          const parsed = JSON.parse(rawAp);
+          let apChanged = false;
+          Object.keys(parsed).forEach((yr) => {
+            if (Array.isArray(parsed[yr])) {
+              const filtered = parsed[yr].filter((p) => !['AP-2569-001', 'AP-2569-002'].includes(p.id));
+              if (filtered.length !== parsed[yr].length) {
+                parsed[yr] = filtered;
+                apChanged = true;
+              }
+            }
+          });
+          if (apChanged) {
+            localStorage.setItem('ia_annual_plans_by_year', JSON.stringify(parsed));
+          }
+        }
+
+        localStorage.setItem(PURGE_MOCK_KEY, 'purged');
+      } catch (err) {
+        console.error('Error during purge of mock data:', err);
+      }
+    }
   } catch (e) {
     console.error('autoRepairDataLinkages error:', e);
   }

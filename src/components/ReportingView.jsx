@@ -53,8 +53,8 @@ export default function ReportingView({
     }
   }, [workingPapers, selectedWpId]);
 
-  // Ensure capaFindings fallback if empty
-  const findingsList = capaFindings && capaFindings.length > 0 ? capaFindings : initialCapaFindings;
+  // Use real capaFindings passed from props
+  const findingsList = capaFindings || [];
 
   // CAPA Filters State
   const [selectedSourceFilter, setSelectedSourceFilter] = useState('all');
