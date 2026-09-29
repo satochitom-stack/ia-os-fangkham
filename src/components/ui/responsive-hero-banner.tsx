@@ -96,7 +96,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <section className="w-full isolate min-h-[92vh] lg:min-h-screen overflow-hidden relative rounded-3xl sm:rounded-[2.5rem] border border-blue-200/80 shadow-[0_20px_60px_-15px_rgba(30,58,138,0.12)] bg-gradient-to-br from-white via-[#f4f8fe] to-[#eaf2fc] text-slate-800 flex flex-col justify-between">
+    <section className="w-full isolate min-h-[85vh] lg:min-h-[90vh] overflow-hidden relative rounded-3xl sm:rounded-[2.5rem] border border-blue-200/80 shadow-[0_20px_60px_-15px_rgba(30,58,138,0.12)] bg-gradient-to-br from-white via-[#f4f8fe] to-[#eaf2fc] text-slate-800 flex flex-col justify-between">
       {/* 1. Bright Architectural Building Photo Background */}
       <img
         src={backgroundImageUrl}
@@ -294,10 +294,10 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
       </header>
 
       {/* 4. Hero Center Body (Title & Welcome Badge) */}
-      <div className="z-10 relative my-auto py-4 sm:py-6 lg:py-8 px-6">
+      <div className="z-10 relative my-auto py-3 sm:py-5 lg:py-6 px-6">
         <div className="max-w-5xl mx-auto text-center">
           {/* Frosted Glass Welcome Badge */}
-          <div className="mb-5 sm:mb-6 inline-flex items-center gap-2 sm:gap-2.5 rounded-full bg-white/90 px-3.5 sm:px-4 py-1.5 border border-blue-200/80 shadow-xs backdrop-blur-md animate-fade-slide-in-1 hover:border-blue-300 transition-all">
+          <div className="mb-4 sm:mb-5 inline-flex items-center gap-2 sm:gap-2.5 rounded-full bg-white/90 px-3.5 sm:px-4 py-1.5 border border-blue-200/80 shadow-xs backdrop-blur-md animate-fade-slide-in-1 hover:border-blue-300 transition-all">
             <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-white bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 rounded-full py-0.5 px-2.5 sm:px-3 shadow-2xs font-['Plus_Jakarta_Sans',sans-serif] tracking-wider uppercase">
               <Sparkles className="w-3 h-3 text-cyan-200 animate-pulse" />
               {badgeLabel}
@@ -308,11 +308,11 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
           </div>
 
           {/* Main Title - Majestic, executive scale with perfect hierarchy */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4.25rem] font-black text-slate-900 tracking-tight leading-[1.14] animate-fade-slide-in-2 font-['Prompt',sans-serif]">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.85rem] font-black text-slate-900 tracking-tight leading-[1.14] animate-fade-slide-in-2 font-['Prompt',sans-serif]">
             <span className="block drop-shadow-xs">
               {title}
             </span>
-            <span className="inline-block whitespace-nowrap bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 bg-clip-text text-transparent drop-shadow-xs mt-2 sm:mt-3">
+            <span className="inline-block whitespace-nowrap bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 bg-clip-text text-transparent drop-shadow-xs mt-2 sm:mt-2.5">
               {titleLine2}
             </span>
           </h1>

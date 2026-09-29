@@ -300,7 +300,7 @@ export default function WelcomeView({ session, onLogin, onGuestLogin, onEnterDas
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#f4f7fb] via-[#f8fafc] to-[#edf2f7] text-slate-800 font-sans selection:bg-blue-600 selection:text-white relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-[#f4f7fb] via-[#f8fafc] to-[#edf2f7] text-slate-800 font-sans selection:bg-blue-600 selection:text-white relative overflow-x-hidden">
       {/* Soft warm ambient background orbs */}
       <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-1/3 -right-40 w-[600px] h-[600px] bg-indigo-300/10 rounded-full blur-3xl pointer-events-none" />
