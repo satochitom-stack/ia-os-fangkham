@@ -21,244 +21,355 @@ import {
   ArrowRight,
   Globe,
   Sparkles,
-  Users
+  Users,
+  Settings,
+  Edit3,
+  Plus,
+  Trash2,
+  RotateCcw,
+  Save,
+  X
 } from 'lucide-react';
 
 export default function PublicOverviewView({
   orgProfile = {},
   selectedYear = '2569',
+  session = {},
   setCurrentTab = () => {}
 }) {
   const [activeTab, setActiveTab] = useState('divisions'); // divisions, timelines, forms, ita
+  const [showAdminEditModal, setShowAdminEditModal] = useState(false);
+  const [adminModalTab, setAdminModalTab] = useState('general'); // general, divisions, timelines, forms, contact
+  const [selectedDivForEdit, setSelectedDivForEdit] = useState(0);
+
+  const isAdmin = session?.role === 'admin';
 
   const orgName = orgProfile.name || 'องค์การบริหารส่วนตำบลฝางคำ';
-  const district = orgProfile.district || 'สิรินธร';
-  const province = orgProfile.province || 'อุบลราชธานี';
+  const rawDistrict = orgProfile.district || 'สิรินธร';
+  const rawProvince = orgProfile.province || 'อุบลราชธานี';
 
-  // 5 Main Divisions Public Portfolios
-  const DIVISIONS_INFO = [
-    {
-      id: 'office',
-      name: 'สำนักปลัด (รวมงานสาธารณสุขและสิ่งแวดล้อม)',
-      leader: orgProfile.palatName ? `กำกับโดย ${orgProfile.palatName}` : 'หัวหน้าสำนักปลัด',
-      icon: Building2,
-      color: 'blue',
-      services: [
-        'งานสารบรรณ รับ-ส่งหนังสือราชการและออกหนังสือรับรอง',
-        'งานนิติการและศูนย์ดำรงธรรม รับเรื่องราวร้องทุกข์ของประชาชน',
-        'งานป้องกันและบรรเทาสาธารณภัย (อปพร., รถน้ำ, ระงับอัคคีภัย)',
-        'บริการจัดเก็บและขนถ่ายขยะมูลฝอยในเขตตำบล 6 หมู่บ้าน',
-        'การควบคุมและป้องกันโรคติดต่อในชุมชน (ไข้เลือดออก, พิษสุนัขบ้า)',
-        'งานสุขาภิบาลอาหาร ตรวจมาตรฐานร้านอาหารและตลาดนัดชุมชน'
-      ],
-      location: 'ชั้น 1 อาคารสำนักงาน อบต.ฝางคำ'
-    },
-    {
-      id: 'finance',
-      name: 'กองคลัง',
-      leader: 'ผู้อำนวยการกองคลัง',
-      icon: BadgeDollarSign,
-      color: 'emerald',
-      services: [
-        'บริการรับชำระภาษีที่ดินและสิ่งปลูกสร้าง (ยื่นภายในเดือน มิ.ย.)',
-        'บริการรับชำระภาษีป้ายและค่าธรรมเนียมใบอนุญาตต่างๆ',
-        'งานแผนที่ภาษีและทะเบียนทรัพย์สิน (LTAX 3000 / GIS)',
-        'งานพัสดุ การจัดซื้อจัดจ้างภาครัฐด้วยความโปร่งใส (e-GP)',
-        'งานการเงินและบัญชี การเบิกจ่ายเงินงบประมาณโครงการพัฒนา'
-      ],
-      location: 'ชั้น 1 อาคารสำนักงาน อบต.ฝางคำ'
-    },
-    {
-      id: 'tech',
-      name: 'กองช่าง',
-      leader: 'ผู้อำนวยการกองช่าง',
-      icon: HardHat,
-      color: 'amber',
-      services: [
-        'บริการรับคำขออนุญาตก่อสร้าง ดัดแปลง หรือรื้อถอนอาคาร (แบบ ข.1)',
-        'ตรวจพิจารณาแบบแปลนและออกใบอนุญาตอาคาร (แบบ อ.1 ภายใน 45 วัน)',
-        'งานซ่อมบำรุงโครงสร้างพื้นฐาน ถนน สะพาน และทางระบายน้ำ',
-        'บริการซ่อมแซมและบำรุงรักษาไฟฟ้าสาธารณะส่องสว่างริมทาง',
-        'งานควบคุมและดูแลระบบประปาชนบทเพื่อการอุปโภคบริโภค'
-      ],
-      location: 'ชั้น 2 อาคารสำนักงาน อบต.ฝางคำ'
-    },
-    {
-      id: 'education',
-      name: 'กองการศึกษา ศาสนาและวัฒนธรรม',
-      leader: 'ผู้อำนวยการกองการศึกษา',
-      icon: GraduationCap,
-      color: 'purple',
-      services: [
-        'บริหารจัดการศูนย์พัฒนาเด็กเล็ก 2 แห่ง (ศพด.วัดเจริญทัศน์ & ศพด.บ้านฝางเทิง)',
-        'จัดสรรงบประมาณอาหารกลางวันนักเรียนคุณภาพ (24 บาท/คน/วัน)',
-        'จัดหาและแจกจ่ายนมโรงเรียนตามมาตรฐาน (พาสเจอร์ไรส์/ยูเอชที)',
-        'ส่งเสริมสนับสนุนการจัดกิจกรรมทางศาสนาและประเพณีวัฒนธรรมท้องถิ่น',
-        'สนับสนุนการพัฒนาการเรียนรู้และสุขอนามัยเด็กปฐมวัย'
-      ],
-      location: 'ชั้น 2 อาคารสำนักงาน อบต.ฝางคำ'
-    },
-    {
-      id: 'welfare',
-      name: 'กองสวัสดิการสังคม',
-      leader: 'ผู้อำนวยการกองสวัสดิการสังคม',
-      icon: HeartHandshake,
-      color: 'rose',
-      services: [
-        'บริการรับลงทะเบียนและจ่ายเงินเบี้ยยังชีพผู้สูงอายุ (600 - 1,000 บาท/เดือน)',
-        'บริการรับคำขอลงทะเบียนเบี้ยความพิการ (800 - 1,000 บาท/เดือน)',
-        'บริการช่วยเหลือสงเคราะห์ผู้ป่วยเอดส์และผู้ยากไร้ในชุมชน',
-        'บริการเงินช่วยเหลือผู้ประสบปัญหาทางสังคมและภัยพิบัติฉุกเฉิน',
-        'ส่งเสริมและพัฒนาศักยภาพกลุ่มสตรี เยาวชน และผู้สูงอายุตำบลฝางคำ'
-      ],
-      location: 'ชั้น 1 อาคารสำนักงาน อบต.ฝางคำ'
-    }
-  ];
+  const cleanDistrict = rawDistrict.replace(/^อำเภอ/, '').trim();
+  const cleanProvince = rawProvince.replace(/^จังหวัด/, '').trim();
+  const locationDisplay = `${orgName} • อ.${cleanDistrict} จ.${cleanProvince}`;
 
-  // Public Service Timelines
-  const SERVICE_TIMELINES = [
-    {
-      title: 'การชำระภาษีที่ดินและสิ่งปลูกสร้าง',
-      period: 'มกราคม - มิถุนายน ของทุกปี',
-      authority: 'กองคลัง',
-      desc: 'ประชาชนผู้ครอบครองที่ดินและสิ่งปลูกสร้าง ยื่นแบบและชำระภาษีตามการประเมิน',
-      statusNote: 'เปิดให้บริการตามเวลาราชการ',
-      color: 'emerald'
-    },
-    {
-      title: 'การโอนเงินเบี้ยยังชีพผู้สูงอายุและคนพิการ',
-      period: 'ทุกวันที่ 10 ของเดือน',
-      authority: 'กองสวัสดิการสังคม',
-      desc: 'กรมบัญชีกลางโอนเงินเข้าบัญชีเงินฝากธนาคารของผู้มีสิทธิโดยตรง',
-      statusNote: 'ตรงตามรอบปฏิทินจ่ายเงินภาครัฐ',
-      color: 'rose'
-    },
-    {
-      title: 'การยื่นคำขออนุญาตก่อสร้างอาคาร (แบบ ข.1)',
-      period: 'พิจารณาแล้วเสร็จภายใน 45 วัน',
-      authority: 'กองช่าง',
-      desc: 'ตาม พ.ร.บ. ควบคุมอาคาร พ.ศ. 2522 ตรวจสอบแบบแปลนและแจ้งผลอนุญาต',
-      statusNote: 'ยื่นคำขอได้ทุกวันทำการ',
-      color: 'amber'
-    },
-    {
-      title: 'รอบการจัดเก็บขยะมูลฝอยชุมชน',
-      period: 'สัปดาห์ละ 2 ครั้ง (ทุกหมู่บ้าน)',
-      authority: 'สำนักปลัด (งานสาธารณสุขฯ)',
-      desc: 'รถเก็บขนมูลฝอยเข้าให้บริการตามรอบเส้นทางที่กำหนด อัตรา 40 บาท/ถัง/เดือน',
-      statusNote: 'ให้บริการสม่ำเสมอ',
-      color: 'blue'
-    },
-    {
-      title: 'รณรงค์ฉีดวัคซีนป้องกันโรคพิษสุนัขบ้าฟรี',
-      period: 'มีนาคม - พฤษภาคม ของทุกปี',
-      authority: 'สำนักปลัด (งานสาธารณสุขฯ)',
-      desc: 'บริการฉีดวัคซีนป้องกันโรคพิษสุนัขบ้าให้แก่สุนัขและแมวในชุมชนฟรี',
-      statusNote: 'จัดบริการเชิงรุกถึงหมู่บ้าน',
-      color: 'purple'
+  // Default initial public data
+  const defaultOverviewData = {
+    slogan: 'ตำบลฝางคำน่าอยู่ เชิดชูคุณธรรม นำการพัฒนา ประชาชนมีคุณภาพชีวิตที่ดี',
+    welcomeDesc: 'มุ่งมั่นให้บริการด้วยความโปร่งใส รวดเร็ว ถูกต้องตามระเบียบกฎหมาย พร้อมเปิดเผยข้อมูลสาธารณะแก่พี่น้องประชาชนทุกคน',
+    metrics: [
+      { label: 'การบริหารราชการ', value: '5 ส่วนราชการหลัก', note: 'โครงสร้าง อบต.ฝางคำ' },
+      { label: 'เขตพื้นที่ให้บริการ', value: '6 หมู่บ้านตำบลฝางคำ', note: 'ครอบคลุมทุกหลังคาเรือน' },
+      { label: 'มาตรฐานความโปร่งใส', value: 'No Gift Policy 100%', note: 'งดรับของขวัญทุกชนิด' },
+      { label: 'ช่องทางรับเรื่องร้องทุกข์', value: 'ศูนย์ดำรงธรรม อบต.', note: 'ยุติธรรม รวดเร็ว โปร่งใส' }
+    ],
+    divisions: [
+      {
+        id: 'office',
+        name: 'สำนักปลัด (รวมงานสาธารณสุขและสิ่งแวดล้อม)',
+        leader: orgProfile.palatName ? `กำกับโดย ${orgProfile.palatName}` : 'หัวหน้าสำนักปลัด',
+        iconName: 'Building2',
+        color: 'blue',
+        headerBg: 'bg-blue-50/80 dark:bg-blue-950/40 border-blue-200/80 dark:border-blue-900/60',
+        badgeBg: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
+        services: [
+          'งานสารบรรณ รับ-ส่งหนังสือราชการและออกหนังสือรับรอง',
+          'งานนิติการและศูนย์ดำรงธรรม รับเรื่องราวร้องทุกข์ของประชาชน',
+          'งานป้องกันและบรรเทาสาธารณภัย (อปพร., รถน้ำ, ระงับอัคคีภัย)',
+          'บริการจัดเก็บและขนถ่ายขยะมูลฝอยในเขตตำบล 6 หมู่บ้าน',
+          'การควบคุมและป้องกันโรคติดต่อในชุมชน (ไข้เลือดออก, พิษสุนัขบ้า)',
+          'งานสุขาภิบาลอาหาร ตรวจมาตรฐานร้านอาหารและตลาดนัดชุมชน'
+        ],
+        location: 'ชั้น 1 อาคารสำนักงาน อบต.ฝางคำ',
+        officeHours: 'จันทร์ - ศุกร์ 08.30 - 16.30 น.'
+      },
+      {
+        id: 'finance',
+        name: 'กองคลัง',
+        leader: 'ผู้อำนวยการกองคลัง',
+        iconName: 'BadgeDollarSign',
+        color: 'emerald',
+        headerBg: 'bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-200/80 dark:border-emerald-900/60',
+        badgeBg: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300',
+        services: [
+          'บริการรับชำระภาษีที่ดินและสิ่งปลูกสร้าง (ยื่นภายในเดือน มิ.ย.)',
+          'บริการรับชำระภาษีป้ายและค่าธรรมเนียมใบอนุญาตต่างๆ',
+          'งานแผนที่ภาษีและทะเบียนทรัพย์สิน (LTAX 3000 / CIS)',
+          'งานพัสดุ การจัดซื้อจัดจ้างภาครัฐด้วยความโปร่งใส (e-GP)',
+          'งานการเงินและบัญชี การเบิกจ่ายเงินงบประมาณโครงการพัฒนา'
+        ],
+        location: 'ชั้น 1 อาคารสำนักงาน อบต.ฝางคำ',
+        officeHours: 'จันทร์ - ศุกร์ 08.30 - 16.30 น.'
+      },
+      {
+        id: 'tech',
+        name: 'กองช่าง',
+        leader: 'ผู้อำนวยการกองช่าง',
+        iconName: 'HardHat',
+        color: 'amber',
+        headerBg: 'bg-amber-50/80 dark:bg-amber-950/40 border-amber-200/80 dark:border-amber-900/60',
+        badgeBg: 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300',
+        services: [
+          'บริการรับคำขออนุญาตก่อสร้าง ดัดแปลง หรือรื้อถอนอาคาร (แบบ ข.1)',
+          'ตรวจพิจารณาแบบแปลนและออกใบอนุญาตอาคาร (แบบ อ.1 ภายใน 45 วัน)',
+          'งานซ่อมบำรุงโครงสร้างพื้นฐาน ถนน สะพาน และทางระบายน้ำ',
+          'บริการซ่อมแซมและบำรุงรักษาไฟฟ้าสาธารณะส่องสว่างริมทาง',
+          'งานควบคุมและดูแลระบบประปาชนบทเพื่อการอุปโภคบริโภค'
+        ],
+        location: 'ชั้น 2 อาคารสำนักงาน อบต.ฝางคำ',
+        officeHours: 'จันทร์ - ศุกร์ 08.30 - 16.30 น.'
+      },
+      {
+        id: 'education',
+        name: 'กองการศึกษา ศาสนาและวัฒนธรรม',
+        leader: 'ผู้อำนวยการกองการศึกษา',
+        iconName: 'GraduationCap',
+        color: 'purple',
+        headerBg: 'bg-purple-50/80 dark:bg-purple-950/40 border-purple-200/80 dark:border-purple-900/60',
+        badgeBg: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300',
+        services: [
+          'บริหารจัดการศูนย์พัฒนาเด็กเล็ก 2 แห่ง (ศพด.วัดเจริญทัศน์ & ศพด.บ้านฝางเทิง)',
+          'จัดสรรงบประมาณอาหารกลางวันนักเรียนคุณภาพ (24 บาท/คน/วัน)',
+          'จัดหาและแจกจ่ายนมโรงเรียนตามมาตรฐาน (พาสเจอร์ไรส์/ยูเอชที)',
+          'ส่งเสริมสนับสนุนการจัดกิจกรรมทางศาสนาและประเพณีวัฒนธรรมท้องถิ่น',
+          'สนับสนุนการพัฒนาการเรียนรู้และสุขอนามัยเด็กปฐมวัย'
+        ],
+        location: 'ชั้น 2 อาคารสำนักงาน อบต.ฝางคำ',
+        officeHours: 'จันทร์ - ศุกร์ 08.30 - 16.30 น.'
+      },
+      {
+        id: 'welfare',
+        name: 'กองสวัสดิการสังคม',
+        leader: 'ผู้อำนวยการกองสวัสดิการสังคม',
+        iconName: 'HeartHandshake',
+        color: 'rose',
+        headerBg: 'bg-rose-50/80 dark:bg-rose-950/40 border-rose-200/80 dark:border-rose-900/60',
+        badgeBg: 'bg-rose-100 text-rose-800 dark:bg-rose-900/50 dark:text-rose-300',
+        services: [
+          'บริการรับลงทะเบียนและจ่ายเงินเบี้ยยังชีพผู้สูงอายุ (600 - 1,000 บาท/เดือน)',
+          'บริการรับคำขอลงทะเบียนเบี้ยความพิการ (800 - 1,000 บาท/เดือน)',
+          'บริการช่วยเหลือสงเคราะห์ผู้ป่วยเอดส์และผู้ยากไร้ในชุมชน',
+          'บริการเงินช่วยเหลือผู้ประสบปัญหาทางสังคมและภัยพิบัติฉุกเฉิน',
+          'ส่งเสริมและพัฒนาศักยภาพกลุ่มสตรี เยาวชน และผู้สูงอายุตำบลฝางคำ'
+        ],
+        location: 'ชั้น 1 อาคารสำนักงาน อบต.ฝางคำ',
+        officeHours: 'จันทร์ - ศุกร์ 08.30 - 16.30 น.'
+      }
+    ],
+    timelines: [
+      {
+        id: 'TIME-01',
+        title: 'การชำระภาษีที่ดินและสิ่งปลูกสร้าง',
+        period: 'มกราคม - มิถุนายน ของทุกปี',
+        authority: 'กองคลัง',
+        desc: 'ประชาชนผู้ครอบครองที่ดินและสิ่งปลูกสร้าง ยื่นแบบและชำระภาษีตามการประเมิน',
+        statusNote: 'เปิดให้บริการตามเวลาราชการ',
+        color: 'emerald'
+      },
+      {
+        id: 'TIME-02',
+        title: 'การโอนเงินเบี้ยยังชีพผู้สูงอายุและคนพิการ',
+        period: 'ทุกวันที่ 10 ของเดือน',
+        authority: 'กองสวัสดิการสังคม',
+        desc: 'กรมบัญชีกลางโอนเงินเข้าบัญชีเงินฝากธนาคารของผู้มีสิทธิโดยตรง',
+        statusNote: 'ตรงตามรอบปฏิทินจ่ายเงินภาครัฐ',
+        color: 'rose'
+      },
+      {
+        id: 'TIME-03',
+        title: 'การยื่นคำขออนุญาตก่อสร้างอาคาร (แบบ ข.1)',
+        period: 'พิจารณาแล้วเสร็จภายใน 45 วัน',
+        authority: 'กองช่าง',
+        desc: 'ตาม พ.ร.บ. ควบคุมอาคาร พ.ศ. 2522 ตรวจสอบแบบแปลนและแจ้งผลอนุญาต',
+        statusNote: 'ยื่นคำขอได้ทุกวันทำการ',
+        color: 'amber'
+      },
+      {
+        id: 'TIME-04',
+        title: 'รอบการจัดเก็บขยะมูลฝอยชุมชน',
+        period: 'สัปดาห์ละ 2 ครั้ง (ทุกหมู่บ้าน)',
+        authority: 'สำนักปลัด (งานสาธารณสุขฯ)',
+        desc: 'รถเก็บขนมูลฝอยเข้าให้บริการตามรอบเส้นทางที่กำหนด อัตรา 40 บาท/ถัง/เดือน',
+        statusNote: 'ให้บริการสม่ำเสมอ',
+        color: 'blue'
+      },
+      {
+        id: 'TIME-05',
+        title: 'รณรงค์ฉีดวัคซีนป้องกันโรคพิษสุนัขบ้าฟรี',
+        period: 'มีนาคม - พฤษภาคม ของทุกปี',
+        authority: 'สำนักปลัด (งานสาธารณสุขฯ)',
+        desc: 'บริการฉีดวัคซีนป้องกันโรคพิษสุนัขบ้าให้แก่สุนัขและแมวในชุมชนฟรี',
+        statusNote: 'จัดบริการเชิงรุกถึงหมู่บ้าน',
+        color: 'purple'
+      }
+    ],
+    forms: [
+      {
+        id: 'FORM-01',
+        code: 'แบบ บย.01',
+        title: 'คำขอลงทะเบียนรับเงินเบี้ยยังชีพผู้สูงอายุ',
+        dept: 'กองสวัสดิการสังคม',
+        docs: 'บัตรประชาชนตัวจริง, ทะเบียนบ้าน, สมุดบัญชีเงินฝากธนาคาร',
+        size: 'PDF / Word'
+      },
+      {
+        id: 'FORM-02',
+        code: 'แบบ คำขอ บพ.',
+        title: 'คำขอลงทะเบียนรับเงินเบี้ยความพิการ',
+        dept: 'กองสวัสดิการสังคม',
+        docs: 'สมุดประจำตัวคนพิการ, บัตรประชาชน, ทะเบียนบ้าน, หน้าสมุดบัญชีธนาคาร',
+        size: 'PDF / Word'
+      },
+      {
+        id: 'FORM-03',
+        code: 'แบบ ข.1',
+        title: 'คำขออนุญาตก่อสร้าง ดัดแปลง หรือรื้อถอนอาคาร',
+        dept: 'กองช่าง',
+        docs: 'สำเนาโฉนดที่ดิน/น.ส.3, แบบแปลนและผังบริเวณ 3 ชุด, บัตรประชาชนผู้ขอ',
+        size: 'PDF / Word'
+      },
+      {
+        id: 'FORM-04',
+        code: 'แบบ คำร้องทั่วไป',
+        title: 'แบบคำร้องขอรับบริการสาธารณะ / ศูนย์ดำรงธรรม',
+        dept: 'สำนักปลัด',
+        docs: 'สำเนาบัตรประชาชน และรายละเอียดข้อร้องเรียนหรือเรื่องที่ขอรับบริการ',
+        size: 'PDF / Word'
+      },
+      {
+        id: 'FORM-05',
+        code: 'แบบ คำขอถังขยะ',
+        title: 'แบบคำขอลงทะเบียนถังขยะมูลฝอยและขอรับบริการจัดเก็บ',
+        dept: 'สำนักปลัด (งานสาธารณสุขฯ)',
+        docs: 'สำเนาบัตรประชาชนเจ้าบ้าน, สำเนาทะเบียนบ้านหลังที่ขอรับบริการ',
+        size: 'PDF / Word'
+      }
+    ],
+    contactInfo: {
+      phone: '045-959-699',
+      fax: '045-959-698',
+      email: 'saraban@fangkham.go.th',
+      address: 'เลขที่ 99 หมู่ที่ 1 ตำบลฝางคำ อำเภอสิรินธร จังหวัดอุบลราชธานี 34350',
+      officeHours: 'จันทร์ - ศุกร์ เวลา 08.30 - 16.30 น. (เว้นวันหยุดราชการ)'
     }
-  ];
+  };
 
-  // Citizen Downloadable Public Forms
-  const CITIZEN_FORMS = [
-    {
-      code: 'แบบ บย.01',
-      title: 'คำขอลงทะเบียนรับเงินเบี้ยยังชีพผู้สูงอายุ',
-      dept: 'กองสวัสดิการสังคม',
-      docs: 'บัตรประชาชนตัวจริง, ทะเบียนบ้าน, สมุดบัญชีเงินฝากธนาคาร',
-      size: 'PDF / Word'
-    },
-    {
-      code: 'แบบ คำขอ บพ.',
-      title: 'คำขอลงทะเบียนรับเงินเบี้ยความพิการ',
-      dept: 'กองสวัสดิการสังคม',
-      docs: 'สมุดประจำตัวคนพิการ, บัตรประชาชน, ทะเบียนบ้าน, หน้าสมุดบัญชีธนาคาร',
-      size: 'PDF / Word'
-    },
-    {
-      code: 'แบบ ข.1',
-      title: 'คำขออนุญาตก่อสร้าง ดัดแปลง หรือรื้อถอนอาคาร',
-      dept: 'กองช่าง',
-      docs: 'สำเนาโฉนดที่ดิน/น.ส.3, แบบแปลนและผังบริเวณ 3 ชุด, บัตรประชาชนผู้ขอ',
-      size: 'PDF / Word'
-    },
-    {
-      code: 'แบบ คำร้องทั่วไป',
-      title: 'แบบคำร้องขอรับบริการสาธารณะ / ศูนย์ดำรงธรรม',
-      dept: 'สำนักปลัด',
-      docs: 'สำเนาบัตรประชาชน และรายละเอียดข้อร้องเรียนหรือเรื่องที่ขอรับบริการ',
-      size: 'PDF / Word'
-    },
-    {
-      code: 'แบบ คำขอถังขยะ',
-      title: 'แบบคำขอลงทะเบียนถังขยะมูลฝอยและขอรับบริการจัดเก็บ',
-      dept: 'สำนักปลัด (งานสาธารณสุขฯ)',
-      docs: 'สำเนาบัตรประชาชนเจ้าบ้าน, สำเนาทะเบียนบ้านหลังที่ขอรับบริการ',
-      size: 'PDF / Word'
+  // Persistent state backed by LocalStorage
+  const [data, setData] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ia_public_overview_data');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && Array.isArray(parsed.divisions) && parsed.divisions.length === 5) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.error('Error loading public overview data:', e);
     }
-  ];
+    return defaultOverviewData;
+  });
+
+  // Working copy for Admin Edit Modal
+  const [editForm, setEditForm] = useState(data);
+
+  const handleOpenAdminModal = () => {
+    setEditForm(JSON.parse(JSON.stringify(data)));
+    setAdminModalTab('general');
+    setShowAdminEditModal(true);
+  };
+
+  const handleSaveAdminData = () => {
+    setData(editForm);
+    localStorage.setItem('ia_public_overview_data', JSON.stringify(editForm));
+    setShowAdminEditModal(false);
+  };
+
+  const handleResetToDefault = () => {
+    if (window.confirm('ท่านต้องการรีเซ็ตข้อมูลภาพรวมกลับสู่ค่าเริ่มต้นของระบบใช่หรือไม่?')) {
+      setData(defaultOverviewData);
+      setEditForm(defaultOverviewData);
+      localStorage.setItem('ia_public_overview_data', JSON.stringify(defaultOverviewData));
+      setShowAdminEditModal(false);
+    }
+  };
+
+  const getIconComponent = (iconName) => {
+    switch (iconName) {
+      case 'Building2': return Building2;
+      case 'BadgeDollarSign': return BadgeDollarSign;
+      case 'HardHat': return HardHat;
+      case 'GraduationCap': return GraduationCap;
+      case 'HeartHandshake': return HeartHandshake;
+      default: return Building2;
+    }
+  };
 
   return (
     <div className="space-y-6 animate-fade-in pb-12">
-      {/* Hero Header */}
-      <div className="bg-gradient-to-br from-blue-700 via-indigo-700 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-72 h-72 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+      {/* Hero Header with Deep Official Blue/Slate Gradient */}
+      <div className="bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-slate-800/80 relative overflow-hidden">
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 space-y-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="bg-white/15 backdrop-blur-md text-blue-200 border border-white/20 text-xs px-3 py-1 rounded-full font-bold flex items-center gap-1.5">
-              <Globe className="w-3.5 h-3.5 text-blue-300" />
-              ศูนย์ข้อมูลข่าวสารและบริการประชาชน (Public Transparency Portal)
-            </span>
-            <span className="bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 text-xs px-2.5 py-1 rounded-full font-semibold">
-              เปิดเผยตามเกณฑ์ ITA & พ.ร.บ. ข้อมูลข่าวสารฯ 2540
-            </span>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="bg-white/10 backdrop-blur-md text-blue-200 border border-white/20 text-xs px-3 py-1 rounded-full font-bold flex items-center gap-1.5">
+                <Globe className="w-3.5 h-3.5 text-blue-300" />
+                ศูนย์ข้อมูลข่าวสารและบริการประชาชน (Public Transparency Portal)
+              </span>
+              <span className="bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 text-xs px-2.5 py-1 rounded-full font-semibold">
+                เปิดเผยตามเกณฑ์ ITA & พ.ร.บ. ข้อมูลข่าวสารฯ 2540
+              </span>
+            </div>
+
+            {/* Admin Management Button (Visible only to ADMIN) */}
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={handleOpenAdminModal}
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black px-3.5 py-1.5 rounded-xl shadow-md transition-all cursor-pointer flex items-center space-x-1.5 shrink-0"
+              >
+                <Settings className="w-3.5 h-3.5" />
+                <span>⚙️ จัดการ/แก้ไขข้อมูลภาพรวม (Admin)</span>
+              </button>
+            )}
           </div>
 
           <div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
               ภาพรวมการดำเนินงานและการให้บริการประชาชน
             </h1>
-            <p className="text-blue-100 text-sm sm:text-base font-medium mt-1">
-              {orgName} • อำเภอ{district} จังหวัด{province}
+            <p className="text-blue-200 text-sm sm:text-base font-semibold mt-1">
+              {locationDisplay}
             </p>
-            <p className="text-xs sm:text-sm text-blue-200/80 max-w-3xl mt-2 leading-relaxed">
-              "ตำบลฝางคำน่าอยู่ เชิดชูคุณธรรม นำการพัฒนา ประชาชนมีคุณภาพชีวิตที่ดี" มุ่งมั่นให้บริการด้วยความโปร่งใส รวดเร็ว ถูกต้องตามระเบียบกฎหมาย พร้อมเปิดเผยข้อมูลสาธารณะแก่พี่น้องประชาชนทุกคน
+            <p className="text-xs sm:text-sm text-slate-300 max-w-3xl mt-2 leading-relaxed">
+              "{data.slogan}" {data.welcomeDesc}
             </p>
           </div>
 
-          {/* Quick Metrics Bar */}
+          {/* Quick Metrics Bar with Subtle Glassmorphic Background */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-white/10 text-xs">
-            <div className="bg-white/10 rounded-2xl p-3 backdrop-blur-sm border border-white/10">
-              <span className="text-blue-200 block text-[11px]">การบริหารราชการ:</span>
-              <strong className="text-base text-white">5 ส่วนราชการหลัก</strong>
-            </div>
-            <div className="bg-white/10 rounded-2xl p-3 backdrop-blur-sm border border-white/10">
-              <span className="text-blue-200 block text-[11px]">เขตพื้นที่ให้บริการ:</span>
-              <strong className="text-base text-white">6 หมู่บ้านตำบลฝางคำ</strong>
-            </div>
-            <div className="bg-white/10 rounded-2xl p-3 backdrop-blur-sm border border-white/10">
-              <span className="text-blue-200 block text-[11px]">มาตรฐานความโปร่งใส:</span>
-              <strong className="text-base text-emerald-300">No Gift Policy 100%</strong>
-            </div>
-            <div className="bg-white/10 rounded-2xl p-3 backdrop-blur-sm border border-white/10">
-              <span className="text-blue-200 block text-[11px]">ช่องทางรับเรื่องร้องทุกข์:</span>
-              <strong className="text-base text-white">ศูนย์ดำรงธรรม อบต.</strong>
-            </div>
+            {data.metrics.map((m, idx) => (
+              <div key={idx} className="bg-white/10 dark:bg-slate-800/60 rounded-2xl p-3.5 backdrop-blur-md border border-white/15">
+                <span className="text-blue-200 block text-[11px] font-medium">{m.label}:</span>
+                <strong className="text-base text-white block mt-0.5">{m.value}</strong>
+                <span className="text-[10px] text-slate-300 block mt-0.5">{m.note}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Navigation Sub-Tabs */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+      {/* Navigation Sub-Tabs in Modern Pill Container */}
+      <div className="bg-slate-200/80 dark:bg-slate-800/80 p-1.5 rounded-2xl border border-slate-300/70 dark:border-slate-700/60 flex flex-wrap items-center gap-1.5">
         <button
           onClick={() => setActiveTab('divisions')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-2 ${
             activeTab === 'divisions'
-              ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+              ? 'bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 shadow-xs font-black'
+              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 hover:bg-white/50 dark:hover:bg-slate-700/50'
           }`}
         >
-          <Building2 className="w-4 h-4" />
+          <Building2 className="w-4 h-4 text-blue-600" />
           <span>โครงสร้าง 5 ส่วนราชการ & งานบริการ</span>
         </button>
 
@@ -266,11 +377,11 @@ export default function PublicOverviewView({
           onClick={() => setActiveTab('timelines')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-2 ${
             activeTab === 'timelines'
-              ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+              ? 'bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 shadow-xs font-black'
+              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 hover:bg-white/50 dark:hover:bg-slate-700/50'
           }`}
         >
-          <Calendar className="w-4 h-4" />
+          <Calendar className="w-4 h-4 text-emerald-600" />
           <span>ปฏิทินรอบเวลาให้บริการประชาชน</span>
         </button>
 
@@ -278,11 +389,11 @@ export default function PublicOverviewView({
           onClick={() => setActiveTab('forms')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-2 ${
             activeTab === 'forms'
-              ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+              ? 'bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 shadow-xs font-black'
+              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 hover:bg-white/50 dark:hover:bg-slate-700/50'
           }`}
         >
-          <Download className="w-4 h-4" />
+          <Download className="w-4 h-4 text-purple-600" />
           <span>แบบฟอร์มคำขอสำหรับประชาชน</span>
         </button>
 
@@ -290,11 +401,11 @@ export default function PublicOverviewView({
           onClick={() => setActiveTab('ita')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-2 ${
             activeTab === 'ita'
-              ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+              ? 'bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 shadow-xs font-black'
+              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 hover:bg-white/50 dark:hover:bg-slate-700/50'
           }`}
         >
-          <ShieldCheck className="w-4 h-4" />
+          <ShieldCheck className="w-4 h-4 text-teal-600" />
           <span>ความโปร่งใส & ศูนย์ข้อมูลข่าวสาร</span>
         </button>
       </div>
@@ -302,58 +413,62 @@ export default function PublicOverviewView({
       {/* Tab 1: 5 Divisions Public Structure */}
       {activeTab === 'divisions' && (
         <div className="space-y-4">
-          <div className="bg-blue-50/60 dark:bg-blue-950/30 p-4 rounded-2xl border border-blue-200/80 dark:border-blue-900/50 flex items-start gap-3">
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-start gap-3">
             <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
             <div className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              <strong>โครงสร้างการบริหารราชการ อบต.ฝางคำ:</strong> ปฏิบัติภารกิจตามพระราชบัญญัติสภาตำบลและองค์การบริหารส่วนตำบล พ.ศ. 2537 โดยแบ่งส่วนราชการออกเป็น 5 หน่วยงาน เพื่ออำนวยความสะดวกและให้บริการประชาชนในตำบลฝางคำอย่างทั่วถึงและเป็นธรรม
+              <strong>โครงสร้างการบริหารราชการ อบต.ฝางคำ:</strong> ปฏิบัติภารกิจตามพระราชบัญญัติสภาตำบลและองค์การบริหารส่วนตำบล พ.ศ. 2537 โดยแบ่งส่วนราชการออกเป็น 5 หน่วยงาน เพื่ออำนวยความสะดวกและให้บริการประชาชนในตำบลฝางคำอย่างทั่วถึง รวดเร็ว และเป็นธรรม
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {DIVISIONS_INFO.map((div) => {
-              const Icon = div.icon;
+            {data.divisions.map((div, idx) => {
+              const Icon = getIconComponent(div.iconName);
               return (
                 <div
-                  key={div.id}
-                  className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col justify-between hover:shadow-md transition-all group"
+                  key={div.id || idx}
+                  className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-xs hover:shadow-md transition-all flex flex-col justify-between overflow-hidden group"
                 >
-                  <div className="space-y-3">
+                  {/* Distinct Department Header Strip with soft color tint */}
+                  <div className={`p-4 border-b ${div.headerBg}`}>
                     <div className="flex items-start justify-between">
-                      <div className="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
-                        <Icon className="w-5 h-5" />
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 flex items-center justify-center font-bold shadow-xs border border-slate-200/60 dark:border-slate-700">
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100">
+                            {div.name}
+                          </h3>
+                          <div className="text-xs text-slate-500 font-medium">
+                            {div.leader}
+                          </div>
+                        </div>
                       </div>
-                      <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500">
-                        {div.location}
-                      </span>
-                    </div>
-
-                    <div>
-                      <h3 className="font-bold text-base text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                        {div.name}
-                      </h3>
-                      <div className="text-xs text-slate-500 mt-0.5">
-                        {div.leader}
-                      </div>
-                    </div>
-
-                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
-                      <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
-                        ภารกิจและงานบริการประชาชน:
-                      </div>
-                      <ul className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
-                        {div.services.map((s, idx) => (
-                          <li key={idx} className="flex items-start gap-1.5">
-                            <span className="text-emerald-500 font-bold shrink-0">✓</span>
-                            <span>{s}</span>
-                          </li>
-                        ))}
-                      </ul>
                     </div>
                   </div>
 
-                  <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
-                    <span>เปิดทำการ จันทร์-ศุกร์</span>
-                    <span>08.30 - 16.30 น.</span>
+                  {/* Card Content: Services List */}
+                  <div className="p-5 space-y-3 flex-1">
+                    <div className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                      ภารกิจและงานบริการประชาชน:
+                    </div>
+                    <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-300">
+                      {div.services.map((s, sIdx) => (
+                        <li key={sIdx} className="flex items-start gap-2">
+                          <span className="text-emerald-500 font-bold shrink-0 mt-0.5">✓</span>
+                          <span className="leading-relaxed">{s}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Card Footer: Location and Office Hours */}
+                  <div className="p-4 bg-slate-50/80 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
+                    <span className="flex items-center gap-1">
+                      <MapPin className="w-3 h-3 text-slate-400" />
+                      <span>{div.location}</span>
+                    </span>
+                    <span>{div.officeHours}</span>
                   </div>
                 </div>
               );
@@ -364,7 +479,7 @@ export default function PublicOverviewView({
 
       {/* Tab 2: Service Timelines & Deadlines */}
       {activeTab === 'timelines' && (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">
@@ -380,24 +495,24 @@ export default function PublicOverviewView({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-            {SERVICE_TIMELINES.map((t, idx) => (
+            {data.timelines.map((t, idx) => (
               <div
-                key={idx}
-                className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2 text-xs"
+                key={t.id || idx}
+                className="p-5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 space-y-2 text-xs hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
               >
                 <div className="flex items-start justify-between">
                   <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100">
                     {t.title}
                   </h3>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100/70 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
                     {t.authority}
                   </span>
                 </div>
-                <div className="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1.5">
+                <div className="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1.5 text-xs">
                   <Clock className="w-3.5 h-3.5" />
                   <span>{t.period}</span>
                 </div>
-                <p className="text-slate-600 dark:text-slate-300">
+                <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
                   {t.desc}
                 </p>
                 <div className="pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-[11px] text-slate-400">
@@ -412,7 +527,7 @@ export default function PublicOverviewView({
 
       {/* Tab 3: Citizen Downloadable Forms */}
       {activeTab === 'forms' && (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">
@@ -428,14 +543,14 @@ export default function PublicOverviewView({
           </div>
 
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
-            {CITIZEN_FORMS.map((form, idx) => (
+            {data.forms.map((form, idx) => (
               <div
-                key={idx}
-                className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/50 dark:hover:bg-slate-800/40 rounded-xl px-2 transition-colors"
+                key={form.id || idx}
+                className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/80 dark:hover:bg-slate-800/40 rounded-xl px-3 transition-colors"
               >
                 <div className="space-y-1">
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs font-mono font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded">
+                    <span className="text-xs font-mono font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded border border-blue-200/60 dark:border-blue-900/60">
                       {form.code}
                     </span>
                     <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100">
@@ -453,7 +568,7 @@ export default function PublicOverviewView({
                 <div className="flex items-center space-x-2 shrink-0 self-start sm:self-auto">
                   <button
                     onClick={() => alert(`ท่านสามารถขอรับแบบฟอร์ม "${form.title}" ได้ที่สำนักงาน ${orgName} หรือดาวน์โหลดผ่านระบบงานเอกสาร`)}
-                    className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 border border-slate-200/60 dark:border-slate-700"
                   >
                     <Download className="w-3.5 h-3.5 text-blue-600" />
                     <span>ตัวอย่างแบบคำขอ</span>
@@ -469,7 +584,7 @@ export default function PublicOverviewView({
       {activeTab === 'ita' && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2 space-y-4">
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-6 h-6 text-emerald-600" />
                 <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">
@@ -477,90 +592,691 @@ export default function PublicOverviewView({
                 </h2>
               </div>
               <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                องค์การบริหารส่วนตำบลฝางคำ ยึดมั่นในการบริหารงานตามหลักธรรมาภิบาล มุ่งเน้นความโปร่งใส ปราศจากการทุจริตคอร์รัปชัน โดยประกาศนโยบาย <strong>"งดรับ งดให้ ของขวัญและของกำนัลทุกชนิดจากการปฏิบัติหน้าที่ (No Gift Policy)"</strong> เพื่อปลูกฝังค่านิยมความซื่อสัตย์สุจริต และสร้างความเชื่อมั่นแก่ประชาชนผู้รับบริการ
+                {orgName} ยึดมั่นในการบริหารงานตามหลักธรรมาภิบาล มุ่งเน้นความโปร่งใส ปราศจากการทุจริตคอร์รัปชัน โดยประกาศนโยบาย <strong>"งดรับ งดให้ ของขวัญและของกำนัลทุกชนิดจากการปฏิบัติหน้าที่ (No Gift Policy)"</strong> เพื่อปลูกฝังค่านิยมความซื่อสัตย์สุจริต และสร้างความเชื่อมั่นแก่ประชาชนผู้รับบริการ
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <div className="p-4 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/80 text-xs space-y-1">
-                  <div className="font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    <span>โปร่งใส ตรวจสอบได้</span>
+                <div className="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 space-y-1">
+                  <div className="font-bold text-xs text-emerald-900 dark:text-emerald-200">
+                    ITA ประจำปี 2568: ผ่านเกณฑ์ระดับ AA
                   </div>
-                  <p className="text-slate-600 dark:text-slate-300">
-                    เปิดเผยข้อมูลข่าวสารภาครัฐ กระบวนการจัดซื้อจัดจ้าง และแผนงานพัฒนาสู่สาธารณะ
+                  <p className="text-[11px] text-emerald-800 dark:text-emerald-300">
+                    การประเมินคุณธรรมและความโปร่งใสในการดำเนินงานของหน่วยงานภาครัฐ (ITA) ประจำปี
                   </p>
                 </div>
-
-                <div className="p-4 rounded-2xl bg-blue-50/60 dark:bg-blue-950/20 border border-blue-200/80 text-xs space-y-1">
-                  <div className="font-bold text-blue-800 dark:text-blue-300 flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-blue-600" />
-                    <span>เสมอภาค ไม่เลือกปฏิบัติ</span>
+                <div className="p-4 rounded-2xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/60 space-y-1">
+                  <div className="font-bold text-xs text-blue-900 dark:text-blue-200">
+                    ศูนย์ข้อมูลข่าวสารของราชการ
                   </div>
-                  <p className="text-slate-600 dark:text-slate-300">
-                    ให้บริการประชาชนทุกกลุ่มวัยอย่างเท่าเทียม รวดเร็ว ตามมาตรฐานการให้บริการภาครัฐ
+                  <p className="text-[11px] text-blue-800 dark:text-blue-300">
+                    เปิดเผยข้อมูลตามมาตรา 9 แห่ง พ.ร.บ. ข้อมูลข่าวสารของราชการ พ.ศ. 2540
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Public Complaint Channel */}
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-3">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-3">
               <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-rose-500" />
-                <span>ช่องทางร้องเรียนการทุจริตและรับเรื่องราวร้องทุกข์ (ศูนย์ดำรงธรรม อบต.)</span>
+                <HelpCircle className="w-4 h-4 text-blue-600" />
+                <span>ช่องทางการร้องเรียนและการแจ้งเบาะแสการทุจริต</span>
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                หากพบเห็นการปฏิบัติหน้าที่โดยมิชอบ หรือมีปัญหาความเดือดร้อนในพื้นที่ สามารถแจ้งเรื่องผ่านศูนย์ดำรงธรรม อบต.ฝางคำ ได้โดยตรง โดยข้อมูลของผู้ร้องเรียนจะถูกเก็บรักษาเป็นความลับตามกฎหมาย
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                ประชาชนสามารถแจ้งเรื่องร้องเรียน ร้องทุกข์ หรือแจ้งเบาะแสการทุจริตประพฤติมิชอบของเจ้าหน้าที่ ได้ผ่านช่องทางศูนย์ดำรงธรรม {orgName} โดยข้อมูลของผู้ร้องเรียนจะถูกเก็บรักษาเป็นความลับสูงสุดตามกฎหมาย
               </p>
-              <div className="flex flex-wrap gap-2 pt-1 text-xs">
-                <span className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">
-                  ตู้รับเรื่องร้องเรียน ณ ที่ทำการ อบต.
+              <div className="pt-2 flex flex-wrap gap-2">
+                <span className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-blue-600" />
+                  <span>สายตรงศูนย์ดำรงธรรม: {data.contactInfo.phone}</span>
                 </span>
-                <span className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">
-                  โทรศัพท์: ติดต่อสำนักปลัด อบต.
-                </span>
-                <span className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">
-                  ยื่นคำร้องด้วยตนเอง ณ ศูนย์ดำรงธรรม
+                <span className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5">
+                  <Mail className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>อีเมลร้องทุกข์: {data.contactInfo.email}</span>
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Contact Details Card */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4 h-fit">
-            <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100">
-              ข้อมูลติดต่อและสถานที่ทำการ
-            </h3>
+          {/* Right Column: Organization Contact Card */}
+          <div className="space-y-4">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4">
+              <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-rose-600" />
+                <span>สถานที่ติดต่อราชการ</span>
+              </h3>
 
-            <div className="space-y-3 text-xs text-slate-600 dark:text-slate-300">
-              <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-slate-900 dark:text-slate-100 block">{orgName}</strong>
-                  <span>ตำบลฝางคำ อำเภอ{district} จังหวัด{province}</span>
+              <div className="space-y-3 text-xs text-slate-600 dark:text-slate-300">
+                <div className="space-y-1">
+                  <span className="font-bold text-slate-800 dark:text-slate-200 block">ที่อยู่สำนักงาน:</span>
+                  <p className="leading-relaxed">{data.contactInfo.address}</p>
                 </div>
-              </div>
 
-              <div className="flex items-start gap-2.5">
-                <Clock className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-slate-900 dark:text-slate-100 block">วันและเวลาทำการ:</strong>
-                  <span>จันทร์ - ศุกร์ เวลา 08.30 - 16.30 น.</span>
-                  <span className="text-slate-400 block text-[11px]">(เว้นวันหยุดราชการและวันหยุดนักขัตฤกษ์)</span>
+                <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <span className="font-bold text-slate-800 dark:text-slate-200 block">เวลาให้บริการ:</span>
+                  <p className="leading-relaxed">{data.contactInfo.officeHours}</p>
                 </div>
-              </div>
 
-              <div className="flex items-start gap-2.5">
-                <Phone className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-slate-900 dark:text-slate-100 block">ติดต่อสอบถาม:</strong>
-                  <span>สำนักงาน {orgName}</span>
+                <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <span className="font-bold text-slate-800 dark:text-slate-200 block">เบอร์โทรศัพท์:</span>
+                  <p className="font-mono">{data.contactInfo.phone}</p>
+                </div>
+
+                <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <span className="font-bold text-slate-800 dark:text-slate-200 block">ไปรษณีย์อิเล็กทรอนิกส์ (Email):</span>
+                  <p className="font-mono text-blue-600 dark:text-blue-400">{data.contactInfo.email}</p>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
 
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400">
-              ระบบตรวจสอบและบริหารจัดการภายใน อปท. (IA-OS) • ฝางคำโปร่งใส พัฒนาอย่างยั่งยืน
+      {/* =========================================================================
+          ADMIN EDIT MODAL (เฉพาะผู้ดูแลระบบ ADMIN)
+      ========================================================================= */}
+      {showAdminEditModal && isAdmin && (
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-4xl w-full shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh] overflow-hidden">
+            {/* Modal Header */}
+            <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50 dark:bg-slate-950">
+              <div className="flex items-center space-x-2.5">
+                <Settings className="w-5 h-5 text-amber-500" />
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
+                    แก้ไขข้อมูลภาพรวมและบริการประชาชน (เฉพาะสิทธิ์ผู้ดูแลระบบ ADMIN)
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    ปรับปรุงข้อความ คำขวัญ บริการ 5 กอง ปฏิทิน และแบบฟอร์ม เพื่อบันทึกลงระบบจริง
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAdminEditModal(false)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Subtabs */}
+            <div className="px-5 pt-3 border-b border-slate-200 dark:border-slate-800 flex flex-wrap gap-2 shrink-0 bg-slate-100/50 dark:bg-slate-900/50">
+              <button
+                onClick={() => setAdminModalTab('general')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  adminModalTab === 'general'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60'
+                }`}
+              >
+                1. ข้อมูลทั่วไป & คำขวัญ
+              </button>
+              <button
+                onClick={() => setAdminModalTab('divisions')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  adminModalTab === 'divisions'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60'
+                }`}
+              >
+                2. ข้อมูล 5 ส่วนราชการ
+              </button>
+              <button
+                onClick={() => setAdminModalTab('timelines')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  adminModalTab === 'timelines'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60'
+                }`}
+              >
+                3. ปฏิทินรอบเวลาบริการ ({editForm.timelines?.length || 0})
+              </button>
+              <button
+                onClick={() => setAdminModalTab('forms')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  adminModalTab === 'forms'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60'
+                }`}
+              >
+                4. คลังแบบฟอร์มคำขอ ({editForm.forms?.length || 0})
+              </button>
+              <button
+                onClick={() => setAdminModalTab('contact')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  adminModalTab === 'contact'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60'
+                }`}
+              >
+                5. ที่อยู่ & การติดต่อ
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 overflow-y-auto space-y-4 flex-1 text-xs custom-scrollbar">
+              {/* Tab 1: General Info */}
+              {adminModalTab === 'general' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                      คำขวัญ / สโลแกน อบต.
+                    </label>
+                    <input
+                      type="text"
+                      value={editForm.slogan}
+                      onChange={(e) => setEditForm({ ...editForm, slogan: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-medium"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                      คำชี้แจง / ปรัชญาการให้บริการประชาชน
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={editForm.welcomeDesc}
+                      onChange={(e) => setEditForm({ ...editForm, welcomeDesc: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-medium leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="pt-2">
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold mb-2">
+                      ป้ายสถิติภาพรวม 4 รายการ (Quick Metrics):
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {editForm.metrics.map((m, idx) => (
+                        <div key={idx} className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2 bg-slate-50/50 dark:bg-slate-950/50">
+                          <input
+                            type="text"
+                            placeholder="ชื่อหัวข้อ"
+                            value={m.label}
+                            onChange={(e) => {
+                              const updated = [...editForm.metrics];
+                              updated[idx].label = e.target.value;
+                              setEditForm({ ...editForm, metrics: updated });
+                            }}
+                            className="w-full px-2 py-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 font-bold text-slate-800 dark:text-slate-200 text-xs"
+                          />
+                          <input
+                            type="text"
+                            placeholder="ข้อความค่าสถิติ"
+                            value={m.value}
+                            onChange={(e) => {
+                              const updated = [...editForm.metrics];
+                              updated[idx].value = e.target.value;
+                              setEditForm({ ...editForm, metrics: updated });
+                            }}
+                            className="w-full px-2 py-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 font-black text-blue-600 text-xs"
+                          />
+                          <input
+                            type="text"
+                            placeholder="คำอธิบายเพิ่มเติม"
+                            value={m.note}
+                            onChange={(e) => {
+                              const updated = [...editForm.metrics];
+                              updated[idx].note = e.target.value;
+                              setEditForm({ ...editForm, metrics: updated });
+                            }}
+                            className="w-full px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 text-[11px]"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 2: 5 Divisions Editing */}
+              {adminModalTab === 'divisions' && (
+                <div className="space-y-4">
+                  {/* Select Division Picker */}
+                  <div className="flex flex-wrap gap-1.5 p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    {editForm.divisions.map((div, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setSelectedDivForEdit(idx)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          selectedDivForEdit === idx
+                            ? 'bg-blue-600 text-white shadow-xs'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                        }`}
+                      >
+                        {div.name.split(' ')[0]}
+                      </button>
+                    ))}
+                  </div>
+
+                  {(() => {
+                    const currentDiv = editForm.divisions[selectedDivForEdit];
+                    if (!currentDiv) return null;
+                    return (
+                      <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 space-y-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                              ชื่อส่วนราชการ:
+                            </label>
+                            <input
+                              type="text"
+                              value={currentDiv.name}
+                              onChange={(e) => {
+                                const updated = [...editForm.divisions];
+                                updated[selectedDivForEdit].name = e.target.value;
+                                setEditForm({ ...editForm, divisions: updated });
+                              }}
+                              className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 font-bold"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                              ผู้กำกับดูแล / หัวหน้าหน่วยงาน:
+                            </label>
+                            <input
+                              type="text"
+                              value={currentDiv.leader}
+                              onChange={(e) => {
+                                const updated = [...editForm.divisions];
+                                updated[selectedDivForEdit].leader = e.target.value;
+                                setEditForm({ ...editForm, divisions: updated });
+                              }}
+                              className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 font-medium"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                              สถานที่ตั้งห้องทำงาน:
+                            </label>
+                            <input
+                              type="text"
+                              value={currentDiv.location}
+                              onChange={(e) => {
+                                const updated = [...editForm.divisions];
+                                updated[selectedDivForEdit].location = e.target.value;
+                                setEditForm({ ...editForm, divisions: updated });
+                              }}
+                              className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                              เวลาทำการ:
+                            </label>
+                            <input
+                              type="text"
+                              value={currentDiv.officeHours}
+                              onChange={(e) => {
+                                const updated = [...editForm.divisions];
+                                updated[selectedDivForEdit].officeHours = e.target.value;
+                                setEditForm({ ...editForm, divisions: updated });
+                              }}
+                              className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+                          <div className="flex items-center justify-between mb-2">
+                            <label className="font-bold text-slate-700 dark:text-slate-300">
+                              รายการภารกิจและงานบริการประชาชน ({currentDiv.services.length} รายการ):
+                            </label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = [...editForm.divisions];
+                                updated[selectedDivForEdit].services.push('บริการประชาชนรายการใหม่');
+                                setEditForm({ ...editForm, divisions: updated });
+                              }}
+                              className="text-blue-600 font-bold hover:underline flex items-center gap-1 cursor-pointer"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>เพิ่มรายการบริการ</span>
+                            </button>
+                          </div>
+
+                          <div className="space-y-2">
+                            {currentDiv.services.map((srv, sIdx) => (
+                              <div key={sIdx} className="flex items-center gap-2">
+                                <input
+                                  type="text"
+                                  value={srv}
+                                  onChange={(e) => {
+                                    const updated = [...editForm.divisions];
+                                    updated[selectedDivForEdit].services[sIdx] = e.target.value;
+                                    setEditForm({ ...editForm, divisions: updated });
+                                  }}
+                                  className="flex-1 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const updated = [...editForm.divisions];
+                                    updated[selectedDivForEdit].services.splice(sIdx, 1);
+                                    setEditForm({ ...editForm, divisions: updated });
+                                  }}
+                                  className="text-rose-500 hover:text-rose-700 p-1 rounded cursor-pointer"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+
+              {/* Tab 3: Timelines Editing */}
+              {adminModalTab === 'timelines' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-700 dark:text-slate-300">
+                      รายการกำหนดการและรอบปฏิทินบริการประชาชน:
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newT = {
+                          id: `TIME-${Date.now().toString().slice(-4)}`,
+                          title: 'บริการใหม่',
+                          period: 'ตามกำหนดการ',
+                          authority: 'สำนักปลัด',
+                          desc: 'รายละเอียดการให้บริการ',
+                          statusNote: 'เปิดให้บริการตามเวลาราชการ',
+                          color: 'blue'
+                        };
+                        setEditForm({ ...editForm, timelines: [...editForm.timelines, newT] });
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center gap-1 cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>เพิ่มรอบเวลาบริการ</span>
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {editForm.timelines.map((t, idx) => (
+                      <div key={idx} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <input
+                            type="text"
+                            placeholder="ชื่องานบริการ"
+                            value={t.title}
+                            onChange={(e) => {
+                              const updated = [...editForm.timelines];
+                              updated[idx].title = e.target.value;
+                              setEditForm({ ...editForm, timelines: updated });
+                            }}
+                            className="flex-1 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 font-bold text-slate-800 dark:text-slate-200"
+                          />
+                          <input
+                            type="text"
+                            placeholder="หน่วยงานที่รับผิดชอบ"
+                            value={t.authority}
+                            onChange={(e) => {
+                              const updated = [...editForm.timelines];
+                              updated[idx].authority = e.target.value;
+                              setEditForm({ ...editForm, timelines: updated });
+                            }}
+                            className="w-48 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 text-xs font-medium"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = [...editForm.timelines];
+                              updated.splice(idx, 1);
+                              setEditForm({ ...editForm, timelines: updated });
+                            }}
+                            className="text-rose-500 hover:text-rose-700 p-1 rounded cursor-pointer"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <input
+                            type="text"
+                            placeholder="รอบเวลา / กรอบวัน"
+                            value={t.period}
+                            onChange={(e) => {
+                              const updated = [...editForm.timelines];
+                              updated[idx].period = e.target.value;
+                              setEditForm({ ...editForm, timelines: updated });
+                            }}
+                            className="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-emerald-600 font-bold"
+                          />
+                          <input
+                            type="text"
+                            placeholder="คำอธิบายรายละเอียด"
+                            value={t.desc}
+                            onChange={(e) => {
+                              const updated = [...editForm.timelines];
+                              updated[idx].desc = e.target.value;
+                              setEditForm({ ...editForm, timelines: updated });
+                            }}
+                            className="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 4: Forms Editing */}
+              {adminModalTab === 'forms' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-700 dark:text-slate-300">
+                      รายการแบบฟอร์มคำขอสำหรับประชาชน:
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newF = {
+                          id: `FORM-${Date.now().toString().slice(-4)}`,
+                          code: 'แบบฟอร์มใหม่',
+                          title: 'ชื่อคำขอรับบริการ',
+                          dept: 'สำนักปลัด',
+                          docs: 'สำเนาบัตรประชาชน, ทะเบียนบ้าน',
+                          size: 'PDF / Word'
+                        };
+                        setEditForm({ ...editForm, forms: [...editForm.forms, newF] });
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center gap-1 cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>เพิ่มแบบฟอร์ม</span>
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {editForm.forms.map((f, idx) => (
+                      <div key={idx} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <input
+                            type="text"
+                            placeholder="รหัสแบบฟอร์ม (เช่น แบบ ข.1)"
+                            value={f.code}
+                            onChange={(e) => {
+                              const updated = [...editForm.forms];
+                              updated[idx].code = e.target.value;
+                              setEditForm({ ...editForm, forms: updated });
+                            }}
+                            className="w-36 px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 font-mono font-bold text-blue-600"
+                          />
+                          <input
+                            type="text"
+                            placeholder="ชื่อแบบคำขอ"
+                            value={f.title}
+                            onChange={(e) => {
+                              const updated = [...editForm.forms];
+                              updated[idx].title = e.target.value;
+                              setEditForm({ ...editForm, forms: updated });
+                            }}
+                            className="flex-1 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 font-bold text-slate-800 dark:text-slate-200"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = [...editForm.forms];
+                              updated.splice(idx, 1);
+                              setEditForm({ ...editForm, forms: updated });
+                            }}
+                            className="text-rose-500 hover:text-rose-700 p-1 rounded cursor-pointer"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <input
+                            type="text"
+                            placeholder="หน่วยงานรับผิดชอบ"
+                            value={f.dept}
+                            onChange={(e) => {
+                              const updated = [...editForm.forms];
+                              updated[idx].dept = e.target.value;
+                              setEditForm({ ...editForm, forms: updated });
+                            }}
+                            className="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600"
+                          />
+                          <input
+                            type="text"
+                            placeholder="เอกสารประกอบที่ต้องแนบ"
+                            value={f.docs}
+                            onChange={(e) => {
+                              const updated = [...editForm.forms];
+                              updated[idx].docs = e.target.value;
+                              setEditForm({ ...editForm, forms: updated });
+                            }}
+                            className="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 5: Contact Info */}
+              {adminModalTab === 'contact' && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                        เบอร์โทรศัพท์ติดต่อ:
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.contactInfo.phone}
+                        onChange={(e) => setEditForm({
+                          ...editForm,
+                          contactInfo: { ...editForm.contactInfo, phone: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                        เบอร์โทรสาร (Fax):
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.contactInfo.fax}
+                        onChange={(e) => setEditForm({
+                          ...editForm,
+                          contactInfo: { ...editForm.contactInfo, fax: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                        ไปรษณีย์อิเล็กทรอนิกส์ (Email):
+                      </label>
+                      <input
+                        type="email"
+                        value={editForm.contactInfo.email}
+                        onChange={(e) => setEditForm({
+                          ...editForm,
+                          contactInfo: { ...editForm.contactInfo, email: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono text-blue-600"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                        ที่อยู่สำนักงาน อบต.:
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.contactInfo.address}
+                        onChange={(e) => setEditForm({
+                          ...editForm,
+                          contactInfo: { ...editForm.contactInfo, address: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                        วันและเวลาให้บริการประชาชน:
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.contactInfo.officeHours}
+                        onChange={(e) => setEditForm({
+                          ...editForm,
+                          contactInfo: { ...editForm.contactInfo, officeHours: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex flex-wrap items-center justify-between gap-3 shrink-0">
+              <button
+                type="button"
+                onClick={handleResetToDefault}
+                className="px-3 py-1.5 rounded-xl border border-rose-300 text-rose-700 hover:bg-rose-50 dark:border-rose-800 dark:text-rose-400 dark:hover:bg-rose-950/40 text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>คืนค่าเริ่มต้น</span>
+              </button>
+
+              <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAdminEditModal(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all cursor-pointer"
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveAdminData}
+                  className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md transition-all cursor-pointer flex items-center space-x-1.5"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>บันทึกข้อมูลภาพรวม</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

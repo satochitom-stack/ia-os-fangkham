@@ -853,7 +853,7 @@ export default function App() {
           setActiveToolkitTab={setActiveToolkitTab}
         />
 
-        <main ref={mainContentRef} className="flex-1 overflow-y-auto min-h-0 p-4 sm:p-6 lg:p-8 bg-slate-50/70 dark:bg-slate-950 custom-scrollbar">
+        <main ref={mainContentRef} className="flex-1 overflow-y-auto min-h-0 p-4 sm:p-6 lg:p-8 bg-slate-100/80 dark:bg-slate-950 custom-scrollbar">
           <div className="max-w-7xl mx-auto">
             <ErrorBoundary key={currentTab} onReset={() => setCurrentTab('dashboard')}>
             {currentTab === 'dashboard' && (
@@ -962,6 +962,7 @@ export default function App() {
                 key={`public-overview-${selectedYear}`}
                 orgProfile={orgProfile}
                 selectedYear={selectedYear}
+                session={session}
                 setCurrentTab={setCurrentTab}
               />
             )}
