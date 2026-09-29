@@ -149,9 +149,9 @@ export default function Sidebar({
   };
 
   return (
-    <aside className="w-68 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 flex flex-col shrink-0 min-h-[calc(100vh-4rem)] border-r border-slate-200/80 dark:border-slate-800 transition-colors">
+    <aside className="w-68 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 flex flex-col shrink-0 h-full border-r border-slate-200/80 dark:border-slate-800 transition-colors overflow-hidden">
       {/* Sidebar Header */}
-      <div className="p-3.5 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+      <div className="p-3.5 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between shrink-0">
         <div>
           <div className="text-[11px] font-bold tracking-wider text-slate-400 dark:text-slate-500 uppercase">
             ระบบตรวจสอบภายใน อปท.
@@ -176,7 +176,7 @@ export default function Sidebar({
       </div>
 
       {/* Navigation Menu List */}
-      <nav className="flex-1 p-2.5 space-y-3 overflow-y-auto custom-scrollbar">
+      <nav className="flex-1 p-2.5 space-y-3 overflow-y-auto custom-scrollbar min-h-0">
         {/* Welcome / Quick Portal Button */}
         <button
           onClick={() => setCurrentTab('welcome')}
@@ -292,7 +292,7 @@ export default function Sidebar({
       </nav>
 
       {/* User Info Card in Sidebar Bottom */}
-      <div className="p-3 border-t border-slate-200/80 dark:border-slate-800/80 bg-slate-50/80 dark:bg-slate-950/60 space-y-1.5">
+      <div className="p-3 border-t border-slate-200/80 dark:border-slate-800/80 bg-slate-50/80 dark:bg-slate-950/60 space-y-1.5 shrink-0">
         <div className="flex items-center space-x-2">
           <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-600/20 text-blue-700 dark:text-blue-400 flex items-center justify-center font-bold text-xs shrink-0">
             {isAdmin ? '👑' : '🏢'}

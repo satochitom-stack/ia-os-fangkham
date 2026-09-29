@@ -691,6 +691,28 @@ export function autoRepairDataLinkages() {
           localStorage.setItem('ia_dept_health_data', JSON.stringify({ wasteRoutes: [], healthSanitation: [], pesticideControls: [] }));
         }
 
+        const rawPubHealth = localStorage.getItem('ia_dept_public_health_data');
+        if (rawPubHealth) {
+          try {
+            const parsedPub = JSON.parse(rawPubHealth);
+            if (!parsedPub || !Array.isArray(parsedPub.wasteManagement) || rawPubHealth.includes('village-1')) {
+              localStorage.setItem('ia_dept_public_health_data', JSON.stringify({
+                summary: {
+                  wasteBinsRegistered: 0,
+                  monthlyWasteFeeEstimate: 0,
+                  foggingCampaignsCompleted: 0,
+                  rabiesVaccinatedAnimals: 0
+                },
+                wasteManagement: [],
+                diseaseControl: [],
+                foodSanitation: []
+              }));
+            }
+          } catch (e) {
+            localStorage.removeItem('ia_dept_public_health_data');
+          }
+        }
+
         // Central Calendar Events
         const rawEvents = localStorage.getItem('ia_central_calendar_events');
         if (rawEvents && (rawEvents.includes('EVT-01') || rawEvents.includes('EVT-02'))) {

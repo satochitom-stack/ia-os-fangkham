@@ -824,6 +824,7 @@ export const initialEducationWorkspaceData = {
     lunchBudgetYear: 0,
     milkBudgetYear: 0
   },
+  centers: [],
   schoolLunchMilk: [],
   educationalMaterials: [],
   cdcTeachers: []
@@ -844,20 +845,21 @@ export const initialWelfareWorkspaceData = {
     { tier: 'อายุ 90 ปีขึ้นไป (1,000 บาท/เดือน)', recipientCount: 0, monthlyTotal: 0, annualEstimate: 0, deceasedDeductionThisMonth: 0, paymentMethod: '-' }
   ],
   disabilityAllowances: [],
+  emergencyRelief: [],
   hivEmergencyAids: []
 };
 
 // 6. ฐานข้อมูลเฉพาะพื้นที่ทำงาน งานสาธารณสุขและสิ่งแวดล้อม (Sprint 4)
 export const initialPublicHealthWorkspaceData = {
   summary: {
-    totalWasteHouseholds: 0,
-    totalFeeCollectedYear: 0,
-    dengueCasesYear: 0,
-    certifiedFoodSanitations: 0
+    wasteBinsRegistered: 0,
+    monthlyWasteFeeEstimate: 0,
+    foggingCampaignsCompleted: 0,
+    rabiesVaccinatedAnimals: 0
   },
-  wasteFeeCollections: [],
-  diseaseSurveillances: [],
-  marketFoodSanitations: []
+  wasteManagement: [],
+  diseaseControl: [],
+  foodSanitation: []
 };
 
 // 7. ฐานข้อมูลปฏิทินส่วนกลางและการปฏิบัติงาน อปท. (Central Hub Calendar - Sprint 5)

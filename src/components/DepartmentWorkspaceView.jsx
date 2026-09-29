@@ -134,7 +134,18 @@ export default function DepartmentWorkspaceView({
   const [educationData, setEducationData] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_dept_education_data');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          return {
+            summary: { ...initialEducationWorkspaceData.summary, ...(parsed.summary || {}) },
+            centers: Array.isArray(parsed.centers) ? parsed.centers : [],
+            schoolLunchMilk: Array.isArray(parsed.schoolLunchMilk) ? parsed.schoolLunchMilk : [],
+            educationalMaterials: Array.isArray(parsed.educationalMaterials) ? parsed.educationalMaterials : [],
+            cdcTeachers: Array.isArray(parsed.cdcTeachers) ? parsed.cdcTeachers : []
+          };
+        }
+      }
     } catch (e) {
       console.error(e);
     }
@@ -144,7 +155,18 @@ export default function DepartmentWorkspaceView({
   const [welfareData, setWelfareData] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_dept_welfare_data');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          return {
+            summary: { ...initialWelfareWorkspaceData.summary, ...(parsed.summary || {}) },
+            elderlyAllowances: Array.isArray(parsed.elderlyAllowances) ? parsed.elderlyAllowances : initialWelfareWorkspaceData.elderlyAllowances,
+            disabilityAllowances: Array.isArray(parsed.disabilityAllowances) ? parsed.disabilityAllowances : [],
+            emergencyRelief: Array.isArray(parsed.emergencyRelief) ? parsed.emergencyRelief : [],
+            hivEmergencyAids: Array.isArray(parsed.hivEmergencyAids) ? parsed.hivEmergencyAids : []
+          };
+        }
+      }
     } catch (e) {
       console.error(e);
     }
@@ -154,7 +176,29 @@ export default function DepartmentWorkspaceView({
   const [publicHealthData, setPublicHealthData] = useState(() => {
     try {
       const saved = localStorage.getItem('ia_dept_public_health_data');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          return {
+            summary: {
+              wasteBinsRegistered: 0,
+              monthlyWasteFeeEstimate: 0,
+              foggingCampaignsCompleted: 0,
+              rabiesVaccinatedAnimals: 0,
+              ...(parsed.summary || {})
+            },
+            wasteManagement: Array.isArray(parsed.wasteManagement)
+              ? parsed.wasteManagement
+              : (Array.isArray(parsed.wasteFeeCollections) ? parsed.wasteFeeCollections : []),
+            diseaseControl: Array.isArray(parsed.diseaseControl)
+              ? parsed.diseaseControl
+              : (Array.isArray(parsed.diseaseSurveillances) ? parsed.diseaseSurveillances : []),
+            foodSanitation: Array.isArray(parsed.foodSanitation)
+              ? parsed.foodSanitation
+              : (Array.isArray(parsed.marketFoodSanitations) ? parsed.marketFoodSanitations : [])
+          };
+        }
+      }
     } catch (e) {
       console.error(e);
     }
@@ -749,7 +793,7 @@ export default function DepartmentWorkspaceView({
                 }`}
               >
                 <Truck className="w-3.5 h-3.5 text-blue-500" />
-                <span>ค่าธรรมเนียมขยะ 6 หมู่บ้าน ({publicHealthData.wasteManagement.length} หมู่บ้าน)</span>
+                <span>ค่าธรรมเนียมขยะ 6 หมู่บ้าน ({publicHealthData?.wasteManagement?.length || 0} หมู่บ้าน)</span>
               </button>
               <button
                 onClick={() => setSubTab('disease')}
@@ -2374,25 +2418,25 @@ export default function DepartmentWorkspaceView({
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
                   <div className="text-xs text-slate-500 font-medium">ถังขยะลงทะเบียน (6 หมู่บ้าน)</div>
-                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{publicHealthData.summary.wasteBinsRegistered} ถัง</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{publicHealthData?.summary?.wasteBinsRegistered || 0} ถัง</div>
                   <div className="text-[11px] text-blue-600 font-bold">จัดเก็บสัปดาห์ละ 2 ครั้ง</div>
                 </div>
 
                 <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
                   <div className="text-xs text-slate-500 font-medium">ประมาณการค่าธรรมเนียมขยะ/เดือน</div>
-                  <div className="text-2xl font-black text-emerald-600">{publicHealthData.summary.monthlyWasteFeeEstimate?.toLocaleString()} ฿</div>
+                  <div className="text-2xl font-black text-emerald-600">{(publicHealthData?.summary?.monthlyWasteFeeEstimate || 0)?.toLocaleString()} ฿</div>
                   <div className="text-[11px] text-slate-500">อัตรา 40 บาท/ถัง/เดือน</div>
                 </div>
 
                 <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
                   <div className="text-xs text-slate-500 font-medium">การพ่นหมอกควันไข้เลือดออก</div>
-                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{publicHealthData.summary.foggingCampaignsCompleted} ครั้ง</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{publicHealthData?.summary?.foggingCampaignsCompleted || 0} ครั้ง</div>
                   <div className="text-[11px] text-rose-600 font-bold">ครอบคลุม ศพด. และชุมชน</div>
                 </div>
 
                 <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
                   <div className="text-xs text-slate-500 font-medium">วัคซีนป้องกันพิษสุนัขบ้า</div>
-                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{publicHealthData.summary.rabiesVaccinatedAnimals} ตัว</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">{publicHealthData?.summary?.rabiesVaccinatedAnimals || 0} ตัว</div>
                   <div className="text-[11px] text-emerald-600 font-bold">ร้อยละ 93 ของประชากรสัตว์</div>
                 </div>
               </div>
@@ -2419,16 +2463,24 @@ export default function DepartmentWorkspaceView({
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                      {publicHealthData.wasteManagement.map((w, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50/50">
-                          <td className="py-3 px-3 font-bold text-slate-900 dark:text-slate-100">{w.village}</td>
-                          <td className="py-3 px-3 text-center">{w.households} ครัวเรือน</td>
-                          <td className="py-3 px-3 text-center font-bold text-blue-600">{w.binsCount} ถัง</td>
-                          <td className="py-3 px-3 text-right font-mono font-bold text-slate-900 dark:text-slate-100">{w.monthlyTotal?.toLocaleString()} ฿</td>
-                          <td className="py-3 px-3 text-slate-500">{w.collectionFrequency}</td>
-                          <td className="py-3 px-3 text-center font-bold text-emerald-600">{w.paymentComplianceRate}%</td>
+                      {(publicHealthData?.wasteManagement || []).length > 0 ? (
+                        publicHealthData.wasteManagement.map((w, idx) => (
+                          <tr key={idx} className="hover:bg-slate-50/50">
+                            <td className="py-3 px-3 font-bold text-slate-900 dark:text-slate-100">{w.village}</td>
+                            <td className="py-3 px-3 text-center">{w.households} ครัวเรือน</td>
+                            <td className="py-3 px-3 text-center font-bold text-blue-600">{w.binsCount} ถัง</td>
+                            <td className="py-3 px-3 text-right font-mono font-bold text-slate-900 dark:text-slate-100">{w.monthlyTotal?.toLocaleString()} ฿</td>
+                            <td className="py-3 px-3 text-slate-500">{w.collectionFrequency}</td>
+                            <td className="py-3 px-3 text-center font-bold text-emerald-600">{w.paymentComplianceRate}%</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="6" className="py-8 text-center text-slate-400">
+                            ยังไม่มีข้อมูลการจัดเก็บขยะมูลฝอย (บันทึกข้อมูลเพื่อเริ่มต้นใช้งาน)
+                          </td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -2448,7 +2500,7 @@ export default function DepartmentWorkspaceView({
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
                 <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
                   <span className="text-slate-400 block text-[11px]">ถังขยะทั้งหมด:</span>
-                  <strong className="text-lg text-slate-900 dark:text-slate-100">480 ถัง</strong>
+                  <strong className="text-lg text-slate-900 dark:text-slate-100">{publicHealthData?.summary?.wasteBinsRegistered || 0} ถัง</strong>
                 </div>
                 <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
                   <span className="text-slate-400 block text-[11px]">จัดเก็บได้เฉลี่ย:</span>
@@ -2468,22 +2520,28 @@ export default function DepartmentWorkspaceView({
               <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
                 บันทึกโครงการควบคุมและป้องกันโรคติดต่อในพื้นที่
               </h3>
-              <div className="space-y-3">
-                {publicHealthData.diseaseControl.map((d) => (
-                  <div key={d.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-2 text-xs">
-                    <div className="flex items-start justify-between">
-                      <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">{d.campaignName}</h4>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        ✓ ดำเนินการแล้วเสร็จ
-                      </span>
+              {(publicHealthData?.diseaseControl || []).length > 0 ? (
+                <div className="space-y-3">
+                  {publicHealthData.diseaseControl.map((d) => (
+                    <div key={d.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-2 text-xs">
+                      <div className="flex items-start justify-between">
+                        <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">{d.campaignName}</h4>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          ✓ ดำเนินการแล้วเสร็จ
+                        </span>
+                      </div>
+                      <div className="text-slate-500">กลุ่มเป้าหมาย: <strong>{d.target}</strong> ({d.achievedCount} / {d.targetCount})</div>
+                      <div className="text-slate-500">ช่วงเวลาดำเนินการ: <strong>{d.campaignPeriod}</strong></div>
+                      {d.vaccineBatch && <div className="text-blue-600 font-mono">Lot วัคซีน: {d.vaccineBatch}</div>}
+                      {d.chemicalType && <div className="text-amber-600 font-medium">สารเคมี: {d.chemicalType}</div>}
                     </div>
-                    <div className="text-slate-500">กลุ่มเป้าหมาย: <strong>{d.target}</strong> ({d.achievedCount} / {d.targetCount})</div>
-                    <div className="text-slate-500">ช่วงเวลาดำเนินการ: <strong>{d.campaignPeriod}</strong></div>
-                    {d.vaccineBatch && <div className="text-blue-600 font-mono">Lot วัคซีน: {d.vaccineBatch}</div>}
-                    {d.chemicalType && <div className="text-amber-600 font-medium">สารเคมี: {d.chemicalType}</div>}
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center text-slate-400 bg-slate-50 dark:bg-slate-800/50 rounded-xl text-xs">
+                  ยังไม่มีบันทึกโครงการควบคุมและป้องกันโรคติดต่อในระบบ
+                </div>
+              )}
             </div>
           )}
 
@@ -2493,24 +2551,30 @@ export default function DepartmentWorkspaceView({
               <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
                 บันทึกการตรวจสุขาภิบาลอาหารและตลาดนัดชุมชน
               </h3>
-              <div className="space-y-3">
-                {publicHealthData.foodSanitation.map((s) => (
-                  <div key={s.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-2 text-xs">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">{s.placeName}</h4>
-                        <div className="text-slate-500">{s.location}</div>
+              {(publicHealthData?.foodSanitation || []).length > 0 ? (
+                <div className="space-y-3">
+                  {publicHealthData.foodSanitation.map((s) => (
+                    <div key={s.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-2 text-xs">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">{s.placeName}</h4>
+                          <div className="text-slate-500">{s.location}</div>
+                        </div>
+                        <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          ผ่านเกณฑ์ {s.passedStalls} / {s.stallsCount} แผง
+                        </span>
                       </div>
-                      <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        ผ่านเกณฑ์ {s.passedStalls} / {s.stallsCount} แผง
-                      </span>
+                      <div className="text-slate-600 pt-1 border-t border-slate-100 dark:border-slate-800">
+                        มาตรฐานที่ประเมิน: <strong>{s.sanitationStandard}</strong> • วันที่ตรวจ: {s.inspectionDate}
+                      </div>
                     </div>
-                    <div className="text-slate-600 pt-1 border-t border-slate-100 dark:border-slate-800">
-                      มาตรฐานที่ประเมิน: <strong>{s.sanitationStandard}</strong> • วันที่ตรวจ: {s.inspectionDate}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center text-slate-400 bg-slate-50 dark:bg-slate-800/50 rounded-xl text-xs">
+                  ยังไม่มีบันทึกการตรวจสุขาภิบาลอาหารและตลาดนัดในระบบ
+                </div>
+              )}
             </div>
           )}
 
