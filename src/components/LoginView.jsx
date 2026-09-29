@@ -281,21 +281,23 @@ export default function LoginView({ onLogin }) {
             {showQuickLogin && (
               <div className="grid grid-cols-2 gap-1.5 max-h-48 overflow-y-auto pr-1">
                 {(() => {
-                  const sorted = [...availableUsers].sort((a, b) => {
-                    const order = { 
-                      mayor: 1, 
-                      palat: 2, 
-                      admin: 3, 
-                      office: 4, 
-                      finance: 5, 
-                      engineering: 6, 
-                      education: 7, 
-                      health: 8,
-                      cdc_charoen: 9,
-                      cdc_fangthoeng: 10
-                    };
-                    return (order[a.username] || 99) - (order[b.username] || 99);
-                  });
+                  const sorted = [...availableUsers]
+                    .filter((u) => u.username !== 'health' && !u.department?.includes('สาธารณสุข'))
+                    .sort((a, b) => {
+                      const order = { 
+                        mayor: 1, 
+                        palat: 2, 
+                        admin: 3, 
+                        office: 4, 
+                        finance: 5, 
+                        engineering: 6, 
+                        education: 7, 
+                        welfare: 8,
+                        cdc_charoen: 9,
+                        cdc_fangthoeng: 10
+                      };
+                      return (order[a.username] || 99) - (order[b.username] || 99);
+                    });
                   return sorted.map((u) => {
                     const isSelected = Boolean(username && u.username && username.toLowerCase() === u.username.toLowerCase());
                     const isAdmin = u.role === 'admin' || u.username === 'admin';
@@ -314,6 +316,8 @@ export default function LoginView({ onLogin }) {
                     } else if (isAdmin) {
                       icon = '👑';
                       displayTitle = 'หน่วยตรวจสอบฯ';
+                    } else if (u.username === 'office') {
+                      displayTitle = 'สำนักปลัด (รวมงานสาธารณสุข)';
                     } else if (isCdc) {
                       icon = '🏫';
                     } else if (displayTitle === 'กองสาธารณสุขและสิ่งแวดล้อม') {

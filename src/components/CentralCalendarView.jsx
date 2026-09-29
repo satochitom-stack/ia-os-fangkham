@@ -225,12 +225,11 @@ export default function CentralCalendarView({
           >
             <option value="all">ทุกสำนัก/กอง</option>
             <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
-            <option value="สำนักปลัด">สำนักปลัด</option>
+            <option value="สำนักปลัด">สำนักปลัด (รวมงานสาธารณสุขฯ)</option>
             <option value="กองคลัง">กองคลัง</option>
             <option value="กองช่าง">กองช่าง</option>
             <option value="กองการศึกษา">กองการศึกษา</option>
             <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
-            <option value="งานสาธารณสุขและสิ่งแวดล้อม">งานสาธารณสุขฯ</option>
             <option value="ทุกส่วนราชการ">ทุกส่วนราชการ</option>
           </select>
 
@@ -480,12 +479,11 @@ export default function CentralCalendarView({
                     className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-bold"
                   >
                     <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
-                    <option value="สำนักปลัด">สำนักปลัด</option>
+                    <option value="สำนักปลัด">สำนักปลัด (รวมงานสาธารณสุขฯ)</option>
                     <option value="กองคลัง">กองคลัง</option>
                     <option value="กองช่าง">กองช่าง</option>
                     <option value="กองการศึกษา">กองการศึกษา</option>
                     <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
-                    <option value="งานสาธารณสุขและสิ่งแวดล้อม">งานสาธารณสุขและสิ่งแวดล้อม</option>
                     <option value="ทุกส่วนราชการ">ทุกส่วนราชการ</option>
                   </select>
                 </div>

@@ -557,8 +557,8 @@ export const OFFICIAL_ACTIVITY_CATALOG = [
     ]
   },
   {
-    department: 'กองสาธารณสุขและสิ่งแวดล้อม',
-    division: 'ฝ่ายบริหารงานสาธารณสุข',
+    department: 'สำนักปลัด',
+    division: 'งานสาธารณสุขและสิ่งแวดล้อม (สังกัดสำนักปลัด)',
     sections: [
       {
         sectionName: 'งานรักษาความสะอาดและจัดการขยะ',

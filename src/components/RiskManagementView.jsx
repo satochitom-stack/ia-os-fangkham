@@ -423,8 +423,12 @@ export default function RiskManagementView({
     };
   }, [riskManagement?.bs5, bs1List, bs2List, bs3List, bs4List, orgProfile, selectedYear]);
 
-  // Available departments (excluding internal audit as auditee)
-  const departmentsList = getDepartments().filter((d) => d !== 'หน่วยตรวจสอบภายใน');
+  // 5 Main Divisions of the Local Administration (มท 0805.2/ว 3482)
+  const departmentsList = useMemo(() => {
+    const rawDepts = getDepartments().filter((d) => d !== 'หน่วยตรวจสอบภายใน' && !d.includes('สาธารณสุข') && !d.startsWith('ศพด.'));
+    const order = { 'สำนักปลัด': 1, 'กองคลัง': 2, 'กองช่าง': 3, 'กองการศึกษา': 4, 'กองสวัสดิการสังคม': 5 };
+    return rawDepts.sort((a, b) => (order[a] || 99) - (order[b] || 99));
+  }, []);
 
   // Submissions state tracking across departments
   const submissions = riskManagement?.submissions || {};

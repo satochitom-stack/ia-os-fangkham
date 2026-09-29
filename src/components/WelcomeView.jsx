@@ -106,12 +106,11 @@ export default function WelcomeView({ session, onLogin, onGuestLogin, onEnterDas
   const childDevelopmentCenters = ['ศพด.วัดเจริญทัศน์', 'ศพด.บ้านฝางเทิง'];
 
   const KNOWN_LABELS = {
-    'สำนักปลัด': 'งานบริหารทั่วไปและนโยบาย',
+    'สำนักปลัด': 'งานบริหารทั่วไป นโยบาย และงานสาธารณสุข',
     'กองคลัง': 'งานการเงิน พัสดุ และบัญชี',
     'กองช่าง': 'งานโยธาและโครงการก่อสร้าง',
     'กองการศึกษา': 'ศูนย์พัฒนาเด็กเล็กและการศึกษา',
     'กองสวัสดิการสังคม': 'เบี้ยยังชีพและการพัฒนาชุมชน',
-    'กองสาธารณสุขและสิ่งแวดล้อม': 'งานสาธารณสุขและสิ่งแวดล้อม',
     'ศพด.วัดเจริญทัศน์': 'ศูนย์พัฒนาเด็กเล็กวัดเจริญทัศน์',
     'ศพด.บ้านฝางเทิง': 'ศูนย์พัฒนาเด็กเล็กบ้านฝางเทิง',
     'ศพด.': 'ศูนย์พัฒนาเด็กเล็กตำบลฝางคำ',
@@ -943,21 +942,23 @@ export default function WelcomeView({ session, onLogin, onGuestLogin, onEnterDas
               </span>
               <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pr-1">
                 {(() => {
-                  const sorted = [...availableUsers].sort((a, b) => {
-                    const order = { 
-                      mayor: 1, 
-                      palat: 2, 
-                      admin: 3, 
-                      office: 4, 
-                      finance: 5, 
-                      engineering: 6, 
-                      education: 7, 
-                      health: 8,
-                      cdc_charoen: 9,
-                      cdc_fangthoeng: 10
-                    };
-                    return (order[a.username] || 99) - (order[b.username] || 99);
-                  });
+                  const sorted = [...availableUsers]
+                    .filter((u) => u.username !== 'health' && !u.department?.includes('สาธารณสุข'))
+                    .sort((a, b) => {
+                      const order = { 
+                        mayor: 1, 
+                        palat: 2, 
+                        admin: 3, 
+                        office: 4, 
+                        finance: 5, 
+                        engineering: 6, 
+                        education: 7, 
+                        welfare: 8,
+                        cdc_charoen: 9,
+                        cdc_fangthoeng: 10
+                      };
+                      return (order[a.username] || 99) - (order[b.username] || 99);
+                    });
                   return sorted.map((u) => {
                     let label = u.displayName || u.username;
                     let icon = '🏢 ';
@@ -970,6 +971,8 @@ export default function WelcomeView({ session, onLogin, onGuestLogin, onEnterDas
                     } else if (u.role === 'admin' || u.username === 'admin') {
                       icon = '👑 ';
                       label = 'หน่วยตรวจสอบฯ';
+                    } else if (u.username === 'office') {
+                      label = 'สำนักปลัด (รวมงานสาธารณสุข)';
                     } else if (u.username?.startsWith('cdc_') || label.includes('ศพด.')) {
                       icon = '🏫 ';
                     } else if (label === 'กองสาธารณสุขและสิ่งแวดล้อม') {

@@ -29,12 +29,11 @@ export const HeroDemo: React.FC<HeroDemoProps> = ({
       onCtaClick={onLogin}
       session={session}
       partners={[
-        { name: "สำนักปลัด", label: "งานบริหารทั่วไปและนโยบาย", onClick: () => onSelectDepartment?.("สำนักปลัด") },
+        { name: "สำนักปลัด", label: "งานบริหารทั่วไป นโยบาย และสาธารณสุข", onClick: () => onSelectDepartment?.("สำนักปลัด") },
         { name: "กองคลัง", label: "งานการเงิน พัสดุ และบัญชี", onClick: () => onSelectDepartment?.("กองคลัง") },
         { name: "กองช่าง", label: "งานโยธาและโครงการก่อสร้าง", onClick: () => onSelectDepartment?.("กองช่าง") },
         { name: "กองการศึกษา", label: "ศูนย์พัฒนาเด็กเล็กและการศึกษา", onClick: () => onSelectDepartment?.("กองการศึกษา") },
-        { name: "กองสวัสดิการสังคม", label: "เบี้ยยังชีพและการพัฒนาชุมชน", onClick: () => onSelectDepartment?.("กองสวัสดิการสังคม") },
-        { name: "กองสาธารณสุขฯ", label: "สิ่งแวดล้อมและสุขาภิบาล", onClick: () => onSelectDepartment?.("กองสาธารณสุขและสิ่งแวดล้อม") }
+        { name: "กองสวัสดิการสังคม", label: "เบี้ยยังชีพและการพัฒนาชุมชน", onClick: () => onSelectDepartment?.("กองสวัสดิการสังคม") }
       ]}
     />
   );

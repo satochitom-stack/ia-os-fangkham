@@ -565,7 +565,6 @@ export default function PlanningView({
                   <option value="กองช่าง">กองช่าง</option>
                   <option value="กองการศึกษา">กองการศึกษา</option>
                   <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
-                  <option value="กองสาธารณสุขและสิ่งแวดล้อม">กองสาธารณสุขและสิ่งแวดล้อม</option>
                 </select>
 
                 <div className="relative">
@@ -1482,7 +1481,6 @@ export default function PlanningView({
                     <option value="กองการศึกษา">กองการศึกษา</option>
                     <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
                     <option value="สำนักปลัด">สำนักปลัด</option>
-                    <option value="กองสาธารณสุขและสิ่งแวดล้อม">กองสาธารณสุขและสิ่งแวดล้อม</option>
                   </select>
                 </div>
               </div>
@@ -1601,7 +1599,6 @@ export default function PlanningView({
                     <option value="กองการศึกษา">กองการศึกษา</option>
                     <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
                     <option value="สำนักปลัด">สำนักปลัด</option>
-                    <option value="กองสาธารณสุขและสิ่งแวดล้อม">กองสาธารณสุขและสิ่งแวดล้อม</option>
                   </select>
                 </div>
                 <div>
@@ -1687,7 +1684,6 @@ export default function PlanningView({
                     <option value="กองการศึกษา">กองการศึกษา</option>
                     <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
                     <option value="สำนักปลัด">สำนักปลัด</option>
-                    <option value="กองสาธารณสุขและสิ่งแวดล้อม">กองสาธารณสุขและสิ่งแวดล้อม</option>
                   </select>
                 </div>
                 <div>

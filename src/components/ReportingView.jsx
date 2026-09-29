@@ -994,7 +994,6 @@ export default function ReportingView({
                     <option value="กองการศึกษา">กองการศึกษา</option>
                     <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
                     <option value="สำนักปลัด">สำนักปลัด</option>
-                    <option value="กองสาธารณสุขและสิ่งแวดล้อม">กองสาธารณสุขและสิ่งแวดล้อม</option>
                   </select>
                 </div>
               </div>

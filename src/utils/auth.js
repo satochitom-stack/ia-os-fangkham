@@ -40,14 +40,11 @@ export function setLastUsername(username) {
 
 export const DEFAULT_DEPARTMENTS = [
   'หน่วยตรวจสอบภายใน',
-  'กองคลัง',
   'สำนักปลัด',
+  'กองคลัง',
   'กองช่าง',
   'กองการศึกษา',
-  'กองสวัสดิการสังคม',
-  'งานสาธารณสุขและสิ่งแวดล้อม',
-  'ศพด.วัดเจริญทัศน์',
-  'ศพด.บ้านฝางเทิง'
+  'กองสวัสดิการสังคม'
 ];
 
 const DEPARTMENTS_KEY = 'ia_departments';
@@ -58,28 +55,24 @@ export function getDepartments() {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        let changed = false;
-        const idx = parsed.indexOf('กองสาธารณสุขและสิ่งแวดล้อม');
-        if (idx !== -1) {
-          parsed[idx] = 'กองสวัสดิการสังคม';
-          changed = true;
+        // Clean out legacy/subdivision entries that are not standalone main departments
+        const obsolete = [
+          'กองสาธารณสุขและสิ่งแวดล้อม',
+          'งานสาธารณสุขและสิ่งแวดล้อม',
+          'งานสาธารณสุข',
+          'ศพด.วัดเจริญทัศน์',
+          'ศพด.บ้านฝางเทิง'
+        ];
+        let cleaned = parsed.filter((d) => !obsolete.includes(d));
+        DEFAULT_DEPARTMENTS.forEach((dept) => {
+          if (!cleaned.includes(dept)) {
+            cleaned.push(dept);
+          }
+        });
+        if (cleaned.length !== parsed.length) {
+          saveDepartments(cleaned);
         }
-        if (!parsed.includes('งานสาธารณสุขและสิ่งแวดล้อม')) {
-          parsed.push('งานสาธารณสุขและสิ่งแวดล้อม');
-          changed = true;
-        }
-        if (!parsed.includes('ศพด.วัดเจริญทัศน์')) {
-          parsed.push('ศพด.วัดเจริญทัศน์');
-          changed = true;
-        }
-        if (!parsed.includes('ศพด.บ้านฝางเทิง')) {
-          parsed.push('ศพด.บ้านฝางเทิง');
-          changed = true;
-        }
-        if (changed) {
-          saveDepartments(parsed);
-        }
-        return parsed;
+        return cleaned;
       }
     }
   } catch (e) {
@@ -310,7 +303,7 @@ export function autoRepairDataLinkages() {
       // 6.2 Synchronize Sprint 4 & 5 permissions (Executive Dashboard, Central Calendar, Education, Welfare, Public Health)
       if (!isSprint4_5Synced) {
         const allIds = ALL_MENU_IDS.map((m) => m.id);
-        const execPerms = ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
+        const execPerms = ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
 
         if (u.role === 'admin') {
           u.permissions = Array.from(new Set([...(u.permissions || []), ...allIds]));
@@ -333,9 +326,6 @@ export function autoRepairDataLinkages() {
         } else if (u.department === 'กองสวัสดิการสังคม' || u.username === 'welfare') {
           u.permissions = Array.from(new Set([...(u.permissions || []), 'dept-workspaces', 'dept-welfare', 'central-calendar']));
           usersChanged = true;
-        } else if (u.department === 'งานสาธารณสุขและสิ่งแวดล้อม' || u.username === 'health') {
-          u.permissions = Array.from(new Set([...(u.permissions || []), 'dept-workspaces', 'dept-health', 'central-calendar']));
-          usersChanged = true;
         }
       }
     });
@@ -348,7 +338,7 @@ export function autoRepairDataLinkages() {
     }
 
     // 7. Ensure Executive accounts exist (ผู้บริหาร & ปลัด อบต.ฝางคำ) and สำนักปลัด is distinct
-    const executivePerms = ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
+    const executivePerms = ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
     
     // 7.1 Ensure mayor (ผู้บริหาร) exists
     if (!users.some((u) => u.username === 'mayor')) {
@@ -462,30 +452,18 @@ export function autoRepairDataLinkages() {
       usersChanged = true;
     }
 
-    // 7.7 Ensure health user is for งานสาธารณสุขและสิ่งแวดล้อม
-    const healthUser = users.find((u) => u.username === 'health');
-    if (healthUser) {
-      if (healthUser.department !== 'งานสาธารณสุขและสิ่งแวดล้อม') {
-        healthUser.department = 'งานสาธารณสุขและสิ่งแวดล้อม';
-        healthUser.displayName = 'งานสาธารณสุขและสิ่งแวดล้อม';
-        healthUser.position = 'เจ้าหน้าที่งานสาธารณสุขและสิ่งแวดล้อม';
-        healthUser.permissions = ['dept-workspaces', 'dept-health', 'central-calendar', 'risk-management', 'forms'];
-        usersChanged = true;
-      }
-    } else {
-      users.push({
-        username: 'health',
-        displayName: 'งานสาธารณสุขและสิ่งแวดล้อม',
-        position: 'เจ้าหน้าที่งานสาธารณสุขและสิ่งแวดล้อม',
-        department: 'งานสาธารณสุขและสิ่งแวดล้อม',
-        role: 'user',
-        passwordText: '1234',
-        permissions: ['dept-workspaces', 'dept-health', 'central-calendar', 'risk-management', 'forms'],
-        canManageUsers: false,
-        createdAt: Date.now()
-      });
+    // 7.7 Merge public health into สำนักปลัด and remove standalone health account
+    const healthUserIndex = users.findIndex((u) => u.username === 'health');
+    if (healthUserIndex !== -1) {
+      users.splice(healthUserIndex, 1);
       usersChanged = true;
     }
+    users.forEach((u) => {
+      if (u.department === 'งานสาธารณสุขและสิ่งแวดล้อม' || u.department === 'กองสาธารณสุขและสิ่งแวดล้อม' || u.department === 'งานสาธารณสุข') {
+        u.department = 'สำนักปลัด';
+        usersChanged = true;
+      }
+    });
 
     // 7.8 Ensure education user exists with workspace permissions
     const eduUser = users.find((u) => u.username === 'education' || u.department === 'กองการศึกษา');
@@ -659,17 +637,6 @@ export function autoRepairDataLinkages() {
           localStorage.setItem('ia_internal_controls_by_year', JSON.stringify(parsed));
         }
 
-        // Risk Management
-        const rawRm = localStorage.getItem('ia_risk_management_by_year');
-        if (rawRm) {
-          const parsed = JSON.parse(rawRm);
-          Object.keys(parsed).forEach((yr) => {
-            if (parsed[yr]?.bs1?.some((b) => b.id === 'BS1-01' || b.riskCode === 'RSK-01')) {
-              parsed[yr] = { bs1: [], bs2: [], bs3: [], bs4: [], bs5: { period: 'รอบ 12 เดือน', evaluator: 'คณะทำงานบริหารจัดการความเสี่ยง อปท.', evaluationDate: '', summaryNotes: '', items: [] } };
-            }
-          });
-          localStorage.setItem('ia_risk_management_by_year', JSON.stringify(parsed));
-        }
 
         // Department Workspaces
         const rawOffice = localStorage.getItem('ia_dept_office_data');
@@ -951,17 +918,6 @@ export const DEFAULT_INITIAL_USERS = [
     role: 'user',
     passwordText: '1234',
     permissions: ['dept-workspaces', 'dept-welfare', 'central-calendar', 'risk-management', 'forms'],
-    canManageUsers: false,
-    createdAt: Date.now()
-  },
-  {
-    username: 'health',
-    displayName: 'งานสาธารณสุขและสิ่งแวดล้อม',
-    position: 'เจ้าหน้าที่งานสาธารณสุขและสิ่งแวดล้อม (สำนักปลัด)',
-    department: 'สำนักปลัด',
-    role: 'user',
-    passwordText: '1234',
-    permissions: ['public-overview', 'dept-workspaces', 'dept-office', 'central-calendar', 'risk-management', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -1407,13 +1363,16 @@ export function resetUsersToDefault() {
 // -------------------------------------------------------------
 
 export async function verifyLogin(username, password) {
-  if (username && username.trim().toLowerCase() === 'guest') {
+  const trimmed = username ? username.trim().toLowerCase() : '';
+  if (trimmed === 'guest') {
     const users = getUsers();
     const guestUser = users.find((u) => u.username === 'guest' || u.role === 'guest');
     if (guestUser) return guestUser;
   }
 
-  const user = getUserByUsername(username);
+  // If logging in with health, automatically map to office (สำนักปลัด)
+  const lookupUser = trimmed === 'health' ? 'office' : username;
+  const user = getUserByUsername(lookupUser);
   if (!user) return null;
 
   // Check hashed password if present

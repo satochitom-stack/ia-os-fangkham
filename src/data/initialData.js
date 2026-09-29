@@ -1160,7 +1160,7 @@ export const initialStrategicPlan = [
   },
   {
     id: 'STRAT-09',
-    department: 'กองสาธารณสุขและสิ่งแวดล้อม',
+    department: 'สำนักปลัด',
     activity: 'การบริหารจัดการขยะมูลฝอยและใบอนุญาตก่อเหตุรำคาญ',
     riskLevel: 'ปานกลาง',
     frequency: 'ทุก 3 ปี (Tri-annual)',
