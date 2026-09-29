@@ -20,7 +20,9 @@ import {
   AlertOctagon,
   Sparkles,
   BarChart3,
-  Users
+  Users,
+  Table,
+  LayoutGrid
 } from 'lucide-react';
 import ConfirmModal from './ConfirmModal';
 
@@ -51,6 +53,7 @@ export default function ExecutiveDashboardView({
   });
 
   const [activeTab, setActiveTab] = useState('overview'); // overview, directives, compliance
+  const [scorecardViewMode, setScorecardViewMode] = useState('table'); // table or cards
   const [selectedDeptFilter, setSelectedDeptFilter] = useState('all');
   const [showCreateDirectiveModal, setShowCreateDirectiveModal] = useState(false);
   const [selectedDirectiveForView, setSelectedDirectiveForView] = useState(null);
@@ -256,19 +259,19 @@ export default function ExecutiveDashboardView({
   return (
     <div className="space-y-6">
       {/* Executive Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden border border-blue-900/50">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="bg-gradient-to-br from-blue-50/90 via-indigo-50/60 to-white dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950 text-slate-900 dark:text-white rounded-3xl p-6 sm:p-8 shadow-xs relative overflow-hidden border border-blue-200/80 dark:border-blue-900/50">
+        <div className="absolute right-0 top-0 w-96 h-96 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30 text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/80 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-400/30 text-xs font-semibold">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               <span>ศูนย์บัญชาการและรายงานภาพรวมสำหรับผู้บริหาร (Executive Governance Cockpit)</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
               แดชบอร์ดผู้บริหาร {orgProfile.name || 'อบต.ฝางคำ'}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
               ติดตามสถานะความเสี่ยงองค์กร 6 สำนัก/กอง, วินัยการเงินการคลัง, กรอบเวลากฎหมายสำคัญ 
               และระบบสั่งการมอบหมายงานผู้บริหาร (Executive Directives)
             </p>
@@ -278,7 +281,7 @@ export default function ExecutiveDashboardView({
             <button
               type="button"
               onClick={() => setShowCreateDirectiveModal(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-lg shadow-blue-900/40 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-sm shadow-blue-600/30 transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>บันทึกข้อสั่งการผู้บริหาร</span>
@@ -286,72 +289,72 @@ export default function ExecutiveDashboardView({
             <button
               type="button"
               onClick={() => setCurrentTab && setCurrentTab('reporting')}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-bold border border-white/15 transition-all cursor-pointer backdrop-blur-xs"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 dark:bg-white/10 dark:hover:bg-white/20 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-white/15 transition-all cursor-pointer shadow-xs"
             >
-              <FileText className="w-4 h-4 text-blue-300" />
+              <FileText className="w-4 h-4 text-blue-600 dark:text-blue-300" />
               <span>รายงานสรุปประจำปี</span>
             </button>
           </div>
         </div>
 
-        {/* 4 Financial & Governance KPI Highlights */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-6 pt-6 border-t border-white/10">
-          <div className="bg-white/5 rounded-2xl p-4 border border-white/10 backdrop-blur-xs">
-            <div className="text-slate-400 text-xs font-medium flex items-center gap-1.5 mb-1">
-              <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
+        {/* 4 Financial & Governance KPI Highlights (ตารางสรุป 4 มิติสำคัญ) */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-6 pt-6 border-t border-blue-200/60 dark:border-white/10">
+          <div className="bg-white/95 dark:bg-white/5 rounded-2xl p-4 border border-blue-200/80 dark:border-white/10 shadow-xs">
+            <div className="text-slate-500 dark:text-slate-400 text-xs font-medium flex items-center gap-1.5 mb-1">
+              <DollarSign className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>งบประมาณรวมทั้งสิ้น</span>
             </div>
-            <div className="text-xl sm:text-2xl font-bold text-white">
+            <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
               {totalBudget > 0 ? (
                 <>
-                  {(totalBudget / 1000000).toFixed(2)} <span className="text-xs font-normal text-slate-400">ลบ.</span>
+                  {(totalBudget / 1000000).toFixed(2)} <span className="text-xs font-normal text-slate-500 dark:text-slate-400">ลบ.</span>
                 </>
               ) : (
                 <>
-                  0.00 <span className="text-xs font-normal text-slate-400">บาท</span>
+                  0.00 <span className="text-xs font-normal text-slate-500 dark:text-slate-400">บาท</span>
                 </>
               )}
             </div>
-            <div className="text-[11px] text-slate-400 mt-1">
+            <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
               {totalBudget > 0 ? 'ปีงบประมาณ พ.ศ. 2569' : 'รอการบันทึกงบประมาณ'}
             </div>
           </div>
 
-          <div className="bg-white/5 rounded-2xl p-4 border border-white/10 backdrop-blur-xs">
-            <div className="text-slate-400 text-xs font-medium flex items-center gap-1.5 mb-1">
-              <TrendingUp className="w-3.5 h-3.5 text-blue-400" />
+          <div className="bg-white/95 dark:bg-white/5 rounded-2xl p-4 border border-blue-200/80 dark:border-white/10 shadow-xs">
+            <div className="text-slate-500 dark:text-slate-400 text-xs font-medium flex items-center gap-1.5 mb-1">
+              <TrendingUp className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
               <span>การเบิกจ่ายงบประมาณ</span>
             </div>
-            <div className="text-xl sm:text-2xl font-bold text-blue-300">
+            <div className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-300">
               {spentPercent}%
             </div>
-            <div className="text-[11px] text-slate-400 mt-1">
+            <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
               {totalSpent > 0 ? `เบิกจ่าย ${(totalSpent / 1000000).toFixed(2)} ลบ.` : 'เบิกจ่าย 0.00 บาท'}
             </div>
           </div>
 
-          <div className="bg-white/5 rounded-2xl p-4 border border-white/10 backdrop-blur-xs">
-            <div className="text-slate-400 text-xs font-medium flex items-center gap-1.5 mb-1">
-              <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
+          <div className="bg-white/95 dark:bg-white/5 rounded-2xl p-4 border border-blue-200/80 dark:border-white/10 shadow-xs">
+            <div className="text-slate-500 dark:text-slate-400 text-xs font-medium flex items-center gap-1.5 mb-1">
+              <ShieldAlert className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
               <span>ข้อทักท้วงคงค้าง (CAPA)</span>
             </div>
-            <div className="text-xl sm:text-2xl font-bold text-amber-300">
-              {capaFindings.filter((c) => c.status !== 'verified_closed').length} <span className="text-xs font-normal text-slate-400">ข้อ</span>
+            <div className="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-300">
+              {capaFindings.filter((c) => c.status !== 'verified_closed').length} <span className="text-xs font-normal text-slate-500 dark:text-slate-400">ข้อ</span>
             </div>
-            <div className="text-[11px] text-slate-400 mt-1">
+            <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
               {capaFindings.filter((c) => c.status !== 'verified_closed').length > 0 ? 'อยู่ในกรอบ 60 วัน' : 'ไม่มีข้อทักท้วงคงค้าง'}
             </div>
           </div>
 
-          <div className="bg-white/5 rounded-2xl p-4 border border-white/10 backdrop-blur-xs">
-            <div className="text-slate-400 text-xs font-medium flex items-center gap-1.5 mb-1">
-              <Send className="w-3.5 h-3.5 text-indigo-400" />
+          <div className="bg-white/95 dark:bg-white/5 rounded-2xl p-4 border border-blue-200/80 dark:border-white/10 shadow-xs">
+            <div className="text-slate-500 dark:text-slate-400 text-xs font-medium flex items-center gap-1.5 mb-1">
+              <Send className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
               <span>ข้อสั่งการผู้บริหาร</span>
             </div>
-            <div className="text-xl sm:text-2xl font-bold text-white">
-              {directives.filter((d) => d.status === 'in_progress').length} <span className="text-xs font-normal text-slate-400">เรื่องรอดำเนินการ</span>
+            <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+              {directives.filter((d) => d.status === 'in_progress').length} <span className="text-xs font-normal text-slate-500 dark:text-slate-400">เรื่องรอดำเนินการ</span>
             </div>
-            <div className="text-[11px] text-emerald-400 mt-1">
+            <div className="text-[11px] text-emerald-600 dark:text-emerald-400 mt-1 font-medium">
               {directives.length > 0 ? `เสร็จสิ้น ${directives.filter((d) => d.status === 'completed').length} เรื่อง` : 'ไม่มีข้อสั่งการคงค้าง'}
             </div>
           </div>
@@ -372,10 +375,10 @@ export default function ExecutiveDashboardView({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* 1. สตง. 60 วัน */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-rose-200 dark:border-rose-900/40 shadow-xs relative overflow-hidden group hover:border-rose-400 transition-all">
+          <div className="bg-gradient-to-b from-rose-50/50 via-white to-white dark:from-rose-950/20 dark:to-slate-900 rounded-2xl p-5 border border-rose-200/90 dark:border-rose-900/40 shadow-xs relative overflow-hidden group hover:border-rose-400 transition-all">
             <div className="absolute top-0 right-0 w-2 h-full bg-rose-500" />
             <div className="flex items-start justify-between mb-3">
-              <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+              <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-100/80 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
                 กฎ 60 วัน สตง./ตสน.
               </span>
               <AlertOctagon className="w-5 h-5 text-rose-500 shrink-0" />
@@ -395,10 +398,10 @@ export default function ExecutiveDashboardView({
           </div>
 
           {/* 2. ลูกหนี้เงินยืม 30 วัน */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-amber-200 dark:border-amber-900/40 shadow-xs relative overflow-hidden group hover:border-amber-400 transition-all">
+          <div className="bg-gradient-to-b from-amber-50/50 via-white to-white dark:from-amber-950/20 dark:to-slate-900 rounded-2xl p-5 border border-amber-200/90 dark:border-amber-900/40 shadow-xs relative overflow-hidden group hover:border-amber-400 transition-all">
             <div className="absolute top-0 right-0 w-2 h-full bg-amber-500" />
             <div className="flex items-start justify-between mb-3">
-              <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+              <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100/80 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
                 กฎ 30 วัน ส่งใช้เงินยืม
               </span>
               <Clock className="w-5 h-5 text-amber-500 shrink-0" />
@@ -418,10 +421,10 @@ export default function ExecutiveDashboardView({
           </div>
 
           {/* 3. ขออนุญาตก่อสร้าง 45 วัน */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-blue-200 dark:border-blue-900/40 shadow-xs relative overflow-hidden group hover:border-blue-400 transition-all">
+          <div className="bg-gradient-to-b from-blue-50/50 via-white to-white dark:from-blue-950/20 dark:to-slate-900 rounded-2xl p-5 border border-blue-200/90 dark:border-blue-900/40 shadow-xs relative overflow-hidden group hover:border-blue-400 transition-all">
             <div className="absolute top-0 right-0 w-2 h-full bg-blue-500" />
             <div className="flex items-start justify-between mb-3">
-              <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+              <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-100/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                 กฎ 45 วัน ควบคุมอาคาร
               </span>
               <Building2 className="w-5 h-5 text-blue-500 shrink-0" />
@@ -441,10 +444,10 @@ export default function ExecutiveDashboardView({
           </div>
 
           {/* 4. ว 184 ตรวจสอบพัสดุประจำปี */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-emerald-200 dark:border-emerald-900/40 shadow-xs relative overflow-hidden group hover:border-emerald-400 transition-all">
+          <div className="bg-gradient-to-b from-emerald-50/50 via-white to-white dark:from-emerald-950/20 dark:to-slate-900 rounded-2xl p-5 border border-emerald-200/90 dark:border-emerald-900/40 shadow-xs relative overflow-hidden group hover:border-emerald-400 transition-all">
             <div className="absolute top-0 right-0 w-2 h-full bg-emerald-500" />
             <div className="flex items-start justify-between mb-3">
-              <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+              <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100/80 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                 ว 184 พัสดุประจำปี
               </span>
               <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
@@ -497,100 +500,224 @@ export default function ExecutiveDashboardView({
       {/* TAB 1: Department Scorecard & Heatmap */}
       {activeTab === 'overview' && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">
-              ดัชนีชี้วัดการปฏิบัติตามระเบียบและระดับความเสี่ยง (Department Governance Scorecard)
-            </h3>
-            <span className="text-xs text-slate-500">คลิกที่ส่วนราชการเพื่อเปิด Workspace เฉพาะทาง</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                ดัชนีชี้วัดการปฏิบัติตามระเบียบและระดับความเสี่ยง (Department Governance Scorecard)
+              </h3>
+              <span className="text-xs text-slate-500">คลิกที่ส่วนราชการเพื่อเปิด Workspace เฉพาะทาง</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700">
+                <button
+                  type="button"
+                  onClick={() => setScorecardViewMode('table')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    scorecardViewMode === 'table'
+                      ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-300 shadow-2xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
+                >
+                  <Table className="w-3.5 h-3.5" />
+                  <span>ตารางสรุป</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setScorecardViewMode('cards')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    scorecardViewMode === 'cards'
+                      ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-300 shadow-2xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <span>การ์ด</span>
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {departmentsData.map((dept) => {
-              const riskColor =
-                dept.riskTier === 'สูง'
-                  ? 'text-rose-600 bg-rose-50 border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/50'
-                  : dept.riskTier === 'ปานกลาง'
-                  ? 'text-amber-600 bg-amber-50 border-amber-200 dark:bg-amber-950/40 dark:border-amber-900/50'
-                  : dept.riskTier === 'ต่ำ'
-                  ? 'text-emerald-600 bg-emerald-50 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-900/50'
-                  : 'text-slate-600 bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700';
+          {scorecardViewMode === 'table' ? (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400">
+                  <thead className="bg-slate-100/90 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700">
+                    <tr>
+                      <th className="px-4 py-3.5">ส่วนราชการ (สำนัก/กอง)</th>
+                      <th className="px-4 py-3.5">ผู้บังคับบัญชา / หัวหน้าส่วน</th>
+                      <th className="px-4 py-3.5">จุดเน้นการตรวจสอบ</th>
+                      <th className="px-3 py-3.5 text-center">ระดับความเสี่ยง</th>
+                      <th className="px-4 py-3.5 text-center min-w-[150px]">คะแนนความโปร่งใส/ระเบียบ</th>
+                      <th className="px-4 py-3.5 text-right">งบประมาณจัดสรร</th>
+                      <th className="px-3 py-3.5 text-center">ข้อทักท้วงคงค้าง</th>
+                      <th className="px-4 py-3.5 text-center">พื้นที่ปฏิบัติงาน</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {departmentsData.map((dept) => {
+                      const riskColor =
+                        dept.riskTier === 'สูง'
+                          ? 'text-rose-600 bg-rose-50 border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/50'
+                          : dept.riskTier === 'ปานกลาง'
+                          ? 'text-amber-600 bg-amber-50 border-amber-200 dark:bg-amber-950/40 dark:border-amber-900/50'
+                          : dept.riskTier === 'ต่ำ'
+                          ? 'text-emerald-600 bg-emerald-50 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-900/50'
+                          : 'text-slate-600 bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700';
 
-              const riskLabel = dept.riskTier === 'รอการประเมิน' ? 'รอการประเมิน' : `เสี่ยง${dept.riskTier}`;
+                      const riskLabel = dept.riskTier === 'รอการประเมิน' ? 'รอการประเมิน' : `เสี่ยง${dept.riskTier}`;
 
-              return (
-                <div
-                  key={dept.id}
-                  onClick={() => setCurrentTab && setCurrentTab(dept.tabKey)}
-                  className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 transition-all cursor-pointer flex flex-col justify-between group"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <div className="text-[11px] font-bold text-blue-600 dark:text-blue-400">
-                          {dept.head}
+                      return (
+                        <tr
+                          key={dept.id}
+                          className="hover:bg-blue-50/40 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group"
+                          onClick={() => setCurrentTab && setCurrentTab(dept.tabKey)}
+                        >
+                          <td className="px-4 py-3.5 font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition-colors whitespace-nowrap">
+                            {dept.name}
+                          </td>
+                          <td className="px-4 py-3.5 text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                            <span className="font-semibold">{dept.head}</span>
+                          </td>
+                          <td className="px-4 py-3.5 text-slate-600 dark:text-slate-400 max-w-xs">
+                            {dept.keyArea}
+                          </td>
+                          <td className="px-3 py-3.5 text-center whitespace-nowrap">
+                            <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${riskColor}`}>
+                              {riskLabel}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3.5 text-center">
+                            <div className="flex items-center gap-2 justify-center">
+                              <div className="w-20 bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full rounded-full ${
+                                    dept.complianceScore >= 90
+                                      ? 'bg-emerald-500'
+                                      : dept.complianceScore >= 80
+                                      ? 'bg-blue-500'
+                                      : dept.complianceScore > 0
+                                      ? 'bg-amber-500'
+                                      : 'bg-transparent'
+                                  }`}
+                                  style={{ width: `${dept.complianceScore || 0}%` }}
+                                />
+                              </div>
+                              <span className="font-bold text-xs text-slate-800 dark:text-slate-200 min-w-12 text-left">
+                                {dept.complianceScore !== null && dept.complianceScore !== undefined ? `${dept.complianceScore}%` : 'รอประเมิน'}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3.5 text-right font-semibold text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                            {dept.budgetAllocated > 0 ? `${(dept.budgetAllocated / 1000000).toFixed(2)} ลบ.` : 'รอการบันทึก'}
+                          </td>
+                          <td className="px-3 py-3.5 text-center whitespace-nowrap">
+                            <span className={`font-semibold ${dept.openIssues > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                              {dept.openIssues > 0 ? `${dept.openIssues} ข้อ` : 'ไม่มีข้อตรวจพบ'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3.5 text-center whitespace-nowrap">
+                            <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 dark:text-blue-400 group-hover:translate-x-0.5 transition-transform">
+                              <span>เข้าหน้างาน</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {departmentsData.map((dept) => {
+                const riskColor =
+                  dept.riskTier === 'สูง'
+                    ? 'text-rose-600 bg-rose-50 border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/50'
+                    : dept.riskTier === 'ปานกลาง'
+                    ? 'text-amber-600 bg-amber-50 border-amber-200 dark:bg-amber-950/40 dark:border-amber-900/50'
+                    : dept.riskTier === 'ต่ำ'
+                    ? 'text-emerald-600 bg-emerald-50 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-900/50'
+                    : 'text-slate-600 bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700';
+
+                const riskLabel = dept.riskTier === 'รอการประเมิน' ? 'รอการประเมิน' : `เสี่ยง${dept.riskTier}`;
+
+                return (
+                  <div
+                    key={dept.id}
+                    onClick={() => setCurrentTab && setCurrentTab(dept.tabKey)}
+                    className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 transition-all cursor-pointer flex flex-col justify-between group"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <div className="text-[11px] font-bold text-blue-600 dark:text-blue-400">
+                            {dept.head}
+                          </div>
+                          <h4 className="font-bold text-base text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition-colors">
+                            {dept.name}
+                          </h4>
                         </div>
-                        <h4 className="font-bold text-base text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition-colors">
-                          {dept.name}
-                        </h4>
-                      </div>
-                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${riskColor}`}>
-                        {riskLabel}
-                      </span>
-                    </div>
-
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      <strong>จุดเน้นตรวจ:</strong> {dept.keyArea}
-                    </p>
-
-                    {/* Progress Bar Score */}
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-slate-500">คะแนนความโปร่งใส/ระเบียบ:</span>
-                        <span className="font-bold text-slate-800 dark:text-slate-200">
-                          {dept.complianceScore !== null && dept.complianceScore !== undefined ? `${dept.complianceScore}%` : 'รอการประเมิน'}
+                        <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${riskColor}`}>
+                          {riskLabel}
                         </span>
                       </div>
-                      <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full ${
-                            dept.complianceScore >= 90
-                              ? 'bg-emerald-500'
-                              : dept.complianceScore >= 80
-                              ? 'bg-blue-500'
-                              : dept.complianceScore > 0
-                              ? 'bg-amber-500'
-                              : 'bg-transparent'
-                          }`}
-                          style={{ width: `${dept.complianceScore || 0}%` }}
-                        />
+
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        <strong>จุดเน้นตรวจ:</strong> {dept.keyArea}
+                      </p>
+
+                      {/* Progress Bar Score */}
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs">
+                          <span className="text-slate-500">คะแนนความโปร่งใส/ระเบียบ:</span>
+                          <span className="font-bold text-slate-800 dark:text-slate-200">
+                            {dept.complianceScore !== null && dept.complianceScore !== undefined ? `${dept.complianceScore}%` : 'รอการประเมิน'}
+                          </span>
+                        </div>
+                        <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${
+                              dept.complianceScore >= 90
+                                ? 'bg-emerald-500'
+                                : dept.complianceScore >= 80
+                                ? 'bg-blue-500'
+                                : dept.complianceScore > 0
+                                ? 'bg-amber-500'
+                                : 'bg-transparent'
+                            }`}
+                            style={{ width: `${dept.complianceScore || 0}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Budget & Issues Stats */}
+                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+                        <div>
+                          <div className="text-slate-400 text-[11px]">งบประมาณจัดสรร</div>
+                          <div className="font-semibold text-slate-800 dark:text-slate-200">
+                            {dept.budgetAllocated > 0 ? `${(dept.budgetAllocated / 1000000).toFixed(2)} ลบ.` : 'รอการบันทึก'}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-slate-400 text-[11px]">ข้อทักท้วงคงค้าง</div>
+                          <div className={`font-semibold ${dept.openIssues > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                            {dept.openIssues > 0 ? `${dept.openIssues} ข้อ` : 'ไม่มีข้อตรวจพบ'}
+                          </div>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Budget & Issues Stats */}
-                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
-                      <div>
-                        <div className="text-slate-400 text-[11px]">งบประมาณจัดสรร</div>
-                        <div className="font-semibold text-slate-800 dark:text-slate-200">
-                          {dept.budgetAllocated > 0 ? `${(dept.budgetAllocated / 1000000).toFixed(2)} ลบ.` : 'รอการบันทึก'}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-slate-400 text-[11px]">ข้อทักท้วงคงค้าง</div>
-                        <div className={`font-semibold ${dept.openIssues > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
-                          {dept.openIssues > 0 ? `${dept.openIssues} ข้อ` : 'ไม่มีข้อตรวจพบ'}
-                        </div>
-                      </div>
+                    <div className="pt-4 flex items-center justify-between text-xs font-bold text-blue-600 dark:text-blue-400 group-hover:translate-x-1 transition-transform">
+                      <span>เข้าสู่หน้างาน {dept.name}</span>
+                      <ArrowRight className="w-4 h-4" />
                     </div>
                   </div>
-
-                  <div className="pt-4 flex items-center justify-between text-xs font-bold text-blue-600 dark:text-blue-400 group-hover:translate-x-1 transition-transform">
-                    <span>เข้าสู่หน้างาน {dept.name}</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 
