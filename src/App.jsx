@@ -23,7 +23,7 @@ import ExecutiveDashboardView from './components/ExecutiveDashboardView';
 import CentralCalendarView from './components/CentralCalendarView';
 import ErrorBoundary from './components/ErrorBoundary';
 import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
-import { getSession, logout as authLogout, switchSessionTo, autoRepairDataLinkages, getUsers, saveUsers, getDepartments, saveDepartments } from './utils/auth';
+import { getSession, loginAsGuest, logout as authLogout, switchSessionTo, autoRepairDataLinkages, getUsers, saveUsers, getDepartments, saveDepartments } from './utils/auth';
 
 import {
   initialOrgProfile,
@@ -647,6 +647,7 @@ export default function App() {
   // Helper: Default landing tab based on role and department
   const getDefaultTabForUser = (s) => {
     if (!s) return 'welcome';
+    if (s.role === 'guest') return s.permissions?.[0] || 'dashboard';
     if (s.role === 'admin') return 'dashboard';
     if (s.role === 'executive') return 'executive-dashboard';
     if (s.department?.includes('ปลัด') || s.username === 'office') return 'dept-office';
@@ -662,6 +663,14 @@ export default function App() {
   useEffect(() => {
     if (!session) return;
     if (session.role === 'admin' || session.role === 'executive') return;
+
+    if (session.role === 'guest') {
+      const allowed = [...(session.permissions || ['dashboard']), 'welcome'];
+      if (!allowed.includes(currentTab)) {
+        setCurrentTab(allowed[0] || 'dashboard');
+      }
+      return;
+    }
 
     const deptAllowed = [];
     if (session.department?.includes('ปลัด') || session.username === 'office') {
@@ -703,14 +712,15 @@ export default function App() {
           setSession(s);
           setCurrentTab(getDefaultTabForUser(s));
         }}
+        onGuestLogin={() => {
+          const s = loginAsGuest();
+          setSession(s);
+          setCurrentTab(getDefaultTabForUser(s));
+        }}
         onEnterDashboard={() => {
-          const s = getSession();
-          if (s) {
-            setSession(s);
-            setCurrentTab(getDefaultTabForUser(s));
-          } else {
-            setCurrentTab('dashboard');
-          }
+          const s = getSession() || loginAsGuest();
+          setSession(s);
+          setCurrentTab(getDefaultTabForUser(s));
         }}
       />
     );
@@ -722,6 +732,11 @@ export default function App() {
         session={session}
         onLogin={(sess) => {
           const s = sess || getSession();
+          setSession(s);
+          setCurrentTab(getDefaultTabForUser(s));
+        }}
+        onGuestLogin={() => {
+          const s = loginAsGuest();
           setSession(s);
           setCurrentTab(getDefaultTabForUser(s));
         }}
@@ -819,6 +834,8 @@ export default function App() {
                 setCurrentTab={setCurrentTab}
                 setSelectedWp={setSelectedWp}
                 onOpenSettings={() => setShowSettings(true)}
+                session={session}
+                onLogout={handleLogout}
               />
             )}
 

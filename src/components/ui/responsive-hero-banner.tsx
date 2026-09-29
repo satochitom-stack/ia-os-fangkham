@@ -10,7 +10,8 @@ import {
   Menu, 
   X, 
   Building2, 
-  Play
+  Play,
+  Users
 } from 'lucide-react';
 
 export interface NavLink {
@@ -44,6 +45,8 @@ export interface ResponsiveHeroBannerProps {
   onPrimaryClick?: () => void;
   secondaryButtonText?: string;
   onSecondaryClick?: () => void;
+  onGuestClick?: () => void;
+  guestButtonText?: string;
   executiveLeader?: Partner;
   permanentSecretary?: Partner;
   partnersTitle?: string;
@@ -74,6 +77,8 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   onPrimaryClick,
   secondaryButtonText = "",
   onSecondaryClick,
+  onGuestClick,
+  guestButtonText = "สำหรับผู้เยี่ยมชม (Guest View)",
   executiveLeader,
   permanentSecretary,
   partnersTitle = "โครงสร้างหน่วยรับตรวจที่เชื่อมโยงในระบบ (CONNECTED DEPARTMENTS)",
@@ -335,6 +340,20 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
               <span>{session ? "เปิดแดชบอร์ดงานตรวจสอบ" : primaryButtonText}</span>
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
+
+            {onGuestClick && (
+              <button
+                type="button"
+                onClick={onGuestClick}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full bg-white/95 hover:bg-blue-50/80 text-slate-700 hover:text-blue-700 font-bold text-sm sm:text-base py-3 sm:py-3.5 px-7 sm:px-8 border border-blue-200/90 shadow-md hover:border-blue-400 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer group"
+              >
+                <Users className="w-4.5 h-4.5 text-blue-600 group-hover:scale-110 transition-transform" />
+                <span>{guestButtonText}</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100/70 text-blue-700 border border-blue-200/80 ml-0.5">
+                  ไม่ต้องล็อกอิน
+                </span>
+              </button>
+            )}
 
             {secondaryButtonText && onSecondaryClick && (
               <button

@@ -119,6 +119,9 @@ export default function Sidebar({
   ];
 
   const canAccessItem = (item) => {
+    if (session?.role === 'guest') {
+      return userPermissions.includes(item.id);
+    }
     if (isAdmin) return true;
     if (isExecutive) return true;
     if (item.adminOnly) return false;
@@ -160,6 +163,10 @@ export default function Sidebar({
         {isAdmin ? (
           <span className="text-[10px] bg-blue-50 dark:bg-indigo-950 border border-blue-200 dark:border-indigo-500/30 text-blue-700 dark:text-indigo-300 font-bold px-1.5 py-0.5 rounded">
             ADMIN
+          </span>
+        ) : session?.role === 'guest' ? (
+          <span className="text-[10px] bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-500/30 text-purple-700 dark:text-purple-300 font-bold px-1.5 py-0.5 rounded">
+            GUEST
           </span>
         ) : (
           <span className="text-[10px] bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-bold px-1.5 py-0.5 rounded">

@@ -26,7 +26,9 @@ export default function DashboardView({
   riskAssessments = [],
   setCurrentTab,
   setSelectedWp,
-  onOpenSettings
+  onOpenSettings,
+  session,
+  onLogout
 }) {
   const completedPlans = annualPlans.filter((p) => p.status === 'completed').length;
   const inProgressPlans = annualPlans.filter((p) => p.status === 'in_progress').length;
@@ -45,6 +47,40 @@ export default function DashboardView({
 
   return (
     <div className="space-y-6">
+      {/* Guest Mode Informational Banner */}
+      {session?.role === 'guest' && (
+        <div className="bg-gradient-to-r from-purple-50 via-indigo-50 to-blue-50 dark:from-purple-950/40 dark:via-indigo-950/30 dark:to-blue-950/20 border border-purple-200/80 dark:border-purple-800/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center space-x-3.5">
+            <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 flex items-center justify-center font-bold text-lg shrink-0 shadow-2xs">
+              👥
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="font-bold text-slate-800 dark:text-slate-100 text-sm">
+                  ยินดีต้อนรับสู่โหมดผู้เยี่ยมชม (Guest View)
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-200/70 dark:bg-purple-900/80 text-purple-800 dark:text-purple-200">
+                  บุคคลภายนอก
+                </span>
+              </div>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                คุณกำลังรับชมภาพรวมผลการดำเนินงานและสถิติงานตรวจสอบภายใน อบต.ฝางคำ
+              </p>
+            </div>
+          </div>
+
+          {onLogout && (
+            <button
+              type="button"
+              onClick={onLogout}
+              className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs shadow-xs transition-all cursor-pointer self-start sm:self-auto shrink-0"
+            >
+              <span>🔑 เข้าสู่ระบบด้วยบัญชีเจ้าหน้าที่</span>
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Top Banner */}
       <div className="bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-white dark:from-slate-850 dark:to-slate-900 rounded-2xl p-6 text-slate-900 dark:text-slate-100 shadow-xs border border-blue-200/80 dark:border-slate-700/80 relative overflow-hidden">
         <div className="absolute right-0 top-0 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>

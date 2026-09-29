@@ -13,11 +13,13 @@ import {
   ChevronUp,
   UserPlus,
   Check,
-  CheckCircle2
+  CheckCircle2,
+  Users
 } from 'lucide-react';
 import {
   verifyLogin,
   startSession,
+  loginAsGuest,
   getUsers,
   getLastUsername,
   setLastUsername,
@@ -240,6 +242,30 @@ export default function LoginView({ onLogin }) {
               )}
             </button>
           </form>
+
+          {/* Quick Guest Entry */}
+          <div className="pt-1">
+            <div className="relative my-2">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-slate-200 dark:border-slate-700"></div>
+              </div>
+              <div className="relative flex justify-center text-[10px] uppercase">
+                <span className="bg-white dark:bg-slate-900 px-2 text-slate-400 font-semibold tracking-wider">หรือเข้าชมทั่วไป</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                const guestSession = loginAsGuest();
+                onLogin(guestSession);
+              }}
+              className="w-full py-2.5 px-3 rounded-xl border border-blue-200 dark:border-blue-800 hover:border-blue-400 bg-blue-50/60 hover:bg-blue-50 dark:bg-blue-950/40 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-bold text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-xs"
+            >
+              <Users className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <span>เข้าใช้งานในฐานะผู้เยี่ยมชม (Guest View - ไม่ต้องใช้รหัสผ่าน)</span>
+            </button>
+          </div>
 
           {/* Quick Login Account Picker */}
           <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">

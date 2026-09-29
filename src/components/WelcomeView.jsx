@@ -34,6 +34,7 @@ import OrgChartStructure from './OrgChartStructure';
 import {
   verifyLogin,
   startSession,
+  loginAsGuest,
   getUsers,
   getLastUsername,
   setLastUsername,
@@ -42,7 +43,7 @@ import {
   ENTERPRISE_ROLES
 } from '../utils/auth';
 
-export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
+export default function WelcomeView({ session, onLogin, onGuestLogin, onEnterDashboard }) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [username, setUsername] = useState(() => getLastUsername());
   const [password, setPassword] = useState('');
@@ -274,6 +275,16 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
     }
   };
 
+  const handleEnterGuest = () => {
+    setShowLoginModal(false);
+    if (onGuestLogin) {
+      onGuestLogin();
+    } else {
+      const guestSession = loginAsGuest();
+      onLogin(guestSession);
+    }
+  };
+
   const scrollToLogin = () => {
     if (session) {
       onEnterDashboard();
@@ -378,16 +389,27 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
                 </div>
               </button>
             ) : (
-              <button
-                type="button"
-                onClick={() => setShowLoginModal(true)}
-                className="relative group p-[1px] rounded-full overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 shadow-md shadow-blue-600/25 hover:shadow-lg hover:shadow-blue-600/35 transition-all cursor-pointer"
-              >
-                <div className="px-4 sm:px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs flex items-center space-x-2 transition-all">
-                  <LogIn className="w-3.5 h-3.5 text-blue-100" />
-                  <span>เข้าสู่ระบบ (Sign In)</span>
-                </div>
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={handleEnterGuest}
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-slate-700 hover:text-blue-700 font-bold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-xs"
+                  title="เข้าชมแดชบอร์ดในฐานะผู้เยี่ยมชม (ไม่ต้องใช้รหัสผ่าน)"
+                >
+                  <Users className="w-3.5 h-3.5 text-blue-600" />
+                  <span>ผู้เยี่ยมชม (Guest)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowLoginModal(true)}
+                  className="relative group p-[1px] rounded-full overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 shadow-md shadow-blue-600/25 hover:shadow-lg hover:shadow-blue-600/35 transition-all cursor-pointer"
+                >
+                  <div className="px-4 sm:px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs flex items-center space-x-2 transition-all">
+                    <LogIn className="w-3.5 h-3.5 text-blue-100" />
+                    <span>เข้าสู่ระบบ (Sign In)</span>
+                  </div>
+                </button>
+              </div>
             )}
           </div>
         </header>
@@ -399,6 +421,8 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
           session={session}
           onPrimaryClick={scrollToLogin}
           onCtaClick={scrollToLogin}
+          onGuestClick={handleEnterGuest}
+          guestButtonText="สำหรับผู้เยี่ยมชม (Guest View)"
           executiveLeader={executiveLeaderPartner}
           permanentSecretary={permanentSecretaryPartner}
           partners={heroPartners}
@@ -890,6 +914,27 @@ export default function WelcomeView({ session, onLogin, onEnterDashboard }) {
                 <span>{busy ? 'กำลังตรวจสอบ...' : 'เข้าสู่ระบบ'}</span>
               </button>
             </form>
+
+            {/* Quick Guest Entry in Modal */}
+            <div className="pt-2">
+              <div className="relative my-2.5">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-200"></div>
+                </div>
+                <div className="relative flex justify-center text-[10px] uppercase">
+                  <span className="bg-white px-2 text-slate-400 font-semibold tracking-wider">หรือเข้าชมทั่วไป</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleEnterGuest}
+                className="w-full py-2.5 px-3 rounded-xl border border-blue-200 hover:border-blue-400 bg-blue-50/60 hover:bg-blue-50 text-blue-700 font-bold text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-xs"
+              >
+                <Users className="w-4 h-4 text-blue-600" />
+                <span>เข้าใช้งานในฐานะผู้เยี่ยมชม (Guest View - ไม่ต้องใช้รหัสผ่าน)</span>
+              </button>
+            </div>
 
             {/* Quick account selector chips */}
             <div className="pt-3 border-t border-slate-100 space-y-2 text-xs">

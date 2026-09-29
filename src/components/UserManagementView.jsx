@@ -506,6 +506,11 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
   };
 
   const handleDelete = (username) => {
+    if (username === 'admin' || username === 'guest') {
+      showToast('⚠️ ไม่สามารถลบบัญชีระบบ (ADMIN หรือ ผู้เยี่ยมชม) ได้');
+      return;
+    }
+
     openConfirmModal({
       title: 'ยืนยันการลบบัญชีผู้ใช้งาน',
       message: `คุณต้องการลบบัญชีผู้ใช้งาน "${username}" ใช่หรือไม่? ข้อมูลและสิทธิ์การเข้าถึงทั้งหมดของบัญชีนี้จะถูกนำออกจากระบบ`,
@@ -837,10 +842,12 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                             className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
                               isAdmin
                                 ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300'
+                                : user.role === 'guest'
+                                ? 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300'
                                 : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
                             }`}
                           >
-                            {isAdmin ? '👑' : '🏢'}
+                            {isAdmin ? '👑' : user.role === 'guest' ? '👥' : '🏢'}
                           </div>
                           <div className="min-w-0">
                             <div className="font-bold text-slate-800 dark:text-slate-100 truncate flex items-center space-x-1">
@@ -848,6 +855,11 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                               {isCurrent && (
                                 <span className="text-[10px] bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-1 rounded font-normal">
                                   คุณ
+                                </span>
+                              )}
+                              {user.role === 'guest' && (
+                                <span className="text-[10px] bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 px-1.5 py-0.2 rounded font-bold">
+                                  ผู้เยี่ยมชม
                                 </span>
                               )}
                               {isUserModified && (
@@ -959,6 +971,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {users.map((user) => {
             const isAdmin = user.role === 'admin';
+            const isGuest = user.role === 'guest' || user.username === 'guest';
             return (
               <div
                 key={user.username}
@@ -970,10 +983,12 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                       className={`w-10 h-10 rounded-xl flex items-center justify-center text-base font-bold ${
                         isAdmin
                           ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300'
+                          : isGuest
+                          ? 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300'
                           : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
                       }`}
                     >
-                      {isAdmin ? '👑' : '🏢'}
+                      {isAdmin ? '👑' : isGuest ? '👥' : '🏢'}
                     </div>
                     <div>
                       <h4 className="font-bold text-slate-800 dark:text-slate-100 text-sm">
@@ -987,10 +1002,12 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                     className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
                       isAdmin
                         ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300'
+                        : isGuest
+                        ? 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300'
                         : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
                     }`}
                   >
-                    {isAdmin ? 'ผู้ดูแลระบบ (ADMIN)' : 'ผู้ใช้งาน (USER)'}
+                    {isAdmin ? 'ผู้ดูแลระบบ (ADMIN)' : isGuest ? 'ผู้เยี่ยมชม (GUEST)' : 'ผู้ใช้งาน (USER)'}
                   </span>
                 </div>
 
@@ -999,7 +1016,18 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                   {user.position && <div><strong>ตำแหน่ง:</strong> {user.position}</div>}
                   <div className="flex items-center space-x-1.5 pt-1">
                     <Key className="w-3.5 h-3.5 text-amber-500" />
-                    <span><strong>รหัสผ่าน:</strong> <span className="font-mono bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">{user.passwordText || '••••••••'}</span></span>
+                    <span>
+                      <strong>รหัสผ่าน:</strong>{' '}
+                      {isGuest ? (
+                        <span className="font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded">
+                          ไม่ต้องใช้รหัสผ่าน (เข้าชมได้ทันที)
+                        </span>
+                      ) : (
+                        <span className="font-mono bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
+                          {user.passwordText || '••••••••'}
+                        </span>
+                      )}
+                    </span>
                   </div>
                   <div>
                     <strong>สิทธิ์เมนู:</strong>{' '}
@@ -1016,7 +1044,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                     className="text-blue-600 hover:text-blue-700 font-semibold flex items-center space-x-1 cursor-pointer"
                   >
                     <Eye className="w-3.5 h-3.5" />
-                    <span>เข้าสู่ระบบเป็นบัญชีนี้</span>
+                    <span>{isGuest ? 'ทดสอบมุมมองผู้เยี่ยมชม' : 'เข้าสู่ระบบเป็นบัญชีนี้'}</span>
                   </button>
 
                   <div className="flex items-center space-x-1">
@@ -1024,11 +1052,11 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                       type="button"
                       onClick={() => handleOpenEdit(user)}
                       className="p-1.5 text-slate-500 hover:text-blue-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
-                      title="แก้ไขข้อมูล/เปลี่ยนรหัสผ่าน"
+                      title="แก้ไขข้อมูล/สิทธิ์"
                     >
                       <Edit3 className="w-4 h-4" />
                     </button>
-                    {!isAdmin && (
+                    {!isAdmin && !isGuest && (
                       <button
                         type="button"
                         onClick={() => handleDelete(user.username)}

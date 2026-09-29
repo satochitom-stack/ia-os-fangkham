@@ -13,7 +13,8 @@ import {
   UserCheck,
   Users,
   ShieldCheck,
-  Sparkles
+  Sparkles,
+  LogIn
 } from 'lucide-react';
 
 export default function Header({
@@ -71,6 +72,10 @@ export default function Header({
                 ) : session?.role === 'executive' ? (
                   <span className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-[10px] px-2 py-0.5 rounded-full font-bold">
                     🏛️ EXECUTIVE: {departmentLabel}
+                  </span>
+                ) : session?.role === 'guest' ? (
+                  <span className="bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                    👥 ผู้เยี่ยมชม (Guest View)
                   </span>
                 ) : (
                   <span className="bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-bold">
@@ -134,6 +139,19 @@ export default function Header({
               <span className="hidden sm:inline">หน้าแรก / ต้อนรับ</span>
             </button>
 
+            {/* Quick Staff Login Button for Guest View */}
+            {session?.role === 'guest' && (
+              <button
+                onClick={onLogout}
+                title="เข้าสู่ระบบด้วยบัญชีเจ้าหน้าที่ / ผู้ดูแลระบบ"
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white transition-all text-xs font-bold cursor-pointer shadow-xs shrink-0"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">เข้าสู่ระบบเจ้าหน้าที่</span>
+                <span className="sm:hidden">เข้าสู่ระบบ</span>
+              </button>
+            )}
+
             {/* Dark Mode Toggle */}
             <button
               onClick={onToggleDarkMode}
@@ -153,10 +171,12 @@ export default function Header({
                   className={`w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center shadow-xs shrink-0 ${
                     isAdmin
                       ? 'bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-400'
+                      : session?.role === 'guest'
+                      ? 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-400'
                       : 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400'
                   }`}
                 >
-                  {isAdmin ? '👑' : '🏢'}
+                  {isAdmin ? '👑' : session?.role === 'guest' ? '👥' : '🏢'}
                 </div>
                 <div className="hidden md:block text-left max-w-[150px]">
                   <div className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
@@ -175,9 +195,24 @@ export default function Header({
                     <div className="font-bold text-slate-800 dark:text-slate-200 truncate">{userTitle}</div>
                     <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">{departmentLabel}</div>
                     <div className="text-[10px] text-blue-600 dark:text-blue-400 mt-0.5">
-                      ชื่อผู้ใช้: @{session?.username} • {isAdmin ? 'สิทธิ์ผู้ดูแลระบบ' : 'สิทธิ์ประจำกอง'}
+                      {session?.role === 'guest'
+                        ? 'เข้าชมในโหมดผู้เยี่ยมชมทั่วไป'
+                        : `ชื่อผู้ใช้: @${session?.username} • ${isAdmin ? 'สิทธิ์ผู้ดูแลระบบ' : 'สิทธิ์ประจำกอง'}`}
                     </div>
                   </div>
+
+                  {session?.role === 'guest' && (
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        onLogout();
+                      }}
+                      className="w-full flex items-center space-x-2 px-3.5 py-2.5 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 cursor-pointer font-bold border-b border-slate-100 dark:border-slate-800"
+                    >
+                      <LogIn className="w-3.5 h-3.5" />
+                      <span>เข้าสู่ระบบด้วยบัญชีเจ้าหน้าที่</span>
+                    </button>
+                  )}
 
                   {isAdmin && onOpenUsersManagement && (
                     <button

@@ -14,7 +14,8 @@ export const ENTERPRISE_ROLES = [
   { id: 'admin', label: 'ผู้ตรวจสอบภายใน (Super Admin)', desc: 'จัดการระบบ, กำหนดสิทธิ์, ตรวจสอบและเข้าถึงทุกโมดูล' },
   { id: 'executive', label: 'ผู้บริหาร (Executive - นายก/ปลัด)', desc: 'ดูข้อมูลภาพรวมทุกกอง, ให้ข้อสั่งการ และรับทราบรายงาน' },
   { id: 'dept_head', label: 'หัวหน้าสำนัก / ผู้อำนวยการกอง (Dept Head)', desc: 'บริหารจัดการข้อมูลภายในกองตนเอง และส่งรายงานการควบคุม' },
-  { id: 'staff', label: 'เจ้าหน้าที่ผู้ปฏิบัติงาน (Staff)', desc: 'บันทึกข้อมูลและแบบประเมินความเสี่ยงประจำวัน' }
+  { id: 'staff', label: 'เจ้าหน้าที่ผู้ปฏิบัติงาน (Staff)', desc: 'บันทึกข้อมูลและแบบประเมินความเสี่ยงประจำวัน' },
+  { id: 'guest', label: 'ผู้เยี่ยมชมทั่วไป (Guest / Public)', desc: 'เข้าชมแดชบอร์ดสรุปและข้อมูลทั่วไปตามที่ผู้ดูแลระบบอนุญาต' }
 ];
 
 export function getLastUsername() {
@@ -510,6 +511,32 @@ export function autoRepairDataLinkages() {
 
     cascadeDepartmentRenameToStorage('กองสาธารณสุขและสิ่งแวดล้อม', 'กองสวัสดิการสังคม');
 
+    // 8. Ensure Guest user exists with default 'dashboard' permission
+    const guestUser = users.find((u) => u.username === 'guest' || u.role === 'guest');
+    if (!guestUser) {
+      users.push({
+        username: 'guest',
+        displayName: 'ผู้เยี่ยมชม (Guest)',
+        position: 'ผู้เยี่ยมชมทั่วไป / ประชาชน',
+        department: 'ผู้เยี่ยมชม',
+        role: 'guest',
+        passwordText: '',
+        permissions: ['dashboard'],
+        canManageUsers: false,
+        createdAt: Date.now()
+      });
+      usersChanged = true;
+    } else {
+      if (guestUser.role !== 'guest') {
+        guestUser.role = 'guest';
+        usersChanged = true;
+      }
+      if (!Array.isArray(guestUser.permissions) || guestUser.permissions.length === 0) {
+        guestUser.permissions = ['dashboard'];
+        usersChanged = true;
+      }
+    }
+
     // Also repair orgProfile auditorName if stored as former developer name
     try {
       const rawProfile = localStorage.getItem('ia_org_profile');
@@ -808,6 +835,17 @@ export const DEFAULT_INITIAL_USERS = [
     role: 'user',
     passwordText: '1234',
     permissions: ['central-calendar', 'risk-management', 'forms'],
+    canManageUsers: false,
+    createdAt: Date.now()
+  },
+  {
+    username: 'guest',
+    displayName: 'ผู้เยี่ยมชม (Guest)',
+    position: 'ผู้เยี่ยมชมทั่วไป / ประชาชน',
+    department: 'ผู้เยี่ยมชม',
+    role: 'guest',
+    passwordText: '',
+    permissions: ['dashboard'],
     canManageUsers: false,
     createdAt: Date.now()
   }
@@ -1215,6 +1253,12 @@ export function resetUsersToDefault() {
 // -------------------------------------------------------------
 
 export async function verifyLogin(username, password) {
+  if (username && username.trim().toLowerCase() === 'guest') {
+    const users = getUsers();
+    const guestUser = users.find((u) => u.username === 'guest' || u.role === 'guest');
+    if (guestUser) return guestUser;
+  }
+
   const user = getUserByUsername(username);
   if (!user) return null;
 
@@ -1230,6 +1274,30 @@ export async function verifyLogin(username, password) {
   }
 
   return null;
+}
+
+export function loginAsGuest() {
+  const users = getUsers();
+  let guestUser = users.find((u) => u.username === 'guest' || u.role === 'guest');
+  if (!guestUser) {
+    guestUser = {
+      username: 'guest',
+      displayName: 'ผู้เยี่ยมชม (Guest)',
+      position: 'ผู้เยี่ยมชมทั่วไป / ประชาชน',
+      department: 'ผู้เยี่ยมชม',
+      role: 'guest',
+      passwordText: '',
+      permissions: ['dashboard'],
+      canManageUsers: false,
+      createdAt: Date.now()
+    };
+    users.push(guestUser);
+    saveUsers(users);
+  }
+  if (!Array.isArray(guestUser.permissions) || guestUser.permissions.length === 0) {
+    guestUser.permissions = ['dashboard'];
+  }
+  return startSession(guestUser, false);
 }
 
 export function startSession(user, remember = true, isImpersonating = false) {
@@ -1258,6 +1326,13 @@ export function getSession() {
     if (session.expiresAt && Date.now() > session.expiresAt) {
       localStorage.removeItem(SESSION_KEY);
       return null;
+    }
+    if (session.role === 'guest') {
+      const users = getUsers();
+      const guestUser = users.find((u) => u.username === 'guest' || u.role === 'guest');
+      if (guestUser && Array.isArray(guestUser.permissions)) {
+        session.permissions = guestUser.permissions;
+      }
     }
     if (session.permissions && Array.isArray(session.permissions)) {
       if (session.permissions.includes('knowledge') && !session.permissions.includes('forms')) {
