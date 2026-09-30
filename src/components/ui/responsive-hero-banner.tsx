@@ -11,7 +11,10 @@ import {
   X, 
   Building2, 
   Play,
-  Users
+  Users,
+  AlertTriangle,
+  Cloud,
+  ChevronDown
 } from 'lucide-react';
 
 export interface NavLink {
@@ -96,7 +99,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <section className="w-full isolate min-h-[85vh] lg:min-h-[90vh] overflow-hidden relative rounded-3xl sm:rounded-[2.5rem] border border-blue-200/80 shadow-[0_20px_60px_-15px_rgba(30,58,138,0.12)] bg-gradient-to-br from-white via-[#f4f8fe] to-[#eaf2fc] text-slate-800 flex flex-col justify-between">
+    <section className="w-full isolate min-h-[640px] lg:min-h-[700px] overflow-hidden relative rounded-3xl sm:rounded-[2.5rem] border border-blue-200/80 shadow-[0_20px_60px_-15px_rgba(30,58,138,0.12)] bg-gradient-to-br from-white via-[#f4f8fe] to-[#eaf2fc] text-slate-800 flex flex-col justify-between">
       {/* 1. Bright Architectural Building Photo Background */}
       <img
         src={backgroundImageUrl}
@@ -367,135 +370,56 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             )}
           </div>
 
-          {/* Executive Leadership Hierarchy (บนสุดเป็น ผู้บริหาร ค่อยมาเป็น ปลัด อบต.ฝางคำ) */}
-          {(executiveLeader || permanentSecretary) && (
-            <div className="pt-4 sm:pt-5 border-t border-slate-200/80 mb-5 sm:mb-6">
-              <div className="flex flex-col items-center space-y-2.5 animate-fade-slide-in-1">
-                {/* 1. บนสุดเป็น ผู้บริหาร */}
-                {executiveLeader && (
-                  <div className="flex flex-col items-center w-full max-w-xs">
-                    <div
-                      onClick={executiveLeader.onClick}
-                      className="w-full sm:w-64 bg-white/90 hover:bg-amber-50/80 border border-slate-200/90 hover:border-amber-400 rounded-2xl p-2.5 sm:p-3 text-center transition-all shadow-2xs hover:shadow-xs cursor-pointer group"
-                    >
-                      <div className="w-7 h-7 rounded-xl bg-amber-50 group-hover:bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-1 transition-colors text-sm shadow-2xs">
-                        {executiveLeader.icon || '👑'}
-                      </div>
-                      <div className="text-xs font-bold text-slate-800 group-hover:text-amber-700 transition-colors">
-                        {executiveLeader.name}
-                      </div>
-                      {executiveLeader.label && (
-                        <div className="text-[9px] text-slate-500 line-clamp-1 mt-0.5">
-                          {executiveLeader.label}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
+          {/* Modern Enterprise Capability Highlights (Clean, airy, and balanced per Concept 1) */}
+          <div className="pt-6 sm:pt-7 border-t border-slate-200/80">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">
+              <div className="bg-white/85 backdrop-blur-md border border-slate-200/80 hover:border-blue-300 rounded-2xl p-3.5 text-center transition-all hover:shadow-xs group">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div className="text-xs font-bold text-slate-800">มาตรฐาน ว 614</div>
+                <div className="text-[10px] text-slate-500 mt-0.5">แผน AI & กระดาษทำการ</div>
+              </div>
 
-                {/* Subtle vertical connector between ผู้บริหาร and ปลัด */}
-                {executiveLeader && permanentSecretary && (
-                  <div className="flex flex-col items-center -my-1 text-slate-400">
-                    <div className="w-[1.5px] h-3 bg-gradient-to-b from-amber-300 to-indigo-300"></div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>
-                  </div>
-                )}
+              <div className="bg-white/85 backdrop-blur-md border border-slate-200/80 hover:border-amber-300 rounded-2xl p-3.5 text-center transition-all hover:shadow-xs group">
+                <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+                  <AlertTriangle className="w-4 h-4" />
+                </div>
+                <div className="text-xs font-bold text-slate-800">ควบคุมภายใน & บส.</div>
+                <div className="text-[10px] text-slate-500 mt-0.5">แบบ ปค.1-5 และ บส.1-5</div>
+              </div>
 
-                {/* 2. ค่อยมาเป็น ปลัด อบต.ฝางคำ */}
-                {permanentSecretary && (
-                  <div className="flex flex-col items-center w-full max-w-xs">
-                    <div
-                      onClick={permanentSecretary.onClick}
-                      className="w-full sm:w-64 bg-white/90 hover:bg-indigo-50/80 border border-slate-200/90 hover:border-indigo-400 rounded-2xl p-2.5 sm:p-3 text-center transition-all shadow-2xs hover:shadow-xs cursor-pointer group"
-                    >
-                      <div className="w-7 h-7 rounded-xl bg-indigo-50 group-hover:bg-indigo-100 text-indigo-600 flex items-center justify-center mx-auto mb-1 transition-colors text-sm shadow-2xs">
-                        {permanentSecretary.icon || '🏛️'}
-                      </div>
-                      <div className="text-xs font-bold text-slate-800 group-hover:text-indigo-700 transition-colors">
-                        {permanentSecretary.name}
-                      </div>
-                      {permanentSecretary.label && (
-                        <div className="text-[9px] text-slate-500 line-clamp-1 mt-0.5">
-                          {permanentSecretary.label}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
+              <div className="bg-white/85 backdrop-blur-md border border-slate-200/80 hover:border-indigo-300 rounded-2xl p-3.5 text-center transition-all hover:shadow-xs group">
+                <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+                  <Building2 className="w-4 h-4" />
+                </div>
+                <div className="text-xs font-bold text-slate-800">5 ส่วนราชการ</div>
+                <div className="text-[10px] text-slate-500 mt-0.5">เชื่อมโยงพื้นที่ทำงานเฉพาะกอง</div>
+              </div>
+
+              <div className="bg-white/85 backdrop-blur-md border border-slate-200/80 hover:border-emerald-300 rounded-2xl p-3.5 text-center transition-all hover:shadow-xs group">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+                  <Cloud className="w-4 h-4" />
+                </div>
+                <div className="text-xs font-bold text-slate-800">Cloud Realtime</div>
+                <div className="text-[10px] text-slate-500 mt-0.5">ซิงค์สด 24 ชม. ทุกอุปกรณ์</div>
               </div>
             </div>
-          )}
 
-          {/* 3. โครงสร้างหน่วยรับตรวจ (กองต่างๆ) อยู่ด้านล่าง */}
-          <div className={`${(executiveLeader || permanentSecretary) ? 'pt-2' : 'pt-4 sm:pt-5 border-t border-slate-200/80'}`}>
-            <p className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center animate-fade-slide-in-1">
-              {partnersTitle}
-            </p>
-            <div 
-              className="grid mt-4 gap-2.5 sm:gap-3 animate-fade-slide-in-2 justify-center"
-              style={{
-                gridTemplateColumns: `repeat(auto-fit, minmax(135px, 1fr))`
-              }}
-            >
-              {partners.map((partner, index) => (
-                <div
-                  key={index}
-                  onClick={partner.onClick}
-                  className="bg-white/85 hover:bg-blue-50/90 border border-slate-200/80 hover:border-blue-300 rounded-2xl p-2.5 sm:p-3 text-center transition-all shadow-2xs hover:shadow-xs cursor-pointer group"
-                >
-                  <div className="w-7 h-7 rounded-xl bg-blue-50 group-hover:bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-1 transition-colors">
-                    {partner.icon || <Building2 className="w-3.5 h-3.5" />}
-                  </div>
-                  <div className="text-xs font-bold text-slate-800 group-hover:text-blue-700 transition-colors">
-                    {partner.name}
-                  </div>
-                  {partner.label && (
-                    <div className="text-[9px] text-slate-500 line-clamp-1 mt-0.5">
-                      {partner.label}
-                    </div>
-                  )}
-                </div>
-              ))}
+            {/* Smooth Scroll Navigation Hint to Full Org Chart below */}
+            <div className="text-center mt-5">
+              <a
+                href="#departments"
+                className="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-500 hover:text-blue-600 bg-white/70 hover:bg-white px-4 py-1.5 rounded-full border border-slate-200/80 shadow-2xs transition-all cursor-pointer group"
+              >
+                <span>ดูโครงสร้างสายการบังคับบัญชาและหน่วยรับตรวจทั้งหมด</span>
+                <ChevronDown className="w-3.5 h-3.5 text-blue-500 group-hover:translate-y-0.5 transition-transform" />
+              </a>
             </div>
-
-            {/* 4. ศูนย์พัฒนาเด็กเล็กในสังกัด (ใต้กองต่างๆ) */}
-            {subUnits && subUnits.length > 0 && (
-              <div className="pt-3.5 sm:pt-4 border-t border-dashed border-slate-200/90 mt-4 sm:mt-5">
-                <p className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center animate-fade-slide-in-1">
-                  {subUnitsTitle}
-                </p>
-                <div 
-                  className="grid mt-2.5 gap-2.5 sm:gap-3 animate-fade-slide-in-2 justify-center max-w-lg mx-auto"
-                  style={{
-                    gridTemplateColumns: `repeat(auto-fit, minmax(160px, 1fr))`
-                  }}
-                >
-                  {subUnits.map((unit, index) => (
-                    <div
-                      key={index}
-                      onClick={unit.onClick}
-                      className="bg-white/90 hover:bg-emerald-50/90 border border-slate-200/80 hover:border-emerald-300 rounded-2xl p-2.5 sm:p-3 text-center transition-all shadow-2xs hover:shadow-xs cursor-pointer group"
-                    >
-                      <div className="w-7 h-7 rounded-xl bg-emerald-50 group-hover:bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-1 transition-colors text-sm shadow-2xs">
-                        {unit.icon || '🏫'}
-                      </div>
-                      <div className="text-xs font-bold text-slate-800 group-hover:text-emerald-700 transition-colors">
-                        {unit.name}
-                      </div>
-                      {unit.label && (
-                        <div className="text-[9px] text-slate-500 line-clamp-1 mt-0.5">
-                          {unit.label}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
   );
 };
 
