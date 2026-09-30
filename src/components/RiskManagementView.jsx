@@ -2267,7 +2267,7 @@ export default function RiskManagementView({
             {/* Official Signature Section */}
             <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-4 print-signature-block break-inside-avoid print:break-inside-avoid">
               <div className="w-72 text-center space-y-1.5 print:text-[8.5pt]">
-                <div>ลายมือชื่อ...................................................</div>
+                <div>(ลงชื่อ)...................................................</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
@@ -2419,7 +2419,7 @@ export default function RiskManagementView({
             {/* Official Signature Section */}
             <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-4 print-signature-block break-inside-avoid print:break-inside-avoid">
               <div className="w-72 text-center space-y-1.5 print:text-[8.5pt]">
-                <div>ลายมือชื่อ...................................................</div>
+                <div>(ลงชื่อ)...................................................</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
@@ -2562,7 +2562,7 @@ export default function RiskManagementView({
             {/* Official Signature Section */}
             <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-4 print-signature-block break-inside-avoid print:break-inside-avoid">
               <div className="w-72 text-center space-y-1.5 print:text-[8.5pt]">
-                <div>ลายมือชื่อ...................................................</div>
+                <div>(ลงชื่อ)...................................................</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
@@ -2744,7 +2744,7 @@ export default function RiskManagementView({
             {/* Official Signature Section */}
             <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-4 print-signature-block break-inside-avoid print:break-inside-avoid">
               <div className="w-72 text-center space-y-1.5 print:text-[8.5pt]">
-                <div>ลายมือชื่อ...................................................</div>
+                <div>(ลงชื่อ)...................................................</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
@@ -2963,7 +2963,7 @@ export default function RiskManagementView({
             {/* Official Signature Section */}
             <div className="p-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-4 print-signature-block break-inside-avoid print:break-inside-avoid">
               <div className="w-72 text-center space-y-1.5 print:text-[8.5pt]">
-                <div>ลายมือชื่อ...................................................</div>
+                <div>(ลงชื่อ)...................................................</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>

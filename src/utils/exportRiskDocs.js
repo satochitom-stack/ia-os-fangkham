@@ -378,7 +378,7 @@ export function exportBsToWord({
         <div style="clear: both;"></div>
 
         <div class="sig-block">
-          <div>ลายมือชื่อ...................................................</div>
+          <div>(ลงชื่อ)...................................................</div>
           <div>( ${escapeHtml(approverName)} )</div>
           <div>ตำแหน่ง ${escapeHtml(approverPosition)}</div>
           <div>วันที่......................................................</div>
@@ -703,7 +703,7 @@ export function exportBsToExcel({
         <tr><td colspan="${colSpanTotal}" style="border:none; height: 20px;"></td></tr>
         <tr>
           <td colspan="${colSpanTotal - 4}" style="border:none;"></td>
-          <td colspan="4" style="border:none; text-align: center;">ลายมือชื่อ...................................................</td>
+          <td colspan="4" style="border:none; text-align: center;">(ลงชื่อ)...................................................</td>
         </tr>
         <tr>
           <td colspan="${colSpanTotal - 4}" style="border:none;"></td>
