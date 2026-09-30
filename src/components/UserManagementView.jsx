@@ -27,7 +27,9 @@ import {
   Copy,
   Check,
   Clock,
-  RefreshCw
+  RefreshCw,
+  Upload,
+  Download
 } from 'lucide-react';
 import { SUPABASE_SCHEMA_SQL } from '../data/supabaseSchemaSql';
 import ConfirmModal from './ConfirmModal';
@@ -56,6 +58,7 @@ import {
   saveSupabaseConfig,
   testSupabaseConnection
 } from '../services/supabaseClient';
+import { cloudSyncService } from '../services/cloudSyncService';
 
 export default function UserManagementView({ currentSession, onSwitchSession, onRefreshUser }) {
   const [users, setUsers] = useState(() => getUsers());
@@ -248,6 +251,37 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
     setCopiedSql(true);
     showToast('📋 คัดลอกสคริปต์ SQL เรียบร้อยแล้ว! นำไปวางใน SQL Editor บน Supabase ได้ทันที');
     setTimeout(() => setCopiedSql(false), 3000);
+  };
+
+  const handleUploadAllToCloudFromUsers = async () => {
+    try {
+      showToast('กำลังเตรียมข้อมูลและอัปโหลดขึ้น Supabase...');
+      const saved = localStorage.getItem('ia_risk_management_by_year');
+      const rmData = saved ? JSON.parse(saved) : {};
+      const res = await cloudSyncService.pushAllRiskManagement(rmData);
+      showToast(`✓ อัปโหลดข้อมูลแบบ บส. ทุกกองขึ้น Supabase สำเร็จแล้ว (${res.count} รายการ)! ทุกเครื่องจะเห็นข้อมูลนี้ทันที`);
+    } catch (e) {
+      showToast(`อัปโหลดไม่สำเร็จ: ${e.message}`, 'error');
+    }
+  };
+
+  const handlePullAllFromCloudFromUsers = async () => {
+    try {
+      showToast('กำลังดึงข้อมูลจาก Supabase...');
+      const cloudData = await cloudSyncService.pullAllRiskManagement();
+      if (cloudData && Object.keys(cloudData).length > 0) {
+        const saved = localStorage.getItem('ia_risk_management_by_year');
+        const local = saved ? JSON.parse(saved) : {};
+        const merged = { ...local, ...cloudData };
+        localStorage.setItem('ia_risk_management_by_year', JSON.stringify(merged));
+        showToast('✓ ดึงข้อมูลล่าสุดจาก Supabase และบันทึกลงในเครื่องเรียบร้อยแล้ว!');
+        if (onRefreshUser) onRefreshUser();
+      } else {
+        showToast('ไม่พบข้อมูลบน Cloud หรือข้อมูลเป็นปัจจุบันอยู่แล้ว');
+      }
+    } catch (e) {
+      showToast(`ดึงข้อมูลไม่สำเร็จ: ${e.message}`, 'error');
+    }
   };
 
   // Pending permissions map { [username]: string[] } to prevent auto-saving on click
@@ -1528,6 +1562,30 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                   <Save className="w-3.5 h-3.5" />
                   <span>บันทึกและเปิดใช้งาน Cloud</span>
                 </button>
+
+                {isCloudConfigured && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleUploadAllToCloudFromUsers}
+                      className="px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5"
+                      title="ส่งข้อมูลแบบ บส. ทุกกองในเครื่องขึ้น Supabase (เหมาะสำหรับเปิดระบบใหม่)"
+                    >
+                      <Upload className="w-3.5 h-3.5 text-indigo-600" />
+                      <span>ส่งข้อมูลในเครื่องขึ้น Cloud ทั้งหมด</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handlePullAllFromCloudFromUsers}
+                      className="px-4 py-2.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5"
+                      title="ดึงข้อมูลล่าสุดจาก Supabase Cloud มาบันทึกลงในเครื่อง"
+                    >
+                      <Download className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>ดึงข้อมูลจาก Cloud ลงเครื่อง</span>
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>

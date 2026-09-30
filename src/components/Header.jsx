@@ -14,8 +14,12 @@ import {
   Users,
   ShieldCheck,
   Sparkles,
-  LogIn
+  LogIn,
+  Cloud,
+  CloudOff,
+  RefreshCw
 } from 'lucide-react';
+import { cloudSyncService } from '../services/cloudSyncService';
 
 export default function Header({
   orgProfile,
@@ -29,8 +33,15 @@ export default function Header({
   onChangePassword,
   onOpenSettings,
   onOpenUsersManagement,
-  onOpenWelcome
+  onOpenWelcome,
+  onOpenCloudSync
 }) {
+  const [syncStatus, setSyncStatus] = useState(() => cloudSyncService.getSyncStatus());
+
+  useEffect(() => {
+    const unsub = cloudSyncService.onSyncStatusChange((st) => setSyncStatus(st));
+    return unsub;
+  }, []);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -137,6 +148,46 @@ export default function Header({
             >
               <Sparkles className="w-3.5 h-3.5 text-cyan-500" />
               <span className="hidden sm:inline">หน้าแรก / ต้อนรับ</span>
+            </button>
+
+            {/* Cloud Sync Status & Trigger Badge */}
+            <button
+              onClick={onOpenCloudSync}
+              title={
+                syncStatus.status === 'connected'
+                  ? 'Cloud Sync: เชื่อมต่อเรียลไทม์ (Supabase) คลิกเพื่อจัดการ'
+                  : syncStatus.status === 'syncing'
+                  ? 'Cloud Sync: กำลังซิงค์ข้อมูล...'
+                  : 'Cloud Sync: ออฟไลน์ (เครื่องเดียว) คลิกเพื่อเปิดระบบซิงค์ออนไลน์ Supabase'
+              }
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border transition-all text-xs font-semibold cursor-pointer shrink-0 ${
+                syncStatus.status === 'connected'
+                  ? 'bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                  : syncStatus.status === 'syncing'
+                  ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
+                  : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+              }`}
+            >
+              {syncStatus.status === 'connected' ? (
+                <>
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                  <Cloud className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span className="hidden md:inline">Cloud Realtime</span>
+                </>
+              ) : syncStatus.status === 'syncing' ? (
+                <>
+                  <RefreshCw className="w-3.5 h-3.5 text-blue-600 animate-spin" />
+                  <span className="hidden md:inline">กำลังซิงค์...</span>
+                </>
+              ) : (
+                <>
+                  <CloudOff className="w-3.5 h-3.5 text-slate-400" />
+                  <span className="hidden md:inline">Cloud Sync</span>
+                </>
+              )}
             </button>
 
             {/* Quick Staff Login Button for Guest View */}

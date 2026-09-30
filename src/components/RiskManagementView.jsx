@@ -38,11 +38,15 @@ import {
   Play,
   Send,
   Clock,
-  Undo2
+  Undo2,
+  Cloud,
+  CloudOff
 } from 'lucide-react';
 import { getDepartments, getSession } from '../utils/auth';
 import { exportBsToWord, exportBsToExcel } from '../utils/exportRiskDocs';
 import ConfirmModal from './ConfirmModal';
+import { cloudSyncService } from '../services/cloudSyncService';
+import { isSupabaseConfigured } from '../services/supabaseClient';
 import {
   getStandardRisksByDepartment,
   calculateRiskLevel,
@@ -1614,6 +1618,32 @@ export default function RiskManagementView({
                 <HelpCircle className="w-3.5 h-3.5 text-blue-500" />
                 <span className="hidden sm:inline">การเชื่อมข้อมูล</span>
               </button>
+
+              {isSupabaseConfigured() && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      setCascadeSuccessMsg('กำลังดึงข้อมูลล่าสุดจาก Supabase Cloud...');
+                      const cloudData = await cloudSyncService.pullAllRiskManagement();
+                      if (cloudData && setRiskManagement) {
+                        setRiskManagement((prev) => ({
+                          ...prev,
+                          ...(cloudData[selectedYear] ? cloudData[selectedYear] : {})
+                        }));
+                      }
+                      setCascadeSuccessMsg('✓ ซิงค์ข้อมูลล่าสุดจาก Supabase Cloud สำเร็จสมบูรณ์!');
+                    } catch (err) {
+                      setCascadeSuccessMsg(`ซิงค์คลาวด์ไม่สำเร็จ: ${err.message}`);
+                    }
+                  }}
+                  className="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center space-x-1.5 transition-colors cursor-pointer"
+                  title="ซิงค์ข้อมูลล่าสุดจาก Supabase Cloud ทันที"
+                >
+                  <RefreshCw className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>ซิงค์ Cloud</span>
+                </button>
+              )}
 
               <span className="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                 ส่งแล้ว: {departmentsList.filter(d => submissions[d]?.status === 'submitted' || submissions[d]?.status === 'reviewed').length} / {departmentsList.length}

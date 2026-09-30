@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Cloud, X } from 'lucide-react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import DashboardView from './components/DashboardView';
@@ -14,6 +15,7 @@ import LoginView from './components/LoginView';
 import WelcomeView from './components/WelcomeView';
 import ChangePasswordModal from './components/ChangePasswordModal';
 import ProfileSettingsModal from './components/ProfileSettingsModal';
+import CloudSyncModal from './components/CloudSyncModal';
 import AuditRiskView, { defaultAuditUniverse } from './components/AuditRiskView';
 import EngagementPlanView from './components/EngagementPlanView';
 import UserManagementView from './components/UserManagementView';
@@ -25,6 +27,8 @@ import PublicOverviewView from './components/PublicOverviewView';
 import ErrorBoundary from './components/ErrorBoundary';
 import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
 import { getSession, loginAsGuest, logout as authLogout, switchSessionTo, autoRepairDataLinkages, getUsers, saveUsers, getDepartments, saveDepartments } from './utils/auth';
+import { cloudSyncService, mergeRiskManagement } from './services/cloudSyncService';
+import { isSupabaseConfigured } from './services/supabaseClient';
 
 import {
   initialOrgProfile,
@@ -56,6 +60,8 @@ export default function App() {
   const [session, setSession] = useState(() => getSession());
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showCloudSyncModal, setShowCloudSyncModal] = useState(false);
+  const [cloudToast, setCloudToast] = useState(null);
 
   // Dark Mode State (Default to false for warm white-blue theme)
   const [darkMode, setDarkMode] = useState(() => {
@@ -428,6 +434,85 @@ export default function App() {
     localStorage.setItem('ia_risk_management_by_year', JSON.stringify(riskManagementByYear));
   }, [riskManagementByYear]);
 
+  // Initialize Cloud Realtime Synchronization (Supabase)
+  useEffect(() => {
+    let isSubscribed = true;
+
+    const setupSync = async () => {
+      if (!isSupabaseConfigured()) return;
+
+      // 1. Initial Pull from Cloud
+      try {
+        const cloudData = await cloudSyncService.pullAllRiskManagement();
+        if (isSubscribed && cloudData && Object.keys(cloudData).length > 0) {
+          setRiskManagementByYear((prev) => {
+            const next = { ...prev };
+            Object.keys(cloudData).forEach((yr) => {
+              next[yr] = mergeRiskManagement(next[yr] || createEmptyRiskManagement(), cloudData[yr]);
+            });
+            return next;
+          });
+        }
+      } catch (e) {
+        console.warn('Initial cloud pull:', e);
+      }
+
+      // 2. Realtime Subscription
+      cloudSyncService.initRealtimeSync({
+        onRiskManagementUpdate: ({ fiscalYear, department, data }) => {
+          if (!fiscalYear || !department || !data) return;
+          console.log(`⚡ [App Realtime Update] Dept: ${department}, Year: ${fiscalYear}`);
+
+          setRiskManagementByYear((prev) => {
+            const yr = String(fiscalYear);
+            const currentYearData = prev[yr] || (yr === '2569' ? initialRiskManagement : createEmptyRiskManagement());
+
+            const filterOutDept = (list) => (list || []).filter((item) => item.department !== department);
+            const nextBs1 = [...filterOutDept(currentYearData.bs1), ...(data.bs1 || [])];
+            const nextBs2 = [...filterOutDept(currentYearData.bs2), ...(data.bs2 || [])];
+            const nextBs3 = [...filterOutDept(currentYearData.bs3), ...(data.bs3 || [])];
+            const nextBs4 = [...filterOutDept(currentYearData.bs4), ...(data.bs4 || [])];
+            const nextBs5 = [...filterOutDept(currentYearData.bs5), ...(data.bs5 || [])];
+            const nextBs5Summary = { ...(currentYearData.bs5Summary || {}), ...(data.bs5Summary || {}) };
+            const nextSubmissions = { ...(currentYearData.submissions || {}), ...(data.submissions || {}) };
+
+            return {
+              ...prev,
+              [yr]: {
+                ...currentYearData,
+                bs1: nextBs1,
+                bs2: nextBs2,
+                bs3: nextBs3,
+                bs4: nextBs4,
+                bs5: nextBs5,
+                bs5Summary: nextBs5Summary,
+                submissions: nextSubmissions
+              }
+            };
+          });
+
+          // Show floating cloud toast
+          setCloudToast({
+            title: `⚡ ซิงค์ข้อมูลล่าสุดจาก "${department}"`,
+            message: `อัปเดตแบบ บส.1 - บส.5 ปีงบ ${fiscalYear} เรียบร้อยแล้ว`,
+            type: 'info'
+          });
+          setTimeout(() => setCloudToast(null), 4000);
+        }
+      });
+    };
+
+    setupSync();
+
+    const handleConfigChange = () => setupSync();
+    window.addEventListener('ia-supabase-config-changed', handleConfigChange);
+
+    return () => {
+      isSubscribed = false;
+      window.removeEventListener('ia-supabase-config-changed', handleConfigChange);
+    };
+  }, []);
+
   useEffect(() => {
     localStorage.setItem('ia_lpa_indicators_by_year', JSON.stringify(lpaIndicatorsByYear));
   }, [lpaIndicatorsByYear]);
@@ -530,6 +615,24 @@ export default function App() {
     setRiskManagementByYear((prev) => {
       const current = prev[selectedYear] || (selectedYear === '2569' ? initialRiskManagement : createEmptyRiskManagement());
       const updated = typeof updaterOrValue === 'function' ? updaterOrValue(current) : updaterOrValue;
+
+      // Auto-push to Supabase Cloud if configured
+      if (isSupabaseConfigured()) {
+        const userDept = session?.department || 'สำนักปลัด';
+        const filterFn = (i) => (session?.role === 'admin' ? true : i.department === userDept);
+        const deptPayload = {
+          bs1: (updated.bs1 || []).filter(filterFn),
+          bs2: (updated.bs2 || []).filter(filterFn),
+          bs3: (updated.bs3 || []).filter(filterFn),
+          bs4: (updated.bs4 || []).filter(filterFn),
+          bs5: (updated.bs5 || []).filter(filterFn),
+          bs5Summary: updated.bs5Summary || {},
+          submissions: updated.submissions || {}
+        };
+        const targetDept = session?.role === 'admin' ? (session?.department || 'หน่วยตรวจสอบภายใน') : userDept;
+        cloudSyncService.pushDeptRiskManagement(selectedYear, targetDept, deptPayload).catch((e) => console.warn('Auto cloud push notice:', e));
+      }
+
       return { ...prev, [selectedYear]: updated };
     });
   };
@@ -800,6 +903,7 @@ export default function App() {
         onOpenSettings={() => setShowSettings(true)}
         onOpenUsersManagement={() => handleSelectTab('users')}
         onOpenWelcome={() => handleSelectTab('welcome')}
+        onOpenCloudSync={() => setShowCloudSyncModal(true)}
       />
 
       {/* Impersonate / Department Preview Banner (แสดงเฉพาะเมื่อ ADMIN กำลังกดทดสอบมุมมองเท่านั้น) */}
@@ -840,6 +944,36 @@ export default function App() {
           onImportBackup={handleImportBackup}
           onClose={() => setShowSettings(false)}
         />
+      )}
+
+      {showCloudSyncModal && (
+        <CloudSyncModal
+          isOpen={showCloudSyncModal}
+          onClose={() => setShowCloudSyncModal(false)}
+          riskManagementByYear={riskManagementByYear}
+          setRiskManagementByYear={setRiskManagementByYear}
+          selectedYear={selectedYear}
+          isAdmin={session?.role === 'admin'}
+        />
+      )}
+
+      {/* Cloud Sync Toast Notification */}
+      {cloudToast && (
+        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-2xl bg-slate-900/95 text-white shadow-2xl border border-slate-700 flex items-start space-x-3 max-w-sm animate-in fade-in slide-in-from-bottom-5 duration-300 backdrop-blur-xs">
+          <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+            <Cloud className="w-4 h-4" />
+          </div>
+          <div className="space-y-0.5 text-xs flex-1">
+            <h4 className="font-bold text-slate-100">{cloudToast.title}</h4>
+            <p className="text-slate-300 text-[11px] leading-relaxed">{cloudToast.message}</p>
+          </div>
+          <button
+            onClick={() => setCloudToast(null)}
+            className="text-slate-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
       )}
 
       <div className="flex-1 flex overflow-hidden min-h-0">
