@@ -432,7 +432,8 @@ export default function WelcomeView({ session, onLogin, onGuestLogin, onEnterDas
           onPrimaryClick={scrollToLogin}
           onCtaClick={scrollToLogin}
           onGuestClick={handleEnterGuest}
-          guestButtonText="สำหรับผู้เยี่ยมชม (Guest View)"
+          primaryButtonText="เข้าสู่ระบบ"
+          guestButtonText="โหมดผู้เยี่ยมชม"
           executiveLeader={executiveLeaderPartner}
           permanentSecretary={permanentSecretaryPartner}
           partners={heroPartners}

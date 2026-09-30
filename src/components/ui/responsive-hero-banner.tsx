@@ -12,9 +12,7 @@ import {
   Building2, 
   Play,
   Users,
-  AlertTriangle,
-  Cloud,
-  ChevronDown
+  Eye
 } from 'lucide-react';
 
 export interface NavLink {
@@ -69,19 +67,19 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
     { label: "ฟังก์ชันการตรวจสอบ", href: "#modules" },
     { label: "คลังระเบียบ ว 614", href: "#standards" }
   ],
-  ctaButtonText = "เข้าสู่ระบบ (Sign In)",
+  ctaButtonText = "เข้าสู่ระบบ",
   onCtaClick,
   badgeLabel = "✨ Welcome",
   badgeText = "Next-Gen Digital Governance & Internal Audit Platform",
   title = "ระบบงานตรวจสอบภายใน",
   titleLine2 = "องค์การบริหารส่วนตำบลฝางคำ",
   description = "",
-  primaryButtonText = "เข้าสู่ระบบงาน (Sign In)",
+  primaryButtonText = "เข้าสู่ระบบ",
   onPrimaryClick,
   secondaryButtonText = "",
   onSecondaryClick,
   onGuestClick,
-  guestButtonText = "สำหรับผู้เยี่ยมชม (Guest View)",
+  guestButtonText = "โหมดผู้เยี่ยมชม",
   executiveLeader,
   permanentSecretary,
   partnersTitle = "โครงสร้างหน่วยรับตรวจที่เชื่อมโยงในระบบ (CONNECTED DEPARTMENTS)",
@@ -99,7 +97,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <section className="w-full isolate min-h-[640px] lg:min-h-[700px] overflow-hidden relative rounded-3xl sm:rounded-[2.5rem] border border-blue-200/80 shadow-[0_20px_60px_-15px_rgba(30,58,138,0.12)] bg-gradient-to-br from-white via-[#f4f8fe] to-[#eaf2fc] text-slate-800 flex flex-col justify-between">
+    <section className="w-full isolate min-h-[480px] sm:min-h-[520px] lg:min-h-[560px] overflow-hidden relative rounded-3xl sm:rounded-[2.5rem] border border-blue-200/80 shadow-[0_20px_60px_-15px_rgba(30,58,138,0.12)] bg-gradient-to-br from-white via-[#f4f8fe] to-[#eaf2fc] text-slate-800 flex flex-col justify-between">
       {/* 1. Bright Architectural Building Photo Background */}
       <img
         src={backgroundImageUrl}
@@ -296,9 +294,9 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
         )}
       </header>
 
-      {/* 4. Hero Center Body (Title & Welcome Badge) */}
-      <div className="z-10 relative my-auto py-3 sm:py-5 lg:py-6 px-6">
-        <div className="max-w-5xl mx-auto text-center">
+      {/* 4. Hero Center Body (Title, Welcome Badge & Sleek Redesigned Buttons) */}
+      <div className="z-10 relative flex-1 flex flex-col justify-center items-center py-10 sm:py-14 lg:py-16 px-6">
+        <div className="max-w-4xl mx-auto text-center">
           {/* Frosted Glass Welcome Badge */}
           <div className="mb-4 sm:mb-5 inline-flex items-center gap-2 sm:gap-2.5 rounded-full bg-white/90 px-3.5 sm:px-4 py-1.5 border border-blue-200/80 shadow-xs backdrop-blur-md animate-fade-slide-in-1 hover:border-blue-300 transition-all">
             <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-white bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 rounded-full py-0.5 px-2.5 sm:px-3 shadow-2xs font-['Plus_Jakarta_Sans',sans-serif] tracking-wider uppercase">
@@ -310,7 +308,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             </span>
           </div>
 
-          {/* Main Title - Refined modern scale (reduced to ~50% per user request) */}
+          {/* Main Title - Refined modern scale */}
           <h1 className="text-lg sm:text-xl md:text-2xl lg:text-[1.95rem] font-extrabold text-slate-900 tracking-tight leading-snug animate-fade-slide-in-2 font-['Prompt',sans-serif]">
             <span className="block drop-shadow-xs">
               {title}
@@ -322,39 +320,33 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
 
           {/* Subtitle / Description (Only displayed if provided) */}
           {description && (
-            <p className="mt-6 text-sm sm:text-base lg:text-lg text-slate-600 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow-2xs animate-fade-slide-in-3">
+            <p className="mt-4 text-sm sm:text-base text-slate-600 font-normal leading-relaxed max-w-xl mx-auto drop-shadow-2xs animate-fade-slide-in-3">
               {description}
             </p>
           )}
-        </div>
-      </div>
 
-      {/* 5. Bottom Action Buttons & Connected Departments */}
-      <div className="z-10 relative pb-7 sm:pb-8 px-6">
-        <div className="max-w-5xl mx-auto">
-          {/* Dual Action Buttons positioned directly above partners section */}
-          <div className="flex flex-col sm:flex-row mb-6 sm:mb-8 gap-3 sm:gap-4 items-center justify-center animate-fade-slide-in-3">
+          {/* Redesigned Modern Action Buttons - Sleek, compact & shifted down with breathing room */}
+          <div className="mt-8 sm:mt-10 lg:mt-12 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center animate-fade-slide-in-3">
+            {/* Primary Button */}
             <button
               type="button"
               onClick={onPrimaryClick}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold text-sm sm:text-base py-3 sm:py-3.5 px-8 sm:px-9 shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-semibold text-sm sm:text-base px-6 py-2.5 sm:py-3 shadow-md shadow-blue-600/25 hover:shadow-lg hover:shadow-blue-600/35 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all cursor-pointer group"
             >
-              <ShieldCheck className="w-5 h-5 text-cyan-200" />
+              <LogIn className="w-4 h-4 text-blue-100 group-hover:scale-110 transition-transform" />
               <span>{session ? "เปิดแดชบอร์ดงานตรวจสอบ" : primaryButtonText}</span>
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+              <ArrowRight className="w-4 h-4 text-blue-200 group-hover:translate-x-0.5 transition-transform" />
             </button>
 
+            {/* Guest / Visitor Button */}
             {onGuestClick && (
               <button
                 type="button"
                 onClick={onGuestClick}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full bg-white/95 hover:bg-blue-50/80 text-slate-700 hover:text-blue-700 font-bold text-sm sm:text-base py-3 sm:py-3.5 px-7 sm:px-8 border border-blue-200/90 shadow-md hover:border-blue-400 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer group"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-white/90 hover:bg-white text-slate-700 hover:text-blue-700 font-semibold text-sm sm:text-base px-6 py-2.5 sm:py-3 border border-slate-200/90 hover:border-blue-300 shadow-2xs hover:shadow-xs hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all cursor-pointer group"
               >
-                <Users className="w-4.5 h-4.5 text-blue-600 group-hover:scale-110 transition-transform" />
+                <Eye className="w-4 h-4 text-slate-500 group-hover:text-blue-600 group-hover:scale-110 transition-colors" />
                 <span>{guestButtonText}</span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100/70 text-blue-700 border border-blue-200/80 ml-0.5">
-                  ไม่ต้องล็อกอิน
-                </span>
               </button>
             )}
 
@@ -362,60 +354,12 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
               <button
                 type="button"
                 onClick={onSecondaryClick}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white/95 hover:bg-white text-slate-700 hover:text-blue-700 font-bold text-sm sm:text-base py-3 sm:py-3.5 px-7 sm:px-8 border border-slate-200/90 shadow-xs hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-white/90 hover:bg-white text-slate-700 hover:text-blue-700 font-semibold text-sm sm:text-base px-6 py-2.5 sm:py-3 border border-slate-200/90 shadow-2xs hover:border-blue-300 hover:shadow-xs transition-all cursor-pointer"
               >
-                <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 fill-blue-600" />
+                <Play className="w-3.5 h-3.5 text-blue-600 fill-blue-600" />
                 <span>{secondaryButtonText}</span>
               </button>
             )}
-          </div>
-
-          {/* Modern Enterprise Capability Highlights (Clean, airy, and balanced per Concept 1) */}
-          <div className="pt-6 sm:pt-7 border-t border-slate-200/80">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">
-              <div className="bg-white/85 backdrop-blur-md border border-slate-200/80 hover:border-blue-300 rounded-2xl p-3.5 text-center transition-all hover:shadow-xs group">
-                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                  <ShieldCheck className="w-4 h-4" />
-                </div>
-                <div className="text-xs font-bold text-slate-800">มาตรฐาน ว 614</div>
-                <div className="text-[10px] text-slate-500 mt-0.5">แผน AI & กระดาษทำการ</div>
-              </div>
-
-              <div className="bg-white/85 backdrop-blur-md border border-slate-200/80 hover:border-amber-300 rounded-2xl p-3.5 text-center transition-all hover:shadow-xs group">
-                <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                  <AlertTriangle className="w-4 h-4" />
-                </div>
-                <div className="text-xs font-bold text-slate-800">ควบคุมภายใน & บส.</div>
-                <div className="text-[10px] text-slate-500 mt-0.5">แบบ ปค.1-5 และ บส.1-5</div>
-              </div>
-
-              <div className="bg-white/85 backdrop-blur-md border border-slate-200/80 hover:border-indigo-300 rounded-2xl p-3.5 text-center transition-all hover:shadow-xs group">
-                <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                  <Building2 className="w-4 h-4" />
-                </div>
-                <div className="text-xs font-bold text-slate-800">5 ส่วนราชการ</div>
-                <div className="text-[10px] text-slate-500 mt-0.5">เชื่อมโยงพื้นที่ทำงานเฉพาะกอง</div>
-              </div>
-
-              <div className="bg-white/85 backdrop-blur-md border border-slate-200/80 hover:border-emerald-300 rounded-2xl p-3.5 text-center transition-all hover:shadow-xs group">
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                  <Cloud className="w-4 h-4" />
-                </div>
-                <div className="text-xs font-bold text-slate-800">Cloud Realtime</div>
-                <div className="text-[10px] text-slate-500 mt-0.5">ซิงค์สด 24 ชม. ทุกอุปกรณ์</div>
-              </div>
-            </div>
-
-            {/* Smooth Scroll Navigation Hint to Full Org Chart below */}
-            <div className="text-center mt-5">
-              <a
-                href="#departments"
-                className="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-500 hover:text-blue-600 bg-white/70 hover:bg-white px-4 py-1.5 rounded-full border border-slate-200/80 shadow-2xs transition-all cursor-pointer group"
-              >
-                <span>ดูโครงสร้างสายการบังคับบัญชาและหน่วยรับตรวจทั้งหมด</span>
-                <ChevronDown className="w-3.5 h-3.5 text-blue-500 group-hover:translate-y-0.5 transition-transform" />
-              </a>
-            </div>
           </div>
         </div>
       </div>
