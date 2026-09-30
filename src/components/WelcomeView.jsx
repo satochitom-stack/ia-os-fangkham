@@ -441,7 +441,7 @@ export default function WelcomeView({ session, onLogin, onGuestLogin, onEnterDas
           subUnitsTitle="หน่วยงานภายใต้สังกัด (AFFILIATED AGENCIES)"
           badgeLabel="✨ Welcome"
           badgeText="Next-Gen Digital Governance & Internal Audit Platform"
-          description="แพลตฟอร์มบริหารจัดการงานตรวจสอบภายใน การควบคุมภายใน (ปอ.1 - ปค.5) และการบริหารความเสี่ยง เชื่อมโยง 5 ส่วนราชการตามมาตรฐาน ว 614"
+          description=""
           partnersTitle={`โครงสร้าง ${auditeeDepartments.length} หน่วยรับตรวจที่เชื่อมโยงในระบบ (CONNECTED DEPARTMENTS)`}
           navLinks={[
             { label: "ภาพรวมระบบ", href: "#welcome-features", isActive: true },
