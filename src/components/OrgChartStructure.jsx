@@ -63,7 +63,7 @@ export default function OrgChartStructure({
             </h3>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            {orgProfile.name} {orgProfile.district} {orgProfile.province} • คลิกที่กล่องเพื่อเข้าสู่ระบบในฐานะหน่วยงานนั้น
+            {orgProfile.name} {orgProfile.district} {orgProfile.province}
           </p>
         </div>
 
@@ -128,9 +128,6 @@ export default function OrgChartStructure({
               <div className="text-[11px] text-slate-600 mt-0.5 font-medium">
                 {orgProfile.approverName || 'นายจรูญ ธรรมพิทักษ์'}
               </div>
-              <div className="text-[10px] text-amber-700 mt-1 font-mono font-medium">
-                @mayor • คลิกเพื่อเข้าสู่ระบบ
-              </div>
             </div>
 
             {/* Vertical connector line down from นายก to ปลัด */}
@@ -160,9 +157,6 @@ export default function OrgChartStructure({
               <div className="text-[11px] text-slate-600 mt-0.5 font-medium">
                 {orgProfile.palatName || 'นายชาญชัย อักโข'}
               </div>
-              <div className="text-[10px] text-emerald-700 mt-1 font-mono font-medium">
-                @palat • คลิกเพื่อเข้าสู่ระบบ
-              </div>
             </div>
 
             {/* Right Side: Connector Line & หน่วยตรวจสอบภายใน */}
@@ -186,9 +180,6 @@ export default function OrgChartStructure({
                 </div>
                 <div className="text-[10px] text-slate-600 mt-0.5 font-medium">
                   {orgProfile.auditorPosition || 'นักวิชาการตรวจสอบภายในปฏิบัติการ'}
-                </div>
-                <div className="text-[9px] text-blue-600 mt-1 font-mono font-bold">
-                  @admin (👑 ADMIN)
                 </div>
               </div>
             </div>
@@ -219,9 +210,6 @@ export default function OrgChartStructure({
                 </div>
                 <div className="text-[10px] text-sky-100 mt-0.5 line-clamp-1">
                   หัวหน้าสำนักปลัด
-                </div>
-                <div className="text-[9px] text-sky-200 font-mono mt-0.5">
-                  @office
                 </div>
               </div>
 
@@ -293,9 +281,6 @@ export default function OrgChartStructure({
                 </div>
                 <div className="text-[10px] text-fuchsia-100 mt-0.5 line-clamp-1">
                   ผู้อำนวยการกองคลัง
-                </div>
-                <div className="text-[9px] text-fuchsia-200 font-mono mt-0.5">
-                  @finance
                 </div>
               </div>
 
@@ -373,9 +358,6 @@ export default function OrgChartStructure({
                 <div className="text-[10px] text-amber-100 mt-0.5 line-clamp-1">
                   ผู้อำนวยการกองช่าง
                 </div>
-                <div className="text-[9px] text-amber-200 font-mono mt-0.5">
-                  @engineering
-                </div>
               </div>
 
               {/* Sub-boxes (ฝ่าย / งาน) */}
@@ -443,9 +425,6 @@ export default function OrgChartStructure({
                 <div className="text-[10px] text-slate-800 font-semibold mt-0.5 line-clamp-1">
                   ผู้อำนวยการกองการศึกษา
                 </div>
-                <div className="text-[9px] text-amber-900 font-mono mt-0.5 font-bold">
-                  @education
-                </div>
               </div>
 
               {/* Sub-boxes (ฝ่าย / งาน) */}
@@ -497,9 +476,6 @@ export default function OrgChartStructure({
                     <div className="text-[8.5px] text-slate-500 line-clamp-1">
                       การจัดการศึกษาระดับปฐมวัย
                     </div>
-                    <div className="text-[8.5px] text-emerald-700 font-mono font-medium">
-                      @cdc_charoen
-                    </div>
                   </div>
 
                   {/* ศพด.บ้านฝางเทิง */}
@@ -512,9 +488,6 @@ export default function OrgChartStructure({
                     </div>
                     <div className="text-[8.5px] text-slate-500 line-clamp-1">
                       การจัดการศึกษาระดับปฐมวัย
-                    </div>
-                    <div className="text-[8.5px] text-emerald-700 font-mono font-medium">
-                      @cdc_fangthoeng
                     </div>
                   </div>
                 </div>
@@ -540,9 +513,6 @@ export default function OrgChartStructure({
                 </div>
                 <div className="text-[10px] text-emerald-100 mt-0.5 line-clamp-1">
                   ผู้อำนวยการกองสวัสดิการ
-                </div>
-                <div className="text-[9px] text-emerald-200 font-mono mt-0.5">
-                  @health
                 </div>
               </div>
 
