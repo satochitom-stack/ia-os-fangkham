@@ -507,7 +507,7 @@ export default function PublicOverviewView({
               centerTitle={orgName}
               centerSubtitle="ศูนย์ปฏิบัติการ 5 ส่วนราชการ"
               badgeLabel="IA-OS DIGITAL GOVERNANCE"
-              className="w-full min-h-[580px] h-[640px] flex flex-col items-center justify-center bg-gradient-to-b from-[#071126] via-[#0b1a3a] to-[#071126] relative overflow-hidden rounded-3xl border border-blue-900/60 shadow-[0_20px_60px_-15px_rgba(2,132,199,0.25)]"
+              className="w-full min-h-[580px] h-[640px] flex flex-col items-center justify-center bg-gradient-to-b from-[#f3f8fe] via-[#ebf3fc] to-[#f5f9ff] dark:from-[#071126] dark:via-[#0b1a3a] dark:to-[#071126] relative overflow-hidden rounded-3xl border border-blue-200/80 dark:border-blue-900/60 shadow-[0_15px_45px_-12px_rgba(37,99,235,0.12)]"
             />
           </div>
         );

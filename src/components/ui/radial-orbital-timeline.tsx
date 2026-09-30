@@ -149,13 +149,13 @@ export default function RadialOrbitalTimeline({
   const getStatusStyles = (status: TimelineItem["status"]): string => {
     switch (status) {
       case "completed":
-        return "text-emerald-300 bg-emerald-950/80 border-emerald-500/60";
+        return "text-emerald-700 bg-emerald-50 border-emerald-200 dark:text-emerald-300 dark:bg-emerald-950/80 dark:border-emerald-500/60";
       case "in-progress":
-        return "text-cyan-300 bg-cyan-950/80 border-cyan-500/60";
+        return "text-blue-700 bg-blue-50 border-blue-200 dark:text-cyan-300 dark:bg-cyan-950/80 dark:border-cyan-500/60";
       case "pending":
-        return "text-slate-300 bg-slate-800/80 border-slate-600";
+        return "text-slate-700 bg-slate-100 border-slate-200 dark:text-slate-300 dark:bg-slate-800/80 dark:border-slate-600";
       default:
-        return "text-slate-300 bg-slate-800/80 border-slate-600";
+        return "text-slate-700 bg-slate-100 border-slate-200 dark:text-slate-300 dark:bg-slate-800/80 dark:border-slate-600";
     }
   };
 
@@ -164,51 +164,51 @@ export default function RadialOrbitalTimeline({
       case 'emerald':
         return {
           bg: 'bg-emerald-600',
-          border: 'border-emerald-400',
+          border: 'border-emerald-300 dark:border-emerald-400',
           glow: 'rgba(16, 185, 129, 0.35)',
-          text: 'text-emerald-300',
+          text: 'text-emerald-700 dark:text-emerald-300',
           bar: 'from-emerald-500 to-teal-400'
         };
       case 'amber':
         return {
-          bg: 'bg-amber-600',
-          border: 'border-amber-400',
+          bg: 'bg-amber-500',
+          border: 'border-amber-300 dark:border-amber-400',
           glow: 'rgba(245, 158, 11, 0.35)',
-          text: 'text-amber-300',
+          text: 'text-amber-700 dark:text-amber-300',
           bar: 'from-amber-500 to-yellow-400'
         };
       case 'purple':
       case 'indigo':
         return {
           bg: 'bg-indigo-600',
-          border: 'border-indigo-400',
+          border: 'border-indigo-300 dark:border-indigo-400',
           glow: 'rgba(99, 102, 241, 0.35)',
-          text: 'text-indigo-300',
+          text: 'text-indigo-700 dark:text-indigo-300',
           bar: 'from-indigo-500 to-purple-400'
         };
       case 'rose':
         return {
-          bg: 'bg-rose-600',
-          border: 'border-rose-400',
+          bg: 'bg-rose-500',
+          border: 'border-rose-300 dark:border-rose-400',
           glow: 'rgba(244, 63, 94, 0.35)',
-          text: 'text-rose-300',
+          text: 'text-rose-700 dark:text-rose-300',
           bar: 'from-rose-500 to-pink-400'
         };
       case 'cyan':
         return {
           bg: 'bg-cyan-600',
-          border: 'border-cyan-400',
+          border: 'border-cyan-300 dark:border-cyan-400',
           glow: 'rgba(6, 182, 212, 0.35)',
-          text: 'text-cyan-300',
+          text: 'text-cyan-700 dark:text-cyan-300',
           bar: 'from-cyan-500 to-blue-400'
         };
       case 'blue':
       default:
         return {
           bg: 'bg-blue-600',
-          border: 'border-blue-400',
+          border: 'border-blue-300 dark:border-blue-400',
           glow: 'rgba(37, 99, 235, 0.35)',
-          text: 'text-blue-300',
+          text: 'text-blue-700 dark:text-blue-300',
           bar: 'from-blue-500 to-cyan-400'
         };
     }
@@ -218,24 +218,24 @@ export default function RadialOrbitalTimeline({
     <div
       className={
         className ||
-        "w-full min-h-[640px] h-[680px] flex flex-col items-center justify-center bg-gradient-to-b from-[#071126] via-[#0b1a3a] to-[#071126] relative overflow-hidden rounded-3xl border border-blue-900/60 shadow-[0_20px_60px_-15px_rgba(2,132,199,0.2)]"
+        "w-full min-h-[640px] h-[680px] flex flex-col items-center justify-center bg-gradient-to-b from-[#f3f8fe] via-[#ebf3fc] to-[#f5f9ff] dark:from-[#071126] dark:via-[#0b1a3a] dark:to-[#071126] relative overflow-hidden rounded-3xl border border-blue-200/80 dark:border-blue-900/60 shadow-[0_15px_45px_-12px_rgba(37,99,235,0.12)]"
       }
       ref={containerRef}
       onClick={handleContainerClick}
     >
       {/* Background Ambience & Grid */}
-      <div className="absolute inset-0 bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] [background-size:24px_24px] opacity-25 pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[580px] h-[580px] bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(#93c5fd_1.2px,transparent_1.2px)] dark:bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] [background-size:24px_24px] opacity-45 dark:opacity-25 pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[580px] h-[580px] bg-blue-300/20 dark:bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] bg-sky-300/25 dark:bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
 
       {/* Floating Slogan Ribbon (คำขวัญประจำตำบล อบต.ฝางคำ) */}
       {slogan && (
         <div className="absolute top-4 inset-x-3 sm:inset-x-8 z-30 flex justify-center pointer-events-none">
-          <div className="max-w-2xl px-4 py-2 sm:py-2.5 rounded-2xl bg-slate-900/85 backdrop-blur-xl border border-cyan-400/30 shadow-lg shadow-blue-950/60 text-center flex items-center justify-center gap-2.5 pointer-events-auto transition-all hover:border-cyan-400/60">
-            <span className="p-1 rounded-lg bg-cyan-500/20 text-cyan-300 shrink-0">
+          <div className="max-w-2xl px-4 py-2 sm:py-2.5 rounded-2xl bg-white/95 dark:bg-slate-900/85 backdrop-blur-xl border border-blue-200/90 dark:border-cyan-400/30 shadow-md shadow-blue-500/5 dark:shadow-blue-950/60 text-center flex items-center justify-center gap-2.5 pointer-events-auto transition-all hover:border-blue-400/60 dark:hover:border-cyan-400/60">
+            <span className="p-1 rounded-lg bg-blue-100 dark:bg-cyan-500/20 text-blue-600 dark:text-cyan-300 shrink-0">
               <Quote className="w-3.5 h-3.5 transform scale-x-[-1]" />
             </span>
-            <p className="text-xs sm:text-[13px] font-bold text-cyan-100 tracking-wide font-['Prompt',sans-serif] leading-tight line-clamp-2">
+            <p className="text-xs sm:text-[13px] font-bold text-slate-800 dark:text-cyan-100 tracking-wide font-['Prompt',sans-serif] leading-tight line-clamp-2">
               "{slogan}"
             </p>
           </div>
@@ -243,23 +243,23 @@ export default function RadialOrbitalTimeline({
       )}
 
       {/* Top Left Badge Indicator */}
-      <div className="absolute top-4 left-4 z-20 hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-950/60 border border-blue-700/40 backdrop-blur-md">
-        <Sparkles className="w-3 h-3 text-cyan-300 animate-pulse" />
-        <span className="text-[10px] font-bold text-cyan-200 tracking-wider uppercase font-mono">
+      <div className="absolute top-4 left-4 z-20 hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-700/40 backdrop-blur-md shadow-xs">
+        <Sparkles className="w-3 h-3 text-blue-600 dark:text-cyan-300 animate-pulse" />
+        <span className="text-[10px] font-bold text-blue-800 dark:text-cyan-200 tracking-wider uppercase font-mono">
           {badgeLabel}
         </span>
       </div>
 
       {/* Top Right Auto-Rotation Controls */}
-      <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 bg-blue-950/70 border border-blue-800/50 rounded-full px-2.5 py-1 text-[11px] text-cyan-200 backdrop-blur-md">
-        <Compass className={`w-3 h-3 text-cyan-400 ${autoRotate ? 'animate-spin' : ''}`} style={{ animationDuration: '6s' }} />
+      <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 bg-white/90 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-800/50 rounded-full px-2.5 py-1 text-[11px] text-slate-700 dark:text-cyan-200 backdrop-blur-md shadow-xs">
+        <Compass className={`w-3 h-3 text-blue-600 dark:text-cyan-400 ${autoRotate ? 'animate-spin' : ''}`} style={{ animationDuration: '6s' }} />
         <button
           type="button"
           onClick={(e) => {
             e.stopPropagation();
             setAutoRotate((v) => !v);
           }}
-          className="text-[10px] font-bold hover:text-white transition-colors cursor-pointer"
+          className="text-[10px] font-bold hover:text-blue-900 dark:hover:text-white transition-colors cursor-pointer"
         >
           {autoRotate ? "หยุดหมุนชั่วคราว" : "หมุนอัตโนมัติ"}
         </button>
@@ -276,24 +276,24 @@ export default function RadialOrbitalTimeline({
           }}
         >
           {/* Orbital Center Core Hub: อบต.ฝางคำ / IA-OS Platform */}
-          <div className="absolute w-20 h-20 rounded-full bg-gradient-to-tr from-blue-700 via-indigo-600 to-cyan-500 animate-pulse flex flex-col items-center justify-center z-10 shadow-[0_0_40px_rgba(14,165,233,0.55)] border-2 border-cyan-300/50">
-            <div className="absolute w-24 h-24 rounded-full border border-cyan-400/35 animate-ping opacity-60"></div>
+          <div className="absolute w-20 h-20 rounded-full bg-gradient-to-tr from-blue-700 via-indigo-600 to-cyan-500 animate-pulse flex flex-col items-center justify-center z-10 shadow-[0_0_35px_rgba(37,99,235,0.35)] border-2 border-white/60 dark:border-cyan-300/50">
+            <div className="absolute w-24 h-24 rounded-full border border-blue-400/30 dark:border-cyan-400/35 animate-ping opacity-60"></div>
             <div
-              className="absolute w-28 h-28 rounded-full border border-blue-400/25 animate-ping opacity-35"
+              className="absolute w-28 h-28 rounded-full border border-sky-300/30 dark:border-blue-400/25 animate-ping opacity-35"
               style={{ animationDelay: "0.5s" }}
             ></div>
             <div className="w-12 h-12 rounded-full bg-white/95 backdrop-blur-md flex flex-col items-center justify-center text-slate-900 shadow-md">
               <span className="text-[10px] tracking-tight leading-none font-bold text-slate-700">อบต.</span>
               <span className="text-[11px] tracking-tight leading-none font-black text-blue-700">ฝางคำ</span>
             </div>
-            <span className="absolute -bottom-6 text-[10px] font-bold text-cyan-200 whitespace-nowrap bg-blue-950/90 px-2.5 py-0.5 rounded-full border border-cyan-500/40 backdrop-blur-xs shadow-md">
+            <span className="absolute -bottom-6 text-[10px] font-bold text-blue-900 dark:text-cyan-200 whitespace-nowrap bg-white/95 dark:bg-blue-950/90 px-2.5 py-0.5 rounded-full border border-blue-200/90 dark:border-cyan-500/40 backdrop-blur-xs shadow-xs">
               {centerSubtitle}
             </span>
           </div>
 
-          {/* Electric Cyan Laser Orbit Tracks */}
-          <div className="absolute w-[430px] h-[430px] rounded-full border border-cyan-400/20 shadow-[0_0_25px_rgba(6,182,212,0.15)] pointer-events-none"></div>
-          <div className="absolute w-[470px] h-[470px] rounded-full border border-dashed border-blue-400/15 pointer-events-none"></div>
+          {/* Electric Laser Orbit Tracks */}
+          <div className="absolute w-[430px] h-[430px] rounded-full border border-blue-300/60 dark:border-cyan-400/20 shadow-[0_0_20px_rgba(59,130,246,0.12)] pointer-events-none"></div>
+          <div className="absolute w-[470px] h-[470px] rounded-full border border-dashed border-blue-300/40 dark:border-blue-400/15 pointer-events-none"></div>
 
           {/* Orbit Nodes: 5 ส่วนราชการหลัก & งานบริการ */}
           {timelineData.map((item, index) => {
@@ -342,10 +342,10 @@ export default function RadialOrbitalTimeline({
                   ${colorCfg.bg} border-2 ${colorCfg.border}
                   ${
                     isExpanded
-                      ? "scale-135 shadow-[0_0_30px_rgba(255,255,255,0.7)] ring-4 ring-cyan-300/50"
+                      ? "scale-135 shadow-[0_0_25px_rgba(37,99,235,0.4)] ring-4 ring-blue-400/60 dark:ring-cyan-300/50"
                       : isRelated
-                      ? "ring-4 ring-cyan-400/70 animate-pulse shadow-lg"
-                      : "shadow-md hover:scale-115 hover:shadow-cyan-400/40"
+                      ? "ring-4 ring-blue-400/70 dark:ring-cyan-400/70 animate-pulse shadow-lg"
+                      : "shadow-md hover:scale-115 hover:shadow-blue-400/40"
                   }
                   transition-all duration-300 transform
                 `}
@@ -357,12 +357,12 @@ export default function RadialOrbitalTimeline({
                 <div
                   className={`
                   absolute top-13 left-1/2 -translate-x-1/2 whitespace-nowrap
-                  text-[11px] sm:text-xs font-bold tracking-wider text-center
-                  transition-all duration-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]
+                  text-[11px] sm:text-xs tracking-wider text-center
+                  transition-all duration-300 px-2 py-0.5 rounded-full backdrop-blur-xs
                   ${
                     isExpanded
-                      ? `${colorCfg.text} scale-110 font-black`
-                      : "text-slate-200 hover:text-white"
+                      ? `${colorCfg.text} scale-110 font-black bg-blue-50/90 dark:bg-slate-900/90 border border-blue-200 dark:border-cyan-400/40 shadow-sm`
+                      : "text-slate-700 dark:text-slate-200 font-bold hover:text-blue-900 dark:hover:text-white bg-white/85 dark:bg-slate-900/65 border border-slate-200/70 dark:border-slate-800 shadow-2xs"
                   }
                 `}
                 >
@@ -371,11 +371,11 @@ export default function RadialOrbitalTimeline({
 
                 {/* Expanded Interactive Card Popup */}
                 {isExpanded && (
-                  <Card className="absolute top-22 left-1/2 -translate-x-1/2 w-80 bg-slate-900/95 backdrop-blur-2xl border-2 border-cyan-400/40 shadow-[0_20px_50px_rgba(2,132,199,0.35)] overflow-visible text-white z-50 rounded-2xl animate-fade-slide-in-1">
+                  <Card className="absolute top-22 left-1/2 -translate-x-1/2 w-80 bg-white/98 dark:bg-slate-900/95 backdrop-blur-2xl border-2 border-blue-400/50 dark:border-cyan-400/40 shadow-[0_20px_50px_rgba(37,99,235,0.18)] dark:shadow-[0_20px_50px_rgba(2,132,199,0.35)] overflow-visible text-slate-800 dark:text-white z-50 rounded-2xl animate-fade-slide-in-1">
                     {/* Connecting Top Stem */}
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 w-0.5 h-3.5 bg-gradient-to-b from-cyan-300 to-cyan-500 shadow-sm"></div>
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 w-0.5 h-3.5 bg-gradient-to-b from-blue-400 to-blue-600 dark:from-cyan-300 dark:to-cyan-500 shadow-xs"></div>
 
-                    <CardHeader className="pb-2 pt-4 px-4 border-b border-white/10">
+                    <CardHeader className="pb-2 pt-4 px-4 border-b border-slate-100 dark:border-white/10">
                       <div className="flex justify-between items-center gap-2">
                         <Badge
                           className={`px-2.5 py-0.5 text-[10px] font-bold rounded-full ${getStatusStyles(
@@ -388,35 +388,35 @@ export default function RadialOrbitalTimeline({
                             ? "⚡ กำลังดำเนินงาน/บริการ"
                             : "รอดำเนินการ"}
                         </Badge>
-                        <span className="text-[11px] font-mono text-cyan-200/90 font-bold">
+                        <span className="text-[11px] font-mono text-blue-600 dark:text-cyan-200/90 font-bold">
                           {item.date}
                         </span>
                       </div>
-                      <CardTitle className="text-sm sm:text-base font-black text-white mt-2 leading-snug">
+                      <CardTitle className="text-sm sm:text-base font-black text-slate-900 dark:text-white mt-2 leading-snug">
                         {item.title}
                       </CardTitle>
                       {item.subtitle && (
-                        <div className="text-[11px] text-cyan-300/80 font-medium">
+                        <div className="text-[11px] text-blue-600 dark:text-cyan-300/80 font-medium">
                           {item.subtitle}
                         </div>
                       )}
                     </CardHeader>
 
-                    <CardContent className="text-xs text-slate-300 pb-4 px-4 space-y-3 pt-3">
-                      <p className="leading-relaxed text-slate-200 text-xs">
+                    <CardContent className="text-xs text-slate-600 dark:text-slate-300 pb-4 px-4 space-y-3 pt-3">
+                      <p className="leading-relaxed text-slate-700 dark:text-slate-200 text-xs">
                         {item.content}
                       </p>
 
                       {/* Energy / Service Efficiency Level */}
-                      <div className="pt-2 border-t border-white/10">
+                      <div className="pt-2 border-t border-slate-100 dark:border-white/10">
                         <div className="flex justify-between items-center text-[11px] mb-1">
-                          <span className="flex items-center text-slate-300 font-medium">
-                            <Zap size={12} className="mr-1 text-amber-400" />
+                          <span className="flex items-center text-slate-600 dark:text-slate-300 font-medium">
+                            <Zap size={12} className="mr-1 text-amber-500" />
                             ศักยภาพและความพร้อมการให้บริการ
                           </span>
-                          <span className="font-mono text-cyan-300 font-black">{item.energy}%</span>
+                          <span className="font-mono text-blue-600 dark:text-cyan-300 font-black">{item.energy}%</span>
                         </div>
-                        <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-white/10">
+                        <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-200/70 dark:border-white/10">
                           <div
                             className={`h-full bg-gradient-to-r ${colorCfg.bar} rounded-full transition-all duration-700`}
                             style={{ width: `${item.energy}%` }}
@@ -426,10 +426,10 @@ export default function RadialOrbitalTimeline({
 
                       {/* Connected Departments / Nodes */}
                       {item.relatedIds.length > 0 && (
-                        <div className="pt-2 border-t border-white/10">
+                        <div className="pt-2 border-t border-slate-100 dark:border-white/10">
                           <div className="flex items-center mb-1.5">
-                            <Link size={11} className="text-cyan-400 mr-1" />
-                            <h4 className="text-[10px] uppercase tracking-wider font-bold text-cyan-300">
+                            <Link size={11} className="text-blue-500 dark:text-cyan-400 mr-1" />
+                            <h4 className="text-[10px] uppercase tracking-wider font-bold text-blue-700 dark:text-cyan-300">
                               ส่วนราชการที่เชื่อมโยงในระบบ:
                             </h4>
                           </div>
@@ -442,14 +442,14 @@ export default function RadialOrbitalTimeline({
                                   key={relatedId}
                                   variant="outline"
                                   size="sm"
-                                  className="flex items-center h-6 px-2.5 py-0 text-[11px] rounded-lg border-cyan-400/30 bg-blue-950/60 hover:bg-blue-600/40 text-cyan-100 hover:text-white transition-all cursor-pointer shadow-xs"
+                                  className="flex items-center h-6 px-2.5 py-0 text-[11px] rounded-lg border-blue-200 dark:border-cyan-400/30 bg-blue-50/70 hover:bg-blue-100 dark:bg-blue-950/60 dark:hover:bg-blue-600/40 text-blue-700 hover:text-blue-900 dark:text-cyan-100 dark:hover:text-white transition-all cursor-pointer shadow-2xs"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     toggleItem(relatedId);
                                   }}
                                 >
                                   {relatedItem.title}
-                                  <ArrowRight size={10} className="ml-1 text-cyan-300" />
+                                  <ArrowRight size={10} className="ml-1 text-blue-500 dark:text-cyan-300" />
                                 </Button>
                               );
                             })}
@@ -466,11 +466,11 @@ export default function RadialOrbitalTimeline({
       </div>
 
       {/* Bottom Hint Strip */}
-      <div className="absolute bottom-3 inset-x-4 z-20 flex flex-col sm:flex-row items-center justify-between text-[11px] text-cyan-200/70 pointer-events-none">
+      <div className="absolute bottom-3 inset-x-4 z-20 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-600 dark:text-cyan-200/70 pointer-events-none">
         <span className="hidden sm:inline">
           💡 คลิกที่โหนดส่วนราชการเพื่อเปิดรายละเอียด หรือคลิกพื้นที่ว่างเพื่อให้วงโคจรหมุนต่อ
         </span>
-        <span className="font-mono text-cyan-300/80 font-bold">
+        <span className="font-mono text-blue-700 dark:text-cyan-300/80 font-bold bg-white/80 dark:bg-transparent px-2.5 py-0.5 rounded-full border border-blue-100 dark:border-none shadow-2xs">
           {timelineData.length} ส่วนราชการและบริการหลักในวงโคจร
         </span>
       </div>
