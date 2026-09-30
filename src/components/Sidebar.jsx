@@ -144,24 +144,26 @@ export default function Sidebar({
   ];
 
   const canAccessItem = (item) => {
-    // 1. หน้าภาพรวมสาธารณะ: ทุกคนเข้าถึงได้เสมอ
-    if (item.id === 'public-overview') return true;
-
-    // 2. ผู้ดูแลระบบ (ADMIN): เข้าถึงได้ทุกเมนู
+    // 1. ผู้ดูแลระบบ (ADMIN): เข้าถึงได้ทุกเมนู
     if (isAdmin) return true;
 
-    // 3. เมนูสำหรับ ADMIN เท่านั้น (เช่น จัดการผู้ใช้งาน): ผู้ใช้อื่นมองไม่เห็นเด็ดขาด
+    // 2. เมนูสำหรับ ADMIN เท่านั้น (เช่น จัดการผู้ใช้งาน): ผู้ใช้อื่นมองไม่เห็นเด็ดขาด
     if (item.adminOnly) return false;
 
-    // 4. แดชบอร์ดผู้บริหาร: สงวนเฉพาะ Admin และ Executive เท่านั้น
+    // 3. แดชบอร์ดผู้บริหาร: สงวนเฉพาะ Admin และ Executive เท่านั้น
     if (item.id === 'executive-dashboard') {
       return isExecutive;
     }
 
-    // 5. ผู้บริหาร (Executive): เข้าถึงแดชบอร์ดผู้บริหาร และเมนูที่ได้รับอนุญาต
+    // 4. ผู้บริหาร (Executive): เข้าถึงแดชบอร์ดผู้บริหาร และเมนูที่ได้รับอนุญาต
     if (isExecutive) {
       if (item.id === 'executive-dashboard') return true;
       return userPermissions.includes(item.id);
+    }
+
+    // 5. หน้าภาพรวมสาธารณะ: เข้าถึงได้หากได้รับสิทธิ์ หรือเป็น guest
+    if (item.id === 'public-overview') {
+      return userPermissions.includes('public-overview') || session?.role === 'guest';
     }
 
     // 6. ตรวจสอบสิทธิ์อย่างเข้มงวดตามที่ ADMIN กำหนดไว้ในตารางสิทธิ์ (Strict RBAC):
@@ -203,31 +205,47 @@ export default function Sidebar({
       {/* Navigation Menu List */}
       <nav className="flex-1 p-2 space-y-2.5 overflow-y-auto custom-scrollbar min-h-0">
         {/* Top Quick Portal Card */}
-        <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100/70 dark:bg-slate-800/50 rounded-xl border border-slate-200/70 dark:border-slate-800/80">
-          <button
-            onClick={() => setCurrentTab('welcome')}
-            className={`flex items-center justify-center space-x-1.5 px-2 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-              currentTab === 'welcome'
-                ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-cyan-300 shadow-2xs'
-                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60'
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-            <span className="truncate">หน้าแรก</span>
-          </button>
+        {isAdmin || isExecutive || session?.role === 'guest' ? (
+          <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100/70 dark:bg-slate-800/50 rounded-xl border border-slate-200/70 dark:border-slate-800/80">
+            <button
+              onClick={() => setCurrentTab('welcome')}
+              className={`flex items-center justify-center space-x-1.5 px-2 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                currentTab === 'welcome'
+                  ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-cyan-300 shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <span className="truncate">หน้าแรก</span>
+            </button>
 
-          <button
-            onClick={() => setCurrentTab('public-overview')}
-            className={`flex items-center justify-center space-x-1.5 px-2 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-              currentTab === 'public-overview'
-                ? 'bg-white dark:bg-slate-700 text-emerald-700 dark:text-emerald-300 shadow-2xs'
-                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60'
-            }`}
-          >
-            <Globe className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-            <span className="truncate">ภาพรวม</span>
-          </button>
-        </div>
+            <button
+              onClick={() => setCurrentTab('public-overview')}
+              className={`flex items-center justify-center space-x-1.5 px-2 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                currentTab === 'public-overview'
+                  ? 'bg-white dark:bg-slate-700 text-emerald-700 dark:text-emerald-300 shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60'
+              }`}
+            >
+              <Globe className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <span className="truncate">ภาพรวม</span>
+            </button>
+          </div>
+        ) : (
+          <div className="p-1 bg-slate-100/70 dark:bg-slate-800/50 rounded-xl border border-slate-200/70 dark:border-slate-800/80">
+            <button
+              onClick={() => setCurrentTab('public-overview')}
+              className={`w-full flex items-center justify-center space-x-2 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                currentTab === 'public-overview'
+                  ? 'bg-white dark:bg-slate-700 text-emerald-700 dark:text-emerald-300 shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60'
+              }`}
+            >
+              <Globe className="w-4 h-4 text-emerald-500 shrink-0" />
+              <span className="truncate">หน้าภาพรวม</span>
+            </button>
+          </div>
+        )}
 
         {/* 5 Grouped Pillars + Workspaces */}
         {MENU_PILLARS.map((pillar) => {

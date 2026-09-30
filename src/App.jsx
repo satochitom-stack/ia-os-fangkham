@@ -1020,25 +1020,10 @@ export default function App() {
       return;
     }
 
-    const deptAllowed = [];
-    if (session.department?.includes('ปลัด') || session.username === 'office' || session.department?.includes('สาธารณสุข') || session.username === 'health') {
-      deptAllowed.push('dept-office', 'dept-workspaces');
-    }
-    if (session.department?.includes('คลัง') || session.username === 'finance') {
-      deptAllowed.push('dept-finance', 'dept-workspaces');
-    }
-    if (session.department?.includes('ช่าง') || session.username === 'engineering' || session.username === 'tech') {
-      deptAllowed.push('dept-tech', 'dept-workspaces');
-    }
-    if (session.department?.includes('การศึกษา') || session.username === 'education') {
-      deptAllowed.push('dept-education', 'dept-workspaces');
-    }
-    if (session.department?.includes('สวัสดิการ') || session.username === 'welfare') {
-      deptAllowed.push('dept-welfare', 'dept-workspaces');
-    }
-    deptAllowed.push('central-calendar');
+    const allowed = Array.isArray(session.permissions) && session.permissions.length > 0
+      ? [...session.permissions, 'public-overview']
+      : ['public-overview', 'risk-management', 'knowledge', 'forms'];
 
-    const allowed = [...(session.permissions || ['public-overview']), ...deptAllowed, 'welcome', 'public-overview'];
     if (!allowed.includes(currentTab)) {
       setCurrentTab('public-overview');
     }

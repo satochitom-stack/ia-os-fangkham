@@ -287,64 +287,24 @@ export function autoRepairDataLinkages() {
         }
       }
 
-      // 6. Synchronize default department permissions to include specialized workspaces
-      if (!isSprint3Synced) {
-        if (u.role === 'admin') {
-          const allIds = ALL_MENU_IDS.map((m) => m.id);
-          u.permissions = Array.from(new Set([...(u.permissions || []), ...allIds]));
-          usersChanged = true;
-        } else if (u.role === 'executive') {
-          const execPerms = ['dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech'];
-          u.permissions = Array.from(new Set([...(u.permissions || []), ...execPerms]));
-          usersChanged = true;
-        } else if (u.department === 'สำนักปลัด' || u.username === 'office') {
-          u.permissions = Array.from(new Set([...(u.permissions || []), 'dept-workspaces', 'dept-office']));
-          usersChanged = true;
-        } else if (u.department === 'กองคลัง' || u.username === 'finance') {
-          u.permissions = Array.from(new Set([...(u.permissions || []), 'dept-workspaces', 'dept-finance']));
-          usersChanged = true;
-        } else if (u.department === 'กองช่าง' || u.username === 'engineering' || u.username === 'tech') {
-          u.permissions = Array.from(new Set([...(u.permissions || []), 'dept-workspaces', 'dept-tech']));
-          usersChanged = true;
-        }
-      }
-
-      // 6.2 Synchronize Sprint 4 & 5 permissions (Executive Dashboard, Central Calendar, Education, Welfare, Public Health)
-      if (!isSprint4_5Synced) {
-        const allIds = ALL_MENU_IDS.map((m) => m.id);
-        const execPerms = ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
-
-        if (u.role === 'admin') {
-          u.permissions = Array.from(new Set([...(u.permissions || []), ...allIds]));
-          usersChanged = true;
-        } else if (u.role === 'executive') {
-          u.permissions = Array.from(new Set([...(u.permissions || []), ...execPerms]));
-          usersChanged = true;
-        } else if (u.department === 'สำนักปลัด' || u.username === 'office') {
-          u.permissions = Array.from(new Set([...(u.permissions || []), 'dept-workspaces', 'dept-office', 'central-calendar']));
-          usersChanged = true;
-        } else if (u.department === 'กองคลัง' || u.username === 'finance') {
-          u.permissions = Array.from(new Set([...(u.permissions || []), 'dept-workspaces', 'dept-finance', 'central-calendar']));
-          usersChanged = true;
-        } else if (u.department === 'กองช่าง' || u.username === 'engineering' || u.username === 'tech') {
-          u.permissions = Array.from(new Set([...(u.permissions || []), 'dept-workspaces', 'dept-tech', 'central-calendar']));
-          usersChanged = true;
-        } else if (u.department === 'กองการศึกษา' || u.username === 'education') {
-          u.permissions = Array.from(new Set([...(u.permissions || []), 'dept-workspaces', 'dept-education', 'central-calendar']));
-          usersChanged = true;
-        } else if (u.department === 'กองสวัสดิการสังคม' || u.username === 'welfare') {
-          u.permissions = Array.from(new Set([...(u.permissions || []), 'dept-workspaces', 'dept-welfare', 'central-calendar']));
-          usersChanged = true;
-        }
+      // 6. Reset base default permissions for department users to the 4 essential menus:
+      // 1. หน้าภาพรวม (public-overview)
+      // 2. การบริหารความเสี่ยงองค์กร (risk-management)
+      // 3. คลังระเบียบและกฎหมาย (knowledge)
+      // 4. แบบฟอร์มมาตรฐาน (forms)
+      // All other menus are granted exclusively by ADMIN in the Permission Matrix.
+      const BASE4_SYNC_KEY = 'ia_dept_perms_base4_v2';
+      const isBase4Synced = localStorage.getItem(BASE4_SYNC_KEY) === 'synced';
+      if (!isBase4Synced) {
+        users.forEach((u) => {
+          if (u.role !== 'admin' && u.role !== 'executive' && u.role !== 'guest') {
+            u.permissions = [...DEFAULT_DEPT_PERMISSIONS];
+            usersChanged = true;
+          }
+        });
+        localStorage.setItem(BASE4_SYNC_KEY, 'synced');
       }
     });
-
-    if (!isSprint3Synced) {
-      localStorage.setItem(SPRINT3_SYNC_KEY, 'synced');
-    }
-    if (!isSprint4_5Synced) {
-      localStorage.setItem(SPRINT4_5_SYNC_KEY, 'synced');
-    }
 
     // 7. Ensure Executive accounts exist (ผู้บริหาร & ปลัด อบต.ฝางคำ) and สำนักปลัด is distinct
     const executivePerms = ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
@@ -406,7 +366,7 @@ export function autoRepairDataLinkages() {
         department: 'สำนักปลัด',
         role: 'user',
         passwordText: '1234',
-        permissions: ['dept-workspaces', 'dept-office', 'central-calendar', 'risk-management', 'forms'],
+        permissions: [...DEFAULT_DEPT_PERMISSIONS],
         canManageUsers: false,
         createdAt: Date.now()
       });
@@ -422,7 +382,7 @@ export function autoRepairDataLinkages() {
         department: 'ศพด.วัดเจริญทัศน์',
         role: 'user',
         passwordText: '1234',
-        permissions: ['central-calendar', 'risk-management', 'forms'],
+        permissions: [...DEFAULT_DEPT_PERMISSIONS],
         canManageUsers: false,
         createdAt: Date.now()
       });
@@ -438,7 +398,7 @@ export function autoRepairDataLinkages() {
         department: 'ศพด.บ้านฝางเทิง',
         role: 'user',
         passwordText: '1234',
-        permissions: ['central-calendar', 'risk-management', 'forms'],
+        permissions: [...DEFAULT_DEPT_PERMISSIONS],
         canManageUsers: false,
         createdAt: Date.now()
       });
@@ -454,7 +414,7 @@ export function autoRepairDataLinkages() {
         department: 'กองสวัสดิการสังคม',
         role: 'user',
         passwordText: '1234',
-        permissions: ['dept-workspaces', 'dept-welfare', 'central-calendar', 'risk-management', 'forms'],
+        permissions: [...DEFAULT_DEPT_PERMISSIONS],
         canManageUsers: false,
         createdAt: Date.now()
       });
@@ -474,14 +434,9 @@ export function autoRepairDataLinkages() {
       }
     });
 
-    // 7.8 Ensure education user exists with workspace permissions
+    // 7.8 Ensure education user exists with default base permissions
     const eduUser = users.find((u) => u.username === 'education' || u.department === 'กองการศึกษา');
-    if (eduUser) {
-      if (!eduUser.permissions?.includes('dept-education')) {
-        eduUser.permissions = Array.from(new Set([...(eduUser.permissions || []), 'dept-workspaces', 'dept-education', 'central-calendar']));
-        usersChanged = true;
-      }
-    } else {
+    if (!eduUser) {
       users.push({
         username: 'education',
         displayName: 'กองการศึกษา',
@@ -489,7 +444,7 @@ export function autoRepairDataLinkages() {
         department: 'กองการศึกษา',
         role: 'user',
         passwordText: '1234',
-        permissions: ['dept-workspaces', 'dept-education', 'central-calendar', 'risk-management', 'forms'],
+        permissions: [...DEFAULT_DEPT_PERMISSIONS],
         canManageUsers: false,
         createdAt: Date.now()
       });
@@ -555,39 +510,13 @@ export function autoRepairDataLinkages() {
         currentSession.permissions = Array.from(set);
         sessChanged = true;
       }
-      if (localStorage.getItem('ia_dept_session_sprint4_5') !== 'synced') {
-        const allIds = ALL_MENU_IDS.map((m) => m.id);
-        const execPerms = ['public-overview', 'executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
-
-        if (currentSession.role === 'admin') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), ...allIds]));
-          sessChanged = true;
-        } else if (currentSession.role === 'executive') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), ...execPerms]));
-          sessChanged = true;
-        } else if (currentSession.department?.includes('ปลัด') || currentSession.username === 'office') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'public-overview', 'dept-workspaces', 'dept-office', 'central-calendar']));
-          sessChanged = true;
-        } else if (currentSession.department?.includes('คลัง') || currentSession.username === 'finance') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'public-overview', 'dept-workspaces', 'dept-finance', 'central-calendar']));
-          sessChanged = true;
-        } else if (currentSession.department?.includes('ช่าง') || currentSession.username === 'engineering' || currentSession.username === 'tech') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'public-overview', 'dept-workspaces', 'dept-tech', 'central-calendar']));
-          sessChanged = true;
-        } else if (currentSession.department?.includes('การศึกษา') || currentSession.username === 'education') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'public-overview', 'dept-workspaces', 'dept-education', 'central-calendar']));
-          sessChanged = true;
-        } else if (currentSession.department?.includes('สวัสดิการ') || currentSession.username === 'welfare') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'public-overview', 'dept-workspaces', 'dept-welfare', 'central-calendar']));
-          sessChanged = true;
-        } else if (currentSession.department?.includes('สาธารณสุข') || currentSession.username === 'health') {
-          currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'public-overview', 'dept-workspaces', 'dept-office', 'central-calendar']));
-          currentSession.department = 'สำนักปลัด';
+      const SESS_BASE4_KEY = 'ia_dept_session_base4_v2';
+      if (localStorage.getItem(SESS_BASE4_KEY) !== 'synced') {
+        if (currentSession.role !== 'admin' && currentSession.role !== 'executive' && currentSession.role !== 'guest') {
+          currentSession.permissions = [...DEFAULT_DEPT_PERMISSIONS];
           sessChanged = true;
         }
-        currentSession.permissions = Array.from(new Set([...(currentSession.permissions || []), 'public-overview', 'central-calendar']));
-        sessChanged = true;
-        localStorage.setItem('ia_dept_session_sprint4_5', 'synced');
+        localStorage.setItem(SESS_BASE4_KEY, 'synced');
       }
       if (sessChanged) {
         localStorage.setItem(SESSION_KEY, JSON.stringify(currentSession));
@@ -842,6 +771,13 @@ export const ALL_MENU_IDS = [
   { id: 'users', label: 'จัดการผู้ใช้งาน & กำหนดสิทธิ์', icon: 'Users', desc: 'จัดการบัญชีกองและกำหนดสิทธิ์การมองเห็นเมนู (ADMIN Only)' }
 ];
 
+export const DEFAULT_DEPT_PERMISSIONS = [
+  'public-overview',
+  'risk-management',
+  'knowledge',
+  'forms'
+];
+
 export const DEFAULT_INITIAL_USERS = [
   {
     username: 'admin',
@@ -882,7 +818,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'สำนักปลัด',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dept-workspaces', 'dept-office', 'central-calendar', 'risk-management', 'forms'],
+    permissions: [...DEFAULT_DEPT_PERMISSIONS],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -893,7 +829,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองคลัง',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dept-workspaces', 'dept-finance', 'central-calendar', 'risk-management', 'forms'],
+    permissions: [...DEFAULT_DEPT_PERMISSIONS],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -904,7 +840,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองช่าง',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dept-workspaces', 'dept-tech', 'central-calendar', 'risk-management', 'forms'],
+    permissions: [...DEFAULT_DEPT_PERMISSIONS],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -915,7 +851,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองการศึกษา',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dept-workspaces', 'dept-education', 'central-calendar', 'risk-management', 'forms'],
+    permissions: [...DEFAULT_DEPT_PERMISSIONS],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -926,7 +862,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'กองสวัสดิการสังคม',
     role: 'user',
     passwordText: '1234',
-    permissions: ['dept-workspaces', 'dept-welfare', 'central-calendar', 'risk-management', 'forms'],
+    permissions: [...DEFAULT_DEPT_PERMISSIONS],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -937,7 +873,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'ศพด.วัดเจริญทัศน์',
     role: 'user',
     passwordText: '1234',
-    permissions: ['central-calendar', 'risk-management', 'forms'],
+    permissions: [...DEFAULT_DEPT_PERMISSIONS],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -948,7 +884,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'ศพด.บ้านฝางเทิง',
     role: 'user',
     passwordText: '1234',
-    permissions: ['central-calendar', 'risk-management', 'forms'],
+    permissions: [...DEFAULT_DEPT_PERMISSIONS],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -1021,12 +957,7 @@ export function getUsers() {
             }
             changed = true;
           }
-          // Auto-grant 'forms' permission if user has 'knowledge'
           if (u.permissions && Array.isArray(u.permissions)) {
-            if (u.permissions.includes('knowledge') && !u.permissions.includes('forms')) {
-              u.permissions.push('forms');
-              changed = true;
-            }
             // Strip executive-dashboard from non-admin / non-executive accounts
             if (u.role !== 'admin' && u.role !== 'executive' && u.permissions.includes('executive-dashboard')) {
               u.permissions = u.permissions.filter((p) => p !== 'executive-dashboard');
@@ -1098,7 +1029,7 @@ export async function addUser({ username, displayName, position, department, rol
     salt,
     hash,
     passwordText: password, // For easy admin viewing/recovery in local system
-    permissions: permissions || ['risk-management', 'forms'],
+    permissions: permissions || [...DEFAULT_DEPT_PERMISSIONS],
     canManageUsers: role === 'admin',
     createdAt: Date.now()
   };
@@ -1118,7 +1049,7 @@ export async function addUser({ username, displayName, position, department, rol
         position: cloudPosition,
         role: role || 'user',
         status: 'active',
-        permissions: permissions || ['risk-management', 'forms'],
+        permissions: permissions || [...DEFAULT_DEPT_PERMISSIONS],
         can_manage_users: role === 'admin',
         updated_at: new Date().toISOString()
       }, { onConflict: 'username' });
@@ -1259,7 +1190,7 @@ export async function registerUser({ username, displayName, department, position
           position: cloudPosition,
           role: role || 'staff',
           status: 'pending',
-          permissions: ['risk-management', 'forms'],
+          permissions: [...DEFAULT_DEPT_PERMISSIONS],
           can_manage_users: role === 'admin'
         }])
         .select()
@@ -1324,7 +1255,7 @@ export async function approvePendingUser(pendingId, approvedRole = null, customP
     } else if (targetRole === 'executive') {
       permissions = ['dashboard', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
     } else {
-      permissions = ['risk-management', 'forms'];
+      permissions = [...DEFAULT_DEPT_PERMISSIONS];
     }
   }
 
@@ -1604,7 +1535,7 @@ export async function verifyLogin(username, password) {
                 role: cloudUser.role || 'staff',
                 salt,
                 hash,
-                permissions: cloudUser.permissions || ['risk-management', 'forms'],
+                permissions: cloudUser.permissions || [...DEFAULT_DEPT_PERMISSIONS],
                 canManageUsers: cloudUser.role === 'admin' || !!cloudUser.can_manage_users,
                 createdAt: cloudUser.created_at ? new Date(cloudUser.created_at).getTime() : Date.now()
               };
@@ -1706,9 +1637,6 @@ export function getSession() {
     }
 
     if (session.permissions && Array.isArray(session.permissions)) {
-      if (session.permissions.includes('knowledge') && !session.permissions.includes('forms')) {
-        session.permissions.push('forms');
-      }
       if (session.role !== 'admin' && session.role !== 'executive') {
         session.permissions = session.permissions.filter((p) => p !== 'executive-dashboard');
       }
