@@ -175,7 +175,24 @@ class CloudSyncService {
       // Transform rows into year-based dictionary: { [year]: { bs1: [], bs2: [], submissions: {} } }
       const result = {};
 
+      const dedupeList = (existing, incoming) => {
+        const seen = new Set();
+        const combined = [];
+        [...(existing || []), ...(incoming || [])].forEach((item) => {
+          if (!item) return;
+          const key = item.id || (item.riskCode ? `${item.riskCode}-${item.department || ''}` : `${item.activity || ''}-${item.department || ''}`);
+          if (!seen.has(key)) {
+            seen.add(key);
+            combined.push(item);
+          }
+        });
+        return combined;
+      };
+
       data.forEach((row) => {
+        // Skip duplicate container row if any exists
+        if (row.department === 'หน่วยตรวจสอบภายใน' || row.department === 'ส่วนกลาง') return;
+
         const yr = String(row.fiscal_year);
         if (!result[yr]) {
           result[yr] = {
@@ -192,16 +209,16 @@ class CloudSyncService {
 
         const deptData = row.data || {};
         if (Array.isArray(deptData.bs1)) {
-          result[yr].bs1.push(...deptData.bs1);
+          result[yr].bs1 = dedupeList(result[yr].bs1, deptData.bs1);
         }
         if (Array.isArray(deptData.bs2)) {
-          result[yr].bs2.push(...deptData.bs2);
+          result[yr].bs2 = dedupeList(result[yr].bs2, deptData.bs2);
         }
         if (Array.isArray(deptData.bs3)) {
-          result[yr].bs3.push(...deptData.bs3);
+          result[yr].bs3 = dedupeList(result[yr].bs3, deptData.bs3);
         }
         if (Array.isArray(deptData.bs4)) {
-          result[yr].bs4.push(...deptData.bs4);
+          result[yr].bs4 = dedupeList(result[yr].bs4, deptData.bs4);
         }
         const incomingBs5 = Array.isArray(deptData.bs5)
           ? deptData.bs5
@@ -209,11 +226,8 @@ class CloudSyncService {
           ? deptData.bs5.items
           : [];
         
-        if (!Array.isArray(result[yr].bs5Items)) result[yr].bs5Items = [];
-        if (!Array.isArray(result[yr].bs5)) result[yr].bs5 = [];
-
-        result[yr].bs5Items.push(...incomingBs5);
-        result[yr].bs5.push(...incomingBs5);
+        result[yr].bs5Items = dedupeList(result[yr].bs5Items, incomingBs5);
+        result[yr].bs5 = dedupeList(result[yr].bs5, incomingBs5);
 
         if (deptData.bs5Summary && Object.keys(deptData.bs5Summary).length > 0) {
           result[yr].bs5Summary = { ...result[yr].bs5Summary, ...deptData.bs5Summary };
@@ -428,6 +442,20 @@ export function mergeRiskManagement(localYearData, cloudYearData) {
 
   const result = { ...localYearData };
 
+  const dedupeByItem = (list) => {
+    const seen = new Set();
+    const clean = [];
+    (list || []).forEach((item) => {
+      if (!item) return;
+      const key = item.id || (item.riskCode ? `${item.riskCode}-${item.department || ''}` : `${item.activity || ''}-${item.department || ''}`);
+      if (!seen.has(key)) {
+        seen.add(key);
+        clean.push(item);
+      }
+    });
+    return clean;
+  };
+
   // 1. Merge array-based tables: bs1, bs2, bs3, bs4
   ['bs1', 'bs2', 'bs3', 'bs4'].forEach((key) => {
     const localList = Array.isArray(result[key]) ? result[key] : [];
@@ -441,9 +469,9 @@ export function mergeRiskManagement(localYearData, cloudYearData) {
 
     if (cloudDeptsWithItems.size > 0) {
       const keepLocal = localList.filter((item) => !cloudDeptsWithItems.has(item.department));
-      result[key] = [...keepLocal, ...cloudList];
+      result[key] = dedupeByItem([...keepLocal, ...cloudList]);
     } else {
-      result[key] = localList;
+      result[key] = dedupeByItem(localList);
     }
   });
 
@@ -473,9 +501,9 @@ export function mergeRiskManagement(localYearData, cloudYearData) {
 
   if (cloudBs5Depts.size > 0) {
     const keepBs5Items = localBs5Items.filter((item) => !cloudBs5Depts.has(item.department));
-    localBs5.items = [...keepBs5Items, ...cloudBs5Items];
+    localBs5.items = dedupeByItem([...keepBs5Items, ...cloudBs5Items]);
   } else {
-    localBs5.items = localBs5Items;
+    localBs5.items = dedupeByItem(localBs5Items);
   }
 
   // Preserve summary/metadata if provided from cloud

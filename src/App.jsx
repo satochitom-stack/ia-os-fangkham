@@ -270,6 +270,59 @@ export default function App() {
             console.error(err);
           }
         }
+
+        // Clean any duplicate items (e.g. from previous bulk merge)
+        let hasDeduped = false;
+        ['2569', '2570'].forEach((yr) => {
+          if (parsed[yr]) {
+            ['bs1', 'bs2', 'bs3', 'bs4'].forEach((key) => {
+              if (Array.isArray(parsed[yr][key])) {
+                const seen = new Set();
+                const initialLen = parsed[yr][key].length;
+                parsed[yr][key] = parsed[yr][key].filter((item) => {
+                  if (!item) return false;
+                  const k = item.id || (item.riskCode ? `${item.riskCode}-${item.department || ''}` : `${item.activity || ''}-${item.department || ''}`);
+                  if (seen.has(k)) return false;
+                  seen.add(k);
+                  return true;
+                });
+                if (parsed[yr][key].length !== initialLen) hasDeduped = true;
+              }
+            });
+            const bs5List = Array.isArray(parsed[yr].bs5)
+              ? parsed[yr].bs5
+              : Array.isArray(parsed[yr].bs5?.items)
+              ? parsed[yr].bs5.items
+              : [];
+            if (bs5List.length > 0) {
+              const seen = new Set();
+              const initialLen = bs5List.length;
+              const cleanBs5 = bs5List.filter((item) => {
+                if (!item) return false;
+                const k = item.id || (item.riskCode ? `${item.riskCode}-${item.department || ''}` : `${item.activity || ''}-${item.department || ''}`);
+                if (seen.has(k)) return false;
+                seen.add(k);
+                return true;
+              });
+              if (cleanBs5.length !== initialLen) {
+                hasDeduped = true;
+                if (Array.isArray(parsed[yr].bs5)) {
+                  parsed[yr].bs5 = cleanBs5;
+                } else if (parsed[yr].bs5?.items) {
+                  parsed[yr].bs5.items = cleanBs5;
+                }
+              }
+            }
+          }
+        });
+        if (hasDeduped) {
+          try {
+            localStorage.setItem('ia_risk_management_by_year', JSON.stringify(parsed));
+          } catch (err) {
+            console.error(err);
+          }
+        }
+
         return parsed;
       }
     } catch (e) {
@@ -461,24 +514,36 @@ export default function App() {
       cloudSyncService.initRealtimeSync({
         onRiskManagementUpdate: ({ fiscalYear, department, data }) => {
           if (!fiscalYear || !department || !data) return;
+          if (department === 'หน่วยตรวจสอบภายใน' || department === 'ส่วนกลาง') return;
           console.log(`⚡ [App Realtime Update] Dept: ${department}, Year: ${fiscalYear}`);
 
           setRiskManagementByYear((prev) => {
             const yr = String(fiscalYear);
             const currentYearData = prev[yr] || (yr === '2569' ? initialRiskManagement : createEmptyRiskManagement());
 
+            const dedupeByItem = (list) => {
+              const seen = new Set();
+              return list.filter((item) => {
+                if (!item) return false;
+                const k = item.id || (item.riskCode ? `${item.riskCode}-${item.department || ''}` : `${item.activity || ''}-${item.department || ''}`);
+                if (seen.has(k)) return false;
+                seen.add(k);
+                return true;
+              });
+            };
+
             const filterOutDept = (list) => (Array.isArray(list) ? list.filter((item) => item.department !== department) : []);
-            const nextBs1 = [...filterOutDept(currentYearData.bs1), ...(Array.isArray(data.bs1) ? data.bs1 : [])];
-            const nextBs2 = [...filterOutDept(currentYearData.bs2), ...(Array.isArray(data.bs2) ? data.bs2 : [])];
-            const nextBs3 = [...filterOutDept(currentYearData.bs3), ...(Array.isArray(data.bs3) ? data.bs3 : [])];
-            const nextBs4 = [...filterOutDept(currentYearData.bs4), ...(Array.isArray(data.bs4) ? data.bs4 : [])];
+            const nextBs1 = dedupeByItem([...filterOutDept(currentYearData.bs1), ...(Array.isArray(data.bs1) ? data.bs1 : [])]);
+            const nextBs2 = dedupeByItem([...filterOutDept(currentYearData.bs2), ...(Array.isArray(data.bs2) ? data.bs2 : [])]);
+            const nextBs3 = dedupeByItem([...filterOutDept(currentYearData.bs3), ...(Array.isArray(data.bs3) ? data.bs3 : [])]);
+            const nextBs4 = dedupeByItem([...filterOutDept(currentYearData.bs4), ...(Array.isArray(data.bs4) ? data.bs4 : [])]);
 
             const currentBs5 = currentYearData.bs5 && typeof currentYearData.bs5 === 'object' && !Array.isArray(currentYearData.bs5)
               ? { ...currentYearData.bs5 }
               : { period: 'รอบ 12 เดือน', evaluator: 'คณะทำงานบริหารจัดการความเสี่ยง อปท.', evaluationDate: '', items: [] };
             const currentBs5Items = Array.isArray(currentBs5.items) ? currentBs5.items : [];
             const incomingBs5Items = Array.isArray(data.bs5) ? data.bs5 : (Array.isArray(data.bs5?.items) ? data.bs5.items : []);
-            const nextBs5Items = [...currentBs5Items.filter(item => item.department !== department), ...incomingBs5Items];
+            const nextBs5Items = dedupeByItem([...currentBs5Items.filter(item => item.department !== department), ...incomingBs5Items]);
             currentBs5.items = nextBs5Items;
 
             const nextBs5Summary = { ...(currentYearData.bs5Summary || {}), ...(data.bs5Summary || {}) };
@@ -627,24 +692,31 @@ export default function App() {
       // Auto-push to Supabase Cloud if configured
       if (isSupabaseConfigured()) {
         const userDept = session?.department || 'สำนักปลัด';
-        const filterFn = (i) => i && (session?.role === 'admin' ? true : i.department === userDept);
-        const bs5Items = Array.isArray(updated.bs5)
-          ? updated.bs5
-          : Array.isArray(updated.bs5?.items)
-          ? updated.bs5.items
-          : [];
+        if (session?.role === 'admin') {
+          // Admin pushes all departments properly partitioned into their own individual rows
+          cloudSyncService.pushAllRiskManagement({ [selectedYear]: updated }, [
+            'สำนักปลัด', 'กองคลัง', 'กองช่าง', 'กองการศึกษา', 'กองสวัสดิการสังคม'
+          ]).catch((e) => console.warn('Auto cloud push notice:', e));
+        } else {
+          // Regular user pushes only their own department's payload
+          const filterFn = (i) => i && i.department === userDept;
+          const bs5Items = Array.isArray(updated.bs5)
+            ? updated.bs5
+            : Array.isArray(updated.bs5?.items)
+            ? updated.bs5.items
+            : [];
 
-        const deptPayload = {
-          bs1: (Array.isArray(updated.bs1) ? updated.bs1 : []).filter(filterFn),
-          bs2: (Array.isArray(updated.bs2) ? updated.bs2 : []).filter(filterFn),
-          bs3: (Array.isArray(updated.bs3) ? updated.bs3 : []).filter(filterFn),
-          bs4: (Array.isArray(updated.bs4) ? updated.bs4 : []).filter(filterFn),
-          bs5: bs5Items.filter(filterFn),
-          bs5Summary: updated.bs5Summary || {},
-          submissions: updated.submissions || {}
-        };
-        const targetDept = session?.role === 'admin' ? (session?.department || 'หน่วยตรวจสอบภายใน') : userDept;
-        cloudSyncService.pushDeptRiskManagement(selectedYear, targetDept, deptPayload).catch((e) => console.warn('Auto cloud push notice:', e));
+          const deptPayload = {
+            bs1: (Array.isArray(updated.bs1) ? updated.bs1 : []).filter(filterFn),
+            bs2: (Array.isArray(updated.bs2) ? updated.bs2 : []).filter(filterFn),
+            bs3: (Array.isArray(updated.bs3) ? updated.bs3 : []).filter(filterFn),
+            bs4: (Array.isArray(updated.bs4) ? updated.bs4 : []).filter(filterFn),
+            bs5: bs5Items.filter(filterFn),
+            bs5Summary: updated.bs5Summary || {},
+            submissions: updated.submissions?.[userDept] ? { [userDept]: updated.submissions[userDept] } : {}
+          };
+          cloudSyncService.pushDeptRiskManagement(selectedYear, userDept, deptPayload).catch((e) => console.warn('Auto cloud push notice:', e));
+        }
       }
 
       return { ...prev, [selectedYear]: updated };

@@ -115,7 +115,7 @@ export default function Sidebar({
     {
       pillarId: 'pillar-4',
       pillarNumber: 'หมวดที่ 4',
-      pillarTitle: 'ธรรมาภิบาล & LPA',
+      pillarTitle: 'ควบคุมภายใน & บริหารความเสี่ยง',
       badgeClass: 'bg-rose-50 text-rose-800 border-rose-200/80 dark:bg-rose-950/70 dark:text-rose-300 dark:border-rose-800/60',
       activeClass: 'bg-gradient-to-r from-rose-600 via-red-600 to-rose-700 text-white shadow-xs font-semibold',
       hoverClass: 'hover:bg-rose-50/80 hover:text-rose-800 dark:hover:bg-slate-800/80 dark:hover:text-rose-300',
