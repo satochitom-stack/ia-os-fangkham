@@ -44,7 +44,9 @@ export const DEFAULT_DEPARTMENTS = [
   'กองคลัง',
   'กองช่าง',
   'กองการศึกษา',
-  'กองสวัสดิการสังคม'
+  'กองสวัสดิการสังคม',
+  'ศพด.วัดเจริญทัศน์',
+  'ศพด.บ้านฝางเทิง'
 ];
 
 const DEPARTMENTS_KEY = 'ia_departments';
@@ -59,9 +61,7 @@ export function getDepartments() {
         const obsolete = [
           'กองสาธารณสุขและสิ่งแวดล้อม',
           'งานสาธารณสุขและสิ่งแวดล้อม',
-          'งานสาธารณสุข',
-          'ศพด.วัดเจริญทัศน์',
-          'ศพด.บ้านฝางเทิง'
+          'งานสาธารณสุข'
         ];
         let cleaned = parsed.filter((d) => !obsolete.includes(d));
         DEFAULT_DEPARTMENTS.forEach((dept) => {
@@ -304,10 +304,28 @@ export function autoRepairDataLinkages() {
         });
         localStorage.setItem(BASE4_SYNC_KEY, 'synced');
       }
+
+      // 6.1 Remove obsolete 'dept-workspaces' and ensure CDC menus are available for admin/executive
+      if (Array.isArray(u.permissions)) {
+        if (u.permissions.includes('dept-workspaces')) {
+          u.permissions = u.permissions.filter((p) => p !== 'dept-workspaces');
+          usersChanged = true;
+        }
+        if (u.role === 'admin' || u.role === 'executive') {
+          if (!u.permissions.includes('dept-cdc-charoen')) {
+            u.permissions.push('dept-cdc-charoen');
+            usersChanged = true;
+          }
+          if (!u.permissions.includes('dept-cdc-fangthoeng')) {
+            u.permissions.push('dept-cdc-fangthoeng');
+            usersChanged = true;
+          }
+        }
+      }
     });
 
     // 7. Ensure Executive accounts exist (ผู้บริหาร & ปลัด อบต.ฝางคำ) and สำนักปลัด is distinct
-    const executivePerms = ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
+    const executivePerms = ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-cdc-charoen', 'dept-cdc-fangthoeng', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'];
     
     // 7.1 Ensure mayor (ผู้บริหาร) exists
     if (!users.some((u) => u.username === 'mayor')) {
@@ -757,12 +775,13 @@ export const ALL_MENU_IDS = [
   { id: 'execution', label: 'ปฏิบัติการตรวจ & กระดาษทำการ', icon: 'ClipboardCheck', desc: 'ลงมือตรวจจริง สุ่มตรวจ และบันทึกกระดาษทำการ' },
   { id: 'audit-toolkits', label: 'เครื่องมือช่วยตรวจเชิงเทคนิค (ปี 70)', icon: 'Wrench', desc: 'เครื่องมือคำนวณราคากลาง Factor F, ค่าปรับ, ค่าธรรมเนียมอาคาร และข้อบัญญัติ' },
   { id: 'reporting', label: 'รายงาน & ติดตามผล (CAPA)', icon: 'FileSpreadsheet', desc: 'รายงานผลการตรวจสอบและติดตามข้อเสนอแนะ' },
-  { id: 'dept-workspaces', label: 'ภาพรวมทุกส่วนราชการ', icon: 'Building2', desc: 'ค็อกพิทและเครื่องมือเฉพาะทางสำหรับแต่ละกอง' },
   { id: 'dept-office', label: 'สำนักปลัด', icon: 'Building2', desc: 'งานสารบรรณ ทะเบียนคุมรถและน้ำมัน แผนพัฒนาท้องถิ่น เรื่องร้องเรียน และงานสาธารณสุขและสิ่งแวดล้อม' },
   { id: 'dept-finance', label: 'กองคลัง', icon: 'BadgeDollarSign', desc: 'ทะเบียนคุมสัญญา คำนวณค่าปรับ ตรวจสอบพัสดุประจำปี และลูกหนี้เงินยืม' },
   { id: 'dept-tech', label: 'กองช่าง', icon: 'HardHat', desc: 'คำนวณราคากลาง Factor F & ปร.5 ทะเบียนคุมงานก่อสร้าง และขออนุญาตอาคาร 45 วัน' },
   { id: 'dept-education', label: 'กองการศึกษา', icon: 'GraduationCap', desc: 'ทะเบียนอาหารกลางวัน นมโรงเรียน พัสดุสื่อการเรียนการสอน และ ศพด.' },
   { id: 'dept-welfare', label: 'กองสวัสดิการสังคม', icon: 'HeartHandshake', desc: 'ทะเบียนคุมเบี้ยยังชีพผู้สูงอายุ 4 ขั้นบันได คนพิการ ผู้ป่วยเอดส์ และสงเคราะห์' },
+  { id: 'dept-cdc-charoen', label: 'ศพด.วัดเจริญทัศน์', icon: 'Baby', desc: 'พื้นที่ทำงานศูนย์พัฒนาเด็กเล็กวัดเจริญทัศน์ ทะเบียนเด็ก อาหารกลางวัน นม และพัฒนาการ' },
+  { id: 'dept-cdc-fangthoeng', label: 'ศพด.บ้านฝางเทิง', icon: 'Baby', desc: 'พื้นที่ทำงานศูนย์พัฒนาเด็กเล็กบ้านฝางเทิง ทะเบียนเด็ก อาหารกลางวัน นม และพัฒนาการ' },
   { id: 'internal-control', label: 'การควบคุมภายใน', icon: 'ShieldCheck', desc: 'บันทึกแบบ ปค.1, ปค.4, ปค.5 ตามหลักเกณฑ์ กค. พ.ศ. 2561 ของแต่ละกอง' },
   { id: 'risk-management', label: 'การบริหารความเสี่ยง', icon: 'AlertTriangle', desc: 'บันทึกแบบ บส.1 - บส.5 และ Matrix ระดับความเสี่ยง 5x5 ของแต่ละกอง' },
   { id: 'lpa', label: 'เตรียมรับประเมิน LPA', icon: 'Award', desc: 'เช็กลิสต์และหลักฐานเตรียมรับประเมิน LPA' },
@@ -796,7 +815,7 @@ export const DEFAULT_INITIAL_USERS = [
     position: 'นายกองค์การบริหารส่วนตำบลฝางคำ / คณะผู้บริหาร',
     department: 'ผู้บริหาร',
     role: 'executive',
-    permissions: ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
+    permissions: ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-cdc-charoen', 'dept-cdc-fangthoeng', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },
@@ -807,7 +826,7 @@ export const DEFAULT_INITIAL_USERS = [
     department: 'ปลัด อบต.ฝางคำ',
     role: 'executive',
     passwordText: '1234',
-    permissions: ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'dept-workspaces', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-health', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
+    permissions: ['executive-dashboard', 'dashboard', 'central-calendar', 'audit-risk', 'planning', 'engagement-plan', 'execution', 'audit-toolkits', 'reporting', 'dept-office', 'dept-finance', 'dept-tech', 'dept-education', 'dept-welfare', 'dept-cdc-charoen', 'dept-cdc-fangthoeng', 'internal-control', 'risk-management', 'lpa', 'knowledge', 'forms'],
     canManageUsers: false,
     createdAt: Date.now()
   },

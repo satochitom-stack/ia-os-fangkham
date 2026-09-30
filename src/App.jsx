@@ -1332,12 +1332,13 @@ export default function App() {
               />
             )}
 
-            {(currentTab === 'dept-workspaces' ||
-              currentTab === 'dept-office' ||
+            {(currentTab === 'dept-office' ||
               currentTab === 'dept-finance' ||
               currentTab === 'dept-tech' ||
               currentTab === 'dept-education' ||
-              currentTab === 'dept-welfare') && (
+              currentTab === 'dept-welfare' ||
+              currentTab === 'dept-cdc-charoen' ||
+              currentTab === 'dept-cdc-fangthoeng') && (
               <DepartmentWorkspaceView
                 key={`dept-${currentTab}-${selectedYear}`}
                 orgProfile={orgProfile}
@@ -1356,6 +1357,10 @@ export default function App() {
                     ? 'กองการศึกษา'
                     : currentTab === 'dept-welfare'
                     ? 'กองสวัสดิการสังคม'
+                    : currentTab === 'dept-cdc-charoen'
+                    ? 'ศพด.วัดเจริญทัศน์'
+                    : currentTab === 'dept-cdc-fangthoeng'
+                    ? 'ศพด.บ้านฝางเทิง'
                     : (session?.department?.includes('คลัง')
                         ? 'กองคลัง'
                         : session?.department?.includes('ช่าง')
@@ -1364,6 +1369,10 @@ export default function App() {
                         ? 'กองการศึกษา'
                         : session?.department?.includes('สวัสดิการ')
                         ? 'กองสวัสดิการสังคม'
+                        : session?.department?.includes('เจริญทัศน์')
+                        ? 'ศพด.วัดเจริญทัศน์'
+                        : session?.department?.includes('ฝางเทิง')
+                        ? 'ศพด.บ้านฝางเทิง'
                         : 'สำนักปลัด')
                 }
                 setCurrentTab={setCurrentTab}

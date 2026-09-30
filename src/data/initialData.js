@@ -1374,6 +1374,316 @@ export const initialPublicHealthWorkspaceData = {
   foodSanitation: []
 };
 
+// 6.1 ฐานข้อมูลเฉพาะพื้นที่ทำงาน ศูนย์พัฒนาเด็กเล็กวัดเจริญทัศน์
+export const initialCdcCharoenWorkspaceData = {
+  centerName: 'ศูนย์พัฒนาเด็กเล็กวัดเจริญทัศน์',
+  village: 'บ้านเจริญทัศน์ หมู่ที่ 2 ต.ฝางคำ',
+  summary: {
+    totalChildren: 28,
+    boysCount: 15,
+    girlsCount: 13,
+    teachersCount: 2,
+    lunchRatePerChild: 24,
+    milkRatePerChild: 8.13,
+    nationalStandardScore: 92.5
+  },
+  children: [
+    {
+      id: 'CDC-CJ-001',
+      idCard: '1-3401-00234-11-2',
+      prefix: 'ด.ช.',
+      firstName: 'กิตติภูมิ',
+      lastName: 'สมบูรณ์',
+      nickname: 'น้องภูมิ',
+      birthDate: '2023-04-12',
+      ageYears: 3,
+      ageMonths: 5,
+      gender: 'ชาย',
+      weight: 14.5,
+      height: 96,
+      nutritionStatus: 'สมส่วน',
+      dentalStatus: 'ฟันดีไม่มีผุ',
+      parentName: 'นายประสิทธิ์ สมบูรณ์',
+      phone: '089-123-4567',
+      status: 'กำลังศึกษา'
+    },
+    {
+      id: 'CDC-CJ-002',
+      idCard: '1-3401-00345-22-3',
+      prefix: 'ด.ญ.',
+      firstName: 'ณัชชา',
+      lastName: 'วงศ์สุวรรณ',
+      nickname: 'น้องน้ำหวาน',
+      birthDate: '2023-06-18',
+      ageYears: 3,
+      ageMonths: 3,
+      gender: 'หญิง',
+      weight: 13.8,
+      height: 94,
+      nutritionStatus: 'สมส่วน',
+      dentalStatus: 'ฟันดีไม่มีผุ',
+      parentName: 'นางสาววิภา วงศ์สุวรรณ',
+      phone: '081-987-6543',
+      status: 'กำลังศึกษา'
+    },
+    {
+      id: 'CDC-CJ-003',
+      idCard: '1-3401-00456-33-4',
+      prefix: 'ด.ช.',
+      firstName: 'ภานุพงศ์',
+      lastName: 'สุขเกษม',
+      nickname: 'น้องกันต์',
+      birthDate: '2022-11-05',
+      ageYears: 3,
+      ageMonths: 10,
+      gender: 'ชาย',
+      weight: 15.2,
+      height: 98,
+      nutritionStatus: 'สมส่วน',
+      dentalStatus: 'ฟันดีไม่มีผุ',
+      parentName: 'นายวิทยา สุขเกษม',
+      phone: '086-555-1122',
+      status: 'กำลังศึกษา'
+    }
+  ],
+  lunchDailyLogs: [
+    {
+      id: 'LUNCH-CJ-2569-001',
+      date: '2026-09-28',
+      attendanceCount: 26,
+      absentCount: 2,
+      menuDescription: 'ข้าวสวย + ต้มจืดเต้าหู้หมูสับผักกาดขาว + ไก่ทอดเกลือ + กล้วยน้ำว้า',
+      milkQuantity: 26,
+      milkTasteCheck: 'ปกติ (รสจืด ไม่บูด เย็นตามเกณฑ์)',
+      lunchQualityCheck: 'ถูกสุขลักษณะ รสชาติกลมกล่อม ครบ 5 หมู่',
+      inspector: 'นางสาวรัตนาภรณ์ ใจดี (ครูผู้ดูแลเด็ก)',
+      remarks: 'ส่งตรวจชิมก่อนแจกจ่ายเด็กเล็กทุกวันตามระเบียบ'
+    },
+    {
+      id: 'LUNCH-CJ-2569-002',
+      date: '2026-09-29',
+      attendanceCount: 27,
+      absentCount: 1,
+      menuDescription: 'ข้าวสวย + พะโล้ไข่หมูนุ่ม + ผัดผักรวมมิตร + ส้มเขียวหวาน',
+      milkQuantity: 27,
+      milkTasteCheck: 'ปกติ (นมพาสเจอร์ไรส์ บรรจุถุงเย็น)',
+      lunchQualityCheck: 'สะอาด สดใหม่ ถูกหลักโภชนาการ',
+      inspector: 'นางสมจิตต์ สว่างแจ้ง (ผู้ช่วยครู)',
+      remarks: 'ไม่มีเด็กแพ้อาหาร'
+    }
+  ],
+  healthGrowthChecks: [
+    {
+      id: 'HEALTH-CJ-001',
+      checkDate: '2026-09-15',
+      term: 'ภาคเรียนที่ 1/2569',
+      childName: 'ด.ช. กิตติภูมิ สมบูรณ์',
+      weight: 14.5,
+      height: 96,
+      nutritionStatus: 'สมส่วน',
+      dentalStatus: 'ฟันน้ำนมสะอาด ไม่มีฟันผุ',
+      dspmStatus: 'สมวัยทุกด้าน (4 ด้านผ่านเกณฑ์)',
+      examiner: 'รพ.สต.ฝางคำ ร่วมกับครูผู้ดูแลเด็ก'
+    },
+    {
+      id: 'HEALTH-CJ-002',
+      checkDate: '2026-09-15',
+      term: 'ภาคเรียนที่ 1/2569',
+      childName: 'ด.ญ. ณัชชา วงศ์สุวรรณ',
+      weight: 13.8,
+      height: 94,
+      nutritionStatus: 'สมส่วน',
+      dentalStatus: 'ฟันสะอาด แนะนำแปรงฟันสม่ำเสมอ',
+      dspmStatus: 'สมวัยทุกด้าน (4 ด้านผ่านเกณฑ์)',
+      examiner: 'รพ.สต.ฝางคำ ร่วมกับครูผู้ดูแลเด็ก'
+    }
+  ],
+  materialsAndSafety: [
+    {
+      id: 'MAT-CJ-001',
+      itemName: 'เครื่องเล่นสนาม (ชุดชิงช้า-สไลเดอร์กลางแจ้ง)',
+      category: 'เครื่องเล่นสนาม',
+      quantity: 1,
+      condition: 'พร้อมใช้งาน ปลอดภัย มีแผ่นยางกันกระแทก',
+      lastInspectedDate: '2026-09-25',
+      inspector: 'นายช่างกองช่าง & ครู ศพด.'
+    },
+    {
+      id: 'MAT-CJ-002',
+      itemName: 'ชุดบล็อกไม้เสริมสร้างกล้ามเนื้อและจินตนาการ',
+      category: 'สื่อเสริมพัฒนาการ',
+      quantity: 5,
+      condition: 'สมบูรณ์ สะอาด ปราศจากสารพิษ (มอก.)',
+      lastInspectedDate: '2026-09-20',
+      inspector: 'นางสาวรัตนาภรณ์ ใจดี'
+    },
+    {
+      id: 'MAT-CJ-003',
+      itemName: 'ตู้ยาสามัญประจำ ศพด. และอุปกรณ์ปฐมพยาบาลเบื้องต้น',
+      category: 'อุปกรณ์ปฐมพยาบาล',
+      quantity: 1,
+      condition: 'ยาไม่หมดอายุ พร้อมใช้งานฉุกเฉิน',
+      lastInspectedDate: '2026-09-22',
+      inspector: 'เจ้าหน้าที่ รพ.สต.ฝางคำ'
+    }
+  ],
+  teachers: [
+    {
+      id: 'T-CJ-01',
+      name: 'นางสาวรัตนาภรณ์ ใจดี',
+      position: 'ครูผู้ดูแลเด็ก (ชำนาญการ)',
+      qualification: 'ค.บ. ปฐมวัย',
+      phone: '081-234-5678',
+      assignedClass: 'ห้องเด็กเล็ก 3-4 ปี',
+      status: 'ปฏิบัติราชการ'
+    },
+    {
+      id: 'T-CJ-02',
+      name: 'นางสมจิตต์ สว่างแจ้ง',
+      position: 'ผู้ช่วยครูผู้ดูแลเด็ก',
+      qualification: 'ศศ.บ. พัฒนาชุมชน',
+      phone: '089-876-5432',
+      assignedClass: 'ห้องเด็กเล็ก 2-3 ปี',
+      status: 'ปฏิบัติราชการ'
+    }
+  ]
+};
+
+// 6.2 ฐานข้อมูลเฉพาะพื้นที่ทำงาน ศูนย์พัฒนาเด็กเล็กบ้านฝางเทิง
+export const initialCdcFangthoengWorkspaceData = {
+  centerName: 'ศูนย์พัฒนาเด็กเล็กบ้านฝางเทิง',
+  village: 'บ้านฝางเทิง หมู่ที่ 5 ต.ฝางคำ',
+  summary: {
+    totalChildren: 24,
+    boysCount: 11,
+    girlsCount: 13,
+    teachersCount: 2,
+    lunchRatePerChild: 24,
+    milkRatePerChild: 8.13,
+    nationalStandardScore: 91.0
+  },
+  children: [
+    {
+      id: 'CDC-FT-001',
+      idCard: '1-3401-00567-44-5',
+      prefix: 'ด.ช.',
+      firstName: 'ธีรเดช',
+      lastName: 'บุญมี',
+      nickname: 'น้องต้นกล้า',
+      birthDate: '2023-03-20',
+      ageYears: 3,
+      ageMonths: 6,
+      gender: 'ชาย',
+      weight: 14.8,
+      height: 97,
+      nutritionStatus: 'สมส่วน',
+      dentalStatus: 'ฟันดีไม่มีผุ',
+      parentName: 'นายสมพร บุญมี',
+      phone: '087-333-4455',
+      status: 'กำลังศึกษา'
+    },
+    {
+      id: 'CDC-FT-002',
+      idCard: '1-3401-00678-55-6',
+      prefix: 'ด.ญ.',
+      firstName: 'พิมพาพร',
+      lastName: 'รัตนชัย',
+      nickname: 'น้องข้าวหอม',
+      birthDate: '2023-05-10',
+      ageYears: 3,
+      ageMonths: 4,
+      gender: 'หญิง',
+      weight: 13.5,
+      height: 93,
+      nutritionStatus: 'สมส่วน',
+      dentalStatus: 'ฟันดีไม่มีผุ',
+      parentName: 'นางกาญจนา รัตนชัย',
+      phone: '084-222-7788',
+      status: 'กำลังศึกษา'
+    }
+  ],
+  lunchDailyLogs: [
+    {
+      id: 'LUNCH-FT-2569-001',
+      date: '2026-09-28',
+      attendanceCount: 23,
+      absentCount: 1,
+      menuDescription: 'ข้าวสวย + ต้มจืดไข่น้ำหมูสับ + ปลาทูทอดกรอบ + แตงโมหวานฉ่ำ',
+      milkQuantity: 23,
+      milkTasteCheck: 'ปกติ (เย็น สด ใหม่ รสจืด)',
+      lunchQualityCheck: 'สะอาด ปรุงสุกใหม่ ครบ 5 หมู่',
+      inspector: 'นางกรรณิการ์ มั่นคง (ครูผู้ดูแลเด็ก)',
+      remarks: 'อาหารอุ่นร้อนก่อนตักเสิร์ฟเด็ก'
+    },
+    {
+      id: 'LUNCH-FT-2569-002',
+      date: '2026-09-29',
+      attendanceCount: 24,
+      absentCount: 0,
+      menuDescription: 'ข้าวสวย + แกงจืดฟักทองใส่หมูบด + น่องไก่อบซอส + กล้วยบวชชีหวานน้อย',
+      milkQuantity: 24,
+      milkTasteCheck: 'ปกติ (ตรวจรับตาม มอก./มท.)',
+      lunchQualityCheck: 'ถูกสุขอนามัย รสชาติเหมาะสำหรับเด็กปฐมวัย',
+      inspector: 'นางสาวจินตนา มารยาท (ผู้ช่วยครู)',
+      remarks: 'เด็กทุกคนรับประทานหมดจาน'
+    }
+  ],
+  healthGrowthChecks: [
+    {
+      id: 'HEALTH-FT-001',
+      checkDate: '2026-09-16',
+      term: 'ภาคเรียนที่ 1/2569',
+      childName: 'ด.ช. ธีรเดช บุญมี',
+      weight: 14.8,
+      height: 97,
+      nutritionStatus: 'สมส่วน',
+      dentalStatus: 'ฟันดี ไม่มีฟันน้ำนมผุ',
+      dspmStatus: 'สมวัยทุกด้าน (4 ด้านผ่านเกณฑ์)',
+      examiner: 'รพ.สต.ฝางคำ ร่วมกับครู ศพด.'
+    }
+  ],
+  materialsAndSafety: [
+    {
+      id: 'MAT-FT-001',
+      itemName: 'เครื่องเล่นสนามกลางแจ้ง (กระดานลื่น ชิงช้า บ่อทราย)',
+      category: 'เครื่องเล่นสนาม',
+      quantity: 1,
+      condition: 'พร้อมใช้งาน ไม่มีเหลี่ยมคม ตรวจสอบน็อตยึดแน่นหนา',
+      lastInspectedDate: '2026-09-24',
+      inspector: 'กองช่าง อบต.ฝางคำ'
+    },
+    {
+      id: 'MAT-FT-002',
+      itemName: 'หนังสือนิทานภาพและบัตรคำศัพท์ภาษาไทย-อังกฤษ',
+      category: 'สื่อเสริมพัฒนาการ',
+      quantity: 35,
+      condition: 'สภาพดี เสริมทักษะการฟังและการพูด',
+      lastInspectedDate: '2026-09-21',
+      inspector: 'นางกรรณิการ์ มั่นคง'
+    }
+  ],
+  teachers: [
+    {
+      id: 'T-FT-01',
+      name: 'นางกรรณิการ์ มั่นคง',
+      position: 'ครูผู้ดูแลเด็ก (ชำนาญการ)',
+      qualification: 'ค.บ. การศึกษาปฐมวัย',
+      phone: '085-444-9988',
+      assignedClass: 'ห้องเตรียมความพร้อม 2-4 ปี',
+      status: 'ปฏิบัติราชการ'
+    },
+    {
+      id: 'T-FT-02',
+      name: 'นางสาวจินตนา มารยาท',
+      position: 'ผู้ช่วยครูผู้ดูแลเด็ก',
+      qualification: 'บธ.บ. การจัดการ',
+      phone: '083-777-6655',
+      assignedClass: 'ห้องเตรียมความพร้อม 2-4 ปี',
+      status: 'ปฏิบัติราชการ'
+    }
+  ]
+};
+
 // 7. ฐานข้อมูลปฏิทินส่วนกลางและการปฏิบัติงาน อปท. (Central Hub Calendar - Sprint 5)
 export const initialCentralCalendarEvents = [];
 

@@ -25,7 +25,8 @@ import {
   HeartHandshake,
   Activity,
   CalendarDays,
-  Globe
+  Globe,
+  Baby
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -99,18 +100,19 @@ export default function Sidebar({
     {
       pillarId: 'pillar-dept',
       pillarNumber: 'พื้นที่ทำงาน',
-      pillarTitle: '5 ส่วนราชการ (Workspaces)',
+      pillarTitle: 'ส่วนราชการ & ศพด.',
       badgeClass: 'bg-purple-50 text-purple-800 border-purple-200/80 dark:bg-purple-950/70 dark:text-purple-300 dark:border-purple-800/60',
       activeClass: 'bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 text-white shadow-xs font-semibold',
       hoverClass: 'hover:bg-purple-50/80 hover:text-purple-800 dark:hover:bg-slate-800/80 dark:hover:text-purple-300',
       iconInactive: 'text-purple-600 dark:text-purple-400',
       items: [
-        { id: 'dept-workspaces', label: 'ภาพรวมทุกส่วนราชการ', icon: Building2 },
         { id: 'dept-office', label: 'สำนักปลัด', icon: Building2 },
         { id: 'dept-finance', label: 'กองคลัง', icon: BadgeDollarSign },
         { id: 'dept-tech', label: 'กองช่าง', icon: HardHat },
         { id: 'dept-education', label: 'กองการศึกษา', icon: GraduationCap },
-        { id: 'dept-welfare', label: 'กองสวัสดิการสังคม', icon: HeartHandshake }
+        { id: 'dept-welfare', label: 'กองสวัสดิการสังคม', icon: HeartHandshake },
+        { id: 'dept-cdc-charoen', label: 'ศพด.วัดเจริญทัศน์', icon: Baby },
+        { id: 'dept-cdc-fangthoeng', label: 'ศพด.บ้านฝางเทิง', icon: Baby }
       ]
     },
     {

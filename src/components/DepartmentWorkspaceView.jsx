@@ -49,7 +49,9 @@ import {
   initialTechWorkspaceData,
   initialEducationWorkspaceData,
   initialWelfareWorkspaceData,
-  initialPublicHealthWorkspaceData
+  initialPublicHealthWorkspaceData,
+  initialCdcCharoenWorkspaceData,
+  initialCdcFangthoengWorkspaceData
 } from '../data/initialData';
 import { exportDepartmentWorkspacesExcel } from '../services/reportExportService';
 
@@ -72,6 +74,8 @@ export default function DepartmentWorkspaceView({
       if (userDept.includes('ช่าง')) return 'กองช่าง';
       if (userDept.includes('การศึกษา')) return 'กองการศึกษา';
       if (userDept.includes('สวัสดิการ')) return 'กองสวัสดิการสังคม';
+      if (userDept.includes('เจริญทัศน์')) return 'ศพด.วัดเจริญทัศน์';
+      if (userDept.includes('ฝางเทิง')) return 'ศพด.บ้านฝางเทิง';
       if (userDept.includes('สาธารณสุข') || userDept.includes('สิ่งแวดล้อม')) return 'สำนักปลัด';
       return 'สำนักปลัด';
     }
@@ -244,6 +248,62 @@ export default function DepartmentWorkspaceView({
     localStorage.setItem('ia_dept_public_health_data', JSON.stringify(publicHealthData));
   }, [publicHealthData]);
 
+  const [cdcCharoenData, setCdcCharoenData] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ia_dept_cdc_charoen_data');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          return {
+            ...initialCdcCharoenWorkspaceData,
+            ...parsed,
+            summary: { ...initialCdcCharoenWorkspaceData.summary, ...(parsed.summary || {}) },
+            children: Array.isArray(parsed.children) ? parsed.children : initialCdcCharoenWorkspaceData.children,
+            lunchDailyLogs: Array.isArray(parsed.lunchDailyLogs) ? parsed.lunchDailyLogs : initialCdcCharoenWorkspaceData.lunchDailyLogs,
+            healthGrowthChecks: Array.isArray(parsed.healthGrowthChecks) ? parsed.healthGrowthChecks : initialCdcCharoenWorkspaceData.healthGrowthChecks,
+            materialsAndSafety: Array.isArray(parsed.materialsAndSafety) ? parsed.materialsAndSafety : initialCdcCharoenWorkspaceData.materialsAndSafety,
+            teachers: Array.isArray(parsed.teachers) ? parsed.teachers : initialCdcCharoenWorkspaceData.teachers
+          };
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return initialCdcCharoenWorkspaceData;
+  });
+
+  const [cdcFangthoengData, setCdcFangthoengData] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ia_dept_cdc_fangthoeng_data');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          return {
+            ...initialCdcFangthoengWorkspaceData,
+            ...parsed,
+            summary: { ...initialCdcFangthoengWorkspaceData.summary, ...(parsed.summary || {}) },
+            children: Array.isArray(parsed.children) ? parsed.children : initialCdcFangthoengWorkspaceData.children,
+            lunchDailyLogs: Array.isArray(parsed.lunchDailyLogs) ? parsed.lunchDailyLogs : initialCdcFangthoengWorkspaceData.lunchDailyLogs,
+            healthGrowthChecks: Array.isArray(parsed.healthGrowthChecks) ? parsed.healthGrowthChecks : initialCdcFangthoengWorkspaceData.healthGrowthChecks,
+            materialsAndSafety: Array.isArray(parsed.materialsAndSafety) ? parsed.materialsAndSafety : initialCdcFangthoengWorkspaceData.materialsAndSafety,
+            teachers: Array.isArray(parsed.teachers) ? parsed.teachers : initialCdcFangthoengWorkspaceData.teachers
+          };
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return initialCdcFangthoengWorkspaceData;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('ia_dept_cdc_charoen_data', JSON.stringify(cdcCharoenData));
+  }, [cdcCharoenData]);
+
+  useEffect(() => {
+    localStorage.setItem('ia_dept_cdc_fangthoeng_data', JSON.stringify(cdcFangthoengData));
+  }, [cdcFangthoengData]);
+
   // Toast State
   const [toastMessage, setToastMessage] = useState(null);
   const showToast = (msg) => {
@@ -397,9 +457,77 @@ export default function DepartmentWorkspaceView({
     feeAmount: 100
   });
 
+  // CDC Specific Modal States
+  const [showAddChildModal, setShowAddChildModal] = useState(false);
+  const [newChild, setNewChild] = useState({
+    prefix: 'ด.ช.',
+    firstName: '',
+    lastName: '',
+    nickname: '',
+    idCard: '',
+    birthDate: '',
+    gender: 'ชาย',
+    weight: '',
+    height: '',
+    nutritionStatus: 'สมส่วน',
+    dentalStatus: 'ฟันดีไม่มีผุ',
+    parentName: '',
+    phone: '',
+    status: 'กำลังศึกษา'
+  });
+
+  const [showAddLunchModal, setShowAddLunchModal] = useState(false);
+  const [newLunchLog, setNewLunchLog] = useState({
+    date: new Date().toISOString().slice(0, 10),
+    attendanceCount: '',
+    absentCount: '0',
+    menuDescription: '',
+    milkQuantity: '',
+    milkTasteCheck: 'ปกติ (รสจืด เย็นตามเกณฑ์)',
+    lunchQualityCheck: 'ถูกสุขลักษณะ รสชาติกลมกล่อม ครบ 5 หมู่',
+    inspector: '',
+    remarks: ''
+  });
+
+  const [showAddHealthModal, setShowAddHealthModal] = useState(false);
+  const [newHealthCheck, setNewHealthCheck] = useState({
+    checkDate: new Date().toISOString().slice(0, 10),
+    term: 'ภาคเรียนที่ 1/2569',
+    childName: '',
+    weight: '',
+    height: '',
+    nutritionStatus: 'สมส่วน',
+    dentalStatus: 'ฟันดี ไม่มีฟันน้ำนมผุ',
+    dspmStatus: 'สมวัยทุกด้าน (4 ด้านผ่านเกณฑ์)',
+    examiner: ''
+  });
+
+  const [showAddSafetyModal, setShowAddSafetyModal] = useState(false);
+  const [newSafetyCheck, setNewSafetyCheck] = useState({
+    itemName: '',
+    category: 'เครื่องเล่นสนาม',
+    quantity: '1',
+    condition: 'พร้อมใช้งาน ปลอดภัย มีแผ่นยางกันกระแทก',
+    lastInspectedDate: new Date().toISOString().slice(0, 10),
+    inspector: ''
+  });
+
+  // Helper flags for CDC
+  const isCdc = activeDept === 'ศพด.วัดเจริญทัศน์' || activeDept === 'ศพด.บ้านฝางเทิง';
+  const currentCdcData = activeDept === 'ศพด.วัดเจริญทัศน์' ? cdcCharoenData : cdcFangthoengData;
+  const setCurrentCdcData = activeDept === 'ศพด.วัดเจริญทัศน์' ? setCdcCharoenData : setCdcFangthoengData;
+
   // Filter CAPA findings belonging to the active department
   const deptCapaFindings = useMemo(() => {
-    return capaFindings.filter((f) => f.department?.includes(activeDept.replace('กอง', '').replace('สำนัก', '')));
+    return capaFindings.filter((f) => {
+      if (activeDept.includes('เจริญทัศน์')) {
+        return f.department?.includes('เจริญทัศน์') || f.department?.includes('ศพด.');
+      }
+      if (activeDept.includes('ฝางเทิง')) {
+        return f.department?.includes('ฝางเทิง') || f.department?.includes('ศพด.');
+      }
+      return f.department?.includes(activeDept.replace('กอง', '').replace('สำนัก', ''));
+    });
   }, [capaFindings, activeDept]);
 
   return (
@@ -441,7 +569,9 @@ export default function DepartmentWorkspaceView({
                   { id: 'กองคลัง', label: 'กองคลัง', icon: BadgeDollarSign },
                   { id: 'กองช่าง', label: 'กองช่าง', icon: HardHat },
                   { id: 'กองการศึกษา', label: 'กองการศึกษา', icon: GraduationCap },
-                  { id: 'กองสวัสดิการสังคม', label: 'กองสวัสดิการสังคม', icon: HeartHandshake }
+                  { id: 'กองสวัสดิการสังคม', label: 'กองสวัสดิการสังคม', icon: HeartHandshake },
+                  { id: 'ศพด.วัดเจริญทัศน์', label: 'ศพด.วัดเจริญทัศน์', icon: Baby },
+                  { id: 'ศพด.บ้านฝางเทิง', label: 'ศพด.บ้านฝางเทิง', icon: Baby }
                 ].map((d) => {
                   const isSelected = activeDept === d.id;
                   const Icon = d.icon;
@@ -782,6 +912,75 @@ export default function DepartmentWorkspaceView({
             </>
           )}
 
+          {/* 6. ศูนย์พัฒนาเด็กเล็ก (ศพด.วัดเจริญทัศน์ & ศพด.บ้านฝางเทิง) Sub-Tabs */}
+          {isCdc && (
+            <>
+              <button
+                onClick={() => setSubTab('overview')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'overview' ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>ภาพรวม ศพด.</span>
+              </button>
+              <button
+                onClick={() => setSubTab('students')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'students' ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <Baby className="w-3.5 h-3.5 text-pink-500" />
+                <span>ทะเบียนเด็กเล็ก ({currentCdcData.children.length} คน)</span>
+              </button>
+              <button
+                onClick={() => setSubTab('lunch')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'lunch' ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <Apple className="w-3.5 h-3.5 text-emerald-500" />
+                <span>อาหารกลางวัน & นม ({currentCdcData.lunchDailyLogs.length} วัน)</span>
+              </button>
+              <button
+                onClick={() => setSubTab('health')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'health' ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <Activity className="w-3.5 h-3.5 text-teal-500" />
+                <span>สุขภาพ & พัฒนาการ ({currentCdcData.healthGrowthChecks.length})</span>
+              </button>
+              <button
+                onClick={() => setSubTab('materials')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'materials' ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-blue-500" />
+                <span>สื่อการเรียน & ความปลอดภัย ({currentCdcData.materialsAndSafety.length})</span>
+              </button>
+              <button
+                onClick={() => setSubTab('teachers')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'teachers' ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <Users className="w-3.5 h-3.5" />
+                <span>บุคลากรครู ({currentCdcData.teachers.length} ท่าน)</span>
+              </button>
+              <button
+                onClick={() => setSubTab('capa')}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  subTab === 'capa' ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                }`}
+              >
+                <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
+                <span>ตอบข้อทักท้วง ({deptCapaFindings.length})</span>
+              </button>
+            </>
+          )}
+
         </div>
       </div>
 
@@ -791,7 +990,8 @@ export default function DepartmentWorkspaceView({
           d.department === activeDept ||
           (activeDept === 'สำนักปลัด' && (d.department?.includes('ปลัด') || d.department?.includes('สาธารณสุข') || d.department?.includes('สิ่งแวดล้อม'))) ||
           (activeDept === 'กองการศึกษา' && d.department?.includes('การศึกษา')) ||
-          (activeDept === 'กองสวัสดิการสังคม' && d.department?.includes('สวัสดิการ'))
+          (activeDept === 'กองสวัสดิการสังคม' && d.department?.includes('สวัสดิการ')) ||
+          (isCdc && (d.department?.includes('ศพด.') || d.department?.includes(activeDept.replace('ศพด.', ''))))
         );
 
         if (relevant.length === 0) return null;
@@ -2521,6 +2721,536 @@ export default function DepartmentWorkspaceView({
       )}
 
       {/* =========================================================================
+          WORKSPACE CONTENT: 6. ศูนย์พัฒนาเด็กเล็ก (ศพด.วัดเจริญทัศน์ & ศพด.บ้านฝางเทิง)
+      ========================================================================= */}
+      {isCdc && (
+        <div className="space-y-6">
+          {/* SubTab: Overview */}
+          {subTab === 'overview' && (
+            <div className="space-y-6">
+              {/* Center Info Banner */}
+              <div className="bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 text-white rounded-3xl p-6 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="space-y-1.5">
+                  <div className="inline-flex items-center gap-1.5 bg-white/15 px-3 py-1 rounded-full text-xs font-bold backdrop-blur-xs">
+                    <Baby className="w-3.5 h-3.5 text-pink-300" />
+                    <span>สังกัดกองการศึกษา ศาสนาและวัฒนธรรม อบต.ฝางคำ</span>
+                  </div>
+                  <h2 className="text-2xl font-black">{currentCdcData.centerName}</h2>
+                  <p className="text-xs text-purple-100 flex items-center gap-2">
+                    <span>📍 ที่ตั้ง: {currentCdcData.village || 'ตำบลฝางคำ อำเภอสิรินธร'}</span>
+                    <span>•</span>
+                    <span>มาตรฐานปฐมวัยแห่งชาติ: ได้คะแนน <strong>{currentCdcData.summary.nationalStandardScore || 90}</strong> / 100</span>
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => setShowAddChildModal(true)}
+                    className="bg-white hover:bg-purple-50 text-purple-900 text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer transition-colors"
+                  >
+                    <Plus className="w-4 h-4 text-purple-700" />
+                    <span>รับเด็กเล็กใหม่</span>
+                  </button>
+                  <button
+                    onClick={() => setShowAddLunchModal(true)}
+                    className="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer transition-colors"
+                  >
+                    <Apple className="w-4 h-4" />
+                    <span>บันทึกอาหาร/นม วันนี้</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* 4 Metric Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">เด็กเล็กในความดูแลทั้งหมด</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-slate-100">
+                    {currentCdcData.children.length || currentCdcData.summary.totalChildren} คน
+                  </div>
+                  <div className="text-[11px] text-pink-600 font-bold">
+                    ชาย {currentCdcData.summary.boysCount || 0} คน • หญิง {currentCdcData.summary.girlsCount || 0} คน
+                  </div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">อาหารกลางวันเด็กเล็ก</div>
+                  <div className="text-2xl font-black text-emerald-600">
+                    {currentCdcData.summary.lunchRatePerChild || 24} ฿<span className="text-xs font-normal text-slate-500"> /คน/วัน</span>
+                  </div>
+                  <div className="text-[11px] text-slate-500">
+                    เงินอุดหนุนรัฐบาลตามมติ ครม.
+                  </div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">บันทึกอาหารกลางวัน & นม</div>
+                  <div className="text-2xl font-black text-blue-600">
+                    {currentCdcData.lunchDailyLogs.length} วัน
+                  </div>
+                  <div className="text-[11px] text-emerald-600 font-bold">
+                    ตรวจรับสม่ำเสมอ 100%
+                  </div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                  <div className="text-xs text-slate-500 font-medium">ครูและผู้ดูแลเด็ก</div>
+                  <div className="text-2xl font-black text-purple-600">
+                    {currentCdcData.teachers.length || currentCdcData.summary.teachersCount} ท่าน
+                  </div>
+                  <div className="text-[11px] text-purple-600 font-bold">
+                    อัตราส่วน 1:{Math.round((currentCdcData.children.length || 20) / (currentCdcData.teachers.length || 1))} คน/ครู
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Actions & Recent Check Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Recent Lunch Check Card */}
+                <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                      <Apple className="w-4 h-4 text-emerald-500" />
+                      <span>บันทึกตรวจรับอาหารกลางวันล่าสุด</span>
+                    </h3>
+                    <button
+                      onClick={() => setSubTab('lunch')}
+                      className="text-xs font-bold text-blue-600 hover:underline cursor-pointer"
+                    >
+                      ดูทั้งหมด
+                    </button>
+                  </div>
+                  {currentCdcData.lunchDailyLogs.length > 0 ? (
+                    <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-2 text-xs">
+                      <div className="flex justify-between font-bold">
+                        <span className="text-slate-700 dark:text-slate-300">วันที่: {currentCdcData.lunchDailyLogs[0].date}</span>
+                        <span className="text-emerald-600">เด็กมาเรียน: {currentCdcData.lunchDailyLogs[0].attendanceCount} คน</span>
+                      </div>
+                      <div className="text-slate-600 dark:text-slate-400">
+                        <strong>เมนู:</strong> {currentCdcData.lunchDailyLogs[0].menuDescription}
+                      </div>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200 dark:border-slate-700 flex justify-between">
+                        <span>ผู้ตรวจชิม/ตรวจรับ: {currentCdcData.lunchDailyLogs[0].inspector}</span>
+                        <span className="text-blue-600 font-bold">นม: {currentCdcData.lunchDailyLogs[0].milkQuantity} ถุง/กล่อง</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-slate-400 py-4 text-center">ยังไม่มีบันทึกอาหารกลางวัน</p>
+                  )}
+                </div>
+
+                {/* Health & DSPM Development Status Card */}
+                <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                      <Activity className="w-4 h-4 text-teal-500" />
+                      <span>สุขภาพ & พัฒนาการ 4 ด้าน (DSPM)</span>
+                    </h3>
+                    <button
+                      onClick={() => setSubTab('health')}
+                      className="text-xs font-bold text-blue-600 hover:underline cursor-pointer"
+                    >
+                      ดูทั้งหมด
+                    </button>
+                  </div>
+                  <div className="p-4 rounded-xl bg-teal-50/50 dark:bg-teal-950/20 border border-teal-200/80 dark:border-teal-900/60 space-y-2 text-xs">
+                    <div className="flex justify-between font-bold text-teal-950 dark:text-teal-200">
+                      <span>การประเมินภาวะโภชนาการและพัฒนาการ</span>
+                      <span className="bg-teal-100 text-teal-800 dark:bg-teal-900/50 dark:text-teal-200 px-2 py-0.5 rounded text-[10px]">
+                        ภาคเรียนที่ 1/2569
+                      </span>
+                    </div>
+                    <p className="text-slate-600 dark:text-slate-400 text-[11px]">
+                      บันทึกตรวจสุขภาพและประเมินพัฒนาการแล้ว <strong>{currentCdcData.healthGrowthChecks.length}</strong> รายการ โดย รพ.สต.ฝางคำ ร่วมกับครูผู้ดูแลเด็ก
+                    </p>
+                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-teal-200/60 text-[11px]">
+                      <div>✅ ภาวะโภชนาการ: <strong>สมส่วน 100%</strong></div>
+                      <div>✅ พัฒนาการ 4 ด้าน: <strong>สมวัย</strong></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: Students */}
+          {subTab === 'students' && (
+            <div className="space-y-4">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                    <Baby className="w-4 h-4 text-pink-500" />
+                    <span>ทะเบียนเด็กเล็ก {currentCdcData.centerName}</span>
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    จำนวนเด็กเล็กทั้งหมด {currentCdcData.children.length} คน (ปีการศึกษา 2569)
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowAddChildModal(true)}
+                  className="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center space-x-1.5 shadow-xs cursor-pointer transition-colors"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>เพิ่มทะเบียนเด็กเล็ก</span>
+                </button>
+              </div>
+
+              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs text-left">
+                    <thead className="bg-slate-50 dark:bg-slate-800/80 font-bold text-slate-700 dark:text-slate-300">
+                      <tr>
+                        <th className="py-3 px-3">รหัส / บัตร ปชช.</th>
+                        <th className="py-3 px-3">ชื่อ - สกุล (ชื่อเล่น)</th>
+                        <th className="py-3 px-3 text-center">เพศ</th>
+                        <th className="py-3 px-3 text-center">อายุ</th>
+                        <th className="py-3 px-3 text-right">นน./สส.</th>
+                        <th className="py-3 px-3 text-center">โภชนาการ</th>
+                        <th className="py-3 px-3">ผู้ปกครอง / เบอร์ติดต่อ</th>
+                        <th className="py-3 px-3 text-center">สถานะ</th>
+                        <th className="py-3 px-3 text-center">จัดการ</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                      {currentCdcData.children.map((ch, idx) => (
+                        <tr key={ch.id || idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                          <td className="py-3 px-3">
+                            <span className="font-mono text-purple-700 dark:text-purple-400 font-bold bg-purple-50 dark:bg-purple-950/40 px-2 py-0.5 rounded text-[11px]">
+                              {ch.id}
+                            </span>
+                            <div className="text-[10px] text-slate-400 font-mono mt-0.5">{ch.idCard || '-'}</div>
+                          </td>
+                          <td className="py-3 px-3 font-bold text-slate-900 dark:text-slate-100">
+                            {ch.prefix} {ch.firstName} {ch.lastName}
+                            {ch.nickname && <span className="text-pink-600 ml-1">({ch.nickname})</span>}
+                          </td>
+                          <td className="py-3 px-3 text-center">
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              ch.gender === 'ชาย' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'
+                            }`}>
+                              {ch.gender}
+                            </span>
+                          </td>
+                          <td className="py-3 px-3 text-center text-slate-600 dark:text-slate-400">
+                            {ch.ageYears || 3} ขวบ {ch.ageMonths ? `${ch.ageMonths} ด.` : ''}
+                          </td>
+                          <td className="py-3 px-3 text-right font-mono text-slate-700 dark:text-slate-300">
+                            {ch.weight ? `${ch.weight} กก.` : '-'} / {ch.height ? `${ch.height} ซม.` : '-'}
+                          </td>
+                          <td className="py-3 px-3 text-center">
+                            <span className="bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                              {ch.nutritionStatus || 'สมส่วน'}
+                            </span>
+                          </td>
+                          <td className="py-3 px-3">
+                            <div className="font-medium text-slate-900 dark:text-slate-100">{ch.parentName || '-'}</div>
+                            <div className="text-[10px] text-slate-400 font-mono">{ch.phone || '-'}</div>
+                          </td>
+                          <td className="py-3 px-3 text-center">
+                            <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded text-[10px] font-bold">
+                              {ch.status || 'กำลังศึกษา'}
+                            </span>
+                          </td>
+                          <td className="py-3 px-3 text-center">
+                            <button
+                              onClick={() => {
+                                openConfirm({
+                                  title: 'ยืนยันลบเด็กเล็ก',
+                                  message: `คุณต้องการลบข้อมูลเด็กเล็ก "${ch.prefix} ${ch.firstName} ${ch.lastName}" ใช่หรือไม่?`,
+                                  confirmText: 'ลบข้อมูล',
+                                  type: 'danger',
+                                  onConfirm: () => {
+                                    const updated = currentCdcData.children.filter((c) => c.id !== ch.id);
+                                    setCurrentCdcData({ ...currentCdcData, children: updated });
+                                    showToast('ลบข้อมูลเด็กเล็กเรียบร้อยแล้ว');
+                                  }
+                                });
+                              }}
+                              className="text-slate-400 hover:text-rose-600 p-1 cursor-pointer"
+                              title="ลบข้อมูล"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: Lunch & Milk */}
+          {subTab === 'lunch' && (
+            <div className="space-y-4">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                    <Apple className="w-4 h-4 text-emerald-500" />
+                    <span>บันทึกตรวจรับอาหารกลางวัน & อาหารเสริมนม (รายวัน)</span>
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    ตามระเบียบกระทรวงมหาดไทยว่าด้วยรายจ่ายเพื่อการจัดบริการสาธารณะ และหนังสือสั่งการ มท.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowAddLunchModal(true)}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center space-x-1.5 shadow-xs cursor-pointer transition-colors"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>บันทึกตรวจรับประจำวัน</span>
+                </button>
+              </div>
+
+              {/* Calculator Summary Strip */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900 text-xs space-y-1">
+                  <div className="text-slate-500 font-bold">อัตราเงินอุดหนุนอาหารกลางวัน</div>
+                  <div className="text-xl font-black text-emerald-700 dark:text-emerald-300">
+                    24 บาท <span className="text-xs font-normal">/คน/วัน (มติ ครม.)</span>
+                  </div>
+                </div>
+                <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 text-xs space-y-1">
+                  <div className="text-slate-500 font-bold">การตรวจรับนมโรงเรียน</div>
+                  <div className="text-xl font-black text-blue-700 dark:text-blue-300">
+                    1 กล่อง/ถุง <span className="text-xs font-normal">/คน/วัน (นมพาสเจอร์ไรส์/ยูเอชที)</span>
+                  </div>
+                </div>
+                <div className="p-4 rounded-xl bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-900 text-xs space-y-1">
+                  <div className="text-slate-500 font-bold">มาตรการป้องกันความเสี่ยง</div>
+                  <div className="text-xs font-bold text-purple-800 dark:text-purple-300">
+                    ตรวจชิมก่อนแจกจ่าย • สุ่มตรวจอุณหภูมิความเย็น • บันทึกหลักฐานรายวัน
+                  </div>
+                </div>
+              </div>
+
+              {/* Logs List */}
+              <div className="space-y-3">
+                {currentCdcData.lunchDailyLogs.map((log) => (
+                  <div key={log.id} className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2 text-xs">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-mono text-purple-700 font-bold bg-purple-50 px-2 py-0.5 rounded text-[11px]">
+                          {log.id}
+                        </span>
+                        <span className="font-bold text-slate-900 dark:text-slate-100 text-sm">
+                          วันที่: {log.date}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                          เด็กมาเรียน {log.attendanceCount} คน (ขาด {log.absentCount || 0} คน)
+                        </span>
+                        <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                          นม {log.milkQuantity} กล่อง
+                        </span>
+                      </div>
+                    </div>
+                    <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl space-y-1">
+                      <div className="font-bold text-slate-800 dark:text-slate-200">
+                        🍛 เมนูอาหารกลางวัน: <span className="font-normal text-slate-700 dark:text-slate-300">{log.menuDescription}</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11px] text-slate-600 dark:text-slate-400">
+                        <div>🥛 ผลตรวจชิมนม: <strong>{log.milkTasteCheck || 'ปกติ'}</strong></div>
+                        <div>🍲 คุณภาพอาหาร: <strong>{log.lunchQualityCheck || 'ถูกต้องตามหลักโภชนาการ'}</strong></div>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center text-[11px] text-slate-500 pt-1">
+                      <span>ผู้ตรวจรับ/ผู้ตรวจชิม: <strong>{log.inspector}</strong></span>
+                      <button
+                        onClick={() => {
+                          const updated = currentCdcData.lunchDailyLogs.filter((l) => l.id !== log.id);
+                          setCurrentCdcData({ ...currentCdcData, lunchDailyLogs: updated });
+                          showToast('ลบบันทึกอาหารกลางวันเรียบร้อยแล้ว');
+                        }}
+                        className="text-rose-500 hover:text-rose-700 font-bold cursor-pointer"
+                      >
+                        ลบรายการ
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: Health & DSPM Development */}
+          {subTab === 'health' && (
+            <div className="space-y-4">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-teal-500" />
+                    <span>ทะเบียนเฝ้าระวังสุขภาพ & ประเมินพัฒนาการเด็กปฐมวัย (DSPM 4 ด้าน)</span>
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    ตรวจร่างกาย ชั่งน้ำหนัก วัดส่วนสูง ตรวจสุขภาพฟัน และประเมินพัฒนาการร่วมกับ รพ.สต.ฝางคำ
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowAddHealthModal(true)}
+                  className="bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center space-x-1.5 shadow-xs cursor-pointer transition-colors"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>บันทึกตรวจสุขภาพ/พัฒนาการ</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {currentCdcData.healthGrowthChecks.map((hc) => (
+                  <div key={hc.id} className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2 text-xs">
+                    <div className="flex justify-between items-center">
+                      <span className="font-mono text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded text-[11px]">{hc.id}</span>
+                      <span className="text-slate-400 text-[11px]">{hc.checkDate} ({hc.term})</span>
+                    </div>
+                    <div className="font-bold text-slate-900 dark:text-slate-100 text-sm">{hc.childName}</div>
+                    <div className="grid grid-cols-2 gap-2 text-slate-600 dark:text-slate-400 pt-1">
+                      <div>น้ำหนัก: <strong>{hc.weight} กก.</strong></div>
+                      <div>ส่วนสูง: <strong>{hc.height} ซม.</strong></div>
+                      <div>ภาวะโภชนาการ: <strong className="text-emerald-600">{hc.nutritionStatus}</strong></div>
+                      <div>สุขภาพฟัน: <strong>{hc.dentalStatus}</strong></div>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-teal-50/50 dark:bg-teal-950/20 border border-teal-100 dark:border-teal-900/40 text-[11px]">
+                      <span className="font-bold text-teal-900 dark:text-teal-200">พัฒนาการ 4 ด้าน (DSPM): </span>
+                      <span>{hc.dspmStatus}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-[10px] text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
+                      <span>ผู้ตรวจ: {hc.examiner}</span>
+                      <button
+                        onClick={() => {
+                          const updated = currentCdcData.healthGrowthChecks.filter((h) => h.id !== hc.id);
+                          setCurrentCdcData({ ...currentCdcData, healthGrowthChecks: updated });
+                          showToast('ลบบันทึกตรวจสุขภาพเรียบร้อยแล้ว');
+                        }}
+                        className="text-rose-500 hover:underline cursor-pointer"
+                      >
+                        ลบ
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: Materials & Playground Safety */}
+          {subTab === 'materials' && (
+            <div className="space-y-4">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-blue-500" />
+                    <span>สื่อการเรียนรู้ & เช็กลิสต์ความปลอดภัยสนามเด็กเล่นสร้างปัญญา</span>
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    ทะเบียนคุมสื่อการสอน ของเล่นเสริมพัฒนาการ และการตรวจสอบความปลอดภัยเครื่องเล่นสนาม
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowAddSafetyModal(true)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center space-x-1.5 shadow-xs cursor-pointer transition-colors"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>เพิ่มรายการสื่อ/ความปลอดภัย</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {currentCdcData.materialsAndSafety.map((mat) => (
+                  <div key={mat.id} className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2 text-xs">
+                    <div className="flex justify-between items-start">
+                      <span className="bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 font-bold px-2.5 py-0.5 rounded text-[10px]">
+                        {mat.category}
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-mono">จำนวน {mat.quantity} รายการ</span>
+                    </div>
+                    <div className="font-bold text-slate-900 dark:text-slate-100 text-sm mt-1">{mat.itemName}</div>
+                    <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-[11px] text-slate-700 dark:text-slate-300">
+                      <strong>สภาพความปลอดภัย:</strong> {mat.condition}
+                    </div>
+                    <div className="flex justify-between items-center text-[10px] text-slate-400 pt-1">
+                      <span>ตรวจล่าสุด: {mat.lastInspectedDate}</span>
+                      <button
+                        onClick={() => {
+                          const updated = currentCdcData.materialsAndSafety.filter((m) => m.id !== mat.id);
+                          setCurrentCdcData({ ...currentCdcData, materialsAndSafety: updated });
+                          showToast('ลบรายการสื่อ/ความปลอดภัยเรียบร้อยแล้ว');
+                        }}
+                        className="text-rose-500 hover:underline cursor-pointer"
+                      >
+                        ลบ
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: Teachers */}
+          {subTab === 'teachers' && (
+            <div className="space-y-4">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                  <Users className="w-4 h-4 text-purple-500" />
+                  <span>บุคลากรครูและผู้ดูแลเด็ก {currentCdcData.centerName}</span>
+                </h3>
+                <p className="text-xs text-slate-500">
+                  บุคลากรที่มีคุณสมบัติถูกต้องตามมาตรฐานสถานพัฒนาเด็กปฐมวัยแห่งชาติ
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {currentCdcData.teachers.map((tc) => (
+                  <div key={tc.id} className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs space-y-3 text-xs">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="font-mono text-purple-700 font-bold bg-purple-50 px-2 py-0.5 rounded text-[10px]">{tc.id}</span>
+                        <h4 className="font-bold text-base text-slate-900 dark:text-slate-100 mt-1">{tc.name}</h4>
+                        <div className="text-xs text-purple-700 font-semibold">{tc.position}</div>
+                      </div>
+                      <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        {tc.status || 'ปฏิบัติราชการ'}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-600 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <div>วุฒิการศึกษา: <strong>{tc.qualification}</strong></div>
+                      <div>ห้องเรียนที่ดูแล: <strong>{tc.assignedClass}</strong></div>
+                      <div>เบอร์โทรศัพท์: <strong>{tc.phone}</strong></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SubTab: CAPA for CDC */}
+          {subTab === 'capa' && (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+              <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                ประเด็นข้อตรวจพบและข้อเสนอแนะผู้ตรวจสอบภายใน (CAPA) {currentCdcData.centerName}
+              </h3>
+              {deptCapaFindings.length === 0 ? (
+                <div className="p-8 text-center text-slate-400 text-xs">
+                  <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-500 mb-2" />
+                  <div>ไม่พบข้อทักท้วงคงค้างของ {currentCdcData.centerName} การจัดบริการสาธารณะและอาหารกลางวันถูกต้องครบถ้วน</div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {deptCapaFindings.map((f) => (
+                    <div key={f.id} className="p-4 rounded-xl border border-amber-200 bg-amber-50/30 text-xs space-y-2">
+                      <div className="font-bold text-slate-900">{f.title}</div>
+                      <div className="text-slate-600">การแก้ไข (CA): {f.correctiveAction}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* =========================================================================
           MODALS: 1. ADD VEHICLE LOG (สำนักปลัด)
       ========================================================================= */}
       {showAddOfficeLogModal && (
@@ -2884,6 +3614,714 @@ export default function DepartmentWorkspaceView({
                   className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold cursor-pointer"
                 >
                   บันทึกโครงการ
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          MODALS: 5. CDC ADD CHILD (ศพด.)
+      ========================================================================= */}
+      {showAddChildModal && (
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center">
+              <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <Baby className="w-4 h-4 text-pink-500" />
+                <span>เพิ่มทะเบียนเด็กเล็กใหม่ ({currentCdcData.centerName})</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowAddChildModal(false)}
+                className="text-slate-400 hover:text-slate-600 text-lg font-bold"
+              >
+                ✕
+              </button>
+            </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const prefixId = activeDept.includes('เจริญทัศน์') ? 'CDC-CJ' : 'CDC-FT';
+                const count = currentCdcData.children.length + 1;
+                const newId = `${prefixId}-${String(count).padStart(3, '0')}`;
+                const childObj = {
+                  ...newChild,
+                  id: newId,
+                  weight: Number(newChild.weight) || 0,
+                  height: Number(newChild.height) || 0,
+                  ageYears: Number(newChild.ageYears) || 3,
+                  ageMonths: Number(newChild.ageMonths) || 0,
+                  status: 'กำลังศึกษา'
+                };
+                const updated = [childObj, ...currentCdcData.children];
+                setCurrentCdcData({
+                  ...currentCdcData,
+                  children: updated,
+                  summary: {
+                    ...currentCdcData.summary,
+                    totalChildren: updated.length,
+                    boysCount: updated.filter(c => c.gender === 'ชาย').length,
+                    girlsCount: updated.filter(c => c.gender === 'หญิง').length
+                  }
+                });
+                setShowAddChildModal(false);
+                setNewChild({
+                  prefix: 'ด.ช.',
+                  firstName: '',
+                  lastName: '',
+                  nickname: '',
+                  idCard: '',
+                  birthDate: '',
+                  gender: 'ชาย',
+                  weight: '',
+                  height: '',
+                  nutritionStatus: 'สมส่วน',
+                  dentalStatus: 'ฟันดีไม่มีผุ',
+                  parentName: '',
+                  phone: '',
+                  status: 'กำลังศึกษา'
+                });
+                showToast(`บันทึกข้อมูล ${childObj.prefix} ${childObj.firstName} เข้าสู่ระบบแล้ว`);
+              }}
+              className="space-y-3 text-xs"
+            >
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">คำนำหน้า</label>
+                  <select
+                    value={newChild.prefix}
+                    onChange={(e) => {
+                      const p = e.target.value;
+                      setNewChild({ ...newChild, prefix: p, gender: p === 'ด.ช.' ? 'ชาย' : 'หญิง' });
+                    }}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                  >
+                    <option value="ด.ช.">ด.ช.</option>
+                    <option value="ด.ญ.">ด.ญ.</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">ชื่อจริง</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="เช่น กิตติภูมิ"
+                    value={newChild.firstName}
+                    onChange={(e) => setNewChild({ ...newChild, firstName: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">นามสกุล</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="เช่น สมบูรณ์"
+                    value={newChild.lastName}
+                    onChange={(e) => setNewChild({ ...newChild, lastName: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">ชื่อเล่น</label>
+                  <input
+                    type="text"
+                    placeholder="เช่น น้องภูมิ"
+                    value={newChild.nickname}
+                    onChange={(e) => setNewChild({ ...newChild, nickname: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">เลขประจำตัวประชาชน (13 หลัก)</label>
+                  <input
+                    type="text"
+                    placeholder="1-3401-xxxxx-xx-x"
+                    value={newChild.idCard}
+                    onChange={(e) => setNewChild({ ...newChild, idCard: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">วัน/เดือน/ปีเกิด</label>
+                  <input
+                    type="date"
+                    value={newChild.birthDate}
+                    onChange={(e) => setNewChild({ ...newChild, birthDate: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">น้ำหนัก (กก.)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    placeholder="14.5"
+                    value={newChild.weight}
+                    onChange={(e) => setNewChild({ ...newChild, weight: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">ส่วนสูง (ซม.)</label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    placeholder="96"
+                    value={newChild.height}
+                    onChange={(e) => setNewChild({ ...newChild, height: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">ภาวะโภชนาการ</label>
+                  <select
+                    value={newChild.nutritionStatus}
+                    onChange={(e) => setNewChild({ ...newChild, nutritionStatus: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                  >
+                    <option value="สมส่วน">สมส่วน</option>
+                    <option value="ท้วม">ท้วม</option>
+                    <option value="เริ่มอ้วน">เริ่มอ้วน</option>
+                    <option value="อ้วน">อ้วน</option>
+                    <option value="ค่อนข้างผอม">ค่อนข้างผอม</option>
+                    <option value="ผอม">ผอม</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">สุขภาพช่องปาก/ฟัน</label>
+                  <input
+                    type="text"
+                    placeholder="ฟันดีไม่มีผุ"
+                    value={newChild.dentalStatus}
+                    onChange={(e) => setNewChild({ ...newChild, dentalStatus: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">ชื่อผู้ปกครอง</label>
+                  <input
+                    type="text"
+                    placeholder="เช่น นายประสิทธิ์ สมบูรณ์"
+                    value={newChild.parentName}
+                    onChange={(e) => setNewChild({ ...newChild, parentName: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">เบอร์โทรศัพท์ติดต่อ</label>
+                  <input
+                    type="tel"
+                    placeholder="08x-xxx-xxxx"
+                    value={newChild.phone}
+                    onChange={(e) => setNewChild({ ...newChild, phone: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowAddChildModal(false)}
+                  className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800"
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold cursor-pointer transition-colors"
+                >
+                  บันทึกทะเบียนเด็ก
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          MODALS: 6. CDC ADD LUNCH/MILK LOG (ศพด.)
+      ========================================================================= */}
+      {showAddLunchModal && (
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center">
+              <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <Apple className="w-4 h-4 text-emerald-500" />
+                <span>บันทึกตรวจรับอาหารกลางวัน & อาหารเสริมนม ({currentCdcData.centerName})</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowAddLunchModal(false)}
+                className="text-slate-400 hover:text-slate-600 text-lg font-bold"
+              >
+                ✕
+              </button>
+            </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const prefixId = activeDept.includes('เจริญทัศน์') ? 'LUNCH-CJ' : 'LUNCH-FT';
+                const count = currentCdcData.lunchDailyLogs.length + 1;
+                const newId = `${prefixId}-2569-${String(count).padStart(3, '0')}`;
+                const logObj = {
+                  ...newLunchLog,
+                  id: newId,
+                  attendanceCount: Number(newLunchLog.attendanceCount) || currentCdcData.children.length,
+                  absentCount: Number(newLunchLog.absentCount) || 0,
+                  milkQuantity: Number(newLunchLog.milkQuantity) || Number(newLunchLog.attendanceCount) || currentCdcData.children.length
+                };
+                const updated = [logObj, ...currentCdcData.lunchDailyLogs];
+                setCurrentCdcData({ ...currentCdcData, lunchDailyLogs: updated });
+                setShowAddLunchModal(false);
+                setNewLunchLog({
+                  date: new Date().toISOString().slice(0, 10),
+                  attendanceCount: '',
+                  absentCount: '0',
+                  menuDescription: '',
+                  milkQuantity: '',
+                  milkTasteCheck: 'ปกติ (รสจืด เย็นตามเกณฑ์)',
+                  lunchQualityCheck: 'ถูกสุขลักษณะ รสชาติกลมกล่อม ครบ 5 หมู่',
+                  inspector: '',
+                  remarks: ''
+                });
+                showToast(`บันทึกตรวจรับอาหารกลางวัน & นม วันที่ ${logObj.date} เรียบร้อยแล้ว`);
+              }}
+              className="space-y-3 text-xs"
+            >
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">วันที่ตรวจรับ</label>
+                  <input
+                    type="date"
+                    required
+                    value={newLunchLog.date}
+                    onChange={(e) => setNewLunchLog({ ...newLunchLog, date: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">เด็กมาเรียน (คน)</label>
+                  <input
+                    type="number"
+                    required
+                    placeholder={String(currentCdcData.children.length || 25)}
+                    value={newLunchLog.attendanceCount}
+                    onChange={(e) => setNewLunchLog({ ...newLunchLog, attendanceCount: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-mono font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">ขาดเรียน (คน)</label>
+                  <input
+                    type="number"
+                    value={newLunchLog.absentCount}
+                    onChange={(e) => setNewLunchLog({ ...newLunchLog, absentCount: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-mono"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="font-bold text-slate-700 dark:text-slate-300">รายการเมนูอาหารกลางวัน (ครบ 5 หมู่)</label>
+                <textarea
+                  rows="2"
+                  required
+                  placeholder="เช่น ข้าวสวย + ต้มจืดเต้าหู้หมูสับผักกาดขาว + ไก่ทอดเกลือ + กล้วยน้ำว้า"
+                  value={newLunchLog.menuDescription}
+                  onChange={(e) => setNewLunchLog({ ...newLunchLog, menuDescription: e.target.value })}
+                  className="w-full mt-1 p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-medium"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">ตรวจรับนมโรงเรียน (กล่อง/ถุง)</label>
+                  <input
+                    type="number"
+                    placeholder="เช่น 26"
+                    value={newLunchLog.milkQuantity}
+                    onChange={(e) => setNewLunchLog({ ...newLunchLog, milkQuantity: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">ผลการตรวจชิมนม</label>
+                  <select
+                    value={newLunchLog.milkTasteCheck}
+                    onChange={(e) => setNewLunchLog({ ...newLunchLog, milkTasteCheck: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                  >
+                    <option value="ปกติ (รสจืด ไม่บูด เย็นตามเกณฑ์)">ปกติ (รสจืด ไม่บูด เย็นตามเกณฑ์)</option>
+                    <option value="ปกติ (นมพาสเจอร์ไรส์ สดใหม่)">ปกติ (นมพาสเจอร์ไรส์ สดใหม่)</option>
+                    <option value="ปกติ (นมยูเอชที บรรจุภัณฑ์สมบูรณ์)">ปกติ (นมยูเอชที บรรจุภัณฑ์สมบูรณ์)</option>
+                    <option value="พบความผิดปกติ (แจ้งเปลี่ยนทันที)">พบความผิดปกติ (แจ้งเปลี่ยนทันที)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">คุณภาพอาหารกลางวัน</label>
+                  <input
+                    type="text"
+                    value={newLunchLog.lunchQualityCheck}
+                    onChange={(e) => setNewLunchLog({ ...newLunchLog, lunchQualityCheck: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">ครูผู้ตรวจรับ / ผู้ตรวจชิม</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="เช่น ครูผู้ดูแลเด็ก / ผู้ช่วยครู"
+                    value={newLunchLog.inspector}
+                    onChange={(e) => setNewLunchLog({ ...newLunchLog, inspector: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowAddLunchModal(false)}
+                  className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800"
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer transition-colors"
+                >
+                  บันทึกการตรวจรับ
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          MODALS: 7. CDC ADD HEALTH CHECK (ศพด.)
+      ========================================================================= */}
+      {showAddHealthModal && (
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center">
+              <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <Activity className="w-4 h-4 text-teal-500" />
+                <span>บันทึกตรวจสุขภาพและประเมินพัฒนาการ DSPM</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowAddHealthModal(false)}
+                className="text-slate-400 hover:text-slate-600 text-lg font-bold"
+              >
+                ✕
+              </button>
+            </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const prefixId = activeDept.includes('เจริญทัศน์') ? 'HEALTH-CJ' : 'HEALTH-FT';
+                const count = currentCdcData.healthGrowthChecks.length + 1;
+                const newId = `${prefixId}-${String(count).padStart(3, '0')}`;
+                const healthObj = {
+                  ...newHealthCheck,
+                  id: newId,
+                  weight: Number(newHealthCheck.weight) || 0,
+                  height: Number(newHealthCheck.height) || 0
+                };
+                const updated = [healthObj, ...currentCdcData.healthGrowthChecks];
+                setCurrentCdcData({ ...currentCdcData, healthGrowthChecks: updated });
+                setShowAddHealthModal(false);
+                setNewHealthCheck({
+                  checkDate: new Date().toISOString().slice(0, 10),
+                  term: 'ภาคเรียนที่ 1/2569',
+                  childName: '',
+                  weight: '',
+                  height: '',
+                  nutritionStatus: 'สมส่วน',
+                  dentalStatus: 'ฟันดี ไม่มีฟันน้ำนมผุ',
+                  dspmStatus: 'สมวัยทุกด้าน (4 ด้านผ่านเกณฑ์)',
+                  examiner: ''
+                });
+                showToast(`บันทึกผลตรวจสุขภาพของ ${healthObj.childName} เรียบร้อยแล้ว`);
+              }}
+              className="space-y-3 text-xs"
+            >
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">วันที่ตรวจ</label>
+                  <input
+                    type="date"
+                    required
+                    value={newHealthCheck.checkDate}
+                    onChange={(e) => setNewHealthCheck({ ...newHealthCheck, checkDate: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">ภาคเรียน</label>
+                  <select
+                    value={newHealthCheck.term}
+                    onChange={(e) => setNewHealthCheck({ ...newHealthCheck, term: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                  >
+                    <option value="ภาคเรียนที่ 1/2569">ภาคเรียนที่ 1/2569</option>
+                    <option value="ภาคเรียนที่ 2/2569">ภาคเรียนที่ 2/2569</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="font-bold text-slate-700 dark:text-slate-300">ชื่อเด็กเล็ก</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="เช่น ด.ช. กิตติภูมิ สมบูรณ์"
+                  value={newHealthCheck.childName}
+                  onChange={(e) => setNewHealthCheck({ ...newHealthCheck, childName: e.target.value })}
+                  className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">น้ำหนัก (กก.)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    required
+                    placeholder="14.5"
+                    value={newHealthCheck.weight}
+                    onChange={(e) => setNewHealthCheck({ ...newHealthCheck, weight: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">ส่วนสูง (ซม.)</label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    required
+                    placeholder="96"
+                    value={newHealthCheck.height}
+                    onChange={(e) => setNewHealthCheck({ ...newHealthCheck, height: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">ภาวะโภชนาการ</label>
+                  <select
+                    value={newHealthCheck.nutritionStatus}
+                    onChange={(e) => setNewHealthCheck({ ...newHealthCheck, nutritionStatus: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                  >
+                    <option value="สมส่วน">สมส่วน</option>
+                    <option value="ท้วม">ท้วม</option>
+                    <option value="เริ่มอ้วน">เริ่มอ้วน</option>
+                    <option value="ค่อนข้างผอม">ค่อนข้างผอม</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">พัฒนาการ 4 ด้าน (DSPM)</label>
+                  <select
+                    value={newHealthCheck.dspmStatus}
+                    onChange={(e) => setNewHealthCheck({ ...newHealthCheck, dspmStatus: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold"
+                  >
+                    <option value="สมวัยทุกด้าน (4 ด้านผ่านเกณฑ์)">สมวัยทุกด้าน (4 ด้านผ่านเกณฑ์)</option>
+                    <option value="สงสัยล่าช้า 1 ด้าน (นัดติดตามซ้ำ 30 วัน)">สงสัยล่าช้า 1 ด้าน (นัดติดตามซ้ำ 30 วัน)</option>
+                    <option value="ส่งต่อตรวจวินิจฉัยแพทย์">ส่งต่อตรวจวินิจฉัยแพทย์</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="font-bold text-slate-700 dark:text-slate-300">ผู้ตรวจ / หน่วยบริการสาธารณสุข</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="เช่น รพ.สต.ฝางคำ ร่วมกับครู ศพด."
+                  value={newHealthCheck.examiner}
+                  onChange={(e) => setNewHealthCheck({ ...newHealthCheck, examiner: e.target.value })}
+                  className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowAddHealthModal(false)}
+                  className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800"
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold cursor-pointer transition-colors"
+                >
+                  บันทึกผลการตรวจ
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          MODALS: 8. CDC ADD SAFETY/MATERIAL CHECK (ศพด.)
+      ========================================================================= */}
+      {showAddSafetyModal && (
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-blue-500" />
+                <span>บันทึกสื่อการเรียนรู้ / ตรวจความปลอดภัยสนามเด็กเล่น</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowAddSafetyModal(false)}
+                className="text-slate-400 hover:text-slate-600 text-lg font-bold"
+              >
+                ✕
+              </button>
+            </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const prefixId = activeDept.includes('เจริญทัศน์') ? 'MAT-CJ' : 'MAT-FT';
+                const count = currentCdcData.materialsAndSafety.length + 1;
+                const newId = `${prefixId}-${String(count).padStart(3, '0')}`;
+                const matObj = {
+                  ...newSafetyCheck,
+                  id: newId,
+                  quantity: Number(newSafetyCheck.quantity) || 1
+                };
+                const updated = [matObj, ...currentCdcData.materialsAndSafety];
+                setCurrentCdcData({ ...currentCdcData, materialsAndSafety: updated });
+                setShowAddSafetyModal(false);
+                setNewSafetyCheck({
+                  itemName: '',
+                  category: 'เครื่องเล่นสนาม',
+                  quantity: '1',
+                  condition: 'พร้อมใช้งาน ปลอดภัย มีแผ่นยางกันกระแทก',
+                  lastInspectedDate: new Date().toISOString().slice(0, 10),
+                  inspector: ''
+                });
+                showToast(`บันทึกรายการ "${matObj.itemName}" เรียบร้อยแล้ว`);
+              }}
+              className="space-y-3 text-xs"
+            >
+              <div>
+                <label className="font-bold text-slate-700 dark:text-slate-300">ชื่อสื่อการสอน / เครื่องเล่นสนาม</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="เช่น ชิงช้ากลางแจ้ง, ชุดบล็อกไม้เสริมพัฒนาการ"
+                  value={newSafetyCheck.itemName}
+                  onChange={(e) => setNewSafetyCheck({ ...newSafetyCheck, itemName: e.target.value })}
+                  className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">หมวดหมู่</label>
+                  <select
+                    value={newSafetyCheck.category}
+                    onChange={(e) => setNewSafetyCheck({ ...newSafetyCheck, category: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                  >
+                    <option value="เครื่องเล่นสนาม">เครื่องเล่นสนาม</option>
+                    <option value="สื่อเสริมพัฒนาการ">สื่อเสริมพัฒนาการ</option>
+                    <option value="อุปกรณ์ปฐมพยาบาล">อุปกรณ์ปฐมพยาบาล</option>
+                    <option value="อาคารสถานที่ & ความปลอดภัย">อาคารสถานที่ & ความปลอดภัย</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">จำนวน (ชุด/ชิ้น)</label>
+                  <input
+                    type="number"
+                    required
+                    value={newSafetyCheck.quantity}
+                    onChange={(e) => setNewSafetyCheck({ ...newSafetyCheck, quantity: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-mono"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="font-bold text-slate-700 dark:text-slate-300">สภาพความพร้อมใช้และความปลอดภัย</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="เช่น พร้อมใช้งาน ปลอดภัย ไม่มีเหลี่ยมคม น็อตยึดแน่นหนา"
+                  value={newSafetyCheck.condition}
+                  onChange={(e) => setNewSafetyCheck({ ...newSafetyCheck, condition: e.target.value })}
+                  className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">วันที่ตรวจล่าสุด</label>
+                  <input
+                    type="date"
+                    required
+                    value={newSafetyCheck.lastInspectedDate}
+                    onChange={(e) => setNewSafetyCheck({ ...newSafetyCheck, lastInspectedDate: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">ผู้ตรวจประเมิน</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="เช่น นายช่างกองช่าง & ครู ศพด."
+                    value={newSafetyCheck.inspector}
+                    onChange={(e) => setNewSafetyCheck({ ...newSafetyCheck, inspector: e.target.value })}
+                    className="w-full mt-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowAddSafetyModal(false)}
+                  className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800"
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold cursor-pointer transition-colors"
+                >
+                  บันทึกรายการ
                 </button>
               </div>
             </form>
