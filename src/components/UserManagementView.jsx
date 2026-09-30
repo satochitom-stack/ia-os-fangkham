@@ -867,20 +867,22 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
             </div>
           )}
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80">
-                  <th className="py-3 px-4 w-52 sticky left-0 bg-slate-50/90 dark:bg-slate-800/80 z-10">
+          <div className="overflow-x-auto overflow-y-auto max-h-[72vh] min-h-[380px] relative border-t border-slate-200 dark:border-slate-800">
+            <table className="w-full text-left text-xs border-separate border-spacing-0">
+              <thead className="sticky top-0 z-20 shadow-xs">
+                <tr className="text-slate-700 dark:text-slate-200 font-bold">
+                  <th className="py-3 px-4 w-52 sticky left-0 top-0 bg-slate-100 dark:bg-slate-800 z-30 font-bold border-b border-r border-slate-200 dark:border-slate-700 shadow-xs">
                     ผู้ใช้งาน / สำนัก-กอง
                   </th>
                   {ALL_MENU_IDS.map((menu) => (
-                    <th key={menu.id} className="py-3 px-2 text-center min-w-28 font-medium">
+                    <th key={menu.id} className="py-3 px-2 text-center min-w-28 font-medium sticky top-0 bg-slate-100 dark:bg-slate-800 z-20 border-b border-slate-200 dark:border-slate-700">
                       <div className="font-bold text-slate-700 dark:text-slate-200">{menu.label}</div>
                       <div className="text-[10px] text-slate-400 font-mono">({menu.id})</div>
                     </th>
                   ))}
-                  <th className="py-3 px-3 text-center min-w-36">การกระทำ</th>
+                  <th className="py-3 px-3 text-center min-w-36 sticky top-0 bg-slate-100 dark:bg-slate-800 z-20 border-b border-slate-200 dark:border-slate-700">
+                    การกระทำ
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -908,7 +910,13 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                       }`}
                     >
                       {/* User Info Column */}
-                      <td className="py-3 px-4 sticky left-0 bg-white dark:bg-slate-900 z-10 border-r border-slate-100 dark:border-slate-800">
+                      <td className={`py-3 px-4 sticky left-0 z-10 border-b border-r border-slate-200 dark:border-slate-800 transition-colors ${
+                        isUserModified
+                          ? 'bg-amber-50 dark:bg-amber-950'
+                          : isCurrent
+                          ? 'bg-blue-50 dark:bg-slate-900'
+                          : 'bg-white dark:bg-slate-900'
+                      }`}>
                         <div className="flex items-center space-x-2.5">
                           <div
                             className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
@@ -953,7 +961,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                         const isMenuLockedForAdmin = isAdmin;
 
                         return (
-                          <td key={menu.id} className="py-3 px-2 text-center">
+                          <td key={menu.id} className="py-3 px-2 text-center border-b border-slate-100 dark:border-slate-800">
                             {isMenuLockedForAdmin ? (
                               <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-xs font-bold" title="ผู้ดูแลระบบมีสิทธิ์ทุกเมนู">
                                 ✓
@@ -977,7 +985,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
                       })}
 
                       {/* Actions Column */}
-                      <td className="py-3 px-3 text-center">
+                      <td className="py-3 px-3 text-center border-b border-slate-100 dark:border-slate-800">
                         <div className="flex items-center justify-center space-x-1.5">
                           <button
                             type="button"
