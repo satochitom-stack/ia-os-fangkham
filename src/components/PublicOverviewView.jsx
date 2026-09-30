@@ -65,14 +65,14 @@ export default function PublicOverviewView({
     welcomeDesc: 'มุ่งมั่นให้บริการด้วยความโปร่งใส รวดเร็ว ถูกต้องตามระเบียบกฎหมาย พร้อมเปิดเผยข้อมูลสาธารณะแก่พี่น้องประชาชนทุกคน',
     metrics: [
       { label: 'การบริหารราชการ', value: '5 ส่วนราชการหลัก', note: 'โครงสร้าง อบต.ฝางคำ' },
-      { label: 'เขตพื้นที่ให้บริการ', value: '6 หมู่บ้านตำบลฝางคำ', note: 'ครอบคลุมทุกหลังคาเรือน' },
+      { label: 'เขตพื้นที่ให้บริการ', value: '4 หมู่บ้านตำบลฝางคำ', note: 'ครอบคลุมทุกหลังคาเรือน' },
       { label: 'มาตรฐานความโปร่งใส', value: 'No Gift Policy 100%', note: 'งดรับของขวัญทุกชนิด' },
       { label: 'ช่องทางรับเรื่องร้องทุกข์', value: 'ศูนย์ดำรงธรรม อบต.', note: 'ยุติธรรม รวดเร็ว โปร่งใส' }
     ],
     divisions: [
       {
         id: 'office',
-        name: 'สำนักปลัด (รวมงานสาธารณสุขและสิ่งแวดล้อม)',
+        name: 'สำนักปลัด',
         leader: orgProfile.palatName ? `กำกับโดย ${orgProfile.palatName}` : 'หัวหน้าสำนักปลัด',
         iconName: 'Building2',
         color: 'blue',
@@ -82,7 +82,7 @@ export default function PublicOverviewView({
           'งานสารบรรณ รับ-ส่งหนังสือราชการและออกหนังสือรับรอง',
           'งานนิติการและศูนย์ดำรงธรรม รับเรื่องราวร้องทุกข์ของประชาชน',
           'งานป้องกันและบรรเทาสาธารณภัย (อปพร., รถน้ำ, ระงับอัคคีภัย)',
-          'บริการจัดเก็บและขนถ่ายขยะมูลฝอยในเขตตำบล 6 หมู่บ้าน',
+          'บริการจัดเก็บและขนถ่ายขยะมูลฝอยในเขตตำบล 4 หมู่บ้าน',
           'การควบคุมและป้องกันโรคติดต่อในชุมชน (ไข้เลือดออก, พิษสุนัขบ้า)',
           'งานสุขาภิบาลอาหาร ตรวจมาตรฐานร้านอาหารและตลาดนัดชุมชน'
         ],
@@ -312,101 +312,45 @@ export default function PublicOverviewView({
   };
 
   return (
-    <div className="space-y-6 animate-fade-in pb-12">
-      {/* 1. ส่วนหัวภาพรวม: ดีไซน์ใหม่ โมเดิร์น คมชัด กระชับ สอดคล้องกับคอมโพเนนต์ 3D */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200/90 dark:border-slate-800 shadow-sm relative overflow-hidden">
-        {/* Soft Royal Blue Ambient Glow */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 dark:bg-blue-600/15 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/80 text-blue-700 dark:text-cyan-300 border border-blue-200/80 dark:border-blue-800 text-xs font-bold tracking-wide">
-                <Landmark className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />
-                <span>{locationDisplay}</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800 text-xs font-bold">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                <span>ITA ธรรมาภิบาลระดับ AA</span>
-              </span>
-            </div>
-
-            {/* Admin Management Button */}
-            {isAdmin && (
-              <button
-                type="button"
-                onClick={handleOpenAdminModal}
-                className="self-start md:self-center bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs font-black px-3.5 py-2 rounded-xl shadow-xs transition-all cursor-pointer flex items-center space-x-1.5 shrink-0 border border-amber-300 active:scale-95"
-              >
-                <Settings className="w-3.5 h-3.5 text-slate-950" />
-                <span>⚙️ จัดการ/แก้ไขข้อมูล (Admin)</span>
-              </button>
-            )}
-          </div>
-
-          <div className="space-y-1">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-slate-900 dark:text-white font-['Prompt',sans-serif]">
-              ภาพรวมระบบและวงโคจรการบริหารราชการ
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
-              ศูนย์ข้อมูลข่าวสารและบริการประชาชนดิจิทัล (Smart Public Portal) • องค์การบริหารส่วนตำบลฝางคำ
-            </p>
-          </div>
-
-          {/* Integrated 4 Stats Chips Bar */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
-            {data.metrics.map((m, idx) => {
-              let IconComponent = Building2;
-              let iconColor = 'text-blue-600 bg-blue-50 border-blue-200/60 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900/60';
-              if (idx === 1) {
-                IconComponent = Users;
-                iconColor = 'text-emerald-600 bg-emerald-50 border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/60';
-              } else if (idx === 2) {
-                IconComponent = ShieldCheck;
-                iconColor = 'text-amber-600 bg-amber-50 border-amber-200/60 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-900/60';
-              } else if (idx === 3) {
-                IconComponent = HelpCircle;
-                iconColor = 'text-purple-600 bg-purple-50 border-purple-200/60 dark:bg-purple-950/40 dark:text-purple-400 dark:border-purple-900/60';
-              }
-
-              return (
-                <div
-                  key={idx}
-                  className="bg-slate-50/80 dark:bg-slate-800/60 rounded-2xl p-3 sm:p-3.5 border border-slate-200/80 dark:border-slate-700/60 flex items-center justify-between gap-2 transition-all hover:border-blue-300 dark:hover:border-blue-600"
-                >
-                  <div>
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-medium">
-                      {m.label}
-                    </span>
-                    <strong className="text-sm sm:text-base font-black text-slate-900 dark:text-white tracking-tight">
-                      {m.value}
-                    </strong>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 block">
-                      {m.note}
-                    </span>
-                  </div>
-                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center border shadow-2xs shrink-0 ${iconColor}`}>
-                    <IconComponent className="w-4 h-4" />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+    <div className="space-y-4 animate-fade-in pb-12">
+      {/* 1. กรอบหน่วยงานด้านบน: องค์การบริหารส่วนตำบลฝางคำ อ.สิรินธร จ.อุบลราชธานี */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 rounded-2xl px-4 sm:px-5 py-2.5 sm:py-3 border border-slate-200/90 dark:border-slate-800 shadow-2xs">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/80 text-blue-700 dark:text-cyan-300 border border-blue-200/80 dark:border-blue-800 text-xs sm:text-sm font-bold tracking-wide">
+            <Landmark className="w-4 h-4 text-blue-600 dark:text-cyan-400" />
+            <span>{locationDisplay}</span>
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800 text-xs font-bold">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>ITA ธรรมาภิบาลระดับ AA</span>
+          </span>
         </div>
+
+        {/* Admin Management Button */}
+        {isAdmin && (
+          <button
+            type="button"
+            onClick={handleOpenAdminModal}
+            className="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs font-black px-3.5 py-1.5 rounded-xl shadow-xs transition-all cursor-pointer flex items-center space-x-1.5 shrink-0 border border-amber-300 active:scale-95"
+          >
+            <Settings className="w-3.5 h-3.5 text-slate-950" />
+            <span>⚙️ จัดการ/แก้ไขข้อมูล (Admin)</span>
+          </button>
+        )}
       </div>
 
-      {/* 2. โมเดลวงโคจร 3 มิติ (Radial Orbital 3D): โชว์ที่หน้าแรก พร้อมคำขวัญ และ 5 ส่วนราชการหลัก */}
+      {/* 2. โมเดลวงโคจร 3 มิติ (Radial Orbital): โครงสร้าง 5 ส่วนราชการหลัก & ภารกิจ อบต.ฝางคำ */}
       {(() => {
         const departmentOrbitalNodes = [
           {
             id: 1,
-            title: data.divisions[0]?.name || 'สำนักปลัด (รวมงานสาธารณสุข)',
+            title: 'สำนักปลัด',
             subtitle: data.divisions[0]?.leader || 'กำกับโดย หัวหน้าสำนักปลัด',
             date: 'ตลอดปีงบประมาณ',
             content: data.divisions[0]?.services?.slice(0, 3).join(' • ') || 'งานสารบรรณ นิติการ ป้องกันและบรรเทาสาธารณภัย สุขาภิบาลและสิ่งแวดล้อม',
             category: 'สำนักปลัด',
             icon: Building2,
-            relatedIds: [2, 3],
+            relatedIds: [2, 6],
             status: 'completed',
             energy: 96,
             color: 'blue'
@@ -458,20 +402,20 @@ export default function PublicOverviewView({
             content: data.divisions[4]?.services?.slice(0, 3).join(' • ') || 'เบี้ยยังชีพผู้สูงอายุ (600-1,000 บ.) เบี้ยความพิการ และสงเคราะห์ครอบครัวยากไร้',
             category: 'กองสวัสดิการสังคม',
             icon: HeartHandshake,
-            relatedIds: [1, 4],
+            relatedIds: [1, 6],
             status: 'completed',
             energy: 98,
             color: 'rose'
           },
           {
             id: 6,
-            title: 'ศูนย์ดำรงธรรม & ITA',
-            subtitle: 'มาตรฐานธรรมาภิบาลระดับ AA',
-            date: 'บริการ 24 ชม.',
-            content: 'รับเรื่องราวร้องทุกข์ของประชาชน ประเมินคุณธรรมความโปร่งใส ITA ระดับ AA และนโยบาย No Gift Policy 100%',
-            category: 'ธรรมาภิบาล',
-            icon: ShieldCheck,
-            relatedIds: [1, 2],
+            title: 'เขตพื้นที่ตำบล 4 หมู่บ้าน',
+            subtitle: 'พื้นที่บริการประชาชน ต.ฝางคำ',
+            date: 'ครอบคลุม 100%',
+            content: 'ม.1 บ้านฝาง • ม.2 บ้านเทิง • ม.3 บ้านคำกลาง • ม.4 บ้านโนนจันทร์ (ครอบคลุมการให้บริการและดูแลคุณภาพชีวิตทุกหลังคาเรือน)',
+            category: 'เขตพื้นที่บริการ',
+            icon: MapPin,
+            relatedIds: [1, 5],
             status: 'completed',
             energy: 100,
             color: 'cyan'
@@ -486,7 +430,7 @@ export default function PublicOverviewView({
                   <Orbit className="w-4 h-4" />
                 </span>
                 <h2 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 font-['Prompt',sans-serif]">
-                  วงโคจร 3D โครงสร้าง 5 ส่วนราชการหลัก & ภารกิจ อบต.ฝางคำ
+                  โครงสร้าง 5 ส่วนราชการหลัก & ภารกิจ อบต.ฝางคำ
                 </h2>
               </div>
               {isAdmin && (
