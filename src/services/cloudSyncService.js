@@ -436,7 +436,7 @@ class CloudSyncService {
 /**
  * Helper to merge incoming cloud risk data into local year-based data
  */
-export function mergeRiskManagement(localYearData, cloudYearData) {
+export function mergeRiskManagement(localYearData, cloudYearData, activeUserDept = null) {
   if (!cloudYearData) return localYearData;
   if (!localYearData) return cloudYearData;
 
@@ -456,6 +456,20 @@ export function mergeRiskManagement(localYearData, cloudYearData) {
     return clean;
   };
 
+  // Protect local departments that have been submitted locally or belong to current user
+  const protectedDepts = new Set();
+  if (activeUserDept && activeUserDept !== 'หน่วยตรวจสอบภายใน' && activeUserDept !== 'ส่วนกลาง') {
+    protectedDepts.add(activeUserDept);
+  }
+  Object.entries(localYearData.submissions || {}).forEach(([dept, sub]) => {
+    if (sub && (sub.status === 'submitted' || sub.status === 'reviewed')) {
+      const cloudSub = cloudYearData.submissions?.[dept];
+      if (!cloudSub || cloudSub.status !== 'submitted') {
+        protectedDepts.add(dept);
+      }
+    }
+  });
+
   // 1. Merge array-based tables: bs1, bs2, bs3, bs4
   ['bs1', 'bs2', 'bs3', 'bs4'].forEach((key) => {
     const localList = Array.isArray(result[key]) ? result[key] : [];
@@ -468,8 +482,9 @@ export function mergeRiskManagement(localYearData, cloudYearData) {
     });
 
     if (cloudDeptsWithItems.size > 0) {
-      const keepLocal = localList.filter((item) => !cloudDeptsWithItems.has(item.department));
-      result[key] = dedupeByItem([...keepLocal, ...cloudList]);
+      const keepLocal = localList.filter((item) => !cloudDeptsWithItems.has(item.department) || protectedDepts.has(item.department));
+      const keepCloud = cloudList.filter((item) => !protectedDepts.has(item.department));
+      result[key] = dedupeByItem([...keepLocal, ...keepCloud]);
     } else {
       result[key] = dedupeByItem(localList);
     }
@@ -500,8 +515,9 @@ export function mergeRiskManagement(localYearData, cloudYearData) {
   });
 
   if (cloudBs5Depts.size > 0) {
-    const keepBs5Items = localBs5Items.filter((item) => !cloudBs5Depts.has(item.department));
-    localBs5.items = dedupeByItem([...keepBs5Items, ...cloudBs5Items]);
+    const keepBs5Items = localBs5Items.filter((item) => !cloudBs5Depts.has(item.department) || protectedDepts.has(item.department));
+    const keepCloudBs5 = cloudBs5Items.filter((item) => !protectedDepts.has(item.department));
+    localBs5.items = dedupeByItem([...keepBs5Items, ...keepCloudBs5]);
   } else {
     localBs5.items = dedupeByItem(localBs5Items);
   }
@@ -516,9 +532,15 @@ export function mergeRiskManagement(localYearData, cloudYearData) {
 
   result.bs5 = localBs5;
 
-  // 3. Merge bs5Summary and submissions
+  // 3. Merge submissions and bs5Summary
+  const combinedSubmissions = { ...(result.submissions || {}), ...(cloudYearData.submissions || {}) };
+  protectedDepts.forEach((dept) => {
+    if (result.submissions?.[dept]) {
+      combinedSubmissions[dept] = result.submissions[dept];
+    }
+  });
+  result.submissions = combinedSubmissions;
   result.bs5Summary = { ...(result.bs5Summary || {}), ...(cloudYearData.bs5Summary || {}) };
-  result.submissions = { ...(result.submissions || {}), ...(cloudYearData.submissions || {}) };
 
   return result;
 }

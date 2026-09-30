@@ -1524,6 +1524,50 @@ export default function RiskManagementView({
                 <span>ส่งออกไฟล์ บส. กองนี้</span>
               </button>
 
+              {isSupabaseConfigured() && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      setCascadeSuccessMsg(`กำลังส่งและซิงค์ข้อมูลของ "${userDept}" ขึ้นสู่ Supabase Cloud...`);
+                      const filterFn = (i) => i && i.department === userDept;
+                      const bs5Items = Array.isArray(riskManagement?.bs5)
+                        ? riskManagement.bs5
+                        : Array.isArray(riskManagement?.bs5?.items)
+                        ? riskManagement.bs5.items
+                        : [];
+
+                      const deptPayload = {
+                        bs1: (riskManagement?.bs1 || []).filter(filterFn),
+                        bs2: (riskManagement?.bs2 || []).filter(filterFn),
+                        bs3: (riskManagement?.bs3 || []).filter(filterFn),
+                        bs4: (riskManagement?.bs4 || []).filter(filterFn),
+                        bs5: bs5Items.filter(filterFn),
+                        bs5Summary: riskManagement?.bs5Summary || {},
+                        submissions: riskManagement?.submissions?.[userDept]
+                          ? { [userDept]: riskManagement.submissions[userDept] }
+                          : { [userDept]: { status: 'submitted', submittedAt: new Date().toLocaleDateString('th-TH'), submittedBy: currentSession?.displayName || userDept } }
+                      };
+
+                      const ok = await cloudSyncService.pushDeptRiskManagement(selectedYear, userDept, deptPayload);
+                      if (ok) {
+                        setCascadeSuccessMsg(`✓ ซิงค์และส่งข้อมูลของ "${userDept}" ขึ้นสู่ Cloud สำเร็จเรียบร้อยแล้ว! ข้อมูลจะปรากฏบนหน้าจอหน่วยตรวจสอบทันที`);
+                      } else {
+                        setCascadeSuccessMsg(`❌ ไม่สามารถซิงค์ขึ้น Cloud ได้ กรุณาตรวจสอบอินเทอร์เน็ต`);
+                      }
+                      setTimeout(() => setCascadeSuccessMsg(''), 6000);
+                    } catch (err) {
+                      setCascadeSuccessMsg(`❌ ผิดพลาด: ${err.message}`);
+                    }
+                  }}
+                  className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition-all flex items-center space-x-1.5 cursor-pointer"
+                  title="ซิงค์ข้อมูลแบบ บส. ของกองนี้ขึ้นสู่ Supabase Cloud ทันที"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>ซิงค์ขึ้น Cloud ทันที</span>
+                </button>
+              )}
+
               <button
                 type="button"
                 onClick={() => setShowCrossMachineInfo(true)}

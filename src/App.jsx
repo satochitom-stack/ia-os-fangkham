@@ -501,10 +501,30 @@ export default function App() {
           setRiskManagementByYear((prev) => {
             const next = { ...prev };
             Object.keys(cloudData).forEach((yr) => {
-              next[yr] = mergeRiskManagement(next[yr] || createEmptyRiskManagement(), cloudData[yr]);
+              next[yr] = mergeRiskManagement(next[yr] || createEmptyRiskManagement(), cloudData[yr], session?.department);
             });
             return next;
           });
+
+          // If the user's department already has local items or submitted status, push to Cloud
+          if (session?.role !== 'admin' && session?.department) {
+            const userDept = session.department;
+            const currentYrData = riskManagementByYear[selectedYear] || initialRiskManagement;
+            const filterFn = (i) => i && i.department === userDept;
+            const bs5List = Array.isArray(currentYrData.bs5) ? currentYrData.bs5 : (currentYrData.bs5?.items || []);
+            const deptPayload = {
+              bs1: (currentYrData.bs1 || []).filter(filterFn),
+              bs2: (currentYrData.bs2 || []).filter(filterFn),
+              bs3: (currentYrData.bs3 || []).filter(filterFn),
+              bs4: (currentYrData.bs4 || []).filter(filterFn),
+              bs5: bs5List.filter(filterFn),
+              bs5Summary: currentYrData.bs5Summary || {},
+              submissions: currentYrData.submissions?.[userDept] ? { [userDept]: currentYrData.submissions[userDept] } : {}
+            };
+            if (deptPayload.bs1.length > 0 || currentYrData.submissions?.[userDept]?.status === 'submitted') {
+              cloudSyncService.pushDeptRiskManagement(selectedYear, userDept, deptPayload).catch((e) => console.warn('Auto dept sync notice:', e));
+            }
+          }
         }
       } catch (e) {
         console.warn('Initial cloud pull:', e);
