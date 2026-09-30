@@ -6,8 +6,11 @@ const STORAGE_KEY = 'ia_supabase_config';
  * Get the Supabase credentials from environment or localStorage
  */
 export function getSupabaseConfig() {
-  let url = import.meta.env?.VITE_SUPABASE_URL || '';
-  let anonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY || '';
+  const DEFAULT_URL = 'https://kdpxnmtblaminyffdwfe.supabase.co';
+  const DEFAULT_KEY = 'sb_publishable_nsrWU0VBRgI5tlHYYvzy8g_658gwW70';
+
+  let url = import.meta.env?.VITE_SUPABASE_URL || DEFAULT_URL;
+  let anonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY || DEFAULT_KEY;
 
   // Allow localStorage override so Admin can paste credentials directly in app UI
   try {
