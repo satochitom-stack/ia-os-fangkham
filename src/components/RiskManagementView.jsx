@@ -45,7 +45,7 @@ import {
 import { getDepartments, getSession } from '../utils/auth';
 import { exportBsToWord, exportBsToExcel } from '../utils/exportRiskDocs';
 import ConfirmModal from './ConfirmModal';
-import { cloudSyncService } from '../services/cloudSyncService';
+import { cloudSyncService, mergeRiskManagement } from '../services/cloudSyncService';
 import { isSupabaseConfigured } from '../services/supabaseClient';
 import {
   getStandardRisksByDepartment,
@@ -1624,17 +1624,17 @@ export default function RiskManagementView({
                   type="button"
                   onClick={async () => {
                     try {
-                      setCascadeSuccessMsg('กำลังดึงข้อมูลล่าสุดจาก Supabase Cloud...');
+                      setCascadeSuccessMsg('กำลังเชื่อมต่อและดึงข้อมูลล่าสุดจาก Supabase Cloud...');
                       const cloudData = await cloudSyncService.pullAllRiskManagement();
-                      if (cloudData && setRiskManagement) {
-                        setRiskManagement((prev) => ({
-                          ...prev,
-                          ...(cloudData[selectedYear] ? cloudData[selectedYear] : {})
-                        }));
+                      if (cloudData && cloudData[selectedYear] && setRiskManagement) {
+                        setRiskManagement((prev) => mergeRiskManagement(prev, cloudData[selectedYear]));
+                        setCascadeSuccessMsg('✓ ซิงค์และผสานรวมข้อมูลล่าสุดจาก Supabase Cloud สำเร็จสมบูรณ์!');
+                      } else {
+                        setCascadeSuccessMsg('✓ ฐานข้อมูลในเครื่องของคุณเป็นข้อมูลล่าสุดตรงกับ Cloud เรียบร้อยแล้ว');
                       }
-                      setCascadeSuccessMsg('✓ ซิงค์ข้อมูลล่าสุดจาก Supabase Cloud สำเร็จสมบูรณ์!');
+                      setTimeout(() => setCascadeSuccessMsg(''), 5000);
                     } catch (err) {
-                      setCascadeSuccessMsg(`ซิงค์คลาวด์ไม่สำเร็จ: ${err.message}`);
+                      setCascadeSuccessMsg(`❌ ซิงค์ข้อมูลไม่สำเร็จ: ${err.message}`);
                     }
                   }}
                   className="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center space-x-1.5 transition-colors cursor-pointer"

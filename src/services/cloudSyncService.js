@@ -184,6 +184,7 @@ class CloudSyncService {
             bs3: [],
             bs4: [],
             bs5: [],
+            bs5Items: [],
             bs5Summary: {},
             submissions: {}
           };
@@ -207,7 +208,12 @@ class CloudSyncService {
           : Array.isArray(deptData.bs5?.items)
           ? deptData.bs5.items
           : [];
+        
+        if (!Array.isArray(result[yr].bs5Items)) result[yr].bs5Items = [];
+        if (!Array.isArray(result[yr].bs5)) result[yr].bs5 = [];
+
         result[yr].bs5Items.push(...incomingBs5);
+        result[yr].bs5.push(...incomingBs5);
 
         if (deptData.bs5Summary && Object.keys(deptData.bs5Summary).length > 0) {
           result[yr].bs5Summary = { ...result[yr].bs5Summary, ...deptData.bs5Summary };
