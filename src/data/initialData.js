@@ -1377,7 +1377,26 @@ export const initialPublicHealthWorkspaceData = {
 // 7. ฐานข้อมูลปฏิทินส่วนกลางและการปฏิบัติงาน อปท. (Central Hub Calendar - Sprint 5)
 export const initialCentralCalendarEvents = [];
 
-// 8. ฐานข้อมูลคลังแบบฟอร์มทางการพร้อมดาวน์โหลด Word / Excel / PDF (Central Forms Repository - Sprint 5)
+// 8. ฐานข้อมูลคลังแบบฟอร์มทางการ (Central Forms Repository)
+export const initialFormsBase = [
+  {
+    id: 'FORM-01-W3482',
+    code: 'มท 0805.2/ว 3482',
+    category: 'การบริหารความเสี่ยง',
+    title: 'แบบรายงานการบริหารจัดการความเสี่ยงของ อปท. (แบบ บส. 1 - บส. 5)',
+    topic: 'หนังสือกระทรวงมหาดไทย ด่วนที่สุด ที่ มท 0805.2/ว 3482 ลงวันที่ 18 สิงหาคม 2566',
+    summary: 'แบบรายงานการบริหารจัดการความเสี่ยงตามมาตรฐานและหลักเกณฑ์กระทรวงการคลัง พ.ศ. 2562 ประกอบด้วย หนังสือสั่งการ, แบบ บส. 1 ถึง บส. 5 และคำอธิบายการจัดทำรายงานอย่างละเอียดครบชุด 12 หน้า',
+    fileRef: 'w3482-risk-forms.pdf',
+    fileUrl: '/docs/w3482-risk-forms.pdf',
+    downloadUrl: '/docs/w3482-risk-forms.pdf',
+    fileType: 'PDF',
+    fileSize: '806 KB',
+    pageCount: '12 หน้า',
+    date: '18 ส.ค. 2566',
+    isOfficial: true
+  }
+];
+
 export const initialOfficialDownloadableForms = [
   {
     id: 'FORM-BS-01',

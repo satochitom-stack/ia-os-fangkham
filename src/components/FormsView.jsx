@@ -1,776 +1,479 @@
 import React, { useState, useMemo } from 'react';
 import {
-  FileText,
+  FileSpreadsheet,
   Search,
-  Eye,
-  Maximize2,
+  FileText,
+  Copy,
+  Check,
+  FolderOpen,
   ExternalLink,
-  ChevronLeft,
-  ChevronRight,
-  BookOpen,
+  Download,
+  Eye,
+  X,
+  Plus,
+  Trash2,
+  Calendar,
   Layers,
-  ArrowLeft,
-  CheckCircle2,
-  AlertCircle,
-  HelpCircle,
+  Filter,
   FileCheck2,
-  Table,
-  Sliders,
-  ShieldAlert,
-  ShieldCheck,
   Send
 } from 'lucide-react';
 
-// รายการหัวข้อทั้งหมดจากเอกสารทางราชการ มท 0805.2/ว 3482 ลงวันที่ 18 สิงหาคม 2566
-export const officialW3482Topics = [
-  {
-    id: 'w3482-notice',
-    code: 'หนังสือสั่งการ',
-    badgeText: 'มท 0805.2/ว 3482',
-    title: 'หนังสือกระทรวงมหาดไทย ด่วนที่สุด ที่ มท 0805.2/ว 3482',
-    subtitle: 'ซักซ้อมแนวทางในการจัดทำรายงานการบริหารจัดการความเสี่ยงขององค์กรปกครองส่วนท้องถิ่น',
-    date: '18 สิงหาคม 2566',
-    pageRangeText: 'หน้า 1 จาก 12 หน้า',
-    startPage: 1,
-    endPage: 1,
-    badgeColor: 'blue',
-    summary: 'กรมส่งเสริมการปกครองท้องถิ่นกำหนดแบบรายงานการบริหารจัดการความเสี่ยง 5 แบบ เพื่อให้ อปท. ใช้เป็นแนวทางปฏิบัติ และเสนอให้ผู้บริหารท้องถิ่นพิจารณาอย่างน้อยปีละ 1 ครั้ง ตามมาตรฐานและหลักเกณฑ์กระทรวงการคลัง',
-    highlights: [
-      'อ้างถึงหลักเกณฑ์กระทรวงการคลังว่าด้วยมาตรฐานและหลักเกณฑ์ปฏิบัติการบริหารจัดการความเสี่ยงสำหรับหน่วยงานของรัฐ พ.ศ. 2562',
-      'กำหนดสิ่งที่ส่งมาด้วยเป็น แบบรายงานการบริหารจัดการความเสี่ยง จำนวน 5 แบบ (บส. 1 - บส. 5)',
-      'เสนอผู้บริหารท้องถิ่นพิจารณาอย่างน้อยปีละ 1 ครั้ง'
-    ],
-    officialDetails: {
-      issuer: 'กรมส่งเสริมการปกครองท้องถิ่น ถนนนครราชสีมา เขตดุสิต กทม. 10300',
-      receiver: 'ผู้ว่าราชการจังหวัด ทุกจังหวัด (เพื่อแจ้ง อปท. ในพื้นที่)',
-      contact: 'กองตรวจสอบระบบการเงินบัญชีท้องถิ่น กลุ่มงานพัฒนาระบบการตรวจสอบ โทร. 0-2241-9026'
-    }
-  },
-  {
-    id: 'bs1',
-    code: 'แบบ บส. 1',
-    badgeText: 'แบบ บส. ๑',
-    title: 'แบบกำหนดขอบเขตความรับผิดชอบตามประเด็นยุทธศาสตร์/ข้อบัญญัติ/เทศบัญญัติ/อื่น ๆ (ถ้ามี)',
-    subtitle: 'การกำหนดขอบเขตภารกิจและเชื่อมโยงโครงการสำคัญกับยุทธศาสตร์ของ อปท. ประจำปีงบประมาณ',
-    pageRangeText: 'หน้า 2 - 3 จาก 12 หน้า',
-    startPage: 2,
-    endPage: 3,
-    badgeColor: 'indigo',
-    onlineFormTab: 'risk-management',
-    summary: 'ใช้สำหรับระบุโครงการ/กิจกรรม/ภารกิจสำคัญของ อปท. ที่สอดคล้องกับยุทธศาสตร์ พร้อมระบุงบประมาณ วัตถุประสงค์ ตัวชี้วัด และเป้าหมาย',
-    columns: [
-      { col: '(1)', title: 'ชื่อหน่วยงาน', detail: 'ชื่อ อปท. หรือส่วนราชการที่รับผิดชอบ' },
-      { col: '(2)', title: 'ประจำปีงบประมาณ พ.ศ.', detail: 'ปีงบประมาณในการบริหารจัดการความเสี่ยง' },
-      { col: '(3)', title: 'รหัสความเสี่ยง', detail: 'รหัสความเสี่ยงตามลำดับจำนวนความเสี่ยงโครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ (เช่น RS-01, RS-02)' },
-      { col: '(4)', title: 'ยุทธศาสตร์ที่รับผิดชอบ', detail: 'ระบุโครงการ/กิจกรรม/ภารกิจ อปท. ที่จัดทำขึ้นเพื่อตอบสนองยุทธศาสตร์ใดหรือภารกิจใดของ อปท.' },
-      { col: '(5)', title: 'โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ', detail: 'โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญต่อการบรรลุวัตถุประสงค์ตามยุทธศาสตร์ หรือที่มีความเสี่ยงสูง ตามนโยบายของผู้บริหารท้องถิ่น' },
-      { col: '(6)', title: 'งบประมาณ (บาท)', detail: 'จำนวนเงินงบประมาณโครงการ/กิจกรรม/ภารกิจ อปท. ตาม (5) (ถ้ามี)' },
-      { col: '(7)', title: 'วัตถุประสงค์', detail: 'วัตถุประสงค์ตามโครงการ/กิจกรรม/ภารกิจ อปท. ตาม (5)' },
-      { col: '(8)', title: 'ตัวชี้วัด', detail: 'ตัวชี้วัดของโครงการ/กิจกรรม/ภารกิจ อปท. ตาม (5)' },
-      { col: '(9)', title: 'เป้าหมาย', detail: 'เป้าหมายที่ต้องการสูงสุดของโครงการ/กิจกรรม/ภารกิจ อปท.' },
-      { col: '(10)-(12)', title: 'ส่วนลงนามกำกับ', detail: 'ลายมือชื่อผู้บริหารท้องถิ่น, ตำแหน่งผู้บริหารท้องถิ่น และวันเดือนปีที่ลงนาม' }
-    ],
-    explanations: [
-      { no: '(1)', text: 'ชื่อ อปท. (เช่น องค์การบริหารส่วนตำบลฝางคำ)' },
-      { no: '(2)', text: 'ปีงบประมาณในการบริหารจัดการความเสี่ยง' },
-      { no: '(3)', text: 'รหัสความเสี่ยงตามลำดับจำนวนความเสี่ยงโครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ' },
-      { no: '(4)', text: 'ยุทธศาสตร์ที่รับผิดชอบ โดยระบุโครงการ/กิจกรรม/ภารกิจ อปท. ที่จัดทำขึ้นเพื่อตอบสนองยุทธศาสตร์ใดหรือภารกิจใดของ อปท.' },
-      { no: '(5)', text: 'โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญต่อการบรรลุวัตถุประสงค์ตามยุทธศาสตร์/ภารกิจ อปท. (โดยระบุโครงการ/กิจกรรม/ภารกิจ อปท. ทั้งหมด หรือโครงการที่มีความเสี่ยง หรือที่มีความเสี่ยงสูง ตามนโยบายของผู้บริหารท้องถิ่น)' },
-      { no: '(6)', text: 'จำนวนเงินงบประมาณโครงการ/กิจกรรม/ภารกิจ อปท. ตาม (5) (ถ้ามี)' },
-      { no: '(7)', text: 'วัตถุประสงค์ตามโครงการ/กิจกรรม/ภารกิจ อปท. ตาม (5)' },
-      { no: '(8)', text: 'ตัวชี้วัดของโครงการ/กิจกรรม/ภารกิจ อปท. ตาม (5)' },
-      { no: '(9)', text: 'เป้าหมายที่ต้องการสูงสุดของโครงการ/กิจกรรม/ภารกิจ อปท.' },
-      { no: '(10)', text: 'ลายมือชื่อผู้บริหารท้องถิ่น' },
-      { no: '(11)', text: 'ตำแหน่งผู้บริหารท้องถิ่น' },
-      { no: '(12)', text: 'วันเดือนปีที่ลงนาม' }
-    ]
-  },
-  {
-    id: 'bs2',
-    code: 'แบบ บส. 2',
-    badgeText: 'แบบ บส. ๒',
-    title: 'การวิเคราะห์โอกาส ผลกระทบ และการตอบสนองความเสี่ยง',
-    subtitle: 'การประเมินคะแนนโอกาสและผลกระทบ (Likelihood x Impact) จำแนก 6 ประเภทความเสี่ยง และเลือก 8 วิธีการตอบสนอง',
-    pageRangeText: 'หน้า 4 - 6 จาก 12 หน้า',
-    startPage: 4,
-    endPage: 6,
-    badgeColor: 'amber',
-    onlineFormTab: 'risk-management',
-    summary: 'ใช้สำหรับประเมินโอกาสและผลกระทบของความเสี่ยง คำนวณคะแนนระดับความเสี่ยง (โอกาส x ผลกระทบ) และกำหนดวิธีการตอบสนองความเสี่ยงตามมาตรฐานราชการ',
-    columns: [
-      { col: '(1)', title: 'ชื่อหน่วยงาน', detail: 'ชื่อ อปท. หรือสำนัก/กองที่รับผิดชอบ' },
-      { col: '(2)', title: 'ประจำปีงบประมาณ พ.ศ.', detail: 'ปีงบประมาณที่ทำการประเมิน' },
-      { col: '(3)', title: 'รหัสความเสี่ยง', detail: 'รหัสความเสี่ยงตามลำดับ นำข้อมูลมาจาก แบบ บส. 1 (3)' },
-      { col: '(4)', title: 'โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ', detail: 'นำข้อมูลมาจาก แบบ บส. 1 (5)' },
-      { col: '(5)', title: 'วัตถุประสงค์', detail: 'นำข้อมูลมาจาก แบบ บส. 1 (7)' },
-      { col: '(6)', title: 'ผู้รับผิดชอบ', detail: 'บุคคลหรือหน่วยงาน หรือบุคคลและหน่วยงาน' },
-      { col: '(7)', title: 'ความเสี่ยง', detail: 'ความเสี่ยงที่มีผลกระทบต่อการบรรลุวัตถุประสงค์' },
-      { col: '(8)', title: 'ประเภทความเสี่ยง', detail: 'จำแนก 6 ด้าน (กลยุทธ์, การเงิน, ดำเนินงาน, กฎระเบียบ, ไอที, ภาพลักษณ์)' },
-      { col: '(9)', title: 'คะแนนโอกาส', detail: 'คะแนนความถี่/ความเป็นไปได้ (1 - 5)' },
-      { col: '(10)', title: 'คะแนนผลกระทบ', detail: 'คะแนนความรุนแรงของผลกระทบ (1 - 5)' },
-      { col: '(11)', title: 'คะแนนระดับความเสี่ยง', detail: 'คำนวณจาก (9) x (10) เพื่อจัดระดับ สูงมาก สูง ปานกลาง ต่ำ' },
-      { col: '(12)', title: 'วิธีการตอบสนองความเสี่ยง', detail: 'เลือก 1 ใน 8 วิธีตามมาตรฐานกระทรวงการคลัง' },
-      { col: '(13)-(15)', title: 'ส่วนลงนามกำกับ', detail: 'ลายมือชื่อ, ตำแหน่งผู้บริหารท้องถิ่น และวันเดือนปีที่ลงนาม' }
-    ],
-    riskTypes: [
-      { id: 1, name: 'ความเสี่ยงด้านกลยุทธ์ (Strategy Risks)', desc: 'เกิดจากการกำหนดแผนกลยุทธ์ที่ไม่เหมาะสม หรือเกิดจากการนำกลยุทธ์ไปใช้ไม่ถูกต้อง' },
-      { id: 2, name: 'ความเสี่ยงด้านการเงิน (Financial Risks)', desc: 'เกี่ยวกับการเบิกจ่ายเงินไม่ถูกต้อง การรับเงินไม่ถูกต้อง ไม่ปฏิบัติตามกฎหมายการเงินการคลัง รวมถึงการทุจริต' },
-      { id: 3, name: 'ความเสี่ยงด้านการดำเนินงาน (Operation Risks)', desc: 'เกิดจากกระบวนการทำงานที่ไม่มีประสิทธิผลหรือไม่มีประสิทธิภาพ' },
-      { id: 4, name: 'ความเสี่ยงด้านการปฏิบัติตามกฎระเบียบ (Legal Risks)', desc: 'หน่วยงานไม่ปฏิบัติตามกฎหมาย ระเบียบ ข้อบังคับ หลักเกณฑ์ มติ ครม. หรือคู่มือปฏิบัติงาน' },
-      { id: 5, name: 'ความเสี่ยงด้านเทคโนโลยีสารสนเทศ (Technology Risks)', desc: 'เกิดจากเทคโนโลยีสารสนเทศ ระบบสารสนเทศล่ม ความปลอดภัยข้อมูล' },
-      { id: 6, name: 'ความเสี่ยงด้านความน่าเชื่อถือขององค์กร (Reputational Risks)', desc: 'ส่งผลกระทบต่อชื่อเสียง ความเชื่อมั่น และความน่าเชื่อถือขององค์กรต่อประชาชน' }
-    ],
-    responseMethods: [
-      { id: 1, name: 'ปฏิเสธความเสี่ยง (Risk Avoidance)', desc: 'ไม่ดำเนินงานในกิจกรรมที่มีความเสี่ยงสูงที่หน่วยงานยอมรับไม่ได้' },
-      { id: 2, name: 'การลดโอกาสของความเสี่ยง (Likelihood Reduction)', desc: 'กำหนดมาตรการควบคุมเพื่อลดโอกาสเกิด เช่น ลดโอกาสการทุจริต' },
-      { id: 3, name: 'การลดผลกระทบของความเสี่ยง (Impact Reduction)', desc: 'การทำประกัน หรือการใช้เครื่องมือป้องกันความเสียหาย' },
-      { id: 4, name: 'การโอนความเสี่ยง (Risk Sharing/Transfer)', desc: 'ถ่ายโอนความเสี่ยงที่ไม่สามารถทำเองได้ เช่น ให้ภาคเอกชนดำเนินการ' },
-      { id: 5, name: 'ยอมรับความเสี่ยง (Risk Acceptance)', desc: 'ไม่ดำเนินการจัดการ เนื่องจากความเสี่ยงอยู่ในระดับที่ยอมรับได้' },
-      { id: 6, name: 'ใช้มาตรการการเฝ้าระวัง (Monitoring/Warning)', desc: 'เก็บรวบรวมข้อมูล วิเคราะห์ แจ้งเตือนเมื่อเกิดสัญญาณเตือน' },
-      { id: 7, name: 'การทำแผนฉุกเฉิน (Contingency Plan)', desc: 'ระบุขั้นตอนเมื่อเกิดเหตุฉุกเฉิน พร้อมระบุผู้รับผิดชอบชัดเจน' },
-      { id: 8, name: 'การส่งเสริมหรือผลักดันเหตุการณ์เชิงบวก (Exploit/Enhance)', desc: 'ส่งเสริมเมื่อเหตุการณ์ที่อาจเกิดขึ้นส่งผลกระทบเชิงบวกต่อองค์กร' }
-    ]
-  },
-  {
-    id: 'bs3',
-    code: 'แบบ บส. 3',
-    badgeText: 'แบบ บส. ๓',
-    title: 'รายงานการจัดทำแผนบริหารความเสี่ยง',
-    subtitle: 'แผนปฏิบัติการจัดการความเสี่ยง ระบุกระบวนการ ผู้รับผิดชอบ ตัวชี้วัด และกรอบเวลา',
-    pageRangeText: 'หน้า 7 - 8 จาก 12 หน้า',
-    startPage: 7,
-    endPage: 8,
-    badgeColor: 'emerald',
-    onlineFormTab: 'risk-management',
-    summary: 'ใช้สำหรับจัดทำแผนบริหารความเสี่ยงอย่างเป็นรูปธรรม ระบุแนวทางดำเนินงานตามกฎหมายระเบียบ เพื่อให้ความเสี่ยงลดลงอยู่ในระดับที่ยอมรับได้',
-    columns: [
-      { col: '(1)', title: 'ชื่อหน่วยงาน', detail: 'ชื่อ อปท. หรือสำนัก/กองที่รับผิดชอบ' },
-      { col: '(2)', title: 'ประจำปีงบประมาณ พ.ศ.', detail: 'ปีงบประมาณในการบริหารจัดการความเสี่ยง' },
-      { col: '(3)', title: 'รหัสความเสี่ยง', detail: 'นำข้อมูลมาจาก แบบ บส. 2 (3)' },
-      { col: '(4)', title: 'โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ', detail: 'นำข้อมูลมาจาก แบบ บส. 2 (4)' },
-      { col: '(5)', title: 'ความเสี่ยง', detail: 'นำข้อมูลมาจาก แบบ บส. 2 (7)' },
-      { col: '(6)', title: 'วิธีการตอบสนองความเสี่ยง', detail: 'นำข้อมูลมาจาก แบบ บส. 2 (12)' },
-      { col: '(7)', title: 'ผู้รับผิดชอบ', detail: 'นำข้อมูลมาจาก แบบ บส. 2 (6)' },
-      { col: '(8)', title: 'วิธีการจัดการความเสี่ยง', detail: 'ระบุแนวทางการดำเนินงาน/ขั้นตอนการปฏิบัติงาน ตามกฎหมาย ระเบียบ ข้อบังคับ เพื่อให้ความเสี่ยงลดลง' },
-      { col: '(9)', title: 'ตัวชี้วัด', detail: 'นำข้อมูลมาจาก แบบ บส. 1 (8)' },
-      { col: '(10)', title: 'ระยะเวลาดำเนินการ', detail: 'ระบุช่วงระยะเวลาในการดำเนินการจัดการความเสี่ยง' },
-      { col: '(11)', title: 'วิธีการติดตามและการรายงาน', detail: 'วิธีการติดตามและรายงานให้ผู้บริหารทราบ เช่น การประชุมประจำเดือน' },
-      { col: '(12)-(14)', title: 'ส่วนลงนามกำกับ', detail: 'ลายมือชื่อ, ตำแหน่งผู้บริหารท้องถิ่น และวันเดือนปีที่ลงนาม' }
-    ],
-    explanations: [
-      { no: '(1)', text: 'ชื่อ อปท.' },
-      { no: '(2)', text: 'ปีงบประมาณในการบริหารจัดการความเสี่ยง' },
-      { no: '(3)', text: 'รหัสความเสี่ยงตามลำดับ นำข้อมูลมาจาก แบบ บส. 2 (3)' },
-      { no: '(4)', text: 'โครงการ/กิจกรรม/ภารกิจ อปท. ที่มีความเสี่ยง นำมาจาก แบบ บส. 2 (4)' },
-      { no: '(5)', text: 'ความเสี่ยงที่มีผลกระทบ นำมาจาก แบบ บส. 2 (7)' },
-      { no: '(6)', text: 'วิธีการตอบสนองความเสี่ยง นำมาจาก แบบ บส. 2 (12)' },
-      { no: '(7)', text: 'ผู้รับผิดชอบ นำมาจาก แบบ บส. 2 (6)' },
-      { no: '(8)', text: 'วิธีการจัดการความเสี่ยง โดยระบุขั้นตอนปฏิบัติงานตามระเบียบข้อบังคับ' },
-      { no: '(9)', text: 'ตัวชี้วัดของโครงการ/กิจกรรม นำมาจาก แบบ บส. 1 (8)' },
-      { no: '(10)', text: 'ระยะเวลาดำเนินการโดยระบุช่วงเวลา' },
-      { no: '(11)', text: 'วิธีการติดตามและรายงานให้ผู้บริหารทราบ' },
-      { no: '(12)-(14)', text: 'ลายมือชื่อ ตำแหน่งผู้บริหารท้องถิ่น และวันเดือนปีที่ลงนาม' }
-    ]
-  },
-  {
-    id: 'bs4',
-    code: 'แบบ บส. 4',
-    badgeText: 'แบบ บส. ๔',
-    title: 'รายงานการติดตามผลการบริหารความเสี่ยง',
-    subtitle: 'การติดตามความคืบหน้าตามรอบระยะเวลา (รอบ 3 เดือน / รอบ 6 เดือน / รอบ 12 เดือน)',
-    pageRangeText: 'หน้า 9 - 10 จาก 12 หน้า',
-    startPage: 9,
-    endPage: 10,
-    badgeColor: 'purple',
-    onlineFormTab: 'risk-management',
-    summary: 'ใช้สำหรับติดตามและรายงานผลการดำเนินงานตามแผนจัดการความเสี่ยงตามรอบระยะเวลาที่กำหนด พร้อมเอกสารหลักฐาน ร้อยละความคืบหน้า และปัญหาอุปสรรค',
-    columns: [
-      { col: '(1)', title: 'ชื่อหน่วยงาน', detail: 'ชื่อ อปท. หรือสำนัก/กองที่รับผิดชอบ' },
-      { col: '(2)', title: 'สำหรับปีงบประมาณ พ.ศ.', detail: 'ปีงบประมาณ และเลือกช่อง [ ] รอบ 3 เดือน [ ] รอบ 6 เดือน [ ] รอบ 12 เดือน' },
-      { col: '(3)', title: 'รหัสความเสี่ยง', detail: 'นำข้อมูลมาจาก แบบ บส. 3 (3)' },
-      { col: '(4)', title: 'โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ', detail: 'นำข้อมูลมาจาก แบบ บส. 3 (4)' },
-      { col: '(5)', title: 'วิธีการจัดการความเสี่ยง', detail: 'นำข้อมูลมาจาก แบบ บส. 3 (8)' },
-      { col: '(6)', title: 'ระยะเวลาดำเนินการ', detail: 'นำข้อมูลมาจาก แบบ บส. 3 (10)' },
-      { col: '(7)', title: 'ผู้รับผิดชอบ', detail: 'นำข้อมูลมาจาก แบบ บส. 3 (7)' },
-      { col: '(8)', title: 'ผลลัพธ์การดำเนินการจัดการความเสี่ยง', detail: 'ระบุผลการดำเนินงาน ได้ดำเนินการหรือไม่ อย่างไร (ระบุแต่ละขั้นตอนหรือภาพรวม)' },
-      { col: '(9)', title: 'เอกสาร/หลักฐาน', detail: 'เอกสารหลักฐานอ้างอิงประกอบผลการดำเนินการ' },
-      { col: '(10)', title: 'ร้อยละความคืบหน้า', detail: 'ระบุเป็นเปอร์เซ็นต์ความก้าวหน้า เช่น 80% หรือ 100%' },
-      { col: '(11)', title: 'ปัญหาอุปสรรคและแนวทางแก้ไขปัญหา', detail: 'ระบุปัญหาที่พบและแนวทางแก้ไข (ถ้ามี)' },
-      { col: '(12)-(14)', title: 'ส่วนลงนามกำกับ', detail: 'ลายมือชื่อ, ตำแหน่งผู้บริหารท้องถิ่น และวันเดือนปีที่ลงนาม' }
-    ],
-    explanations: [
-      { no: '(1)', text: 'ชื่อ อปท.' },
-      { no: '(2)', text: 'ปีงบประมาณ และระบุรอบระยะเวลา (รอบ 3 เดือน / 6 เดือน / 12 เดือน)' },
-      { no: '(3)', text: 'รหัสความเสี่ยง นำมาจาก แบบ บส. 3 (3)' },
-      { no: '(4)', text: 'โครงการ/กิจกรรม นำมาจาก แบบ บส. 3 (4)' },
-      { no: '(5)', text: 'วิธีการจัดการความเสี่ยง นำมาจาก แบบ บส. 3 (8)' },
-      { no: '(6)', text: 'ระยะเวลาดำเนินการ นำมาจาก แบบ บส. 3 (10)' },
-      { no: '(7)', text: 'ผู้รับผิดชอบ นำมาจาก แบบ บส. 3 (7)' },
-      { no: '(8)', text: 'ผลลัพธ์การดำเนินการจัดการความเสี่ยง' },
-      { no: '(9)', text: 'เอกสาร/หลักฐานอ้างอิงประกอบ' },
-      { no: '(10)', text: 'ร้อยละความคืบหน้าของการดำเนินการ' },
-      { no: '(11)', text: 'ปัญหา อุปสรรค และแนวทางแก้ไขปัญหา (ถ้ามี)' },
-      { no: '(12)-(14)', text: 'ลายมือชื่อ ตำแหน่งผู้บริหารท้องถิ่น และวันเดือนปีที่ลงนาม' }
-    ]
-  },
-  {
-    id: 'bs5',
-    code: 'แบบ บส. 5',
-    badgeText: 'แบบ บส. ๕',
-    title: 'รายงานผลการดำเนินการและทบทวนแผนการบริหารความเสี่ยง',
-    subtitle: 'เปรียบเทียบระดับความเสี่ยงก่อนและหลัง สรุปผลความเสี่ยงคงเหลือ และกำหนดแนวทางสำหรับปีถัดไป',
-    pageRangeText: 'หน้า 11 - 12 จาก 12 หน้า',
-    startPage: 11,
-    endPage: 12,
-    badgeColor: 'rose',
-    onlineFormTab: 'risk-management',
-    summary: 'ใช้สำหรับสรุปผลการประเมินความเสี่ยงประจำปี เปรียบเทียบคะแนนก่อน-หลัง ประเมินความเสี่ยงคงเหลือ สรุปว่าควบคุมได้หรือไม่ และวางแผนสำหรับปีถัดไป',
-    columns: [
-      { col: '(1)-(2)', title: 'ชื่อหน่วยงาน & ปีงบประมาณ', detail: 'ชื่อ อปท. และประจำปีงบประมาณ พ.ศ. ...' },
-      { col: '(3)-(5)', title: 'ข้อมูลความเสี่ยงเดิม', detail: 'รหัสความเสี่ยง, โครงการ/กิจกรรม, ความเสี่ยง' },
-      { col: '(6)', title: 'คะแนนระดับความเสี่ยงก่อนดำเนินการ', detail: 'โอกาส (1) x ผลกระทบ (2) = คะแนนระดับความเสี่ยง (3) [นำมาจาก บส.2]' },
-      { col: '(7)-(8)', title: 'วิธีการจัดการ & ผลดำเนินการ', detail: 'วิธีการจัดการความเสี่ยง และผลลัพธ์จากการจัดการ' },
-      { col: '(9)', title: 'คะแนนระดับความเสี่ยงภายหลังดำเนินการ', detail: 'ประเมินซ้ำ: โอกาส (1) x ผลกระทบ (2) = คะแนนระดับความเสี่ยง (3)' },
-      { col: '(10)', title: 'การเปลี่ยนแปลงระดับความเสี่ยง', detail: 'ระบุว่า "ลดลง" หรือ "ไม่ลดลง"' },
-      { col: '(11)', title: 'ความเสี่ยงคงเหลือ / เกิดขึ้นใหม่', detail: 'ระบุความเสี่ยงที่ยังหลงเหลืออยู่ หรือความเสี่ยงใหม่ที่ตรวจพบ' },
-      { col: '(12)', title: 'สรุปความเสี่ยง', detail: 'เลือกประเมิน: [ควบคุมได้] หรือ [ควบคุมไม่ได้]' },
-      { col: '(13)', title: 'แนวทาง/มาตรการจัดการสำหรับปีถัดไป', detail: 'ระบุวิธีการดำเนินการสำหรับปีงบประมาณถัดไป' },
-      { col: '(14)-(16)', title: 'ส่วนลงนามกำกับ', detail: 'ลายมือชื่อ, ตำแหน่งผู้บริหารท้องถิ่น และวันเดือนปีที่รายงาน' }
-    ],
-    explanations: [
-      { no: '(1)', text: 'ชื่อ อปท.' },
-      { no: '(2)', text: 'ปีงบประมาณในการบริหารจัดการความเสี่ยง' },
-      { no: '(3)', text: 'รหัสความเสี่ยง นำมาจาก แบบ บส. 4 (3)' },
-      { no: '(4)', text: 'โครงการ/ภารกิจ นำมาจาก แบบ บส. 4 (4)' },
-      { no: '(5)', text: 'ความเสี่ยงที่มีผลกระทบ นำมาจาก แบบ บส. 3 (5)' },
-      { no: '(6)', text: 'คะแนนระดับความเสี่ยงก่อนดำเนินการ (โอกาส x ผลกระทบ) นำมาจาก แบบ บส. 2' },
-      { no: '(7)', text: 'วิธีการจัดการความเสี่ยง นำมาจาก แบบ บส. 4 (5)' },
-      { no: '(8)', text: 'ผลการดำเนินการจัดการความเสี่ยง (สรุปเป็นภาพรวม)' },
-      { no: '(9)', text: 'คะแนนระดับความเสี่ยงภายหลังการดำเนินการ (ประเมินโอกาส x ผลกระทบใหม่)' },
-      { no: '(10)', text: 'การเปลี่ยนแปลงระดับความเสี่ยง (เปรียบเทียบก่อนและหลังว่าลดลงหรือไม่)' },
-      { no: '(11)', text: 'ความเสี่ยงคงเหลือหรือเกิดขึ้นใหม่ภายหลังจากดำเนินการ' },
-      { no: '(12)', text: 'สรุปความเสี่ยงที่ควบคุมได้/ควบคุมไม่ได้ หรือยอมรับได้/ไม่ได้' },
-      { no: '(13)', text: 'แนวทาง/มาตรการจัดการความเสี่ยงสำหรับปีถัดไป' },
-      { no: '(14)-(16)', text: 'ลายมือชื่อ ตำแหน่งผู้บริหารท้องถิ่น และวันเดือนปีที่รายงาน' }
-    ]
-  },
-  {
-    id: 'full-doc',
-    code: 'ฉบับเต็ม',
-    badgeText: 'ฉบับเต็ม 12 หน้า',
-    title: 'เอกสารต้นฉบับทางราชการ ว 3482 (แบบ บส. 1 - บส. 5 ครบชุด)',
-    subtitle: 'หนังสือกระทรวงมหาดไทย ที่ มท 0805.2/ว 3482 ลว. 18 ส.ค. 2566 และแบบรายงานทั้ง 5 แบบ',
-    pageRangeText: 'ครบทั้ง 12 หน้าต่อเนื่อง',
-    startPage: 1,
-    endPage: 12,
-    badgeColor: 'slate',
-    summary: 'เปิดดูเอกสารทางการตัวจริงฉบับสมบูรณ์ ตั้งแต่หน้า 1 ถึงหน้า 12 ครบทั้งหนังสือสั่งการ ตารางแบบรายงาน บส. 1 - บส. 5 และคำอธิบายทุกข้อ',
-    highlights: [
-      'หนังสือสั่งการ กรมส่งเสริมการปกครองท้องถิ่น (หน้า 1)',
-      'ตารางแบบรายงาน บส. 1 ถึง บส. 5 (หน้า 2, 4, 7, 9, 11)',
-      'คำอธิบายและแนวทางการกรอกแบบฟอร์ม บส. 1 ถึง บส. 5 (หน้า 3, 5-6, 8, 10, 12)'
-    ]
-  }
-];
-
 export default function FormsView({
-  setCurrentTab,
+  formsBase = [],
+  onUpdateFormsBase,
+  orgProfile = {},
   session,
-  orgProfile = {}
+  setCurrentTab
 }) {
-  // เริ่มต้นด้วยการแสดงหน้ารายการหัวข้อทั้งหมด (selectedTopicId = null)
-  const [selectedTopicId, setSelectedTopicId] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [contentTab, setContentTab] = useState('pdf'); // 'pdf' | 'structure'
-  const [isFullscreenModalOpen, setIsFullscreenModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [copiedId, setCopiedId] = useState(null);
+  const [previewDoc, setPreviewDoc] = useState(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
 
-  // PDF URL ทางการที่ฝังอยู่ในระบบ
-  const pdfFileUrl = '/docs/w3482-risk-forms.pdf';
+  const isAdmin = session?.role === 'admin';
 
-  // ค้นหาหัวข้อตามคำค้น
-  const filteredTopics = useMemo(() => {
-    if (!searchQuery.trim()) return officialW3482Topics;
-    const q = searchQuery.toLowerCase();
-    return officialW3482Topics.filter((topic) => {
-      const matchTitle = topic.title.toLowerCase().includes(q);
-      const matchSubtitle = topic.subtitle.toLowerCase().includes(q);
-      const matchCode = topic.code.toLowerCase().includes(q);
-      const matchSummary = topic.summary.toLowerCase().includes(q);
-      return matchTitle || matchSubtitle || matchCode || matchSummary;
+  // New Form Document Form State
+  const [newDoc, setNewDoc] = useState({
+    category: 'การบริหารความเสี่ยง',
+    code: '',
+    title: '',
+    topic: '',
+    summary: '',
+    fileRef: '',
+    fileUrl: '',
+    fileType: 'PDF',
+    fileSize: ''
+  });
+
+  const categories = [
+    { id: 'all', label: 'ทั้งหมด' },
+    { id: 'การบริหารความเสี่ยง', label: 'การบริหารความเสี่ยง' },
+    { id: 'การควบคุมภายใน', label: 'การควบคุมภายใน' },
+    { id: 'พัสดุและสัญญา', label: 'พัสดุและสัญญา' },
+    { id: 'การเงินและการคลัง', label: 'การเงินและการคลัง' },
+    { id: 'งานตรวจสอบภายใน', label: 'งานตรวจสอบภายใน' },
+    { id: 'ทั่วไป', label: 'ทั่วไป' }
+  ];
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const filteredItems = useMemo(() => {
+    return (formsBase || []).filter((item) => {
+      const matchCat =
+        selectedCategory === 'all' || item.category === selectedCategory;
+      const q = (searchTerm || '').toLowerCase();
+      const matchSearch =
+        (item.title || '').toLowerCase().includes(q) ||
+        (item.code || '').toLowerCase().includes(q) ||
+        (item.topic || '').toLowerCase().includes(q) ||
+        (item.summary || '').toLowerCase().includes(q) ||
+        (item.fileRef || '').toLowerCase().includes(q);
+      return matchCat && matchSearch;
     });
-  }, [searchQuery]);
+  }, [formsBase, selectedCategory, searchTerm]);
 
-  // หัวข้อปัจจุบันที่เลือก
-  const currentTopic = useMemo(() => {
-    return officialW3482Topics.find((t) => t.id === selectedTopicId) || null;
-  }, [selectedTopicId]);
+  const handleCopy = (id, text) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    showToast('คัดลอกชื่อแบบฟอร์มเรียบร้อยแล้ว');
+    setTimeout(() => setCopiedId(null), 2000);
+  };
 
-  // นำทางไปหัวข้อก่อนหน้า/ถัดไป
-  const currentIndex = officialW3482Topics.findIndex((t) => t.id === selectedTopicId);
-  const prevTopic = currentIndex > 0 ? officialW3482Topics[currentIndex - 1] : null;
-  const nextTopic = currentIndex >= 0 && currentIndex < officialW3482Topics.length - 1 ? officialW3482Topics[currentIndex + 1] : null;
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const sizeStr =
+      file.size > 1024 * 1024
+        ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+        : `${Math.round(file.size / 1024)} KB`;
+
+    let fileType = 'PDF';
+    const lowerName = file.name.toLowerCase();
+    if (lowerName.endsWith('.docx') || lowerName.endsWith('.doc')) fileType = 'WORD';
+    else if (lowerName.endsWith('.xlsx') || lowerName.endsWith('.xls')) fileType = 'EXCEL';
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setNewDoc((prev) => ({
+        ...prev,
+        fileUrl: event.target.result,
+        fileRef: file.name,
+        fileSize: sizeStr,
+        fileType,
+        title: prev.title || file.name.replace(/\.[^/.]+$/, '')
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleAddDocument = (e) => {
+    e.preventDefault();
+    if (!newDoc.title.trim()) {
+      alert('กรุณาระบุชื่อแบบฟอร์ม');
+      return;
+    }
+
+    const docToAdd = {
+      id: `FORM-CUSTOM-${Date.now()}`,
+      category: newDoc.category,
+      code: newDoc.code.trim() || 'แบบฟอร์ม',
+      title: newDoc.title.trim(),
+      topic: newDoc.topic.trim() || newDoc.title.trim(),
+      summary: newDoc.summary.trim() || 'แบบฟอร์มมาตรฐานสำหรับปฏิบัติงาน',
+      fileRef: newDoc.fileRef || 'ไฟล์แนบระบบ',
+      fileUrl: newDoc.fileUrl || '',
+      downloadUrl: newDoc.fileUrl || '',
+      fileType: newDoc.fileType || 'PDF',
+      fileSize: newDoc.fileSize || 'ไฟล์แนบ',
+      date: new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }),
+      isCustom: true
+    };
+
+    if (onUpdateFormsBase) {
+      onUpdateFormsBase((prev) => [docToAdd, ...prev]);
+      showToast('เพิ่มแบบฟอร์มใหม่เรียบร้อยแล้ว');
+    }
+
+    setIsAddModalOpen(false);
+    setNewDoc({
+      category: 'การบริหารความเสี่ยง',
+      code: '',
+      title: '',
+      topic: '',
+      summary: '',
+      fileRef: '',
+      fileUrl: '',
+      fileType: 'PDF',
+      fileSize: ''
+    });
+  };
+
+  const handleDeleteDocument = (id, title) => {
+    if (window.confirm(`ยืนยันการลบแบบฟอร์ม "${title}" หรือไม่?`)) {
+      if (onUpdateFormsBase) {
+        onUpdateFormsBase((prev) => prev.filter((item) => item.id !== id));
+        showToast('ลบแบบฟอร์มเรียบร้อยแล้ว');
+      }
+    }
+  };
+
+  const isPdf = (url) => {
+    if (!url) return false;
+    return url.toLowerCase().includes('.pdf') || url.startsWith('data:application/pdf');
+  };
 
   return (
     <div className="space-y-6">
-      {/* 1. Header Banner ทางการ */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div className="space-y-1.5">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 text-xs font-bold border border-blue-200 dark:border-blue-800 flex items-center gap-1.5">
-              <FileCheck2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-              หนังสือกระทรวงมหาดไทย ด่วนที่สุด มท 0805.2/ว 3482
-            </span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-              ลว. 18 สิงหาคม 2566
-            </span>
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-xl border border-slate-700 text-xs font-semibold flex items-center space-x-2 animate-in fade-in slide-in-from-bottom-2">
+          <Check className="w-4 h-4 text-emerald-400" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
+      {/* Header & Search Bar */}
+      <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center space-x-2 text-xs font-bold text-blue-600 dark:text-cyan-400 mb-1">
+              <FileSpreadsheet className="w-4 h-4" />
+              <span>คลังแบบฟอร์มมาตรฐาน (Forms Library)</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
+              คลังเอกสารและแบบฟอร์มมาตรฐาน อปท.
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              รวบรวมแบบฟอร์มทางการ แบบรายงาน และเอกสารแม่แบบสำหรับองค์กรปกครองส่วนท้องถิ่น สามารถเปิดอ่านเอกสารตัวจริงได้ทันทีในระบบโดยไม่ต้องดาวน์โหลด
+            </p>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
-            แบบรายงานการบริหารจัดการความเสี่ยงของ อปท. (แบบ บส. 1 - บส. 5)
-          </h2>
-          <p className="text-xs text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
-            เอกสารทางการตามหลักเกณฑ์กระทรวงการคลังว่าด้วยมาตรฐานและหลักเกณฑ์ปฏิบัติการบริหารจัดการความเสี่ยงสำหรับหน่วยงานของรัฐ พ.ศ. 2562 
-            สามารถกดดูเอกสาร PDF ต้นฉบับและคำอธิบายได้โดยตรงในระบบโดยไม่ต้องดาวน์โหลด
-          </p>
+          {/* Admin Upload Button */}
+          {isAdmin && (
+            <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsAddModalOpen(true)}
+                className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>เพิ่มแบบฟอร์ม / อัปโหลดไฟล์</span>
+              </button>
+            </div>
+          )}
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0">
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedTopicId('full-doc');
-              setContentTab('pdf');
-            }}
-            className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all flex items-center gap-2 cursor-pointer"
-          >
-            <Eye className="w-4 h-4" />
-            <span>เปิดดูเอกสารฉบับเต็ม (12 หน้า)</span>
-          </button>
+        {/* Stats Badges */}
+        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-900/40 text-xs font-semibold">
+            <Layers className="w-3.5 h-3.5 text-blue-600" />
+            <span>ทั้งหมด {formsBase.length} ฉบับ</span>
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-900/40 text-xs font-semibold">
+            <Eye className="w-3.5 h-3.5 text-emerald-600" />
+            <span>พร้อมเปิดอ่านและดาวน์โหลดทุกรายการ</span>
+          </span>
+          {searchTerm && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 text-xs font-semibold">
+              <Filter className="w-3.5 h-3.5 text-amber-600" />
+              <span>พบ {filteredItems.length} รายการจากการค้นหา</span>
+            </span>
+          )}
+        </div>
+
+        {/* Search & Categories Filter */}
+        <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+          <div className="relative flex-1 w-full">
+            <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3.5 top-3.5" />
+            <input
+              type="text"
+              placeholder="พิมพ์คำค้นหา เช่น ว 3482, บส. 1, การบริหารความเสี่ยง, ปค. 4, จัดซื้อจัดจ้าง..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 outline-none text-xs bg-slate-50/50 dark:bg-slate-950 dark:text-slate-100 dark:placeholder-slate-500"
+            />
+          </div>
+
+          <div className="flex items-center space-x-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-none">
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-3 py-2 rounded-xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
+                  selectedCategory === cat.id
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* 2. กรณีที่ยังไม่ได้เลือกหัวข้อ (แสดงรายการหัวข้อเรื่องก่อน) */}
-      {!selectedTopicId && (
-        <div className="space-y-5">
-          {/* ช่องค้นหาหัวข้อ */}
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="relative flex-1 w-full">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-              <input
-                type="text"
-                placeholder="ค้นหาหัวข้อเรื่อง เช่น บส. 1, บส. 2, ว 3482, ประเภทความเสี่ยง, วิธีการตอบสนอง..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
-              />
-            </div>
-            <div className="text-xs text-slate-500 font-medium px-2">
-              พบ {filteredTopics.length} หัวข้อ
-            </div>
-          </div>
+      {/* Cards List */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {filteredItems.map((item) => {
+          const isCopied = copiedId === item.id;
+          const activeFileUrl = item.fileUrl || item.downloadUrl;
+          const isPdfFile = isPdf(activeFileUrl);
 
-          {/* รายการหัวข้อเรื่อง (Topics Cards) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredTopics.map((topic, index) => {
-              const isFull = topic.id === 'full-doc';
-              return (
-                <div
-                  key={topic.id}
-                  onClick={() => {
-                    setSelectedTopicId(topic.id);
-                    setContentTab('pdf');
-                  }}
-                  className={`bg-white dark:bg-slate-900 rounded-2xl p-5 border transition-all cursor-pointer flex flex-col justify-between group hover:shadow-lg ${
-                    isFull
-                      ? 'border-blue-300 dark:border-blue-700 bg-linear-to-br from-blue-50/50 to-indigo-50/30 dark:from-blue-950/20 dark:to-indigo-950/10'
-                      : 'border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-600'
-                  }`}
-                >
-                  <div className="space-y-3">
-                    {/* Badge & Page Range */}
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-xs font-bold">
-                        {topic.badgeText}
-                      </span>
-                      <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
-                        {topic.pageRangeText}
-                      </span>
-                    </div>
-
-                    {/* Title & Subtitle */}
-                    <div>
-                      <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug">
-                        {topic.title}
-                      </h3>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
-                        {topic.subtitle}
-                      </p>
-                    </div>
-
-                    {/* Summary text */}
-                    <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800/80 text-[11px] text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed">
-                      {topic.summary}
-                    </div>
-                  </div>
-
-                  {/* Footer Action */}
-                  <div className="pt-4 mt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
-                    <span className="text-blue-600 dark:text-blue-400 font-bold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                      <Eye className="w-3.5 h-3.5" />
-                      <span>กดดูเนื้อหาและเอกสาร</span>
-                    </span>
-                    <span className="text-slate-400 group-hover:text-blue-600 transition-colors">
-                      <ChevronRight className="w-4 h-4" />
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* 3. กรณีที่ผู้ใช้กดเลือกหัวข้อแล้ว (แสดงเนื้อหา + PDF Viewer) */}
-      {selectedTopicId && currentTopic && (
-        <div className="space-y-4 animate-in fade-in duration-150">
-          {/* แถบย้อนกลับ และตัวเลือกสลับหัวขอด่วน */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
-            <button
-              type="button"
-              onClick={() => setSelectedTopicId(null)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all cursor-pointer w-fit"
+          return (
+            <div
+              key={item.id}
+              className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all space-y-3.5 flex flex-col justify-between group"
             >
-              <ArrowLeft className="w-4 h-4 text-blue-600" />
-              <span>กลับไปหน้ารายการหัวข้อทั้งหมด</span>
-            </button>
-
-            {/* Quick Navigation Tabs for each form */}
-            <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 scrollbar-none">
-              {officialW3482Topics.map((t) => {
-                const isActive = t.id === currentTopic.id;
-                return (
-                  <button
-                    key={t.id}
-                    type="button"
-                    onClick={() => setSelectedTopicId(t.id)}
-                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-                      isActive
-                        ? 'bg-blue-600 text-white shadow-2xs'
-                        : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
-                    }`}
-                  >
-                    {t.code}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* รายละเอียดของหัวข้อที่เลือก */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 dark:text-blue-400 mb-1">
-                  <span className="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-800 font-bold">
-                    {currentTopic.badgeText}
-                  </span>
-                  <span>•</span>
-                  <span>{currentTopic.pageRangeText}</span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100">
-                  {currentTopic.title}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  {currentTopic.subtitle}
-                </p>
-              </div>
-
-              {/* Action Buttons: Fullscreen & Link to online form */}
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setIsFullscreenModalOpen(true)}
-                  className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
-                  title="เปิดดูเต็มหน้าจอ"
-                >
-                  <Maximize2 className="w-3.5 h-3.5 text-blue-600" />
-                  <span>ขยายเต็มจอ</span>
-                </button>
-
-                <a
-                  href={`${pdfFileUrl}#page=${currentTopic.startPage}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
-                  title="เปิดในแท็บใหม่ของบราวเซอร์"
-                >
-                  <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
-                  <span>เปิดในแท็บใหม่</span>
-                </a>
-
-                {currentTopic.onlineFormTab && setCurrentTab && (
-                  <button
-                    type="button"
-                    onClick={() => setCurrentTab(currentTopic.onlineFormTab)}
-                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
-                    title="ไปที่หน้าบันทึกและประเมินความเสี่ยงออนไลน์ในระบบ"
-                  >
-                    <Send className="w-3.5 h-3.5" />
-                    <span>ไปกรอกข้อมูลออนไลน์</span>
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* แถบเลือกสลับระหว่างดู PDF ต้นฉบับ vs ดูโครงสร้างและคำอธิบาย */}
-            <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800">
-              <button
-                type="button"
-                onClick={() => setContentTab('pdf')}
-                className={`flex items-center gap-2 px-4 py-2.5 border-b-2 text-xs font-bold transition-all cursor-pointer ${
-                  contentTab === 'pdf'
-                    ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-                    : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                }`}
-              >
-                <Eye className="w-4 h-4" />
-                <span>เปิดดูเอกสาร PDF ต้นฉบับ (ไม่ต้องดาวน์โหลด)</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setContentTab('structure')}
-                className={`flex items-center gap-2 px-4 py-2.5 border-b-2 text-xs font-bold transition-all cursor-pointer ${
-                  contentTab === 'structure'
-                    ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-                    : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                }`}
-              >
-                <Table className="w-4 h-4" />
-                <span>โครงสร้างแบบฟอร์มและคำอธิบายราชการ</span>
-              </button>
-            </div>
-
-            {/* TAB 1: PDF Viewer In-App */}
-            {contentTab === 'pdf' && (
-              <div className="space-y-2">
-                <div className="p-3 bg-blue-50/60 dark:bg-blue-950/30 rounded-xl border border-blue-100 dark:border-blue-900/40 text-xs text-blue-800 dark:text-blue-300 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <FileCheck2 className="w-4 h-4 text-blue-600 shrink-0" />
-                    <span>
-                      กำลังแสดงเอกสารต้นฉบับทางราชการ <strong>{currentTopic.title}</strong> (หน้า {currentTopic.startPage} {currentTopic.endPage !== currentTopic.startPage ? `ถึง ${currentTopic.endPage}` : ''})
+              <div className="space-y-2.5">
+                {/* Category & Format Badges */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-[10px] px-2.5 py-0.5 rounded-full font-bold">
+                      {item.category}
                     </span>
+                    {item.code && (
+                      <span className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[10px] px-2 py-0.5 rounded-md font-bold">
+                        {item.code}
+                      </span>
+                    )}
+                    {item.fileType && (
+                      <span
+                        className={`text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${
+                          item.fileType.includes('WORD')
+                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200'
+                            : item.fileType.includes('EXCEL')
+                            ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200'
+                            : 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200'
+                        }`}
+                      >
+                        {item.fileType} {item.fileSize ? `(${item.fileSize})` : ''}
+                      </span>
+                    )}
+                    {item.pageCount && (
+                      <span className="text-[10px] px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 font-semibold">
+                        {item.pageCount}
+                      </span>
+                    )}
                   </div>
-                  <span className="text-[11px] text-slate-500 hidden sm:inline">
-                    ท่านสามารถเลื่อนอ่าน ซูมขยาย หรือค้นหาในเอกสารได้ทันที
-                  </span>
+
+                  <div className="flex items-center space-x-1 shrink-0">
+                    <button
+                      onClick={() => handleCopy(item.id, `${item.title} - ${item.topic}`)}
+                      className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                      title="คัดลอกชื่อแบบฟอร์ม"
+                    >
+                      {isCopied ? (
+                        <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                      ) : (
+                        <Copy className="w-4 h-4" />
+                      )}
+                    </button>
+
+                    {isAdmin && (item.isCustom || !item.isOfficial) && (
+                      <button
+                        onClick={() => handleDeleteDocument(item.id, item.title)}
+                        className="text-rose-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors cursor-pointer"
+                        title="ลบแบบฟอร์มนี้"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
-                <div className="w-full h-[720px] rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 shadow-inner">
-                  <iframe
-                    src={`${pdfFileUrl}#page=${currentTopic.startPage}&view=FitH`}
-                    className="w-full h-full border-none"
-                    title={currentTopic.title}
-                  />
+                {/* Title & Topic */}
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-snug group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition-colors">
+                    {item.title}
+                  </h3>
+                  {item.topic && (
+                    <div className="text-xs font-semibold text-blue-700 dark:text-cyan-300 mt-1">
+                      เรื่อง: {item.topic}
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
 
-            {/* TAB 2: โครงสร้างแบบฟอร์มและคำอธิบาย (Structure & Explanations) */}
-            {contentTab === 'structure' && (
-              <div className="space-y-6 pt-2">
-                {/* สรุปสาระสำคัญ */}
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-2">
-                  <div className="font-bold text-xs text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
-                    <BookOpen className="w-4 h-4 text-blue-600" />
-                    <span>วัตถุประสงค์และสาระสำคัญของ {currentTopic.code}</span>
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                    {currentTopic.summary}
+                {/* Summary Box */}
+                {item.summary && (
+                  <p className="text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-950/60 p-3 rounded-xl border border-slate-100 dark:border-slate-800/80 leading-relaxed">
+                    {item.summary}
                   </p>
-                </div>
-
-                {/* รายละเอียดคอลัมน์ในแบบฟอร์ม (ถ้ามี) */}
-                {currentTopic.columns && (
-                  <div className="space-y-3">
-                    <div className="font-bold text-xs text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                      <Table className="w-4 h-4 text-indigo-600" />
-                      <span>โครงสร้างตารางและหัวข้อคอลัมน์ใน {currentTopic.code}</span>
-                    </div>
-
-                    <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
-                      <table className="w-full text-left text-xs border-collapse">
-                        <thead>
-                          <tr className="bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-700">
-                            <th className="py-2.5 px-4 w-28">ลำดับคอลัมน์</th>
-                            <th className="py-2.5 px-4 w-60">ชื่อหัวตาราง</th>
-                            <th className="py-2.5 px-4">คำอธิบายและการใช้งาน</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                          {currentTopic.columns.map((col, idx) => (
-                            <tr key={idx} className="hover:bg-slate-50/80 dark:hover:bg-slate-850/50">
-                              <td className="py-2.5 px-4 font-bold text-blue-600 dark:text-blue-400">
-                                {col.col}
-                              </td>
-                              <td className="py-2.5 px-4 font-semibold text-slate-900 dark:text-slate-100">
-                                {col.title}
-                              </td>
-                              <td className="py-2.5 px-4 text-slate-600 dark:text-slate-400 leading-relaxed">
-                                {col.detail}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
-
-                {/* ประเภทความเสี่ยง 6 ด้าน (เฉพาะ บส. 2) */}
-                {currentTopic.riskTypes && (
-                  <div className="space-y-3">
-                    <div className="font-bold text-xs text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                      <ShieldAlert className="w-4 h-4 text-amber-500" />
-                      <span>ประเภทความเสี่ยง 6 ประเภท (ตามคำอธิบายข้อ ๘ ของแบบ บส. ๒)</span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {currentTopic.riskTypes.map((rt) => (
-                        <div key={rt.id} className="p-3.5 rounded-xl border border-amber-200/70 dark:border-amber-900/50 bg-amber-50/40 dark:bg-amber-950/20 space-y-1">
-                          <div className="font-bold text-xs text-amber-900 dark:text-amber-200">
-                            {rt.id}. {rt.name}
-                          </div>
-                          <div className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
-                            {rt.desc}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* วิธีการตอบสนองความเสี่ยง 8 วิธี (เฉพาะ บส. 2) */}
-                {currentTopic.responseMethods && (
-                  <div className="space-y-3">
-                    <div className="font-bold text-xs text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                      <span>วิธีการตอบสนองความเสี่ยง 8 วิธี (ตามคำอธิบายข้อ ๑๒ ของแบบ บส. ๒)</span>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
-                      {currentTopic.responseMethods.map((rm) => (
-                        <div key={rm.id} className="p-3 rounded-xl border border-emerald-200/70 dark:border-emerald-900/50 bg-emerald-50/40 dark:bg-emerald-950/20 space-y-1">
-                          <div className="font-bold text-xs text-emerald-900 dark:text-emerald-200">
-                            {rm.id}. {rm.name}
-                          </div>
-                          <div className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
-                            {rm.desc}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* คำอธิบายแบบตามระเบียบ (Explanations) */}
-                {currentTopic.explanations && (
-                  <div className="space-y-3">
-                    <div className="font-bold text-xs text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                      <HelpCircle className="w-4 h-4 text-blue-600" />
-                      <span>คำอธิบายการกรอกแบบฟอร์ม {currentTopic.code} (ตามเอกสารทางการ)</span>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                      {currentTopic.explanations.map((exp, idx) => (
-                        <div
-                          key={idx}
-                          className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 text-xs flex items-start gap-2.5"
-                        >
-                          <span className="font-bold text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
-                            {exp.no}
-                          </span>
-                          <span className="text-slate-700 dark:text-slate-300 leading-relaxed">
-                            {exp.text}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* ข้อมูลหนังสือสั่งการ (สำหรับ w3482-notice) */}
-                {currentTopic.officialDetails && (
-                  <div className="space-y-3">
-                    <div className="font-bold text-xs text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-blue-600" />
-                      <span>รายละเอียดการติดต่อและส่วนราชการเจ้าของเรื่อง</span>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-blue-50/40 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/40 text-xs space-y-2">
-                      <div><strong>ส่วนราชการ:</strong> {currentTopic.officialDetails.issuer}</div>
-                      <div><strong>ผู้รับการแจ้ง:</strong> {currentTopic.officialDetails.receiver}</div>
-                      <div><strong>กลุ่มงานรับผิดชอบ:</strong> {currentTopic.officialDetails.contact}</div>
-                    </div>
-                  </div>
                 )}
               </div>
-            )}
 
-            {/* Navigation Buttons: Previous / Next topic */}
-            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              {prevTopic ? (
-                <button
-                  type="button"
-                  onClick={() => setSelectedTopicId(prevTopic.id)}
-                  className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
+              {/* Footer File Reference & Actions */}
+              <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-400 gap-2.5">
+                <div
+                  className="flex items-center text-slate-500 dark:text-slate-400 font-mono text-[11px] truncate max-w-full sm:max-w-[210px]"
+                  title={item.fileRef}
                 >
-                  <ChevronLeft className="w-4 h-4 text-blue-600" />
-                  <span>หัวข้อก่อนหน้า: {prevTopic.code}</span>
-                </button>
-              ) : <div />}
+                  <FolderOpen className="w-3.5 h-3.5 mr-1.5 text-blue-500 shrink-0" />
+                  <span className="truncate">{item.fileRef || 'ไฟล์แนบ'}</span>
+                </div>
 
-              {nextTopic ? (
-                <button
-                  type="button"
-                  onClick={() => setSelectedTopicId(nextTopic.id)}
-                  className="px-3.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all border border-blue-200 dark:border-blue-800"
-                >
-                  <span>หัวข้อถัดไป: {nextTopic.code}</span>
-                  <ChevronRight className="w-4 h-4 text-blue-600" />
-                </button>
-              ) : <div />}
+                <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
+                  {/* Preview Button for PDFs (เปิดอ่านได้โดยไม่ต้องดาวน์โหลด) */}
+                  {isPdfFile && activeFileUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setPreviewDoc(item)}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:hover:bg-blue-900 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                      title="เปิดดูเอกสารตัวเต็มในระบบโดยไม่ต้องดาวน์โหลด"
+                    >
+                      <Eye className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                      <span>เปิดอ่าน</span>
+                    </button>
+                  )}
+
+                  {/* Primary Download Button */}
+                  {activeFileUrl ? (
+                    <a
+                      href={activeFileUrl}
+                      download={item.fileRef || `${item.id}.pdf`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-2xs transition-all cursor-pointer"
+                      title="ดาวน์โหลดไฟล์ลงเครื่อง"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>
+                        {item.fileType?.includes('WORD')
+                          ? 'ดาวน์โหลด Word'
+                          : item.fileType?.includes('EXCEL')
+                          ? 'ดาวน์โหลด Excel'
+                          : 'ดาวน์โหลด'}
+                      </span>
+                    </a>
+                  ) : (
+                    <span className="text-slate-400 dark:text-slate-500 text-[11px]">
+                      ไม่มีไฟล์แนบ
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
+          );
+        })}
+      </div>
+
+      {filteredItems.length === 0 && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-12 text-center border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 space-y-3">
+          <FileSpreadsheet className="w-10 h-10 text-slate-300 dark:text-slate-700 mx-auto" />
+          <div className="text-base font-bold text-slate-700 dark:text-slate-200">ไม่พบแบบฟอร์มที่ค้นหา</div>
+          <div className="text-xs max-w-sm mx-auto">
+            ลองค้นหาด้วยคำสำคัญอื่น เช่น <strong>ว 3482</strong>, <strong>การบริหารความเสี่ยง</strong> หรือกดเลือกหมวดหมู่ <strong>"ทั้งหมด"</strong>
           </div>
+          <button
+            type="button"
+            onClick={() => {
+              setSearchTerm('');
+              setSelectedCategory('all');
+            }}
+            className="px-4 py-2 bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-cyan-400 text-xs font-bold rounded-xl cursor-pointer hover:bg-blue-100"
+          >
+            ล้างคำค้นหาทั้งหมด
+          </button>
         </div>
       )}
 
-      {/* 4. Fullscreen Modal สำหรับอ่าน PDF เต็มจอโดยไม่ต้องดาวน์โหลด */}
-      {isFullscreenModalOpen && currentTopic && (
+      {/* =========================================================================
+          PDF PREVIEW MODAL (เปิดดูเอกสารได้โดยตรงโดยไม่ต้องดาวน์โหลด)
+      ========================================================================= */}
+      {previewDoc && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-150">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-6xl h-[94vh] rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-5xl h-[92vh] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden">
             {/* Modal Header */}
             <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 bg-slate-50 dark:bg-slate-850">
               <div className="flex items-center gap-2.5 min-w-0">
-                <FileCheck2 className="w-4 h-4 text-blue-600 shrink-0" />
-                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">
-                  {currentTopic.title} ({currentTopic.pageRangeText})
-                </h3>
+                <FileCheck2 className="w-4 h-4 text-blue-600 dark:text-cyan-400 shrink-0" />
+                <div className="min-w-0">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">
+                    {previewDoc.title}
+                  </h3>
+                  {previewDoc.topic && (
+                    <p className="text-[11px] text-blue-600 dark:text-cyan-400 truncate">
+                      {previewDoc.topic}
+                    </p>
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
                 <a
-                  href={`${pdfFileUrl}#page=${currentTopic.startPage}`}
+                  href={previewDoc.fileUrl || previewDoc.downloadUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+                  className="px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
                   title="เปิดในแท็บใหม่"
                 >
-                  <ExternalLink className="w-4 h-4" />
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">เปิดในแท็บใหม่</span>
                 </a>
+
+                <a
+                  href={previewDoc.fileUrl || previewDoc.downloadUrl}
+                  download={previewDoc.fileRef || `${previewDoc.id}.pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-all cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>ดาวน์โหลดไฟล์</span>
+                </a>
+
                 <button
                   type="button"
-                  onClick={() => setIsFullscreenModalOpen(false)}
-                  className="px-3 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold cursor-pointer"
+                  onClick={() => setPreviewDoc(null)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 cursor-pointer transition-colors"
                 >
-                  ปิดหน้าต่าง
+                  <X className="w-5 h-5" />
                 </button>
               </div>
             </div>
@@ -778,11 +481,147 @@ export default function FormsView({
             {/* Modal Iframe */}
             <div className="flex-1 bg-slate-100 dark:bg-slate-950 p-2 overflow-hidden flex flex-col">
               <iframe
-                src={`${pdfFileUrl}#page=${currentTopic.startPage}&view=FitH`}
-                className="w-full h-full rounded-2xl border border-slate-300 dark:border-slate-800 bg-white"
-                title={currentTopic.title}
+                src={`${previewDoc.fileUrl || previewDoc.downloadUrl}#toolbar=1&navpanes=1`}
+                className="w-full h-full rounded-lg border border-slate-300 dark:border-slate-800 bg-white"
+                title={previewDoc.title}
               />
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          ADMIN ADD / UPLOAD FORM MODAL (เฉพาะ ADMIN เท่านั้น)
+      ========================================================================= */}
+      {isAdmin && isAddModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden my-8">
+            <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-850">
+              <div className="flex items-center space-x-2 text-slate-900 dark:text-slate-100 font-bold">
+                <Plus className="w-5 h-5 text-blue-600" />
+                <span>เพิ่มแบบฟอร์มมาตรฐานใหม่ (สำหรับ ADMIN)</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAddModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddDocument} className="p-5 space-y-3.5 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                    หมวดหมู่แบบฟอร์ม <span className="text-rose-500">*</span>:
+                  </label>
+                  <select
+                    value={newDoc.category}
+                    onChange={(e) => setNewDoc({ ...newDoc, category: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-bold"
+                  >
+                    {categories
+                      .filter((c) => c.id !== 'all')
+                      .map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.label}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                    รหัส / เลขที่แบบฟอร์ม:
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="เช่น ว 3482 หรือ บส. 1"
+                    value={newDoc.code}
+                    onChange={(e) => setNewDoc({ ...newDoc, code: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                  ชื่อแบบฟอร์ม <span className="text-rose-500">*</span>:
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="เช่น แบบรายงานการบริหารจัดการความเสี่ยง..."
+                  value={newDoc.title}
+                  onChange={(e) => setNewDoc({ ...newDoc, title: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-bold"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                  ชื่อเรื่อง / อ้างอิงหนังสือสั่งการ:
+                </label>
+                <input
+                  type="text"
+                  placeholder="เช่น หนังสือกระทรวงมหาดไทย ด่วนที่สุด ที่ มท..."
+                  value={newDoc.topic}
+                  onChange={(e) => setNewDoc({ ...newDoc, topic: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                  คำอธิบายสรุปสาระสำคัญ:
+                </label>
+                <textarea
+                  rows="3"
+                  placeholder="สรุปวัตถุประสงค์และการนำแบบฟอร์มนี้ไปใช้งาน..."
+                  value={newDoc.summary}
+                  onChange={(e) => setNewDoc({ ...newDoc, summary: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100"
+                />
+              </div>
+
+              {/* File Upload Box */}
+              <div className="p-3.5 rounded-xl border border-dashed border-blue-300 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20 space-y-2">
+                <label className="block text-blue-900 dark:text-blue-200 font-bold">
+                  อัปโหลดไฟล์เอกสารจากเครื่อง (PDF, Word, Excel):
+                </label>
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx,.xls,.xlsx"
+                  onChange={handleFileUpload}
+                  className="w-full text-xs text-slate-600 dark:text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer"
+                />
+                {newDoc.fileRef && (
+                  <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1.5">
+                    <Check className="w-3.5 h-3.5" />
+                    <span>
+                      แนบไฟล์: {newDoc.fileRef} ({newDoc.fileSize}) - {newDoc.fileType}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-end space-x-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsAddModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold cursor-pointer"
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-xs cursor-pointer"
+                >
+                  บันทึกแบบฟอร์ม
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

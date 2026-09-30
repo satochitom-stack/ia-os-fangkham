@@ -44,6 +44,7 @@ import {
   createEmptyRiskManagement,
   initialLpaIndicators,
   initialKnowledgeBase,
+  initialFormsBase,
   initialStrategicPlan,
   initialCapaFindings
 } from './data/initialData';
@@ -531,6 +532,34 @@ export default function App() {
       console.warn('Could not save knowledge base to localStorage:', e);
     }
   }, [knowledgeBase]);
+
+  const [formsBase, setFormsBase] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ia_forms_base');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const merged = initialFormsBase.map((initItem) => {
+          const found = parsed.find((p) => p.id === initItem.id);
+          return found
+            ? { ...initItem, ...found, fileUrl: initItem.fileUrl, downloadUrl: initItem.downloadUrl, fileType: initItem.fileType, fileSize: initItem.fileSize }
+            : initItem;
+        });
+        const userAdded = parsed.filter((p) => !initialFormsBase.some((initItem) => initItem.id === p.id));
+        return [...merged, ...userAdded];
+      }
+      return initialFormsBase;
+    } catch {
+      return initialFormsBase;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('ia_forms_base', JSON.stringify(formsBase));
+    } catch (e) {
+      console.warn('Could not save forms base to localStorage:', e);
+    }
+  }, [formsBase]);
 
   // Save year-scoped states to localStorage
   useEffect(() => {
@@ -1402,6 +1431,8 @@ export default function App() {
                 key={`forms-${selectedYear}`}
                 setCurrentTab={setCurrentTab}
                 selectedYear={selectedYear}
+                formsBase={formsBase}
+                onUpdateFormsBase={setFormsBase}
                 orgProfile={orgProfile}
                 session={session}
                 riskManagement={riskManagement}
