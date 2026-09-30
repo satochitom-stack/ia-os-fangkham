@@ -373,11 +373,12 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
         )}
       </header>
 
-      {/* 4. Hero Center Body (Title, Welcome Badge & Action Buttons shifted down) */}
-      <div className="z-10 relative flex-1 flex flex-col justify-center items-center py-6 sm:py-8 lg:py-10 px-6">
-        <div className="max-w-4xl mx-auto text-center">
+      {/* 4. Hero Content: Text Group at Top under Header & Buttons at Bottom */}
+      <div className="z-10 relative flex-1 flex flex-col justify-between items-center pt-7 sm:pt-9 lg:pt-11 pb-5 sm:pb-7 px-6">
+        {/* Upper Text Group: Comfortably below header bar */}
+        <div className="max-w-4xl mx-auto text-center animate-fade-slide-in-1">
           {/* Frosted Glass Welcome Badge */}
-          <div className="mb-4 sm:mb-5 inline-flex items-center gap-2 sm:gap-2.5 rounded-full bg-white/90 px-3.5 sm:px-4 py-1.5 border border-blue-200/80 shadow-xs backdrop-blur-md animate-fade-slide-in-1 hover:border-blue-300 transition-all">
+          <div className="mb-3.5 sm:mb-4 inline-flex items-center gap-2 sm:gap-2.5 rounded-full bg-white/90 px-3.5 sm:px-4 py-1.5 border border-blue-200/80 shadow-xs backdrop-blur-md hover:border-blue-300 transition-all">
             <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-white bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 rounded-full py-0.5 px-2.5 sm:px-3 shadow-2xs font-['Plus_Jakarta_Sans',sans-serif] tracking-wider uppercase">
               <Sparkles className="w-3 h-3 text-cyan-200 animate-pulse" />
               {badgeLabel}
@@ -396,9 +397,11 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
               {titleLine2}
             </span>
           </h1>
+        </div>
 
-          {/* Action Buttons moved further down to the lower area */}
-          <div className="mt-16 sm:mt-24 lg:mt-28 flex flex-col sm:flex-row gap-3.5 sm:gap-4 items-center justify-center animate-fade-slide-in-3">
+        {/* Lower Section: Action Buttons positioned down below */}
+        <div className="w-full max-w-4xl mx-auto text-center mt-auto pt-8 sm:pt-12 pb-3 sm:pb-4 animate-fade-slide-in-3">
+          <div className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 items-center justify-center">
             {/* Primary Button */}
             <button
               type="button"
