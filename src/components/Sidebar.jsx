@@ -147,26 +147,26 @@ export default function Sidebar({
   return (
     <aside className="w-68 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 flex flex-col shrink-0 h-full border-r border-slate-200/80 dark:border-slate-800 transition-colors overflow-hidden">
       {/* Sidebar Header */}
-      <div className="p-3.5 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between shrink-0">
+      <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between shrink-0 bg-slate-50/50 dark:bg-slate-900/50">
         <div>
-          <div className="text-[11px] font-bold tracking-wider text-slate-400 dark:text-slate-500 uppercase">
-            ระบบตรวจสอบภายใน อปท.
-          </div>
-          <div className="text-xs font-bold text-slate-800 dark:text-slate-200 mt-0.5">
-            5 เสาหลัก & เครื่องมือปี 70
+          <span className="text-[10px] font-black uppercase tracking-wider text-blue-600 dark:text-cyan-400 block font-mono">
+            อบต.ฝางคำ
+          </span>
+          <div className="text-xs font-bold text-slate-800 dark:text-slate-100 mt-0.5 tracking-tight flex items-center gap-1.5">
+            <span>เมนูระบบปฏิบัติการ</span>
           </div>
         </div>
         {isAdmin ? (
-          <span className="text-[10px] bg-blue-50 dark:bg-indigo-950 border border-blue-200 dark:border-indigo-500/30 text-blue-700 dark:text-indigo-300 font-bold px-1.5 py-0.5 rounded">
-            ADMIN
+          <span className="text-[10px] bg-indigo-50 dark:bg-indigo-950/80 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300 font-black px-2 py-0.5 rounded-full shadow-2xs">
+            👑 ADMIN
           </span>
         ) : session?.role === 'guest' ? (
-          <span className="text-[10px] bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-500/30 text-purple-700 dark:text-purple-300 font-bold px-1.5 py-0.5 rounded">
-            GUEST
+          <span className="text-[10px] bg-purple-50 dark:bg-purple-950/80 border border-purple-200/80 dark:border-purple-800/60 text-purple-700 dark:text-purple-300 font-bold px-2 py-0.5 rounded-full shadow-2xs">
+            👥 GUEST
           </span>
         ) : (
-          <span className="text-[10px] bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-bold px-1.5 py-0.5 rounded">
-            USER
+          <span className="text-[10px] bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 font-bold px-2 py-0.5 rounded-full shadow-2xs">
+            🏢 USER
           </span>
         )}
       </div>

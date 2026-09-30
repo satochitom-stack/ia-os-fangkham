@@ -82,23 +82,23 @@ export default function DashboardView({
       )}
 
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-white dark:from-slate-850 dark:to-slate-900 rounded-2xl p-6 text-slate-900 dark:text-slate-100 shadow-xs border border-blue-200/80 dark:border-slate-700/80 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-blue-50/95 via-sky-50/50 to-white dark:from-slate-900 dark:via-slate-850 dark:to-slate-900 rounded-2xl p-5 sm:p-6 text-slate-900 dark:text-slate-100 shadow-xs border border-blue-200/80 dark:border-blue-900/50 relative overflow-hidden">
         <div className="absolute right-0 top-0 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center space-x-2 bg-blue-100/80 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-800 rounded-full px-3 py-1 text-xs font-semibold text-blue-700 dark:text-blue-300 mb-2">
+            <div className="inline-flex items-center space-x-2 bg-blue-100/90 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/80 rounded-full px-3 py-1 text-xs font-bold text-blue-700 dark:text-cyan-300 mb-2 shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>ปีงบประมาณ พ.ศ. {selectedYear}</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100">
               ระบบงานตรวจสอบภายใน {orgDisplayName}
             </h2>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-2xl">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-2xl leading-relaxed">
               {hasAuditorName ? (
-                <>ผู้ตรวจสอบภายใน: <strong className="text-slate-900 dark:text-slate-200">{orgProfile.auditorName}</strong> ({orgProfile.auditorPosition})</>
+                <>ผู้ตรวจสอบภายใน: <strong className="text-slate-800 dark:text-slate-200 font-bold">{orgProfile.auditorName}</strong> ({orgProfile.auditorPosition})</>
               ) : (
-                <span className="text-amber-700 dark:text-amber-400">
-                  ⚠️ ยังไม่ได้ตั้งชื่อผู้ตรวจสอบภายใน กรุณากดปุ่มตั้งค่าโปรไฟล์เพื่อระบุชื่อของท่าน
+                <span className="text-amber-700 dark:text-amber-400 font-medium">
+                  ⚠️ ยังไม่ได้ตั้งชื่อผู้ตรวจสอบภายใน กรุณากดปุ่มตั้งค่าเพื่อระบุชื่อของท่าน
                 </span>
               )}
             </p>
@@ -115,16 +115,16 @@ export default function DashboardView({
             )}
             <button
               onClick={() => setCurrentTab('execution')}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center space-x-2 cursor-pointer active:scale-95"
             >
               <ClipboardList className="w-4 h-4 text-blue-100" />
               <span>เปิดกระดาษทำการ</span>
             </button>
             <button
               onClick={() => setCurrentTab('reporting')}
-              className="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer"
+              className="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl text-xs font-bold shadow-2xs transition-all flex items-center space-x-2 cursor-pointer active:scale-95"
             >
-              <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <FileText className="w-4 h-4 text-blue-600 dark:text-cyan-400" />
               <span>สรุปรายงานผล</span>
             </button>
           </div>
