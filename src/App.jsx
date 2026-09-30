@@ -1094,7 +1094,7 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen w-full bg-slate-100 dark:bg-slate-800 flex flex-col font-sans overflow-hidden">
+    <div className="h-screen w-full bg-slate-100 dark:bg-slate-800 flex flex-col font-sans overflow-hidden print:h-auto print:overflow-visible print:bg-white">
       <Header
         orgProfile={orgProfile}
         selectedYear={selectedYear}
@@ -1211,8 +1211,8 @@ export default function App() {
           pendingCount={pendingCount}
         />
 
-        <main ref={mainContentRef} className="flex-1 overflow-y-auto min-h-0 p-4 sm:p-6 lg:p-8 bg-slate-100/80 dark:bg-slate-950 custom-scrollbar">
-          <div className="max-w-7xl mx-auto">
+        <main ref={mainContentRef} className="flex-1 overflow-y-auto min-h-0 p-4 sm:p-6 lg:p-8 bg-slate-100/80 dark:bg-slate-950 custom-scrollbar print:p-0 print:m-0 print:bg-white print:overflow-visible">
+          <div className="max-w-7xl mx-auto print:max-w-none print:w-full print:m-0 print:p-0">
             <ErrorBoundary key={currentTab} onReset={() => setCurrentTab('dashboard')}>
             {currentTab === 'dashboard' && (
               <DashboardView

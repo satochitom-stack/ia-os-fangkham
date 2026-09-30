@@ -2127,31 +2127,31 @@ export default function RiskManagementView({
               <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400 border-collapse print:text-black">
                 <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700/80 print:bg-slate-100 print:text-black">
                   <tr>
-                    <th className="px-3.5 py-3.5 w-24 text-center">
+                    <th className="px-2 py-2.5 w-20 text-center print:w-16 print:px-1 print:py-1">
                       (3)<br />รหัสความเสี่ยง
                     </th>
-                    <th className="px-3.5 py-3.5 w-44">
+                    <th className="px-2.5 py-2.5 w-44 print:w-40 print:px-1.5 print:py-1">
                       (4)<br />ยุทธศาสตร์ที่รับผิดชอบ
                     </th>
-                    <th className="px-4 py-3.5 min-w-[200px]">
+                    <th className="px-3.5 py-2.5 min-w-[200px] print:min-w-0 print:px-2 print:py-1">
                       (5)<br />โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ
                     </th>
-                    <th className="px-3.5 py-3.5 w-28 text-right">
+                    <th className="px-2.5 py-2.5 w-28 text-right print:w-24 print:px-1.5 print:py-1">
                       (6)<br />งบประมาณ (บาท)
                     </th>
-                    <th className="px-4 py-3.5 min-w-[180px]">
+                    <th className="px-3.5 py-2.5 min-w-[180px] print:min-w-0 print:px-2 print:py-1">
                       (7)<br />วัตถุประสงค์
                     </th>
-                    <th className="px-3.5 py-3.5 min-w-[160px]">
+                    <th className="px-3 py-2.5 min-w-[160px] print:min-w-0 print:px-1.5 print:py-1">
                       (8)<br />ตัวชี้วัด
                     </th>
-                    <th className="px-3.5 py-3.5 min-w-[150px]">
+                    <th className="px-3 py-2.5 min-w-[150px] print:min-w-0 print:px-1.5 print:py-1">
                       (9)<br />เป้าหมาย
                     </th>
-                    <th className="px-3 py-3.5 text-center w-28">
+                    <th className="px-3 py-3.5 text-center w-28 no-print print:hidden">
                       ส่วนราชการ
                     </th>
-                    {setRiskManagement && <th className="px-3 py-3.5 text-center w-20 no-print">จัดการ</th>}
+                    {setRiskManagement && <th className="px-3 py-3.5 text-center w-20 no-print print:hidden">จัดการ</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -2204,34 +2204,34 @@ export default function RiskManagementView({
                       const canManage = canEditItem(item.department);
                       return (
                         <tr key={item.id || idx} className="hover:bg-blue-50/30 dark:hover:bg-slate-800/50 transition-colors">
-                          <td className="px-3.5 py-3 font-mono font-bold text-center text-blue-700 dark:text-blue-300 align-top">
+                          <td className="px-2 py-2 font-mono font-bold text-center text-blue-700 dark:text-blue-300 align-top print:text-black print:px-1 print:py-1">
                             {item.riskCode || `RSK-0${idx + 1}`}
                           </td>
-                          <td className="px-3.5 py-3 text-slate-700 dark:text-slate-300 font-medium align-top">
+                          <td className="px-2.5 py-2 text-slate-700 dark:text-slate-300 font-medium align-top print:text-black print:px-1.5 print:py-1">
                             {item.strategy}
                           </td>
-                          <td className="px-4 py-3 font-bold text-slate-900 dark:text-slate-100 align-top">
+                          <td className="px-3 py-2 font-bold text-slate-900 dark:text-slate-100 align-top print:text-black print:px-2 print:py-1">
                             {item.activity}
                           </td>
-                          <td className="px-3.5 py-3 text-right font-mono font-semibold text-slate-800 dark:text-slate-200 align-top">
+                          <td className="px-2.5 py-2 text-right font-mono font-semibold text-slate-800 dark:text-slate-200 align-top print:text-black print:px-1.5 print:py-1">
                             {item.budget ? Number(item.budget).toLocaleString() : '-'}
                           </td>
-                          <td className="px-4 py-3 text-slate-600 dark:text-slate-300 align-top">
+                          <td className="px-3 py-2 text-slate-600 dark:text-slate-300 align-top print:text-black print:px-2 print:py-1">
                             {item.objective}
                           </td>
-                          <td className="px-3.5 py-3 text-slate-600 dark:text-slate-300 align-top">
+                          <td className="px-2.5 py-2 text-slate-600 dark:text-slate-300 align-top print:text-black print:px-1.5 print:py-1">
                             {item.kpi}
                           </td>
-                          <td className="px-3.5 py-3 text-slate-600 dark:text-slate-300 align-top">
+                          <td className="px-2.5 py-2 text-slate-600 dark:text-slate-300 align-top print:text-black print:px-1.5 print:py-1">
                             {item.target}
                           </td>
-                          <td className="px-3 py-3 text-center align-top">
+                          <td className="px-3 py-3 text-center align-top no-print print:hidden">
                             <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                               {item.department}
                             </span>
                           </td>
                           {setRiskManagement && (
-                            <td className="px-3 py-3 text-center align-top no-print">
+                            <td className="px-3 py-3 text-center align-top no-print print:hidden">
                               {canManage ? (
                                 <div className="flex items-center justify-center space-x-1">
                                   <button
@@ -2265,21 +2265,21 @@ export default function RiskManagementView({
             </div>
 
             {/* Official Signature Section */}
-            <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-6">
-              <div className="w-72 text-center space-y-2 print:text-xs">
-                <div>ลายมือชื่อ...................................................</div>
+            <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-4 print-signature-block break-inside-avoid print:break-inside-avoid">
+              <div className="w-72 text-center space-y-1.5 print:text-[8.5pt]">
+                <div>ลายมือชื่อ................................................... (๑๐)</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
-                    <div>ตำแหน่ง ....................................................</div>
+                    <div>ตำแหน่ง .................................................... (๑๑)</div>
                   </>
                 ) : (
                   <>
                     <div>( {orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
-                    <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
+                    <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} (๑๑)</div>
                   </>
                 )}
-                <div>วันที่......................................................</div>
+                <div>วันที่...............เดือน.....................พ.ศ. .............. (๑๒)</div>
               </div>
             </div>
           </div>
@@ -2344,7 +2344,7 @@ export default function RiskManagementView({
                     <th className="px-4 py-3.5 min-w-[170px]">
                       (12)<br />วิธีการตอบสนองความเสี่ยง
                     </th>
-                    {setRiskManagement && <th className="px-3 py-3.5 text-center w-16 no-print">จัดการ</th>}
+                    {setRiskManagement && <th className="px-3 py-3.5 text-center w-16 no-print print:hidden">จัดการ</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -2359,41 +2359,41 @@ export default function RiskManagementView({
                       const canManage = canEditItem(item.department);
                       return (
                         <tr key={item.id || idx} className="hover:bg-blue-50/30 dark:hover:bg-slate-800/50 transition-colors">
-                          <td className="px-3 py-3 font-mono font-bold text-center text-blue-700 dark:text-blue-300 align-top">
+                          <td className="px-2 py-2 font-mono font-bold text-center text-blue-700 dark:text-blue-300 align-top print:text-black print:px-1 print:py-1">
                             {item.riskCode}
                           </td>
-                          <td className="px-4 py-3 font-bold text-slate-900 dark:text-slate-100 align-top">
+                          <td className="px-3 py-2 font-bold text-slate-900 dark:text-slate-100 align-top print:text-black print:px-1.5 print:py-1">
                             {item.activity}
                           </td>
-                          <td className="px-4 py-3 text-slate-600 dark:text-slate-300 align-top">
+                          <td className="px-3 py-2 text-slate-600 dark:text-slate-300 align-top print:text-black print:px-1.5 print:py-1">
                             {item.objective}
                           </td>
-                          <td className="px-3.5 py-3 text-slate-700 dark:text-slate-300 align-top">
+                          <td className="px-2.5 py-2 text-slate-700 dark:text-slate-300 align-top print:text-black print:px-1 print:py-1">
                             {item.responsiblePerson}
                           </td>
-                          <td className="px-4 py-3 text-rose-700 dark:text-rose-300 font-semibold align-top">
+                          <td className="px-3 py-2 text-rose-700 dark:text-rose-300 font-semibold align-top print:text-black print:px-1.5 print:py-1">
                             {item.riskEvent}
                           </td>
-                          <td className="px-3.5 py-3 text-slate-700 dark:text-slate-300 align-top text-[11px]">
+                          <td className="px-2.5 py-2 text-slate-700 dark:text-slate-300 align-top text-[11px] print:text-black print:px-1 print:py-1">
                             {item.riskCategory}
                           </td>
-                          <td className="px-2.5 py-3 text-center font-mono font-bold align-top">
+                          <td className="px-2 py-2 text-center font-mono font-bold align-top print:text-black print:px-1 print:py-1">
                             {item.likelihood}
                           </td>
-                          <td className="px-2.5 py-3 text-center font-mono font-bold align-top">
+                          <td className="px-2 py-2 text-center font-mono font-bold align-top print:text-black print:px-1 print:py-1">
                             {item.impact}
                           </td>
-                          <td className="px-3 py-3 text-center align-top">
-                            <div className="font-mono font-black text-slate-900 dark:text-slate-100">{item.riskScore}</div>
-                            <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] inline-block mt-0.5 ${getRiskLevelBadge(item.riskLevel)}`}>
+                          <td className="px-2.5 py-2 text-center align-top print:text-black print:px-1 print:py-1">
+                            <div className="font-mono font-black text-slate-900 dark:text-slate-100 print:text-black">{item.riskScore}</div>
+                            <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] inline-block mt-0.5 print:border print:border-black ${getRiskLevelBadge(item.riskLevel)}`}>
                               {item.riskLevel}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-indigo-700 dark:text-indigo-300 font-medium align-top">
+                          <td className="px-3 py-2 text-indigo-700 dark:text-indigo-300 font-medium align-top print:text-black print:px-1.5 print:py-1">
                             {item.riskResponse}
                           </td>
                           {setRiskManagement && (
-                            <td className="px-3 py-3 text-center align-top no-print">
+                            <td className="px-3 py-3 text-center align-top no-print print:hidden">
                               {canManage ? (
                                 <button
                                   type="button"
@@ -2417,21 +2417,21 @@ export default function RiskManagementView({
             </div>
 
             {/* Official Signature Section */}
-            <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-6">
-              <div className="w-72 text-center space-y-2 print:text-xs">
-                <div>ลายมือชื่อ...................................................</div>
+            <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-4 print-signature-block break-inside-avoid print:break-inside-avoid">
+              <div className="w-72 text-center space-y-1.5 print:text-[8.5pt]">
+                <div>ลายมือชื่อ................................................... (๑๓)</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
-                    <div>ตำแหน่ง ....................................................</div>
+                    <div>ตำแหน่ง .................................................... (๑๔)</div>
                   </>
                 ) : (
                   <>
                     <div>( {orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
-                    <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
+                    <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} (๑๔)</div>
                   </>
                 )}
-                <div>วันที่......................................................</div>
+                <div>วันที่...............เดือน.....................พ.ศ. .............. (๑๕)</div>
               </div>
             </div>
           </div>
@@ -2493,7 +2493,7 @@ export default function RiskManagementView({
                     <th className="px-3.5 py-3.5 min-w-[160px]">
                       (11)<br />วิธีการติดตาม และการรายงาน
                     </th>
-                    {setRiskManagement && <th className="px-3 py-3.5 text-center w-16 no-print">จัดการ</th>}
+                    {setRiskManagement && <th className="px-3 py-3.5 text-center w-16 no-print print:hidden">จัดการ</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -2508,35 +2508,35 @@ export default function RiskManagementView({
                       const canManage = canEditItem(item.department);
                       return (
                         <tr key={item.id || idx} className="hover:bg-blue-50/30 dark:hover:bg-slate-800/50 transition-colors">
-                          <td className="px-3 py-3 font-mono font-bold text-center text-blue-700 dark:text-blue-300 align-top">
+                          <td className="px-2 py-2 font-mono font-bold text-center text-blue-700 dark:text-blue-300 align-top print:text-black print:px-1 print:py-1">
                             {item.riskCode}
                           </td>
-                          <td className="px-4 py-3 font-bold text-slate-900 dark:text-slate-100 align-top">
+                          <td className="px-3 py-2 font-bold text-slate-900 dark:text-slate-100 align-top print:text-black print:px-1.5 print:py-1">
                             {item.activity}
                           </td>
-                          <td className="px-4 py-3 text-rose-700 dark:text-rose-300 font-semibold align-top">
+                          <td className="px-3 py-2 text-rose-700 dark:text-rose-300 font-semibold align-top print:text-black print:px-1.5 print:py-1">
                             {item.riskEvent}
                           </td>
-                          <td className="px-3.5 py-3 text-indigo-700 dark:text-indigo-300 font-medium align-top">
+                          <td className="px-2.5 py-2 text-indigo-700 dark:text-indigo-300 font-medium align-top print:text-black print:px-1 print:py-1">
                             {item.riskResponse}
                           </td>
-                          <td className="px-3.5 py-3 text-slate-700 dark:text-slate-300 align-top">
+                          <td className="px-2.5 py-2 text-slate-700 dark:text-slate-300 align-top print:text-black print:px-1 print:py-1">
                             {item.responsiblePerson}
                           </td>
-                          <td className="px-4 py-3 text-slate-700 dark:text-slate-300 leading-relaxed align-top">
+                          <td className="px-3.5 py-2 text-slate-700 dark:text-slate-300 leading-relaxed align-top print:text-black print:px-2 print:py-1">
                             {item.measures}
                           </td>
-                          <td className="px-3.5 py-3 text-slate-600 dark:text-slate-300 align-top">
+                          <td className="px-2.5 py-2 text-slate-600 dark:text-slate-300 align-top print:text-black print:px-1 print:py-1">
                             {item.kpi}
                           </td>
-                          <td className="px-3 py-3 text-slate-700 dark:text-slate-300 align-top font-medium">
+                          <td className="px-2.5 py-2 text-slate-700 dark:text-slate-300 align-top font-medium print:text-black print:px-1 print:py-1">
                             {item.timeline}
                           </td>
-                          <td className="px-3.5 py-3 text-slate-600 dark:text-slate-300 align-top">
+                          <td className="px-3 py-2 text-slate-600 dark:text-slate-300 align-top print:text-black print:px-1.5 print:py-1">
                             {item.monitoringMethod}
                           </td>
                           {setRiskManagement && (
-                            <td className="px-3 py-3 text-center align-top no-print">
+                            <td className="px-3 py-3 text-center align-top no-print print:hidden">
                               {canManage ? (
                                 <button
                                   type="button"
@@ -2560,21 +2560,21 @@ export default function RiskManagementView({
             </div>
 
             {/* Official Signature Section */}
-            <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-6">
-              <div className="w-72 text-center space-y-2 print:text-xs">
-                <div>ลายมือชื่อ...................................................</div>
+            <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-4 print-signature-block break-inside-avoid print:break-inside-avoid">
+              <div className="w-72 text-center space-y-1.5 print:text-[8.5pt]">
+                <div>ลายมือชื่อ................................................... (๑๒)</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
-                    <div>ตำแหน่ง ....................................................</div>
+                    <div>ตำแหน่ง .................................................... (๑๓)</div>
                   </>
                 ) : (
                   <>
                     <div>( {orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
-                    <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
+                    <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} (๑๓)</div>
                   </>
                 )}
-                <div>วันที่......................................................</div>
+                <div>วันที่...............เดือน.....................พ.ศ. .............. (๑๔)</div>
               </div>
             </div>
           </div>
@@ -2673,7 +2673,7 @@ export default function RiskManagementView({
                     <th className="px-4 py-3.5 min-w-[180px]">
                       (11)<br />ปัญหาอุปสรรค และแนวทางแก้ไข
                     </th>
-                    {setRiskManagement && <th className="px-3 py-3.5 text-center w-16 no-print">จัดการ</th>}
+                    {setRiskManagement && <th className="px-3 py-3.5 text-center w-16 no-print print:hidden">จัดการ</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -2718,7 +2718,7 @@ export default function RiskManagementView({
                             {item.problemSolution || '-'}
                           </td>
                           {setRiskManagement && (
-                            <td className="px-3 py-3 text-center align-top no-print">
+                            <td className="px-3 py-3 text-center align-top no-print print:hidden">
                               {canManage ? (
                                 <button
                                   type="button"
@@ -2742,21 +2742,21 @@ export default function RiskManagementView({
             </div>
 
             {/* Official Signature Section */}
-            <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-6">
-              <div className="w-72 text-center space-y-2 print:text-xs">
-                <div>ลายมือชื่อ...................................................</div>
+            <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-4 print-signature-block break-inside-avoid print:break-inside-avoid">
+              <div className="w-72 text-center space-y-1.5 print:text-[8.5pt]">
+                <div>ลายมือชื่อ................................................... (๑๒)</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
-                    <div>ตำแหน่ง ....................................................</div>
+                    <div>ตำแหน่ง .................................................... (๑๓)</div>
                   </>
                 ) : (
                   <>
                     <div>( {orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
-                    <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
+                    <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} (๑๓)</div>
                   </>
                 )}
-                <div>วันที่......................................................</div>
+                <div>วันที่...............เดือน.....................พ.ศ. .............. (๑๔)</div>
               </div>
             </div>
           </div>
@@ -2824,7 +2824,7 @@ export default function RiskManagementView({
                     <th rowSpan={2} className="px-4 py-2.5 min-w-[180px] text-left">
                       (13)<br />มาตรการสำหรับปีถัดไป
                     </th>
-                    {setRiskManagement && <th rowSpan={2} className="px-3 py-2.5 w-16 no-print">จัดการ</th>}
+                    {setRiskManagement && <th rowSpan={2} className="px-3 py-2.5 w-16 no-print print:hidden">จัดการ</th>}
                   </tr>
                   <tr className="border-t border-slate-200 dark:border-slate-700 text-[10px]">
                     {/* (6) Pre-score subheaders */}
@@ -2914,7 +2914,7 @@ export default function RiskManagementView({
                             {item.nextYearMeasures}
                           </td>
                           {setRiskManagement && (
-                            <td className="px-3 py-3 text-center align-top no-print">
+                            <td className="px-3 py-3 text-center align-top no-print print:hidden">
                               {canManage ? (
                                 <button
                                   type="button"
@@ -2938,7 +2938,7 @@ export default function RiskManagementView({
             </div>
 
             {/* Executive Summary Card */}
-            <div className="p-6 bg-slate-50/70 dark:bg-slate-850/60 border-t border-slate-200 dark:border-slate-800 space-y-4 print:bg-slate-50 print:border print:border-black print:p-4">
+            <div className="p-6 bg-slate-50/70 dark:bg-slate-850/60 border-t border-slate-200 dark:border-slate-800 space-y-4 print:bg-slate-50 print:border print:border-black print:p-4 break-inside-avoid print:break-inside-avoid">
               <div className="flex items-center justify-between">
                 <div className="font-bold text-xs sm:text-sm text-slate-900 dark:text-slate-100 flex items-center space-x-2">
                   <FileText className="w-4 h-4 text-blue-600" />
@@ -2961,21 +2961,21 @@ export default function RiskManagementView({
             </div>
 
             {/* Official Signature Section */}
-            <div className="p-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-6">
-              <div className="w-72 text-center space-y-2 print:text-xs">
-                <div>ลายมือชื่อ...................................................</div>
+            <div className="p-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-4 print-signature-block break-inside-avoid print:break-inside-avoid">
+              <div className="w-72 text-center space-y-1.5 print:text-[8.5pt]">
+                <div>ลายมือชื่อ................................................... (๑๔)</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
-                    <div>ตำแหน่ง ....................................................</div>
+                    <div>ตำแหน่ง .................................................... (๑๕)</div>
                   </>
                 ) : (
                   <>
                     <div>( {bs5Data.approvedBy || orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
-                    <div>ตำแหน่ง {bs5Data.approverPosition || orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
+                    <div>ตำแหน่ง {bs5Data.approverPosition || orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} (๑๕)</div>
                   </>
                 )}
-                <div>วันที่รายงาน {bs5Data.reportDate || `......................................................`}</div>
+                <div>วันที่...............เดือน.....................พ.ศ. .............. (๑๖)</div>
               </div>
             </div>
           </div>
