@@ -79,6 +79,45 @@ export const RISK_RESPONSES = [
   { id: 'exploit', label: '8. การส่งเสริมหรือผลักดันเหตุการณ์ (Exploit / Enhance)', desc: 'เมื่อเหตุการณ์ที่อาจเกิดขึ้นส่งผลกระทบเชิงบวกกับองค์กร' },
 ];
 
+// 7 ยุทธศาสตร์การบริหารความเสี่ยง องค์การบริหารส่วนตำบลฝางคำ (๕.๒)
+export const FANGKHAM_STRATEGIES = [
+  'ยุทธศาสตร์ที่ 1 การพัฒนาโครงสร้างพื้นฐาน',
+  'ยุทธศาสตร์ที่ 2 การพัฒนาคุณภาพชีวิต',
+  'ยุทธศาสตร์ที่ 3 การจัดระเบียบชุมชน สังคม และรักษาความสงบเรียบร้อย',
+  'ยุทธศาสตร์ที่ 4 การวางแผนการส่งเสริมการลงทุน',
+  'ยุทธศาสตร์ที่ 5 การจัดการทรัพยากรธรรมชาติและสิ่งแวดล้อม',
+  'ยุทธศาสตร์ที่ 6 การบริหารจัดการศิลปวัฒนธรรม จารีตประเพณี และภูมิปัญญาท้องถิ่น',
+  'ยุทธศาสตร์ที่ 7 การบริหารจัดการทรัพยากรขององค์กรปกครองส่วนท้องถิ่น'
+];
+
+export function mapToFangkhamStrategy(strategyText = '', department = '') {
+  const text = `${strategyText} ${department}`.toLowerCase();
+  if (text.includes('โครงสร้างพื้นฐาน') || text.includes('คมนาคม') || text.includes('ช่าง') || text.includes('ก่อสร้าง') || text.includes('ถนน') || text.includes('สะพาน')) {
+    return FANGKHAM_STRATEGIES[0];
+  }
+  if (text.includes('คุณภาพชีวิต') || text.includes('การศึกษา') || text.includes('สวัสดิการ') || text.includes('สาธารณสุข') || text.includes('เด็ก') || text.includes('ผู้สูงอายุ')) {
+    return FANGKHAM_STRATEGIES[1];
+  }
+  if (text.includes('ระเบียบชุมชน') || text.includes('ความสงบ') || text.includes('ป้องกัน') || text.includes('จราจร') || text.includes('ความปลอดภัย') || text.includes('สาธารณภัย')) {
+    return FANGKHAM_STRATEGIES[2];
+  }
+  if (text.includes('ลงทุน') || text.includes('ส่งเสริมอาชีพ') || text.includes('เกษตร') || text.includes('พาณิชย์') || text.includes('ตลาด')) {
+    return FANGKHAM_STRATEGIES[3];
+  }
+  if (text.includes('ธรรมชาติ') || text.includes('สิ่งแวดล้อม') || text.includes('ขยะ') || text.includes('น้ำเสีย') || text.includes('มลพิษ')) {
+    return FANGKHAM_STRATEGIES[4];
+  }
+  if (text.includes('วัฒนธรรม') || text.includes('ประเพณี') || text.includes('ภูมิปัญญา') || text.includes('ศาสนา') || text.includes('เทศกาล')) {
+    return FANGKHAM_STRATEGIES[5];
+  }
+  if (text.includes('คลัง') || text.includes('การเงิน') || text.includes('พัสดุ') || text.includes('บริหารจัดการ') || text.includes('ทรัพยากร') || text.includes('ปลัด')) {
+    return FANGKHAM_STRATEGIES[6];
+  }
+  const exact = FANGKHAM_STRATEGIES.find(s => s === strategyText || strategyText.includes(s));
+  if (exact) return exact;
+  return FANGKHAM_STRATEGIES[6];
+}
+
 // คำอธิบายแบบตามหนังสือสั่งการ มท 0805.2/ว 3482
 const FORM_GUIDELINES = {
   bs1: {
@@ -321,7 +360,7 @@ export default function RiskManagementView({
       ...item,
       riskCode: item.riskCode || `RSK-0${idx + 1}`,
       activity: item.activity || item.riskEvent || 'โครงการ/ภารกิจสำคัญ',
-      strategy: item.strategy || 'ยุทธศาสตร์การพัฒนาด้านการบริหารจัดการบ้านเมืองที่ดี',
+      strategy: item.strategy || FANGKHAM_STRATEGIES[6],
       budget: item.budget !== undefined ? item.budget : 0,
       objective: item.objective || '',
       kpi: item.kpi || 'ร้อยละความสำเร็จตามเป้าหมาย (100%)',
@@ -3024,7 +3063,7 @@ export default function RiskManagementView({
                     if (chosen) {
                       setFormBs1(prev => ({
                         ...prev,
-                        strategy: chosen.strategy,
+                        strategy: mapToFangkhamStrategy(chosen.strategy, isAdmin ? formBs1.department : userDept),
                         activity: chosen.activity,
                         budget: chosen.budget !== undefined ? chosen.budget : prev.budget,
                         objective: chosen.objective,
@@ -3051,14 +3090,24 @@ export default function RiskManagementView({
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   (4) ยุทธศาสตร์ที่รับผิดชอบ:
                 </label>
-                <input
-                  type="text"
+                <select
                   required
-                  placeholder="เช่น ยุทธศาสตร์การพัฒนาด้านการบริหารจัดการบ้านเมืองที่ดี"
                   value={formBs1.strategy}
                   onChange={(e) => setFormBs1({ ...formBs1, strategy: e.target.value })}
-                  className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800"
-                />
+                  className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-medium text-xs focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                >
+                  <option value="">-- คลิกเพื่อเลือกยุทธศาสตร์ อบต.ฝางคำ (7 ยุทธศาสตร์) --</option>
+                  {FANGKHAM_STRATEGIES.map((strat) => (
+                    <option key={strat} value={strat}>
+                      🎯 {strat}
+                    </option>
+                  ))}
+                  {formBs1.strategy && !FANGKHAM_STRATEGIES.includes(formBs1.strategy) && (
+                    <option value={formBs1.strategy}>
+                      📌 {formBs1.strategy}
+                    </option>
+                  )}
+                </select>
               </div>
 
               <div>
@@ -3074,7 +3123,7 @@ export default function RiskManagementView({
                       if (analyzed) {
                         setFormBs1(prev => ({
                           ...prev,
-                          strategy: prev.strategy || analyzed.strategy,
+                          strategy: prev.strategy || mapToFangkhamStrategy(analyzed.strategy, isAdmin ? formBs1.department : userDept),
                           objective: prev.objective || analyzed.objective,
                           kpi: prev.kpi || analyzed.kpi,
                           target: prev.target || analyzed.target,
@@ -3267,7 +3316,7 @@ export default function RiskManagementView({
                     if (chosen) {
                       setEditingBs1(prev => ({
                         ...prev,
-                        strategy: chosen.strategy,
+                        strategy: mapToFangkhamStrategy(chosen.strategy, editingBs1.department),
                         activity: chosen.activity,
                         budget: chosen.budget !== undefined ? chosen.budget : prev.budget,
                         objective: chosen.objective,
@@ -3294,13 +3343,24 @@ export default function RiskManagementView({
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   (4) ยุทธศาสตร์ที่รับผิดชอบ:
                 </label>
-                <input
-                  type="text"
+                <select
                   required
                   value={editingBs1.strategy || ''}
                   onChange={(e) => setEditingBs1({ ...editingBs1, strategy: e.target.value })}
-                  className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800"
-                />
+                  className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-medium text-xs focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                >
+                  <option value="">-- คลิกเพื่อเลือกยุทธศาสตร์ อบต.ฝางคำ (7 ยุทธศาสตร์) --</option>
+                  {FANGKHAM_STRATEGIES.map((strat) => (
+                    <option key={strat} value={strat}>
+                      🎯 {strat}
+                    </option>
+                  ))}
+                  {editingBs1.strategy && !FANGKHAM_STRATEGIES.includes(editingBs1.strategy) && (
+                    <option value={editingBs1.strategy}>
+                      📌 {editingBs1.strategy}
+                    </option>
+                  )}
+                </select>
               </div>
 
               <div>
@@ -3316,7 +3376,7 @@ export default function RiskManagementView({
                       if (analyzed) {
                         setEditingBs1(prev => ({
                           ...prev,
-                          strategy: prev.strategy || analyzed.strategy,
+                          strategy: prev.strategy || mapToFangkhamStrategy(analyzed.strategy, editingBs1.department),
                           objective: prev.objective || analyzed.objective,
                           kpi: prev.kpi || analyzed.kpi,
                           target: prev.target || analyzed.target,
