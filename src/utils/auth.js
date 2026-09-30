@@ -1438,13 +1438,31 @@ export function getSession() {
       localStorage.removeItem(SESSION_KEY);
       return null;
     }
-    if (session.role === 'guest') {
-      const users = getUsers();
+
+    // Always synchronize live permissions, role, and department from the master users list
+    // so any changes made by ADMIN in User Management take effect immediately across all sessions
+    const users = getUsers();
+    const currentUser = users.find(
+      (u) => (u.username || '').toLowerCase() === (session.username || '').toLowerCase()
+    );
+
+    if (currentUser) {
+      if (Array.isArray(currentUser.permissions)) {
+        session.permissions = [...currentUser.permissions];
+      }
+      if (currentUser.role) {
+        session.role = currentUser.role;
+      }
+      if (currentUser.department) {
+        session.department = currentUser.department;
+      }
+    } else if (session.role === 'guest') {
       const guestUser = users.find((u) => u.username === 'guest' || u.role === 'guest');
       if (guestUser && Array.isArray(guestUser.permissions)) {
-        session.permissions = guestUser.permissions;
+        session.permissions = [...guestUser.permissions];
       }
     }
+
     if (session.permissions && Array.isArray(session.permissions)) {
       if (session.permissions.includes('knowledge') && !session.permissions.includes('forms')) {
         session.permissions.push('forms');

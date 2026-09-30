@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -26,6 +26,7 @@ import {
   ExternalLink,
   FileSpreadsheet,
   Download,
+  Upload,
   Zap,
   RefreshCw,
   Search,
@@ -204,6 +205,10 @@ export default function RiskManagementView({
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewModalDept, setReviewModalDept] = useState('');
   const [reviewOpinion, setReviewOpinion] = useState('');
+
+  // Cross-Machine file transfer ref & info state
+  const fileInputRef = useRef(null);
+  const [showCrossMachineInfo, setShowCrossMachineInfo] = useState(false);
 
   // Reusable Elegant Confirm Modal State
   const [confirmModalConfig, setConfirmModalConfig] = useState({
@@ -1181,6 +1186,101 @@ export default function RiskManagementView({
     setReviewOpinion('');
   };
 
+  // Export Risk Data (JSON) for Cross-Machine Transfer / Backup
+  const handleExportBsData = (targetDept = null) => {
+    const isSingle = Boolean(targetDept && targetDept !== 'all');
+    const deptFilterName = isSingle ? targetDept : (filterDept !== 'all' ? filterDept : null);
+    const filterFn = (item) => (!deptFilterName ? true : item.department === deptFilterName);
+
+    const exportPayload = {
+      app: 'IA-OS Fangkham',
+      version: '2.0',
+      type: 'risk-management-bs',
+      exportedAt: new Date().toISOString(),
+      fiscalYear: selectedYear,
+      exportedBy: currentSession?.displayName || currentSession?.username || 'user',
+      department: deptFilterName || 'all',
+      data: {
+        bs1: (riskManagement?.bs1 || []).filter(filterFn),
+        bs2: (riskManagement?.bs2 || []).filter(filterFn),
+        bs3: (riskManagement?.bs3 || []).filter(filterFn),
+        bs4: (riskManagement?.bs4 || []).filter(filterFn),
+        bs5: (riskManagement?.bs5 || []).filter(filterFn),
+        bs5Summary: riskManagement?.bs5Summary || {},
+        submissions: deptFilterName
+          ? (riskManagement?.submissions?.[deptFilterName] ? { [deptFilterName]: riskManagement.submissions[deptFilterName] } : {})
+          : (riskManagement?.submissions || {})
+      }
+    };
+
+    const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const cleanName = (deptFilterName || 'ทุกส่วนราชการ').replace(/\s+/g, '_');
+    link.download = `ข้อมูลแบบ_บส_${cleanName}_ปี${selectedYear}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    setCascadeSuccessMsg(`ส่งออกไฟล์ข้อมูล บส. ของ "${deptFilterName || 'ทุกส่วนราชการ'}" สำเร็จ! สามารถส่งไฟล์นี้ให้หน่วยตรวจสอบหรือเครื่องอื่นนำเข้าได้`);
+  };
+
+  // Import Risk Data (JSON) from another machine / department
+  const handleImportBsFile = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const parsed = JSON.parse(event.target.result);
+        if (!parsed || !parsed.data || (!Array.isArray(parsed.data.bs1) && !Array.isArray(parsed.data.bs2))) {
+          alert('รูปแบบไฟล์ไม่ถูกต้อง กรุณาเลือกไฟล์ JSON ที่ส่งออกจากระบบบริหารความเสี่ยง (แบบ บส.)');
+          return;
+        }
+
+        const incomingBs1 = parsed.data.bs1 || [];
+        const incomingBs2 = parsed.data.bs2 || [];
+        const incomingBs3 = parsed.data.bs3 || [];
+        const incomingBs4 = parsed.data.bs4 || [];
+        const incomingBs5 = parsed.data.bs5 || [];
+        const incomingSubmissions = parsed.data.submissions || {};
+
+        if (setRiskManagement) {
+          setRiskManagement((prev) => {
+            const mergeList = (original = [], incoming = []) => {
+              const map = new Map();
+              original.forEach((item) => map.set(item.id, item));
+              incoming.forEach((item) => map.set(item.id, item));
+              return Array.from(map.values());
+            };
+
+            return {
+              ...prev,
+              bs1: mergeList(prev?.bs1 || [], incomingBs1),
+              bs2: mergeList(prev?.bs2 || [], incomingBs2),
+              bs3: mergeList(prev?.bs3 || [], incomingBs3),
+              bs4: mergeList(prev?.bs4 || [], incomingBs4),
+              bs5: mergeList(prev?.bs5 || [], incomingBs5),
+              submissions: {
+                ...(prev?.submissions || {}),
+                ...incomingSubmissions
+              }
+            };
+          });
+        }
+
+        const deptName = parsed.department === 'all' ? 'ทุกกอง' : parsed.department || 'ส่วนราชการ';
+        setCascadeSuccessMsg(`นำเข้าข้อมูล บส. ของ "${deptName}" เรียบร้อยแล้ว! (${incomingBs1.length} รายการ บส.1) ข้อมูลถูกผสานเข้าสู่เครื่องนี้เรียบร้อย`);
+      } catch (err) {
+        alert('เกิดข้อผิดพลาดในการอ่านไฟล์: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
   // Handle Print Action
   const handlePrint = () => {
     window.print();
@@ -1410,6 +1510,25 @@ export default function RiskManagementView({
             </div>
 
             <div className="flex items-center gap-2 self-start sm:self-center shrink-0">
+              <button
+                type="button"
+                onClick={() => handleExportBsData(userDept)}
+                className="px-3 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold shadow-xs transition-colors flex items-center space-x-1.5 cursor-pointer"
+                title="ส่งออกไฟล์ข้อมูล บส.1 - บส.5 ของกองนี้เป็น JSON เพื่อส่งให้หน่วยตรวจสอบภายใน"
+              >
+                <Download className="w-3.5 h-3.5 text-slate-500" />
+                <span>ส่งออกไฟล์ บส. กองนี้</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowCrossMachineInfo(true)}
+                className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+                title="วิธีส่งข้อมูลข้ามเครื่อง / สำรองข้อมูล"
+              >
+                <HelpCircle className="w-4 h-4" />
+              </button>
+
               {(!currentDeptSubmission.status || currentDeptSubmission.status === 'draft') ? (
                 <button
                   type="button"
@@ -1457,12 +1576,49 @@ export default function RiskManagementView({
               </div>
             </div>
 
-            {/* Summary stats counters */}
-            <div className="flex items-center gap-1.5 text-xs font-semibold">
-              <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+            {/* Summary stats counters & Cross-Machine Action */}
+            <div className="flex flex-wrap items-center gap-1.5 text-xs font-semibold">
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept=".json"
+                onChange={handleImportBsFile}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white flex items-center space-x-1.5 shadow-xs transition-colors cursor-pointer"
+                title="นำเข้าไฟล์ JSON แบบ บส. ที่กองอื่นส่งมาให้"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                <span>นำเข้าไฟล์ บส. จากกองอื่น</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleExportBsData(null)}
+                className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 flex items-center space-x-1 transition-colors cursor-pointer"
+                title="สำรองข้อมูล บส.1 - บส.5 ของทุกกองเป็นไฟล์ JSON"
+              >
+                <Download className="w-3.5 h-3.5 text-slate-500" />
+                <span>สำรองทั้งหมด (JSON)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowCrossMachineInfo(true)}
+                className="px-2 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center space-x-1 transition-colors cursor-pointer"
+                title="คำอธิบายการเชื่อมโยงข้อมูลระหว่างเครื่อง / Cloud Sync"
+              >
+                <HelpCircle className="w-3.5 h-3.5 text-blue-500" />
+                <span className="hidden sm:inline">การเชื่อมข้อมูล</span>
+              </button>
+
+              <span className="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                 ส่งแล้ว: {departmentsList.filter(d => submissions[d]?.status === 'submitted' || submissions[d]?.status === 'reviewed').length} / {departmentsList.length}
               </span>
-              <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+              <span className="px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                 สอบทานแล้ว: {departmentsList.filter(d => submissions[d]?.status === 'reviewed').length}
               </span>
             </div>
@@ -1560,6 +1716,14 @@ export default function RiskManagementView({
                     </button>
 
                     <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleExportBsData(dept)}
+                        className="text-[11px] p-1.5 rounded text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-slate-700 transition-colors"
+                        title={`ส่งออกไฟล์ บส. ของ "${dept}" เป็น JSON`}
+                      >
+                        <Download className="w-3 h-3" />
+                      </button>
                       {sub.status === 'submitted' ? (
                         <button
                           type="button"
@@ -4467,6 +4631,98 @@ export default function RiskManagementView({
               >
                 <Check className="w-3.5 h-3.5" />
                 <span>บันทึกผลการสอบทาน</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cross-Machine Data Sharing Info Modal */}
+      {showCrossMachineInfo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs no-print">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-150">
+            <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-slate-850 dark:to-slate-850">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20">
+                  <Info className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
+                    คำแนะนำการเชื่อมโยงข้อมูลระหว่างเครื่อง (Data Sync)
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    ความเข้าใจเกี่ยวกับระบบจัดเก็บข้อมูลและการแชร์รายงาน บส.1 - บส.5
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowCrossMachineInfo(false)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs leading-relaxed">
+              {/* Question 1 */}
+              <div className="p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 space-y-2">
+                <h4 className="font-bold text-amber-900 dark:text-amber-300 flex items-center space-x-1.5 text-sm">
+                  <span>❓ ทำไมกองอื่นกรอกข้อมูลแล้ว ไม่วิ่งมาโชว์ที่เครื่อง Admin/หน่วยตรวจ ทันที?</span>
+                </h4>
+                <p className="text-amber-800 dark:text-amber-200/90">
+                  ระบบเว็บแอปพลิเคชันนี้ทำงานด้วยสถาปัตยกรรม <strong>Local-First (Client-side Storage)</strong> ข้อมูลจะถูกจัดเก็บไว้ในหน่วยความจำของบราวเซอร์ประจำเครื่องคอมพิวเตอร์นั้นๆ (Local Storage) เพื่อความปลอดภัยสูงสุด ความรวดเร็วในการเปิดใช้งาน และสามารถทำงานได้แม้อินเทอร์เน็ตหลุด
+                </p>
+                <p className="text-amber-800 dark:text-amber-200/90 font-medium">
+                  👉 ดังนั้น ข้อมูลที่กรอกบนคอมพิวเตอร์เครื่องหนึ่ง (เช่น PC ของกองช่าง) จึงยังไม่ถูกส่งข้ามเครือข่ายไปยังคอมพิวเตอร์เครื่องอื่นโดยตรงจนกว่าจะมีการแชร์ข้อมูล
+                </p>
+              </div>
+
+              {/* Solution 1 */}
+              <div className="p-4 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/60 space-y-2.5">
+                <h4 className="font-bold text-indigo-950 dark:text-indigo-200 flex items-center space-x-1.5 text-sm">
+                  <span>🔄 วิธีแชร์และรวมข้อมูลข้ามเครื่อง (ทำได้ทันที ไม่ต้องตั้งค่าเซิร์ฟเวอร์)</span>
+                </h4>
+                <div className="space-y-2 text-indigo-900 dark:text-indigo-200/90 pl-1">
+                  <div className="flex items-start space-x-2">
+                    <span className="w-5 h-5 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center shrink-0 text-[10px]">1</span>
+                    <div>
+                      <strong>แต่ละกองจัดทำรายงาน:</strong> เมื่อกรอกข้อมูลแบบ บส.1 - บส.5 เสร็จแล้ว ให้กดปุ่ม <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 font-bold text-slate-800 dark:text-slate-200 border border-indigo-200 dark:border-slate-700 mx-1"><Download className="w-3 h-3 mr-0.5 text-indigo-600" />ส่งออกไฟล์ บส. กองนี้</span> ระบบจะดาวน์โหลดไฟล์ <code className="bg-white/80 dark:bg-slate-800 px-1 py-0.5 rounded font-mono text-indigo-700 dark:text-indigo-300">.json</code> ลงในเครื่อง
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <span className="w-5 h-5 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center shrink-0 text-[10px]">2</span>
+                    <div>
+                      <strong>ส่งไฟล์รายงาน:</strong> แต่ละกองส่งไฟล์ <code className="bg-white/80 dark:bg-slate-800 px-1 py-0.5 rounded font-mono text-indigo-700 dark:text-indigo-300">.json</code> นั้นให้หน่วยตรวจสอบภายใน (ผ่าน Line, อีเมล หรือ Flash drive)
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <span className="w-5 h-5 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center shrink-0 text-[10px]">3</span>
+                    <div>
+                      <strong>หน่วยตรวจสอบนำเข้าข้อมูล:</strong> หน่วยตรวจสอบเปิดระบบแล้วกดปุ่ม <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-indigo-600 font-bold text-white shadow-xs mx-1"><Upload className="w-3 h-3 mr-0.5" />นำเข้าไฟล์ บส. จากกองอื่น</span> แล้วเลือกไฟล์ที่ได้รับ ระบบจะผสานรวมข้อมูล (Merge) เข้าสู่ฐานข้อมูลเครื่องตรวจทันที โดยไม่ทับซ้อนหรือลบข้อมูลเดิมของกองอื่น
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Solution 2 */}
+              <div className="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 space-y-2">
+                <h4 className="font-bold text-emerald-950 dark:text-emerald-200 flex items-center space-x-1.5 text-sm">
+                  <span>☁️ แนวทางซิงค์ออนไลน์เรียลไทม์ (Cloud Database - Supabase)</span>
+                </h4>
+                <p className="text-emerald-900 dark:text-emerald-200/90">
+                  ระบบได้เตรียมโครงสร้างเชื่อมต่อ <strong>Supabase Cloud Database</strong> ไว้เรียบร้อยแล้ว หากหน่วยงานต้องการให้ข้อมูลทุกเครื่องเชื่อมโยงกันสดๆ อัตโนมัติโดยไม่ต้องส่งไฟล์ สามารถไปที่ <strong>&ldquo;ตั้งค่าระบบ&rdquo; &rarr; &ldquo;ฐานข้อมูลคลาวด์ (Supabase)&rdquo;</strong> แล้วกรอก URL และ Anon Key เพื่อเปิดใช้งานระบบ Real-time Sync ได้ทันที
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-50 dark:bg-slate-850 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowCrossMachineInfo(false)}
+                className="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold text-xs shadow-sm transition-colors cursor-pointer"
+              >
+                เข้าใจแล้ว / ปิดหน้าต่าง
               </button>
             </div>
           </div>

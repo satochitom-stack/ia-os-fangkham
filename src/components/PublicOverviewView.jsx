@@ -257,8 +257,91 @@ export default function PublicOverviewView({
       email: 'saraban@fangkham.go.th',
       address: 'เลขที่ 99 หมู่ที่ 1 ตำบลฝางคำ อำเภอสิรินธร จังหวัดอุบลราชธานี 34350',
       officeHours: 'จันทร์ - ศุกร์ เวลา 08.30 - 16.30 น. (เว้นวันหยุดราชการ)'
-    }
+    },
+    orbitalNodes: [
+      {
+        id: 1,
+        title: 'สำนักปลัด',
+        subtitle: 'กำกับโดย หัวหน้าสำนักปลัด',
+        date: 'ตลอดปีงบประมาณ',
+        content: 'งานสารบรรณ นิติการ ป้องกันและบรรเทาสาธารณภัย สุขาภิบาลและสิ่งแวดล้อม',
+        category: 'สำนักปลัด',
+        iconName: 'Building2',
+        relatedIds: [2, 6],
+        status: 'completed',
+        energy: 96,
+        color: 'blue'
+      },
+      {
+        id: 2,
+        title: 'กองคลัง',
+        subtitle: 'ผู้อำนวยการกองคลัง',
+        date: 'ภาษีที่ดิน มิ.ย.',
+        content: 'การเงินและบัญชี ภาษีที่ดินและสิ่งปลูกสร้าง แผนที่ภาษี LTAX 3000 และจัดซื้อจัดจ้าง e-GP',
+        category: 'กองคลัง',
+        iconName: 'BadgeDollarSign',
+        relatedIds: [1, 3],
+        status: 'in-progress',
+        energy: 94,
+        color: 'emerald'
+      },
+      {
+        id: 3,
+        title: 'กองช่าง',
+        subtitle: 'ผู้อำนวยการกองช่าง',
+        date: 'พิจารณาคำขอ 45 วัน',
+        content: 'คำขออนุญาตก่อสร้างอาคาร (ข.1/อ.1) ตรวจแบบแปลน ซ่อมบำรุงไฟฟ้าสาธารณะและถนน',
+        category: 'กองช่าง',
+        iconName: 'HardHat',
+        relatedIds: [1, 4],
+        status: 'in-progress',
+        energy: 88,
+        color: 'amber'
+      },
+      {
+        id: 4,
+        title: 'กองการศึกษา',
+        subtitle: 'ผู้อำนวยการกองการศึกษา',
+        date: 'ภาคเรียนที่ 1 - 2',
+        content: 'ศูนย์พัฒนาเด็กเล็ก 2 แห่ง (ศพด.วัดเจริญทัศน์ & ศพด.บ้านฝางเทิง) อาหารกลางวันและนมโรงเรียน',
+        category: 'กองการศึกษา',
+        iconName: 'GraduationCap',
+        relatedIds: [3, 5],
+        status: 'completed',
+        energy: 100,
+        color: 'purple'
+      },
+      {
+        id: 5,
+        title: 'กองสวัสดิการสังคม',
+        subtitle: 'ผู้อำนวยการกองสวัสดิการสังคม',
+        date: 'ทุกวันที่ 10 ของเดือน',
+        content: 'เบี้ยยังชีพผู้สูงอายุ (600-1,000 บ.) เบี้ยความพิการ และสงเคราะห์ครอบครัวยากไร้',
+        category: 'กองสวัสดิการสังคม',
+        iconName: 'HeartHandshake',
+        relatedIds: [1, 6],
+        status: 'completed',
+        energy: 98,
+        color: 'rose'
+      },
+      {
+        id: 6,
+        title: 'เขตพื้นที่ตำบล 4 หมู่บ้าน',
+        subtitle: 'พื้นที่บริการประชาชน ต.ฝางคำ',
+        date: 'ครอบคลุม 100%',
+        content: 'ม.1 บ้านฝาง • ม.2 บ้านเทิง • ม.3 บ้านคำกลาง • ม.4 บ้านโนนจันทร์ (ครอบคลุมการให้บริการและดูแลคุณภาพชีวิตทุกหลังคาเรือน)',
+        category: 'เขตพื้นที่บริการ',
+        iconName: 'MapPin',
+        relatedIds: [1, 5],
+        status: 'completed',
+        energy: 100,
+        color: 'cyan'
+      }
+    ]
   };
+
+  // Selected node for editing in orbital tab
+  const [selectedOrbitalNodeForEdit, setSelectedOrbitalNodeForEdit] = useState(0);
 
   // Persistent state backed by LocalStorage
   const [data, setData] = useState(() => {
@@ -267,7 +350,13 @@ export default function PublicOverviewView({
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && Array.isArray(parsed.divisions) && parsed.divisions.length === 5) {
-          return parsed;
+          return {
+            ...defaultOverviewData,
+            ...parsed,
+            orbitalNodes: Array.isArray(parsed.orbitalNodes) && parsed.orbitalNodes.length === 6
+              ? parsed.orbitalNodes
+              : defaultOverviewData.orbitalNodes
+          };
         }
       }
     } catch (e) {
@@ -279,9 +368,13 @@ export default function PublicOverviewView({
   // Working copy for Admin Edit Modal
   const [editForm, setEditForm] = useState(data);
 
-  const handleOpenAdminModal = () => {
-    setEditForm(JSON.parse(JSON.stringify(data)));
-    setAdminModalTab('general');
+  const handleOpenAdminModal = (defaultTab = 'general') => {
+    const copy = JSON.parse(JSON.stringify(data));
+    if (!copy.orbitalNodes || copy.orbitalNodes.length !== 6) {
+      copy.orbitalNodes = JSON.parse(JSON.stringify(defaultOverviewData.orbitalNodes));
+    }
+    setEditForm(copy);
+    setAdminModalTab(defaultTab);
     setShowAdminEditModal(true);
   };
 
@@ -341,86 +434,10 @@ export default function PublicOverviewView({
 
       {/* 2. โมเดลวงโคจร 3 มิติ (Radial Orbital): โครงสร้าง 5 ส่วนราชการหลัก & ภารกิจ อบต.ฝางคำ */}
       {(() => {
-        const departmentOrbitalNodes = [
-          {
-            id: 1,
-            title: 'สำนักปลัด',
-            subtitle: data.divisions[0]?.leader || 'กำกับโดย หัวหน้าสำนักปลัด',
-            date: 'ตลอดปีงบประมาณ',
-            content: data.divisions[0]?.services?.slice(0, 3).join(' • ') || 'งานสารบรรณ นิติการ ป้องกันและบรรเทาสาธารณภัย สุขาภิบาลและสิ่งแวดล้อม',
-            category: 'สำนักปลัด',
-            icon: Building2,
-            relatedIds: [2, 6],
-            status: 'completed',
-            energy: 96,
-            color: 'blue'
-          },
-          {
-            id: 2,
-            title: data.divisions[1]?.name || 'กองคลัง',
-            subtitle: data.divisions[1]?.leader || 'ผู้อำนวยการกองคลัง',
-            date: 'ภาษีที่ดิน มิ.ย.',
-            content: data.divisions[1]?.services?.slice(0, 3).join(' • ') || 'การเงินและบัญชี ภาษีที่ดินและสิ่งปลูกสร้าง แผนที่ภาษี LTAX 3000 และจัดซื้อจัดจ้าง e-GP',
-            category: 'กองคลัง',
-            icon: BadgeDollarSign,
-            relatedIds: [1, 3],
-            status: 'in-progress',
-            energy: 94,
-            color: 'emerald'
-          },
-          {
-            id: 3,
-            title: data.divisions[2]?.name || 'กองช่าง',
-            subtitle: data.divisions[2]?.leader || 'ผู้อำนวยการกองช่าง',
-            date: 'พิจารณาคำขอ 45 วัน',
-            content: data.divisions[2]?.services?.slice(0, 3).join(' • ') || 'คำขออนุญาตก่อสร้างอาคาร (ข.1/อ.1) ตรวจแบบแปลน ซ่อมบำรุงไฟฟ้าสาธารณะและถนน',
-            category: 'กองช่าง',
-            icon: HardHat,
-            relatedIds: [1, 4],
-            status: 'in-progress',
-            energy: 88,
-            color: 'amber'
-          },
-          {
-            id: 4,
-            title: data.divisions[3]?.name || 'กองการศึกษา',
-            subtitle: data.divisions[3]?.leader || 'ผู้อำนวยการกองการศึกษา',
-            date: 'ภาคเรียนที่ 1 - 2',
-            content: data.divisions[3]?.services?.slice(0, 3).join(' • ') || 'ศูนย์พัฒนาเด็กเล็ก 2 แห่ง (ศพด.วัดเจริญทัศน์ & ศพด.บ้านฝางเทิง) อาหารกลางวันและนมโรงเรียน',
-            category: 'กองการศึกษา',
-            icon: GraduationCap,
-            relatedIds: [3, 5],
-            status: 'completed',
-            energy: 100,
-            color: 'purple'
-          },
-          {
-            id: 5,
-            title: data.divisions[4]?.name || 'กองสวัสดิการสังคม',
-            subtitle: data.divisions[4]?.leader || 'ผู้อำนวยการกองสวัสดิการสังคม',
-            date: 'ทุกวันที่ 10 ของเดือน',
-            content: data.divisions[4]?.services?.slice(0, 3).join(' • ') || 'เบี้ยยังชีพผู้สูงอายุ (600-1,000 บ.) เบี้ยความพิการ และสงเคราะห์ครอบครัวยากไร้',
-            category: 'กองสวัสดิการสังคม',
-            icon: HeartHandshake,
-            relatedIds: [1, 6],
-            status: 'completed',
-            energy: 98,
-            color: 'rose'
-          },
-          {
-            id: 6,
-            title: 'เขตพื้นที่ตำบล 4 หมู่บ้าน',
-            subtitle: 'พื้นที่บริการประชาชน ต.ฝางคำ',
-            date: 'ครอบคลุม 100%',
-            content: 'ม.1 บ้านฝาง • ม.2 บ้านเทิง • ม.3 บ้านคำกลาง • ม.4 บ้านโนนจันทร์ (ครอบคลุมการให้บริการและดูแลคุณภาพชีวิตทุกหลังคาเรือน)',
-            category: 'เขตพื้นที่บริการ',
-            icon: MapPin,
-            relatedIds: [1, 5],
-            status: 'completed',
-            energy: 100,
-            color: 'cyan'
-          }
-        ];
+        const orbitalNodesToDisplay = (data.orbitalNodes || defaultOverviewData.orbitalNodes).map((node) => ({
+          ...node,
+          icon: getIconComponent(node.iconName)
+        }));
 
         return (
           <div className="space-y-2">
@@ -436,17 +453,17 @@ export default function PublicOverviewView({
               {isAdmin && (
                 <button
                   type="button"
-                  onClick={handleOpenAdminModal}
+                  onClick={() => handleOpenAdminModal('orbital')}
                   className="text-xs text-blue-600 dark:text-cyan-400 hover:underline flex items-center gap-1 font-medium cursor-pointer"
                 >
                   <Edit3 className="w-3.5 h-3.5" />
-                  <span>แก้ไขคำขวัญ/ข้อมูล</span>
+                  <span>แก้ไขคำขวัญ/ข้อมูลวงโคจร</span>
                 </button>
               )}
             </div>
 
             <RadialOrbitalTimeline
-              timelineData={departmentOrbitalNodes}
+              timelineData={orbitalNodesToDisplay}
               slogan={data.slogan}
               centerTitle={orgName}
               centerSubtitle="ศูนย์ปฏิบัติการ 5 ส่วนราชการ"
@@ -847,6 +864,16 @@ export default function PublicOverviewView({
                 }`}
               >
                 5. ที่อยู่ & การติดต่อ
+              </button>
+              <button
+                onClick={() => setAdminModalTab('orbital')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  adminModalTab === 'orbital'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60'
+                }`}
+              >
+                🪐 6. ข้อมูลวงโคจร 3D (6 โหนด)
               </button>
             </div>
 
@@ -1343,6 +1370,175 @@ export default function PublicOverviewView({
                       />
                     </div>
                   </div>
+                </div>
+              )}
+
+              {/* Tab 6: 3D Orbital Nodes Editing */}
+              {adminModalTab === 'orbital' && (
+                <div className="space-y-4">
+                  <div className="p-3 bg-blue-50 dark:bg-blue-950/40 rounded-xl border border-blue-200/80 dark:border-blue-900/60">
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">
+                      คำขวัญ / สโลแกน อบต.ฝางคำ (แสดงที่แถบ Ribbon ด้านบนวงโคจร)
+                    </label>
+                    <input
+                      type="text"
+                      value={editForm.slogan || ''}
+                      onChange={(e) => setEditForm({ ...editForm, slogan: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl border border-blue-300 dark:border-blue-700 bg-white dark:bg-slate-900 font-bold text-blue-950 dark:text-cyan-200"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold mb-2">
+                      เลือกโหนดในวงโคจร 3D ที่ต้องการแก้ไขข้อมูล:
+                    </label>
+                    <div className="flex flex-wrap gap-1.5 p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                      {(editForm.orbitalNodes || defaultOverviewData.orbitalNodes).map((node, idx) => (
+                        <button
+                          key={node.id}
+                          type="button"
+                          onClick={() => setSelectedOrbitalNodeForEdit(idx)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                            selectedOrbitalNodeForEdit === idx
+                              ? 'bg-blue-600 text-white shadow-xs'
+                              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                          }`}
+                        >
+                          {node.title}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {(() => {
+                    const currentNode = (editForm.orbitalNodes || defaultOverviewData.orbitalNodes)[selectedOrbitalNodeForEdit];
+                    if (!currentNode) return null;
+
+                    const updateCurrentNode = (field, val) => {
+                      const updated = [...(editForm.orbitalNodes || defaultOverviewData.orbitalNodes)];
+                      updated[selectedOrbitalNodeForEdit] = {
+                        ...updated[selectedOrbitalNodeForEdit],
+                        [field]: val
+                      };
+                      setEditForm({ ...editForm, orbitalNodes: updated });
+                    };
+
+                    return (
+                      <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 space-y-3">
+                        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                          <span className="font-bold text-slate-800 dark:text-slate-200">
+                            แก้ไขรายละเอียดโหนดที่ {selectedOrbitalNodeForEdit + 1}: {currentNode.title}
+                          </span>
+                          <span className="text-[11px] font-mono text-blue-600 dark:text-cyan-400 font-bold">
+                            ID: {currentNode.id}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">
+                              ชื่อโหนดในวงโคจร (Node Title)
+                            </label>
+                            <input
+                              type="text"
+                              value={currentNode.title}
+                              onChange={(e) => updateCurrentNode('title', e.target.value)}
+                              className="w-full px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-bold"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">
+                              ตำแหน่ง / ผู้กำกับ / คำอธิบายสั้น (Subtitle)
+                            </label>
+                            <input
+                              type="text"
+                              value={currentNode.subtitle || ''}
+                              onChange={(e) => updateCurrentNode('subtitle', e.target.value)}
+                              className="w-full px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">
+                              กรอบเวลา / ระยะเวลาให้บริการ (Date/Period)
+                            </label>
+                            <input
+                              type="text"
+                              value={currentNode.date || ''}
+                              onChange={(e) => updateCurrentNode('date', e.target.value)}
+                              className="w-full px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">
+                              สถานะการให้บริการ (Status)
+                            </label>
+                            <select
+                              value={currentNode.status}
+                              onChange={(e) => updateCurrentNode('status', e.target.value)}
+                              className="w-full px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-medium"
+                            >
+                              <option value="completed">พร้อมให้บริการเต็มรูปแบบ (Completed)</option>
+                              <option value="in-progress">กำลังดำเนินงาน/บริการ (In Progress)</option>
+                              <option value="pending">รอดำเนินการ (Pending)</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">
+                              โทนสี (Color)
+                            </label>
+                            <select
+                              value={currentNode.color || 'blue'}
+                              onChange={(e) => updateCurrentNode('color', e.target.value)}
+                              className="w-full px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-medium"
+                            >
+                              <option value="blue">Blue (น้ำเงิน/ฟ้า)</option>
+                              <option value="emerald">Emerald (เขียว)</option>
+                              <option value="amber">Amber (ส้ม/ทอง)</option>
+                              <option value="purple">Purple (ม่วง)</option>
+                              <option value="rose">Rose (ชมพู/แดง)</option>
+                              <option value="cyan">Cyan (ฟ้าสว่าง)</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <div className="flex justify-between items-center mb-1">
+                              <label className="text-slate-600 dark:text-slate-400 font-semibold">
+                                ศักยภาพและความพร้อมการให้บริการ (Energy %)
+                              </label>
+                              <span className="font-mono font-bold text-blue-600 dark:text-cyan-400">
+                                {currentNode.energy}%
+                              </span>
+                            </div>
+                            <input
+                              type="range"
+                              min="0"
+                              max="100"
+                              value={currentNode.energy || 100}
+                              onChange={(e) => updateCurrentNode('energy', parseInt(e.target.value))}
+                              className="w-full"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">
+                            รายละเอียดภารกิจและบริการ (แสดงในกล่องป๊อปอัป 3D เมื่อคลิก)
+                          </label>
+                          <textarea
+                            rows={3}
+                            value={currentNode.content || ''}
+                            onChange={(e) => updateCurrentNode('content', e.target.value)}
+                            className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 leading-relaxed font-normal"
+                            placeholder="ระบุภารกิจหรือบริการสำคัญ เช่น ม.1 บ้านฝาง • ม.2 บ้านเทิง..."
+                          />
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
             </div>

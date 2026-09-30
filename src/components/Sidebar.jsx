@@ -119,32 +119,28 @@ export default function Sidebar({
   ];
 
   const canAccessItem = (item) => {
+    // 1. หน้าภาพรวมสาธารณะ: ทุกคนเข้าถึงได้เสมอ
     if (item.id === 'public-overview') return true;
-    if (session?.role === 'guest') {
-      return userPermissions.includes(item.id);
-    }
+
+    // 2. ผู้ดูแลระบบ (ADMIN): เข้าถึงได้ทุกเมนู
     if (isAdmin) return true;
-    if (isExecutive) return true;
+
+    // 3. เมนูสำหรับ ADMIN เท่านั้น (เช่น จัดการผู้ใช้งาน): ผู้ใช้อื่นมองไม่เห็นเด็ดขาด
     if (item.adminOnly) return false;
 
-    // แดชบอร์ดผู้บริหาร: สงวนเฉพาะ Admin และ ผู้บริหาร (Executive) เท่านั้น กอง/ส่วนราชการอื่น ๆ จะมองไม่เห็น
-    if (item.id === 'executive-dashboard') return false;
-    if (item.id === 'central-calendar') return true;
-    if (item.id === 'dept-office' && (session?.department?.includes('ปลัด') || session?.department?.includes('สาธารณสุข') || session?.department?.includes('สิ่งแวดล้อม') || session?.username === 'office' || session?.username === 'health')) return true;
-    if (item.id === 'dept-finance' && (session?.department?.includes('คลัง') || session?.username === 'finance')) return true;
-    if (item.id === 'dept-tech' && (session?.department?.includes('ช่าง') || session?.username === 'engineering' || session?.username === 'tech')) return true;
-    if (item.id === 'dept-education' && (session?.department?.includes('การศึกษา') || session?.username === 'education')) return true;
-    if (item.id === 'dept-welfare' && (session?.department?.includes('สวัสดิการ') || session?.username === 'welfare')) return true;
-    if (item.id === 'dept-workspaces' && (
-      session?.department?.includes('ปลัด') ||
-      session?.department?.includes('คลัง') ||
-      session?.department?.includes('ช่าง') ||
-      session?.department?.includes('การศึกษา') ||
-      session?.department?.includes('สวัสดิการ') ||
-      session?.department?.includes('สาธารณสุข') ||
-      ['office', 'finance', 'engineering', 'tech', 'education', 'welfare', 'health'].includes(session?.username)
-    )) return true;
+    // 4. แดชบอร์ดผู้บริหาร: สงวนเฉพาะ Admin และ Executive เท่านั้น
+    if (item.id === 'executive-dashboard') {
+      return isExecutive;
+    }
 
+    // 5. ผู้บริหาร (Executive): เข้าถึงแดชบอร์ดผู้บริหาร และเมนูที่ได้รับอนุญาต
+    if (isExecutive) {
+      if (item.id === 'executive-dashboard') return true;
+      return userPermissions.includes(item.id);
+    }
+
+    // 6. ตรวจสอบสิทธิ์อย่างเข้มงวดตามที่ ADMIN กำหนดไว้ในตารางสิทธิ์ (Strict RBAC):
+    // แสดงเฉพาะเมนูที่มีรหัสอยู่ใน userPermissions ของผู้ใช้นั้น ๆ เท่านั้น
     return userPermissions.includes(item.id);
   };
 
