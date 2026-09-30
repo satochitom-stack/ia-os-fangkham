@@ -31,8 +31,11 @@ import {
   X,
   Quote,
   Landmark,
-  Award
+  Award,
+  Orbit,
+  LayoutGrid
 } from 'lucide-react';
+import RadialOrbitalTimeline from '@/components/ui/radial-orbital-timeline';
 
 export default function PublicOverviewView({
   orgProfile = {},
@@ -41,6 +44,7 @@ export default function PublicOverviewView({
   setCurrentTab = () => {}
 }) {
   const [activeTab, setActiveTab] = useState('divisions'); // divisions, timelines, forms, ita
+  const [timelineViewMode, setTimelineViewMode] = useState('orbital'); // orbital, cards
   const [showAdminEditModal, setShowAdminEditModal] = useState(false);
   const [adminModalTab, setAdminModalTab] = useState('general'); // general, divisions, timelines, forms, contact
   const [selectedDivForEdit, setSelectedDivForEdit] = useState(0);
@@ -491,11 +495,24 @@ export default function PublicOverviewView({
       {/* Tab 1: 5 Divisions Public Structure */}
       {activeTab === 'divisions' && (
         <div className="space-y-4">
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-start gap-3">
-            <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
-            <div className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              <strong>โครงสร้างการบริหารราชการ อบต.ฝางคำ:</strong> ปฏิบัติภารกิจตามพระราชบัญญัติสภาตำบลและองค์การบริหารส่วนตำบล พ.ศ. 2537 โดยแบ่งส่วนราชการออกเป็น 5 หน่วยงาน เพื่ออำนวยความสะดวกและให้บริการประชาชนในตำบลฝางคำอย่างทั่วถึง รวดเร็ว และเป็นธรรม
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+              <div className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                <strong>โครงสร้างการบริหารราชการ อบต.ฝางคำ:</strong> ปฏิบัติภารกิจตามพระราชบัญญัติสภาตำบลและองค์การบริหารส่วนตำบล พ.ศ. 2537 โดยแบ่งส่วนราชการออกเป็น 5 หน่วยงาน เพื่ออำนวยความสะดวกและให้บริการประชาชนในตำบลฝางคำอย่างทั่วถึง รวดเร็ว และเป็นธรรม
+              </div>
             </div>
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('timelines');
+                setTimelineViewMode('orbital');
+              }}
+              className="shrink-0 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all flex items-center space-x-1.5 cursor-pointer self-start sm:self-auto"
+            >
+              <Orbit className="w-3.5 h-3.5 text-cyan-200" />
+              <span>ชมวงโคจร 3D</span>
+            </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -555,53 +572,207 @@ export default function PublicOverviewView({
         </div>
       )}
 
-      {/* Tab 2: Service Timelines & Deadlines */}
-      {activeTab === 'timelines' && (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">
-                กรอบเวลาและรอบปฏิทินการให้บริการประชาชน
-              </h2>
-              <p className="text-xs text-slate-500">
-                กำหนดการสำคัญเพื่อการติดต่อรับบริการและการปฏิบัติตามกฎหมายของประชาชน
-              </p>
-            </div>
-            <span className="text-xs text-blue-600 bg-blue-50 dark:bg-blue-950 px-3 py-1 rounded-xl font-bold">
-              ปีงบประมาณ พ.ศ. {selectedYear}
-            </span>
-          </div>
+      {/* Tab 2: Service Timelines & Deadlines with Radial Orbital Timeline */}
+      {activeTab === 'timelines' && (() => {
+        const orbitalTimelineData = (data.timelines && data.timelines.length > 0)
+          ? data.timelines.map((t, idx) => {
+              let icon = Building2;
+              let energy = 90;
+              let status = 'in-progress';
+              if (t.authority?.includes('คลัง')) {
+                icon = BadgeDollarSign;
+                energy = 92;
+                status = 'in-progress';
+              } else if (t.authority?.includes('ช่าง')) {
+                icon = HardHat;
+                energy = 85;
+                status = 'in-progress';
+              } else if (t.authority?.includes('ศึกษา')) {
+                icon = GraduationCap;
+                energy = 100;
+                status = 'completed';
+              } else if (t.authority?.includes('สวัสดิการ')) {
+                icon = HeartHandshake;
+                energy = 98;
+                status = 'completed';
+              } else if (t.authority?.includes('ปลัด')) {
+                icon = Building2;
+                energy = 95;
+                status = 'completed';
+              }
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-            {data.timelines.map((t, idx) => (
-              <div
-                key={t.id || idx}
-                className="p-5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 space-y-2 text-xs hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
-              >
-                <div className="flex items-start justify-between">
-                  <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100">
-                    {t.title}
-                  </h3>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
-                    {t.authority}
+              const total = data.timelines.length;
+              const prevId = idx === 0 ? total : idx;
+              const nextId = idx === total - 1 ? 1 : idx + 2;
+
+              return {
+                id: idx + 1,
+                title: t.title,
+                date: t.period,
+                content: `${t.desc} [${t.authority} - ${t.statusNote || 'ให้บริการตามกำหนด'}]`,
+                category: t.authority,
+                icon: icon,
+                relatedIds: [prevId, nextId].filter((id) => id !== idx + 1),
+                status: status,
+                energy: energy
+              };
+            })
+          : [
+              {
+                id: 1,
+                title: "สำนักปลัด & สาธารณสุข",
+                date: "ตลอดปีงบประมาณ 2569",
+                content: "งานสารบรรณ นิติการ ป้องกันบรรเทาสาธารณภัย รับเรื่องร้องเรียน และงานเก็บขนขยะมูลฝอย",
+                category: "สำนักปลัด",
+                icon: Building2,
+                relatedIds: [2, 3],
+                status: "completed",
+                energy: 95,
+              },
+              {
+                id: 2,
+                title: "การจัดเก็บภาษีและพัสดุ",
+                date: "ม.ค. - มิ.ย. 2569",
+                content: "ชำระภาษีที่ดินและสิ่งปลูกสร้าง แผนที่ภาษี LTAX 3000 และการจัดซื้อจัดจ้าง e-GP",
+                category: "กองคลัง",
+                icon: BadgeDollarSign,
+                relatedIds: [1, 3],
+                status: "in-progress",
+                energy: 90,
+              },
+              {
+                id: 3,
+                title: "ขออนุญาตก่อสร้างอาคาร",
+                date: "พิจารณาใน 45 วัน",
+                content: "ยื่นคำขออนุญาตก่อสร้างอาคาร (แบบ ข.1/อ.1) ตรวจแบบแปลน และซ่อมบำรุงไฟฟ้าสาธารณะ",
+                category: "กองช่าง",
+                icon: HardHat,
+                relatedIds: [1, 4],
+                status: "in-progress",
+                energy: 85,
+              },
+              {
+                id: 4,
+                title: "ศูนย์พัฒนาเด็กเล็ก & อาหาร",
+                date: "ภาคเรียนที่ 1 - 2",
+                content: "บริหารจัดการ ศพด. 2 แห่ง (ศพด.วัดเจริญทัศน์ & ศพด.บ้านฝางเทิง) อาหารกลางวันและนมโรงเรียน",
+                category: "กองการศึกษา",
+                icon: GraduationCap,
+                relatedIds: [3, 5],
+                status: "completed",
+                energy: 100,
+              },
+              {
+                id: 5,
+                title: "เบี้ยยังชีพ & สวัสดิการ",
+                date: "ทุกวันที่ 10 ของเดือน",
+                content: "จ่ายเบี้ยยังชีพผู้สูงอายุ คนพิการ ผู้ป่วยเอดส์ และการสงเคราะห์ครอบครัวยากไร้ในชุมชน",
+                category: "กองสวัสดิการสังคม",
+                icon: HeartHandshake,
+                relatedIds: [1, 4],
+                status: "completed",
+                energy: 98,
+              }
+            ];
+
+        return (
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center space-x-2">
+                  <span className="p-1.5 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400">
+                    <Orbit className="w-4 h-4" />
+                  </span>
+                  <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">
+                    กรอบเวลาและรอบปฏิทินการให้บริการประชาชน
+                  </h2>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  กำหนดการสำคัญและรอบการให้บริการสาธารณะ อบต.ฝางคำ ประจำปีงบประมาณ พ.ศ. {selectedYear}
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-2 flex-wrap gap-y-2">
+                {/* View Switcher: Orbital 3D vs Cards */}
+                <div className="bg-slate-100 dark:bg-slate-800 p-1 rounded-xl flex items-center border border-slate-200 dark:border-slate-700">
+                  <button
+                    type="button"
+                    onClick={() => setTimelineViewMode('orbital')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1.5 transition-all cursor-pointer ${
+                      timelineViewMode === 'orbital'
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <Orbit className="w-3.5 h-3.5" />
+                    <span>วงโคจร 3D (Orbital)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTimelineViewMode('cards')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1.5 transition-all cursor-pointer ${
+                      timelineViewMode === 'cards'
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <span>รายการการ์ด (Cards)</span>
+                  </button>
+                </div>
+
+                <span className="text-xs text-blue-600 bg-blue-50 dark:bg-blue-950 px-3 py-1 rounded-xl font-bold hidden sm:inline-block">
+                  ปีงบประมาณ พ.ศ. {selectedYear}
+                </span>
+              </div>
+            </div>
+
+            {timelineViewMode === 'orbital' ? (
+              <div className="space-y-3 pt-1">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-500 gap-1 bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-700">
+                  <span className="flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-blue-500" />
+                    <span><strong>คำแนะนำ:</strong> วงโคจรหมุนอัตโนมัติรอบศูนย์กลาง คลิกที่แต่ละโหนดเพื่อเปิดการ์ดข้อมูลและกดส่วนงานที่เชื่อมโยงเพื่อข้ามโหนด</span>
+                  </span>
+                  <span className="text-[11px] font-mono text-blue-600 dark:text-blue-400 font-bold self-end sm:self-auto">
+                    {orbitalTimelineData.length} โหนดบริการในวงโคจร
                   </span>
                 </div>
-                <div className="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1.5 text-xs">
-                  <Clock className="w-3.5 h-3.5" />
-                  <span>{t.period}</span>
-                </div>
-                <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                  {t.desc}
-                </p>
-                <div className="pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-[11px] text-slate-400">
-                  <span>สถานะการบริการ:</span>
-                  <span className="text-emerald-600 font-medium">● {t.statusNote}</span>
-                </div>
+                <RadialOrbitalTimeline timelineData={orbitalTimelineData} />
               </div>
-            ))}
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                {data.timelines.map((t, idx) => (
+                  <div
+                    key={t.id || idx}
+                    className="p-5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 space-y-2 text-xs hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
+                  >
+                    <div className="flex items-start justify-between">
+                      <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100">
+                        {t.title}
+                      </h3>
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
+                        {t.authority}
+                      </span>
+                    </div>
+                    <div className="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1.5 text-xs">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>{t.period}</span>
+                    </div>
+                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                      {t.desc}
+                    </p>
+                    <div className="pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-[11px] text-slate-400">
+                      <span>สถานะการบริการ:</span>
+                      <span className="text-emerald-600 font-medium">● {t.statusNote}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Tab 3: Citizen Downloadable Forms */}
       {activeTab === 'forms' && (
