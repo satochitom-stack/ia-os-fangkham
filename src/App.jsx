@@ -467,12 +467,20 @@ export default function App() {
             const yr = String(fiscalYear);
             const currentYearData = prev[yr] || (yr === '2569' ? initialRiskManagement : createEmptyRiskManagement());
 
-            const filterOutDept = (list) => (list || []).filter((item) => item.department !== department);
-            const nextBs1 = [...filterOutDept(currentYearData.bs1), ...(data.bs1 || [])];
-            const nextBs2 = [...filterOutDept(currentYearData.bs2), ...(data.bs2 || [])];
-            const nextBs3 = [...filterOutDept(currentYearData.bs3), ...(data.bs3 || [])];
-            const nextBs4 = [...filterOutDept(currentYearData.bs4), ...(data.bs4 || [])];
-            const nextBs5 = [...filterOutDept(currentYearData.bs5), ...(data.bs5 || [])];
+            const filterOutDept = (list) => (Array.isArray(list) ? list.filter((item) => item.department !== department) : []);
+            const nextBs1 = [...filterOutDept(currentYearData.bs1), ...(Array.isArray(data.bs1) ? data.bs1 : [])];
+            const nextBs2 = [...filterOutDept(currentYearData.bs2), ...(Array.isArray(data.bs2) ? data.bs2 : [])];
+            const nextBs3 = [...filterOutDept(currentYearData.bs3), ...(Array.isArray(data.bs3) ? data.bs3 : [])];
+            const nextBs4 = [...filterOutDept(currentYearData.bs4), ...(Array.isArray(data.bs4) ? data.bs4 : [])];
+
+            const currentBs5 = currentYearData.bs5 && typeof currentYearData.bs5 === 'object' && !Array.isArray(currentYearData.bs5)
+              ? { ...currentYearData.bs5 }
+              : { period: 'รอบ 12 เดือน', evaluator: 'คณะทำงานบริหารจัดการความเสี่ยง อปท.', evaluationDate: '', items: [] };
+            const currentBs5Items = Array.isArray(currentBs5.items) ? currentBs5.items : [];
+            const incomingBs5Items = Array.isArray(data.bs5) ? data.bs5 : (Array.isArray(data.bs5?.items) ? data.bs5.items : []);
+            const nextBs5Items = [...currentBs5Items.filter(item => item.department !== department), ...incomingBs5Items];
+            currentBs5.items = nextBs5Items;
+
             const nextBs5Summary = { ...(currentYearData.bs5Summary || {}), ...(data.bs5Summary || {}) };
             const nextSubmissions = { ...(currentYearData.submissions || {}), ...(data.submissions || {}) };
 
@@ -484,7 +492,7 @@ export default function App() {
                 bs2: nextBs2,
                 bs3: nextBs3,
                 bs4: nextBs4,
-                bs5: nextBs5,
+                bs5: currentBs5,
                 bs5Summary: nextBs5Summary,
                 submissions: nextSubmissions
               }
@@ -619,13 +627,19 @@ export default function App() {
       // Auto-push to Supabase Cloud if configured
       if (isSupabaseConfigured()) {
         const userDept = session?.department || 'สำนักปลัด';
-        const filterFn = (i) => (session?.role === 'admin' ? true : i.department === userDept);
+        const filterFn = (i) => i && (session?.role === 'admin' ? true : i.department === userDept);
+        const bs5Items = Array.isArray(updated.bs5)
+          ? updated.bs5
+          : Array.isArray(updated.bs5?.items)
+          ? updated.bs5.items
+          : [];
+
         const deptPayload = {
-          bs1: (updated.bs1 || []).filter(filterFn),
-          bs2: (updated.bs2 || []).filter(filterFn),
-          bs3: (updated.bs3 || []).filter(filterFn),
-          bs4: (updated.bs4 || []).filter(filterFn),
-          bs5: (updated.bs5 || []).filter(filterFn),
+          bs1: (Array.isArray(updated.bs1) ? updated.bs1 : []).filter(filterFn),
+          bs2: (Array.isArray(updated.bs2) ? updated.bs2 : []).filter(filterFn),
+          bs3: (Array.isArray(updated.bs3) ? updated.bs3 : []).filter(filterFn),
+          bs4: (Array.isArray(updated.bs4) ? updated.bs4 : []).filter(filterFn),
+          bs5: bs5Items.filter(filterFn),
           bs5Summary: updated.bs5Summary || {},
           submissions: updated.submissions || {}
         };

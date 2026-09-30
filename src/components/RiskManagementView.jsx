@@ -1209,7 +1209,7 @@ export default function RiskManagementView({
         bs2: (riskManagement?.bs2 || []).filter(filterFn),
         bs3: (riskManagement?.bs3 || []).filter(filterFn),
         bs4: (riskManagement?.bs4 || []).filter(filterFn),
-        bs5: (riskManagement?.bs5 || []).filter(filterFn),
+        bs5: (Array.isArray(riskManagement?.bs5) ? riskManagement.bs5 : (riskManagement?.bs5?.items || [])).filter(filterFn),
         bs5Summary: riskManagement?.bs5Summary || {},
         submissions: deptFilterName
           ? (riskManagement?.submissions?.[deptFilterName] ? { [deptFilterName]: riskManagement.submissions[deptFilterName] } : {})

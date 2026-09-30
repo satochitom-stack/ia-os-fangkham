@@ -17,7 +17,7 @@ import {
   Zap,
   Info
 } from 'lucide-react';
-import { cloudSyncService } from '../services/cloudSyncService';
+import { cloudSyncService, mergeRiskManagement } from '../services/cloudSyncService';
 import {
   getSupabaseConfig,
   saveSupabaseConfig,
@@ -112,16 +112,7 @@ export default function CloudSyncModal({
           const next = { ...prev };
           Object.keys(cloudData).forEach((yr) => {
             if (cloudData[yr]) {
-              next[yr] = {
-                ...(next[yr] || {}),
-                bs1: cloudData[yr].bs1 || next[yr]?.bs1 || [],
-                bs2: cloudData[yr].bs2 || next[yr]?.bs2 || [],
-                bs3: cloudData[yr].bs3 || next[yr]?.bs3 || [],
-                bs4: cloudData[yr].bs4 || next[yr]?.bs4 || [],
-                bs5: cloudData[yr].bs5 || next[yr]?.bs5 || [],
-                bs5Summary: { ...(next[yr]?.bs5Summary || {}), ...(cloudData[yr].bs5Summary || {}) },
-                submissions: { ...(next[yr]?.submissions || {}), ...(cloudData[yr].submissions || {}) }
-              };
+              next[yr] = mergeRiskManagement(next[yr], cloudData[yr]);
             }
           });
           return next;

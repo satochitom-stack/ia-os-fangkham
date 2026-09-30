@@ -202,9 +202,13 @@ class CloudSyncService {
         if (Array.isArray(deptData.bs4)) {
           result[yr].bs4.push(...deptData.bs4);
         }
-        if (Array.isArray(deptData.bs5)) {
-          result[yr].bs5.push(...deptData.bs5);
-        }
+        const incomingBs5 = Array.isArray(deptData.bs5)
+          ? deptData.bs5
+          : Array.isArray(deptData.bs5?.items)
+          ? deptData.bs5.items
+          : [];
+        result[yr].bs5Items.push(...incomingBs5);
+
         if (deptData.bs5Summary && Object.keys(deptData.bs5Summary).length > 0) {
           result[yr].bs5Summary = { ...result[yr].bs5Summary, ...deptData.bs5Summary };
         }
@@ -295,13 +299,19 @@ class CloudSyncService {
         Object.keys(yearData.submissions || {}).forEach((d) => allDepts.add(d));
 
         allDepts.forEach((dept) => {
-          const filterFn = (i) => i.department === dept;
+          const filterFn = (i) => i && i.department === dept;
+          const bs5Items = Array.isArray(yearData.bs5)
+            ? yearData.bs5
+            : Array.isArray(yearData.bs5?.items)
+            ? yearData.bs5.items
+            : [];
+
           const deptPayload = {
-            bs1: (yearData.bs1 || []).filter(filterFn),
-            bs2: (yearData.bs2 || []).filter(filterFn),
-            bs3: (yearData.bs3 || []).filter(filterFn),
-            bs4: (yearData.bs4 || []).filter(filterFn),
-            bs5: (yearData.bs5 || []).filter(filterFn),
+            bs1: (Array.isArray(yearData.bs1) ? yearData.bs1 : []).filter(filterFn),
+            bs2: (Array.isArray(yearData.bs2) ? yearData.bs2 : []).filter(filterFn),
+            bs3: (Array.isArray(yearData.bs3) ? yearData.bs3 : []).filter(filterFn),
+            bs4: (Array.isArray(yearData.bs4) ? yearData.bs4 : []).filter(filterFn),
+            bs5: bs5Items.filter(filterFn),
             bs5Summary: yearData.bs5Summary || {},
             submissions: yearData.submissions?.[dept] ? { [dept]: yearData.submissions[dept] } : {}
           };
@@ -411,19 +421,68 @@ export function mergeRiskManagement(localYearData, cloudYearData) {
   if (!localYearData) return cloudYearData;
 
   const result = { ...localYearData };
-  const cloudDepts = new Set();
-  ['bs1', 'bs2', 'bs3', 'bs4', 'bs5'].forEach(key => {
-    (cloudYearData[key] || []).forEach(item => {
-      if (item.department) cloudDepts.add(item.department);
+
+  // 1. Merge array-based tables: bs1, bs2, bs3, bs4
+  ['bs1', 'bs2', 'bs3', 'bs4'].forEach((key) => {
+    const localList = Array.isArray(result[key]) ? result[key] : [];
+    const cloudList = Array.isArray(cloudYearData[key]) ? cloudYearData[key] : [];
+
+    // Track departments that have items in the incoming cloud data
+    const cloudDeptsWithItems = new Set();
+    cloudList.forEach((item) => {
+      if (item && item.department) cloudDeptsWithItems.add(item.department);
     });
-  });
-  Object.keys(cloudYearData.submissions || {}).forEach(d => cloudDepts.add(d));
 
-  ['bs1', 'bs2', 'bs3', 'bs4', 'bs5'].forEach(key => {
-    const keepLocal = (result[key] || []).filter(item => !cloudDepts.has(item.department));
-    result[key] = [...keepLocal, ...(cloudYearData[key] || [])];
+    if (cloudDeptsWithItems.size > 0) {
+      const keepLocal = localList.filter((item) => !cloudDeptsWithItems.has(item.department));
+      result[key] = [...keepLocal, ...cloudList];
+    } else {
+      result[key] = localList;
+    }
   });
 
+  // 2. Merge bs5 (which is an object with items: [...])
+  const localBs5 = result.bs5 && typeof result.bs5 === 'object' && !Array.isArray(result.bs5)
+    ? { ...result.bs5 }
+    : {
+        period: 'รอบ 12 เดือน',
+        evaluator: 'คณะทำงานบริหารจัดการความเสี่ยง อปท.',
+        evaluationDate: '',
+        items: Array.isArray(result.bs5) ? result.bs5 : []
+      };
+
+  const localBs5Items = Array.isArray(localBs5.items) ? localBs5.items : [];
+  const cloudBs5Items = Array.isArray(cloudYearData.bs5)
+    ? cloudYearData.bs5
+    : Array.isArray(cloudYearData.bs5?.items)
+    ? cloudYearData.bs5.items
+    : Array.isArray(cloudYearData.bs5Items)
+    ? cloudYearData.bs5Items
+    : [];
+
+  const cloudBs5Depts = new Set();
+  cloudBs5Items.forEach((item) => {
+    if (item && item.department) cloudBs5Depts.add(item.department);
+  });
+
+  if (cloudBs5Depts.size > 0) {
+    const keepBs5Items = localBs5Items.filter((item) => !cloudBs5Depts.has(item.department));
+    localBs5.items = [...keepBs5Items, ...cloudBs5Items];
+  } else {
+    localBs5.items = localBs5Items;
+  }
+
+  // Preserve summary/metadata if provided from cloud
+  if (cloudYearData.bs5 && typeof cloudYearData.bs5 === 'object' && !Array.isArray(cloudYearData.bs5)) {
+    if (cloudYearData.bs5.summary) localBs5.summary = cloudYearData.bs5.summary;
+    if (cloudYearData.bs5.approvedBy) localBs5.approvedBy = cloudYearData.bs5.approvedBy;
+    if (cloudYearData.bs5.approverPosition) localBs5.approverPosition = cloudYearData.bs5.approverPosition;
+    if (cloudYearData.bs5.reportDate) localBs5.reportDate = cloudYearData.bs5.reportDate;
+  }
+
+  result.bs5 = localBs5;
+
+  // 3. Merge bs5Summary and submissions
   result.bs5Summary = { ...(result.bs5Summary || {}), ...(cloudYearData.bs5Summary || {}) };
   result.submissions = { ...(result.submissions || {}), ...(cloudYearData.submissions || {}) };
 
