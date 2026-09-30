@@ -301,8 +301,7 @@ export default function LoginView({ onLogin }) {
                   return sorted.map((u) => {
                     const isSelected = Boolean(username && u.username && username.toLowerCase() === u.username.toLowerCase());
                     const isAdmin = u.role === 'admin' || u.username === 'admin';
-                    const isMayor = u.username === 'mayor' || (u.role === 'executive' && u.username !== 'palat') || u.displayName === 'ผู้บริหาร';
-                    const isPalat = u.username === 'palat' || u.displayName?.includes('ปลัด');
+                    const isPalat = u.username === 'palat' || (u.displayName?.includes('ปลัด') && u.username !== 'office' && !u.displayName?.includes('สำนัก'));
                     const isCdc = u.username?.startsWith('cdc_') || u.displayName?.includes('ศพด.');
 
                     let icon = '🏢';
@@ -316,8 +315,9 @@ export default function LoginView({ onLogin }) {
                     } else if (isAdmin) {
                       icon = '👑';
                       displayTitle = 'หน่วยตรวจสอบฯ';
-                    } else if (u.username === 'office') {
-                      displayTitle = 'สำนักปลัด (รวมงานสาธารณสุข)';
+                    } else if (u.username === 'office' || displayTitle?.includes('สำนักปลัด')) {
+                      icon = '🏢';
+                      displayTitle = 'สำนักปลัด';
                     } else if (isCdc) {
                       icon = '🏫';
                     } else if (displayTitle === 'กองสาธารณสุขและสิ่งแวดล้อม') {

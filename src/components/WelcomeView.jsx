@@ -151,7 +151,7 @@ export default function WelcomeView({ session, onLogin, onGuestLogin, onEnterDas
     label: 'การบริหารราชการและกำกับดูแลภาพรวม',
     onClick: () => {
       const user = availableUsers.find(
-        (u) => u.username === 'palat' || u.displayName?.includes('ปลัด') || u.position?.includes('ปลัด')
+        (u) => u.username === 'palat' || (u.username !== 'office' && !u.displayName?.includes('สำนัก') && (u.displayName?.includes('ปลัด') || u.position?.includes('ปลัด')))
       );
       if (user) {
         handleQuickSelect(user);
@@ -564,7 +564,7 @@ export default function WelcomeView({ session, onLogin, onGuestLogin, onEnterDas
                 <div
                   onClick={() => {
                     const user = availableUsers.find(
-                      (u) => u.username === 'palat' || u.displayName?.includes('ปลัด') || u.position?.includes('ปลัด')
+                      (u) => u.username === 'palat' || (u.username !== 'office' && !u.displayName?.includes('สำนัก') && (u.displayName?.includes('ปลัด') || u.position?.includes('ปลัด')))
                     );
                     if (user) handleQuickSelect(user);
                     else {
@@ -976,14 +976,15 @@ export default function WelcomeView({ session, onLogin, onGuestLogin, onEnterDas
                     if (u.username === 'mayor' || (u.role === 'executive' && u.username !== 'palat') || label === 'ผู้บริหาร') {
                       icon = '👑 ';
                       label = 'ผู้บริหาร';
-                    } else if (u.username === 'palat' || label.includes('ปลัด')) {
+                    } else if (u.username === 'palat' || (label.includes('ปลัด') && u.username !== 'office' && !label.includes('สำนัก'))) {
                       icon = '🏛️ ';
                       label = 'ปลัด อบต.ฝางคำ';
                     } else if (u.role === 'admin' || u.username === 'admin') {
                       icon = '👑 ';
                       label = 'หน่วยตรวจสอบฯ';
-                    } else if (u.username === 'office') {
-                      label = 'สำนักปลัด (รวมงานสาธารณสุข)';
+                    } else if (u.username === 'office' || label.includes('สำนักปลัด')) {
+                      icon = '🏢 ';
+                      label = 'สำนักปลัด';
                     } else if (u.username?.startsWith('cdc_') || label.includes('ศพด.')) {
                       icon = '🏫 ';
                     } else if (label === 'กองสาธารณสุขและสิ่งแวดล้อม') {
