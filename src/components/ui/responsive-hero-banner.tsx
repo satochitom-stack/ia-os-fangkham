@@ -12,7 +12,11 @@ import {
   Building2, 
   Play,
   Users,
-  Eye
+  Eye,
+  Monitor,
+  Maximize2,
+  Minimize2,
+  ChevronDown
 } from 'lucide-react';
 
 export interface NavLink {
@@ -95,9 +99,34 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   session
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [fitMode, setFitMode] = useState<'fit' | 'compact'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('ia_hero_fit_mode') as 'fit' | 'compact') || 'fit';
+    }
+    return 'fit';
+  });
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleBrowserFullscreen = () => {
+    if (typeof document !== 'undefined') {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+        setIsFullscreen(true);
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        }
+        setIsFullscreen(false);
+      }
+    }
+  };
 
   return (
-    <section className="w-full isolate min-h-[480px] sm:min-h-[520px] lg:min-h-[560px] overflow-hidden relative rounded-3xl sm:rounded-[2.5rem] border border-blue-200/80 shadow-[0_20px_60px_-15px_rgba(30,58,138,0.12)] bg-gradient-to-br from-white via-[#f4f8fe] to-[#eaf2fc] text-slate-800 flex flex-col justify-between">
+    <section className={`w-full isolate transition-all duration-300 overflow-hidden relative rounded-3xl sm:rounded-[2.5rem] border border-blue-200/80 shadow-[0_20px_60px_-15px_rgba(30,58,138,0.12)] bg-gradient-to-br from-white via-[#f4f8fe] to-[#eaf2fc] text-slate-800 flex flex-col justify-between ${
+      fitMode === 'fit'
+        ? 'min-h-[82vh] sm:min-h-[86vh] lg:min-h-[88vh] xl:min-h-[90vh] max-h-[960px]'
+        : 'min-h-[500px] sm:min-h-[540px]'
+    }`}>
       {/* 1. Bright Architectural Building Photo Background */}
       <img
         src={backgroundImageUrl}
@@ -260,6 +289,38 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             ))}
           </nav>
 
+          {/* Right: Screen Fit & Fullscreen Controls */}
+          <div className="hidden md:flex items-center gap-1.5 bg-white/85 backdrop-blur-md px-2.5 py-1.5 rounded-full border border-slate-200/80 shadow-xs">
+            <button
+              type="button"
+              onClick={() => {
+                const next = fitMode === 'fit' ? 'compact' : 'fit';
+                setFitMode(next);
+                if (typeof window !== 'undefined') {
+                  localStorage.setItem('ia_hero_fit_mode', next);
+                }
+              }}
+              className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer ${
+                fitMode === 'fit'
+                  ? 'bg-blue-600 text-white shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+              title={fitMode === 'fit' ? "กำลังแสดงผลแบบพอดีหน้าจอ (คลิกเพื่อสลับเป็นขนาดกะทัดรัด)" : "คลิกเพื่อปรับขนาดให้พอดีหน้าจอ"}
+            >
+              <Monitor className="w-3.5 h-3.5" />
+              <span>{fitMode === 'fit' ? 'พอดีหน้าจอ' : 'กะทัดรัด'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={toggleBrowserFullscreen}
+              className="p-1.5 rounded-full text-slate-500 hover:text-blue-700 hover:bg-blue-50 transition-colors cursor-pointer"
+              title={isFullscreen ? "ออกจากเต็มจอ" : "แสดงผลเต็มจอภาพ (Fullscreen)"}
+            >
+              {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+            </button>
+          </div>
+
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -290,6 +351,24 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
                 {link.label}
               </a>
             ))}
+
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between px-2">
+              <span className="text-xs text-slate-500 font-medium">มุมมองหน้าจอ:</span>
+              <button
+                type="button"
+                onClick={() => {
+                  const next = fitMode === 'fit' ? 'compact' : 'fit';
+                  setFitMode(next);
+                  if (typeof window !== 'undefined') {
+                    localStorage.setItem('ia_hero_fit_mode', next);
+                  }
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-200"
+              >
+                <Monitor className="w-3.5 h-3.5" />
+                <span>{fitMode === 'fit' ? 'โหมดพอดีจอ' : 'โหมดกะทัดรัด'}</span>
+              </button>
+            </div>
           </div>
         )}
       </header>
@@ -362,6 +441,17 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             )}
           </div>
         </div>
+      </div>
+
+      {/* 5. Sleek Bottom Scroll Indicator */}
+      <div className="z-10 relative pb-4 sm:pb-6 text-center select-none">
+        <a
+          href="#welcome-features"
+          className="inline-flex flex-col items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-blue-600 transition-colors group cursor-pointer"
+        >
+          <span className="opacity-80 group-hover:opacity-100">เลื่อนลงเพื่อสำรวจระบบ</span>
+          <ChevronDown className="w-4 h-4 text-blue-500 animate-bounce" />
+        </a>
       </div>
     </section>
   );

@@ -426,7 +426,7 @@ export default function WelcomeView({ session, onLogin, onGuestLogin, onEnterDas
       </div>
 
       {/* 2. Responsive Hero Banner (Option B: Royal Blue & Cyber Cyan Cosmic Beam) */}
-      <section className="relative w-full pt-3 sm:pt-4 pb-6 px-3 sm:px-6 max-w-7xl mx-auto">
+      <section className="relative w-full pt-2 sm:pt-3 pb-4 sm:pb-6 px-2.5 sm:px-4 lg:px-6 max-w-[1440px] 2xl:max-w-[1560px] mx-auto">
         <ResponsiveHeroBanner
           session={session}
           onPrimaryClick={scrollToLogin}
