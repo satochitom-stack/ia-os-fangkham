@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Cloud, X } from 'lucide-react';
+import { Cloud, X, UserCheck } from 'lucide-react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import DashboardView from './components/DashboardView';
@@ -26,9 +26,9 @@ import CentralCalendarView from './components/CentralCalendarView';
 import PublicOverviewView from './components/PublicOverviewView';
 import ErrorBoundary from './components/ErrorBoundary';
 import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
-import { getSession, loginAsGuest, logout as authLogout, switchSessionTo, autoRepairDataLinkages, getUsers, saveUsers, getDepartments, saveDepartments } from './utils/auth';
+import { getSession, loginAsGuest, logout as authLogout, switchSessionTo, autoRepairDataLinkages, getUsers, saveUsers, getDepartments, saveDepartments, getPendingUsers, pullPendingUsersFromCloud } from './utils/auth';
 import { cloudSyncService, mergeRiskManagement } from './services/cloudSyncService';
-import { isSupabaseConfigured } from './services/supabaseClient';
+import { isSupabaseConfigured, getSupabaseClient } from './services/supabaseClient';
 
 import {
   initialOrgProfile,
@@ -62,6 +62,57 @@ export default function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [showCloudSyncModal, setShowCloudSyncModal] = useState(false);
   const [cloudToast, setCloudToast] = useState(null);
+  const [pendingCount, setPendingCount] = useState(() => getPendingUsers().length);
+
+  // Listen to local pending users list changes
+  useEffect(() => {
+    const handlePendingChanged = () => {
+      setPendingCount(getPendingUsers().length);
+    };
+    window.addEventListener('ia-pending-users-changed', handlePendingChanged);
+    return () => window.removeEventListener('ia-pending-users-changed', handlePendingChanged);
+  }, []);
+
+  // Supabase Cloud Realtime listener for pending registrations
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+
+    // Pull from cloud on mount if admin
+    if (session?.role === 'admin') {
+      pullPendingUsersFromCloud().then((list) => {
+        if (Array.isArray(list)) setPendingCount(list.length);
+      });
+    }
+
+    const client = getSupabaseClient();
+    if (!client) return;
+
+    const channel = client
+      .channel('app-profiles-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'profiles' },
+        (payload) => {
+          pullPendingUsersFromCloud().then((list) => {
+            if (Array.isArray(list)) setPendingCount(list.length);
+          });
+          if (session?.role === 'admin' && payload.eventType === 'INSERT' && payload.new?.status === 'pending') {
+            setCloudToast({
+              title: '🔔 มีคำขอลงทะเบียนใหม่!',
+              message: `ผู้ใช้ @${payload.new.username} (${payload.new.display_name} - ${payload.new.department || 'ไม่ระบุสังกัด'}) ส่งคำขอเข้าใช้งานระบบ`,
+              actionTab: 'users',
+              type: 'info'
+            });
+            setTimeout(() => setCloudToast(null), 8000);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      client.removeChannel(channel);
+    };
+  }, [session?.role]);
 
   // Dark Mode State (Default to false for warm white-blue theme)
   const [darkMode, setDarkMode] = useState(() => {
@@ -1010,6 +1061,7 @@ export default function App() {
         onOpenUsersManagement={() => handleSelectTab('users')}
         onOpenWelcome={() => handleSelectTab('welcome')}
         onOpenCloudSync={() => setShowCloudSyncModal(true)}
+        pendingCount={pendingCount}
       />
 
       {/* Impersonate / Department Preview Banner (แสดงเฉพาะเมื่อ ADMIN กำลังกดทดสอบมุมมองเท่านั้น) */}
@@ -1063,18 +1115,36 @@ export default function App() {
         />
       )}
 
-      {/* Cloud Sync Toast Notification */}
+      {/* Cloud Sync / Registration Toast Notification */}
       {cloudToast && (
-        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-2xl bg-slate-900/95 text-white shadow-2xl border border-slate-700 flex items-start space-x-3 max-w-sm animate-in fade-in slide-in-from-bottom-5 duration-300 backdrop-blur-xs">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-            <Cloud className="w-4 h-4" />
+        <div
+          onClick={() => {
+            if (cloudToast.actionTab) {
+              handleSelectTab(cloudToast.actionTab);
+              setCloudToast(null);
+            }
+          }}
+          className={`fixed bottom-6 right-6 z-50 p-4 rounded-2xl bg-slate-900/95 text-white shadow-2xl border border-slate-700 flex items-start space-x-3 max-w-sm animate-in fade-in slide-in-from-bottom-5 duration-300 backdrop-blur-xs ${
+            cloudToast.actionTab ? 'cursor-pointer hover:border-amber-500/80 transition-all' : ''
+          }`}
+        >
+          <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+            {cloudToast.actionTab ? <UserCheck className="w-4 h-4" /> : <Cloud className="w-4 h-4" />}
           </div>
           <div className="space-y-0.5 text-xs flex-1">
-            <h4 className="font-bold text-slate-100">{cloudToast.title}</h4>
+            <h4 className="font-bold text-slate-100 flex items-center justify-between">
+              <span>{cloudToast.title}</span>
+              {cloudToast.actionTab && (
+                <span className="text-[10px] text-amber-400 font-semibold underline">คลิกเพื่อดูคำขอ</span>
+              )}
+            </h4>
             <p className="text-slate-300 text-[11px] leading-relaxed">{cloudToast.message}</p>
           </div>
           <button
-            onClick={() => setCloudToast(null)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setCloudToast(null);
+            }}
             className="text-slate-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
           >
             <X className="w-3.5 h-3.5" />
@@ -1090,6 +1160,7 @@ export default function App() {
           planCount={annualPlans.length}
           activeToolkitTab={activeToolkitTab}
           setActiveToolkitTab={setActiveToolkitTab}
+          pendingCount={pendingCount}
         />
 
         <main ref={mainContentRef} className="flex-1 overflow-y-auto min-h-0 p-4 sm:p-6 lg:p-8 bg-slate-100/80 dark:bg-slate-950 custom-scrollbar">
@@ -1319,6 +1390,7 @@ export default function App() {
             {currentTab === 'users' && session?.role === 'admin' && (
               <UserManagementView
                 currentSession={session}
+                initialTab={pendingCount > 0 ? 'pending' : 'matrix'}
                 onSwitchSession={(newSession) => {
                   setSession(newSession);
                   if (newSession.role !== 'admin') {

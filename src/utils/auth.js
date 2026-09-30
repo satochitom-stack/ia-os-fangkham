@@ -1104,6 +1104,29 @@ export async function addUser({ username, displayName, position, department, rol
   };
   users.push(newUser);
   saveUsers(users);
+
+  // Sync to Cloud Supabase profiles
+  if (isSupabaseConfigured()) {
+    try {
+      const client = getSupabaseClient();
+      const cleanPos = position?.trim() || '';
+      const cloudPosition = cleanPos ? `${cleanPos}:::cred:${salt}:${hash}` : `:::cred:${salt}:${hash}`;
+      await client.from('profiles').upsert({
+        username: cleanUsername,
+        display_name: displayName.trim(),
+        department: department?.trim() || 'หน่วยงานทั่วไป',
+        position: cloudPosition,
+        role: role || 'user',
+        status: 'active',
+        permissions: permissions || ['risk-management', 'forms'],
+        can_manage_users: role === 'admin',
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'username' });
+    } catch (e) {
+      console.warn('Supabase addUser sync:', e);
+    }
+  }
+
   return newUser;
 }
 
@@ -1133,9 +1156,64 @@ export function savePendingUsers(list) {
   }
 }
 
+export async function pullPendingUsersFromCloud() {
+  if (!isSupabaseConfigured()) return getPendingUsers();
+  try {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('profiles')
+      .select('*')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.warn('Error fetching pending users from cloud:', error);
+      return getPendingUsers();
+    }
+
+    if (Array.isArray(data)) {
+      const localList = getPendingUsers();
+      const cloudPending = data.map((row) => {
+        let pos = row.position || '';
+        let salt = '';
+        let hash = '';
+        if (pos.includes(':::cred:')) {
+          const parts = pos.split(':::cred:');
+          pos = parts[0] || '';
+          const credParts = (parts[1] || '').split(':');
+          salt = credParts[0] || '';
+          hash = credParts[1] || '';
+        }
+        const localMatch = localList.find((l) => l.username?.toLowerCase() === row.username?.toLowerCase());
+
+        return {
+          id: row.id || row.username,
+          username: row.username,
+          displayName: row.display_name,
+          department: row.department,
+          position: pos,
+          role: row.role || 'staff',
+          email: `${row.username}@local.ia-os`,
+          salt: salt || localMatch?.salt || '',
+          hash: hash || localMatch?.hash || '',
+          passwordText: localMatch?.passwordText || '',
+          requestedAt: row.created_at ? new Date(row.created_at).getTime() : Date.now(),
+          status: 'pending'
+        };
+      });
+
+      savePendingUsers(cloudPending);
+      return cloudPending;
+    }
+  } catch (e) {
+    console.warn('pullPendingUsersFromCloud failed:', e);
+  }
+  return getPendingUsers();
+}
+
 export async function registerUser({ username, displayName, department, position, role = 'staff', password, email }) {
   const cleanUsername = username.trim().toLowerCase();
-  const cleanDept = department.trim();
+  const cleanDept = department ? department.trim() : 'สำนักปลัด';
   const cleanDisplayName = displayName.trim();
   const cleanPosition = position ? position.trim() : '';
 
@@ -1148,42 +1226,64 @@ export async function registerUser({ username, displayName, department, position
     throw new Error(`ชื่อผู้ใช้ "${username}" มีอยู่ในระบบแล้ว`);
   }
 
-  const pendingList = getPendingUsers();
-  if (pendingList.some((p) => p.username.toLowerCase() === cleanUsername)) {
-    throw new Error(`ชื่อผู้ใช้ "${username}" ได้ส่งคำขอลงทะเบียนไว้แล้ว (อยู่ระหว่างรอผู้ดูแลระบบอนุมัติ)`);
-  }
+  const salt = generateSalt();
+  const hash = await hashPassword(password, salt);
+  const cloudPosition = cleanPosition ? `${cleanPosition}:::cred:${salt}:${hash}` : `:::cred:${salt}:${hash}`;
 
-  // If Supabase is configured, register user in Supabase Auth
   let supabaseId = null;
   if (isSupabaseConfigured()) {
     try {
       const client = getSupabaseClient();
-      const userEmail = email && email.includes('@') ? email.trim() : `${cleanUsername}@local.ia-os`;
-      const { data, error } = await client.auth.signUp({
-        email: userEmail,
-        password: password,
-        options: {
-          data: {
-            username: cleanUsername,
-            display_name: cleanDisplayName,
-            department: cleanDept,
-            position: cleanPosition,
-            role: role
-          }
+      // Check if user already exists in profiles
+      const { data: existingProfile } = await client
+        .from('profiles')
+        .select('id, username, status')
+        .eq('username', cleanUsername)
+        .maybeSingle();
+
+      if (existingProfile) {
+        if (existingProfile.status === 'pending') {
+          throw new Error(`ชื่อผู้ใช้ "${username}" ได้ส่งคำขอลงทะเบียนไว้แล้ว (อยู่ระหว่างรอผู้ดูแลระบบอนุมัติ)`);
+        } else {
+          throw new Error(`ชื่อผู้ใช้ "${username}" มีอยู่ในระบบแล้ว`);
         }
-      });
-      if (error) {
-        console.warn('Supabase signUp notice:', error.message);
-      } else if (data?.user?.id) {
-        supabaseId = data.user.id;
+      }
+
+      // Insert pending profile into Supabase
+      const { data: inserted, error: insertError } = await client
+        .from('profiles')
+        .insert([{
+          username: cleanUsername,
+          display_name: cleanDisplayName,
+          department: cleanDept,
+          position: cloudPosition,
+          role: role || 'staff',
+          status: 'pending',
+          permissions: ['risk-management', 'forms'],
+          can_manage_users: role === 'admin'
+        }])
+        .select()
+        .single();
+
+      if (insertError) {
+        console.error('Supabase profile registration error:', insertError);
+        throw new Error(`ส่งคำขอไปยังระบบคลาวด์ไม่สำเร็จ: ${insertError.message}`);
+      }
+
+      if (inserted?.id) {
+        supabaseId = inserted.id;
       }
     } catch (err) {
+      if (err.message && (err.message.includes('มีอยู่ในระบบแล้ว') || err.message.includes('ส่งคำขอลงทะเบียนไว้แล้ว'))) {
+        throw err;
+      }
       console.warn('Supabase registration sync warning:', err);
+      throw new Error(err.message || 'เกิดข้อผิดพลาดในการเชื่อมต่อคลาวด์เพื่อลงทะเบียน');
     }
   }
 
-  const salt = generateSalt();
-  const hash = await hashPassword(password, salt);
+  const pendingList = getPendingUsers();
+  const existingIdx = pendingList.findIndex((p) => p.username.toLowerCase() === cleanUsername);
 
   const pendingEntry = {
     id: supabaseId || 'pend_' + Date.now(),
@@ -1200,7 +1300,11 @@ export async function registerUser({ username, displayName, department, position
     status: 'pending'
   };
 
-  pendingList.push(pendingEntry);
+  if (existingIdx !== -1) {
+    pendingList[existingIdx] = pendingEntry;
+  } else {
+    pendingList.push(pendingEntry);
+  }
   savePendingUsers(pendingList);
   return pendingEntry;
 }
@@ -1252,10 +1356,17 @@ export async function approvePendingUser(pendingId, approvedRole = null, customP
   if (isSupabaseConfigured()) {
     try {
       const client = getSupabaseClient();
+      const cloudPosition = pending.position
+        ? (pending.salt && pending.hash ? `${pending.position}:::cred:${pending.salt}:${pending.hash}` : pending.position)
+        : (pending.salt && pending.hash ? `:::cred:${pending.salt}:${pending.hash}` : '');
+
       await client.from('profiles').update({
         status: 'active',
         role: targetRole,
-        permissions
+        position: cloudPosition || pending.position,
+        permissions,
+        can_manage_users: targetRole === 'admin',
+        updated_at: new Date().toISOString()
       }).eq('username', pending.username);
     } catch (e) {
       console.warn('Supabase profile activation sync:', e);
@@ -1268,10 +1379,20 @@ export async function approvePendingUser(pendingId, approvedRole = null, customP
   return newUser;
 }
 
-export function rejectPendingUser(pendingId) {
+export async function rejectPendingUser(pendingId) {
   const pendingList = getPendingUsers();
+  const pending = pendingList.find((p) => p.id === pendingId || p.username === pendingId);
   const filtered = pendingList.filter((p) => p.id !== pendingId && p.username !== pendingId);
   savePendingUsers(filtered);
+
+  if (pending && isSupabaseConfigured()) {
+    try {
+      const client = getSupabaseClient();
+      await client.from('profiles').delete().eq('username', pending.username);
+    } catch (e) {
+      console.warn('Supabase reject pending user error:', e);
+    }
+  }
 }
 
 export async function updateUser(username, updates) {
@@ -1325,6 +1446,34 @@ export async function updateUser(username, updates) {
     console.error(e);
   }
 
+  // Sync to Cloud Supabase profiles
+  if (isSupabaseConfigured()) {
+    try {
+      const client = getSupabaseClient();
+      const cleanPos = user.position || '';
+      const cloudPosition = cleanPos
+        ? (user.salt && user.hash ? `${cleanPos}:::cred:${user.salt}:${user.hash}` : cleanPos)
+        : (user.salt && user.hash ? `:::cred:${user.salt}:${user.hash}` : '');
+
+      await client.from('profiles').upsert({
+        username: targetUsername,
+        display_name: user.displayName,
+        department: user.department,
+        position: cloudPosition,
+        role: user.role || 'user',
+        permissions: user.permissions || [],
+        can_manage_users: user.role === 'admin',
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'username' });
+
+      if (targetUsername !== oldUsername) {
+        await client.from('profiles').delete().eq('username', oldUsername);
+      }
+    } catch (e) {
+      console.warn('Supabase updateUser sync:', e);
+    }
+  }
+
   return user;
 }
 
@@ -1339,6 +1488,19 @@ export function updateUserPermissions(username, permissions) {
   if (currentSession?.username.toLowerCase() === username.toLowerCase()) {
     startSession(users[idx], currentSession.remember);
   }
+
+  if (isSupabaseConfigured()) {
+    try {
+      const client = getSupabaseClient();
+      client.from('profiles').update({
+        permissions,
+        updated_at: new Date().toISOString()
+      }).eq('username', username).catch((e) => console.warn(e));
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+
   return users[idx];
 }
 
@@ -1359,6 +1521,15 @@ export function deleteUser(username) {
     }
   } catch (e) {
     console.error(e);
+  }
+
+  if (isSupabaseConfigured() && target) {
+    try {
+      const client = getSupabaseClient();
+      client.from('profiles').delete().eq('username', target.username).catch((e) => console.warn(e));
+    } catch (e) {
+      console.warn(e);
+    }
   }
 }
 
@@ -1382,17 +1553,79 @@ export async function verifyLogin(username, password) {
   // If logging in with health, automatically map to office (สำนักปลัด)
   const lookupUser = trimmed === 'health' ? 'office' : username;
   const user = getUserByUsername(lookupUser);
-  if (!user) return null;
 
-  // Check hashed password if present
-  if (user.hash && user.salt) {
-    const hash = await hashPassword(password, user.salt);
-    if (hash === user.hash) return user;
+  // 1. Check local users cache
+  if (user) {
+    if (user.hash && user.salt) {
+      const hash = await hashPassword(password, user.salt);
+      if (hash === user.hash) return user;
+    }
+    if (user.passwordText && user.passwordText === password) {
+      return user;
+    }
   }
 
-  // Check plaintext fallback (default initial seed passwords)
-  if (user.passwordText && user.passwordText === password) {
-    return user;
+  // 2. Cross-device check: Query Supabase Cloud if user was created or approved on another device
+  if (isSupabaseConfigured()) {
+    try {
+      const client = getSupabaseClient();
+      const { data: cloudUser, error } = await client
+        .from('profiles')
+        .select('*')
+        .eq('username', trimmed)
+        .maybeSingle();
+
+      if (cloudUser) {
+        if (cloudUser.status === 'pending') {
+          throw new Error('บัญชีนี้อยู่ระหว่างรอผู้ดูแลระบบ (ADMIN) อนุมัติการเข้าใช้งาน');
+        }
+
+        if (cloudUser.status === 'active') {
+          let pos = cloudUser.position || '';
+          let salt = '';
+          let hash = '';
+          if (pos.includes(':::cred:')) {
+            const parts = pos.split(':::cred:');
+            pos = parts[0] || '';
+            const credParts = (parts[1] || '').split(':');
+            salt = credParts[0] || '';
+            hash = credParts[1] || '';
+          }
+
+          if (salt && hash) {
+            const calculatedHash = await hashPassword(password, salt);
+            if (calculatedHash === hash) {
+              const users = getUsers();
+              const validUser = {
+                username: cloudUser.username,
+                displayName: cloudUser.display_name,
+                department: cloudUser.department,
+                position: pos,
+                role: cloudUser.role || 'staff',
+                salt,
+                hash,
+                permissions: cloudUser.permissions || ['risk-management', 'forms'],
+                canManageUsers: cloudUser.role === 'admin' || !!cloudUser.can_manage_users,
+                createdAt: cloudUser.created_at ? new Date(cloudUser.created_at).getTime() : Date.now()
+              };
+              const idx = users.findIndex((u) => u.username.toLowerCase() === trimmed);
+              if (idx !== -1) {
+                users[idx] = validUser;
+              } else {
+                users.push(validUser);
+              }
+              saveUsers(users);
+              return validUser;
+            }
+          }
+        }
+      }
+    } catch (err) {
+      if (err.message && err.message.includes('รอผู้ดูแลระบบ')) {
+        throw err;
+      }
+      console.warn('verifyLogin Supabase notice:', err);
+    }
   }
 
   return null;

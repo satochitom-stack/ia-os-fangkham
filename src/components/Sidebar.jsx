@@ -33,7 +33,8 @@ export default function Sidebar({
   setCurrentTab,
   session,
   activeToolkitTab = 'factor-f',
-  setActiveToolkitTab
+  setActiveToolkitTab,
+  pendingCount = 0
 }) {
   const isAdmin = session?.role === 'admin';
   const isExecutive = session?.role === 'executive';
@@ -274,6 +275,12 @@ export default function Sidebar({
                           <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : pillar.iconInactive}`} />
                           <span className="truncate text-left">{item.label}</span>
                         </div>
+
+                        {item.id === 'users' && isAdmin && pendingCount > 0 && (
+                          <span className="ml-auto shrink-0 inline-flex items-center justify-center min-w-4.5 h-4.5 px-1.5 rounded-full text-[10px] font-black bg-rose-500 text-white shadow-xs animate-pulse ring-1 ring-white/20">
+                            {pendingCount}
+                          </span>
+                        )}
 
                         {hasSubmenu && (
                           <div className="flex items-center space-x-1 shrink-0 ml-1">

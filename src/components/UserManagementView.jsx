@@ -48,6 +48,7 @@ import {
   updateDepartment,
   deleteDepartment,
   getPendingUsers,
+  pullPendingUsersFromCloud,
   approvePendingUser,
   rejectPendingUser,
   ENTERPRISE_ROLES
@@ -56,15 +57,16 @@ import {
   isSupabaseConfigured,
   getSupabaseConfig,
   saveSupabaseConfig,
-  testSupabaseConnection
+  testSupabaseConnection,
+  getSupabaseClient
 } from '../services/supabaseClient';
 import { cloudSyncService } from '../services/cloudSyncService';
 
-export default function UserManagementView({ currentSession, onSwitchSession, onRefreshUser }) {
+export default function UserManagementView({ currentSession, onSwitchSession, onRefreshUser, initialTab = 'matrix' }) {
   const [users, setUsers] = useState(() => getUsers());
   const [departments, setDepartments] = useState(() => getDepartments());
   const [pendingUsers, setPendingUsers] = useState(() => getPendingUsers());
-  const [activeTab, setActiveTab] = useState('matrix'); // 'matrix', 'accounts', 'departments', 'pending', 'cloud'
+  const [activeTab, setActiveTab] = useState(initialTab); // 'matrix', 'accounts', 'departments', 'pending', 'cloud'
   const [toastMessage, setToastMessage] = useState('');
 
   // Supabase Cloud Configuration States
@@ -126,15 +128,21 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
     setTimeout(() => setToastMessage(''), 3500);
   };
 
-  const refreshList = () => {
+  const refreshList = async () => {
+    const cloudPending = await pullPendingUsersFromCloud();
     setUsers(getUsers());
     setDepartments(getDepartments());
-    setPendingUsers(getPendingUsers());
+    setPendingUsers(cloudPending || getPendingUsers());
     setIsCloudConfigured(isSupabaseConfigured());
     if (onRefreshUser) onRefreshUser();
   };
 
   useEffect(() => {
+    // Initial fetch of pending users from Supabase Cloud on mount
+    pullPendingUsersFromCloud().then((list) => {
+      if (Array.isArray(list)) setPendingUsers(list);
+    });
+
     const handlePendingChange = () => setPendingUsers(getPendingUsers());
     const handleCloudChange = () => {
       setIsCloudConfigured(isSupabaseConfigured());
@@ -143,9 +151,30 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
     };
     window.addEventListener('ia-pending-users-changed', handlePendingChange);
     window.addEventListener('ia-supabase-config-changed', handleCloudChange);
+
+    // Supabase Realtime channel for live updates when someone registers
+    let channel = null;
+    if (isSupabaseConfigured()) {
+      const client = getSupabaseClient();
+      if (client) {
+        channel = client
+          .channel('usermgmt-profiles-realtime')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => {
+            pullPendingUsersFromCloud().then((list) => {
+              if (Array.isArray(list)) setPendingUsers(list);
+            });
+          })
+          .subscribe();
+      }
+    }
+
     return () => {
       window.removeEventListener('ia-pending-users-changed', handlePendingChange);
       window.removeEventListener('ia-supabase-config-changed', handleCloudChange);
+      if (channel && isSupabaseConfigured()) {
+        const client = getSupabaseClient();
+        if (client) client.removeChannel(channel);
+      }
     };
   }, []);
 
@@ -159,7 +188,7 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
       onConfirm: async () => {
         try {
           await approvePendingUser(pending.id, roleToAssign);
-          refreshList();
+          await refreshList();
           showToast(`✓ อนุมัติผู้ใช้งาน @${pending.username} เรียบร้อยแล้ว`);
         } catch (err) {
           showToast(`เกิดข้อผิดพลาด: ${err.message}`);
@@ -174,10 +203,14 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
       message: `คุณต้องการปฏิเสธคำขอลงทะเบียนของ "${pending.displayName}" (@${pending.username}) ใช่หรือไม่?`,
       confirmText: 'ปฏิเสธคำขอ',
       type: 'danger',
-      onConfirm: () => {
-        rejectPendingUser(pending.id);
-        refreshList();
-        showToast(`ปฏิเสธคำขอของ @${pending.username} แล้ว`);
+      onConfirm: async () => {
+        try {
+          await rejectPendingUser(pending.id);
+          await refreshList();
+          showToast(`ปฏิเสธคำขอของ @${pending.username} แล้ว`);
+        } catch (err) {
+          showToast(`เกิดข้อผิดพลาด: ${err.message}`);
+        }
       }
     });
   };
@@ -705,7 +738,12 @@ export default function UserManagementView({ currentSession, onSwitchSession, on
         </button>
 
         <button
-          onClick={() => setActiveTab('pending')}
+          onClick={() => {
+            setActiveTab('pending');
+            pullPendingUsersFromCloud().then((list) => {
+              if (Array.isArray(list)) setPendingUsers(list);
+            });
+          }}
           className={`pb-3 px-3 text-sm font-semibold flex items-center space-x-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'pending'
               ? 'border-blue-600 text-blue-600 dark:text-blue-400'

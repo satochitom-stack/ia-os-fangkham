@@ -34,7 +34,8 @@ export default function Header({
   onOpenSettings,
   onOpenUsersManagement,
   onOpenWelcome,
-  onOpenCloudSync
+  onOpenCloudSync,
+  pendingCount = 0
 }) {
   const [syncStatus, setSyncStatus] = useState(() => cloudSyncService.getSyncStatus());
 
@@ -233,16 +234,26 @@ export default function Header({
                 onClick={() => setMenuOpen((v) => !v)}
                 className="flex items-center space-x-2 px-2 py-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer border border-transparent hover:border-slate-200/80 dark:hover:border-slate-700"
               >
-                <div
-                  className={`w-8 h-8 rounded-xl font-bold text-xs flex items-center justify-center shadow-xs shrink-0 ${
-                    isAdmin
-                      ? 'bg-gradient-to-br from-indigo-500 to-blue-600 text-white'
-                      : session?.role === 'guest'
-                      ? 'bg-gradient-to-br from-purple-500 to-indigo-600 text-white'
-                      : 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white'
-                  }`}
-                >
-                  {isAdmin ? '👑' : session?.role === 'guest' ? '👥' : '🏢'}
+                <div className="relative">
+                  <div
+                    className={`w-8 h-8 rounded-xl font-bold text-xs flex items-center justify-center shadow-xs shrink-0 ${
+                      isAdmin
+                        ? 'bg-gradient-to-br from-indigo-500 to-blue-600 text-white'
+                        : session?.role === 'guest'
+                        ? 'bg-gradient-to-br from-purple-500 to-indigo-600 text-white'
+                        : 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white'
+                    }`}
+                  >
+                    {isAdmin ? '👑' : session?.role === 'guest' ? '👥' : '🏢'}
+                  </div>
+                  {isAdmin && pendingCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-4 w-4 bg-rose-500 text-[9px] font-black text-white items-center justify-center">
+                        {pendingCount}
+                      </span>
+                    </span>
+                  )}
                 </div>
                 <div className="hidden lg:block text-left max-w-[130px]">
                   <div className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">
@@ -286,10 +297,17 @@ export default function Header({
                         setMenuOpen(false);
                         onOpenUsersManagement();
                       }}
-                      className="w-full flex items-center space-x-2 px-3.5 py-2.5 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 cursor-pointer font-bold border-b border-slate-100 dark:border-slate-800"
+                      className="w-full flex items-center justify-between px-3.5 py-2.5 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 cursor-pointer font-bold border-b border-slate-100 dark:border-slate-800"
                     >
-                      <Users className="w-3.5 h-3.5" />
-                      <span>จัดการผู้ใช้งาน & กำหนดสิทธิ์รายกอง</span>
+                      <div className="flex items-center space-x-2">
+                        <Users className="w-3.5 h-3.5" />
+                        <span>จัดการผู้ใช้งาน & กำหนดสิทธิ์</span>
+                      </div>
+                      {pendingCount > 0 && (
+                        <span className="px-1.5 py-0.5 rounded-full text-[10px] font-black bg-rose-500 text-white animate-pulse">
+                          {pendingCount} คำขอ
+                        </span>
+                      )}
                     </button>
                   )}
 
