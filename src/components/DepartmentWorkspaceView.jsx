@@ -437,11 +437,11 @@ export default function DepartmentWorkspaceView({
             {isAdmin ? (
               <div className="flex flex-wrap items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shrink-0 gap-1">
                 {[
-                  { id: 'สำนักปลัด', label: 'สำนักปลัด (รวมงานสาธารณสุขฯ)', icon: Building2 },
+                  { id: 'สำนักปลัด', label: 'สำนักปลัด', icon: Building2 },
                   { id: 'กองคลัง', label: 'กองคลัง', icon: BadgeDollarSign },
                   { id: 'กองช่าง', label: 'กองช่าง', icon: HardHat },
                   { id: 'กองการศึกษา', label: 'กองการศึกษา', icon: GraduationCap },
-                  { id: 'กองสวัสดิการสังคม', label: 'สวัสดิการฯ', icon: HeartHandshake }
+                  { id: 'กองสวัสดิการสังคม', label: 'กองสวัสดิการสังคม', icon: HeartHandshake }
                 ].map((d) => {
                   const isSelected = activeDept === d.id;
                   const Icon = d.icon;

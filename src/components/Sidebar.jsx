@@ -46,6 +46,10 @@ export default function Sidebar({
       pillarId: 'pillar-1',
       pillarNumber: 'หมวดที่ 1',
       pillarTitle: 'การวางแผน & ภาพรวมองค์กร',
+      badgeClass: 'bg-blue-50 text-blue-700 border-blue-200/80 dark:bg-blue-950/70 dark:text-blue-300 dark:border-blue-800/60',
+      activeClass: 'bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white shadow-xs font-semibold',
+      hoverClass: 'hover:bg-blue-50/80 hover:text-blue-700 dark:hover:bg-slate-800/80 dark:hover:text-blue-300',
+      iconInactive: 'text-blue-600 dark:text-blue-400',
       items: [
         { id: 'executive-dashboard', label: 'แดชบอร์ดผู้บริหาร', icon: LayoutDashboard },
         { id: 'dashboard', label: 'แดชบอร์ดตรวจสอบภายใน', icon: ShieldAlert },
@@ -58,7 +62,11 @@ export default function Sidebar({
     {
       pillarId: 'pillar-2',
       pillarNumber: 'หมวดที่ 2',
-      pillarTitle: 'ปฏิบัติการตรวจ & เครื่องมือเชิงเทคนิค',
+      pillarTitle: 'ปฏิบัติการตรวจ & เทคนิค',
+      badgeClass: 'bg-amber-50 text-amber-800 border-amber-200/80 dark:bg-amber-950/70 dark:text-amber-300 dark:border-amber-800/60',
+      activeClass: 'bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 text-white shadow-xs font-semibold',
+      hoverClass: 'hover:bg-amber-50/80 hover:text-amber-800 dark:hover:bg-slate-800/80 dark:hover:text-amber-300',
+      iconInactive: 'text-amber-600 dark:text-amber-400',
       items: [
         { id: 'execution', label: 'กระดาษทำการตรวจสอบ', icon: ClipboardCheck },
         {
@@ -78,28 +86,40 @@ export default function Sidebar({
     {
       pillarId: 'pillar-3',
       pillarNumber: 'หมวดที่ 3',
-      pillarTitle: 'รายงานผล สรุปตรวจพบ & ติดตาม',
+      pillarTitle: 'รายงานผล & ติดตาม',
+      badgeClass: 'bg-emerald-50 text-emerald-800 border-emerald-200/80 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800/60',
+      activeClass: 'bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white shadow-xs font-semibold',
+      hoverClass: 'hover:bg-emerald-50/80 hover:text-emerald-800 dark:hover:bg-slate-800/80 dark:hover:text-emerald-300',
+      iconInactive: 'text-emerald-600 dark:text-emerald-400',
       items: [
         { id: 'reporting', label: 'รายงานผล & ติดตามข้อทักท้วง (CAPA)', icon: FileSpreadsheet }
       ]
     },
     {
       pillarId: 'pillar-dept',
-      pillarNumber: 'หมวดพื้นที่ทำงาน',
-      pillarTitle: 'ส่วนราชการ & กองต่าง ๆ (Workspaces)',
+      pillarNumber: 'พื้นที่ทำงาน',
+      pillarTitle: '5 ส่วนราชการ (Workspaces)',
+      badgeClass: 'bg-purple-50 text-purple-800 border-purple-200/80 dark:bg-purple-950/70 dark:text-purple-300 dark:border-purple-800/60',
+      activeClass: 'bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 text-white shadow-xs font-semibold',
+      hoverClass: 'hover:bg-purple-50/80 hover:text-purple-800 dark:hover:bg-slate-800/80 dark:hover:text-purple-300',
+      iconInactive: 'text-purple-600 dark:text-purple-400',
       items: [
-        { id: 'dept-workspaces', label: 'ภาพรวมพื้นที่ทำงานส่วนราชการ', icon: Building2 },
-        { id: 'dept-office', label: 'สำนักปลัด (รวมงานสาธารณสุขฯ)', icon: Building2 },
-        { id: 'dept-finance', label: 'กองคลัง (จัดซื้อจัดจ้าง/ค่าปรับ/พัสดุ)', icon: BadgeDollarSign },
-        { id: 'dept-tech', label: 'กองช่าง (Factor F/คุมงาน/ใบอนุญาต)', icon: HardHat },
-        { id: 'dept-education', label: 'กองการศึกษา (อาหารกลางวัน/นม/สื่อ)', icon: GraduationCap },
-        { id: 'dept-welfare', label: 'กองสวัสดิการสังคม (เบี้ยยังชีพ/สงเคราะห์)', icon: HeartHandshake }
+        { id: 'dept-workspaces', label: 'ภาพรวมทุกส่วนราชการ', icon: Building2 },
+        { id: 'dept-office', label: 'สำนักปลัด', icon: Building2 },
+        { id: 'dept-finance', label: 'กองคลัง', icon: BadgeDollarSign },
+        { id: 'dept-tech', label: 'กองช่าง', icon: HardHat },
+        { id: 'dept-education', label: 'กองการศึกษา', icon: GraduationCap },
+        { id: 'dept-welfare', label: 'กองสวัสดิการสังคม', icon: HeartHandshake }
       ]
     },
     {
       pillarId: 'pillar-4',
       pillarNumber: 'หมวดที่ 4',
-      pillarTitle: 'ธรรมาภิบาล ควบคุมภายใน & LPA',
+      pillarTitle: 'ธรรมาภิบาล & LPA',
+      badgeClass: 'bg-rose-50 text-rose-800 border-rose-200/80 dark:bg-rose-950/70 dark:text-rose-300 dark:border-rose-800/60',
+      activeClass: 'bg-gradient-to-r from-rose-600 via-red-600 to-rose-700 text-white shadow-xs font-semibold',
+      hoverClass: 'hover:bg-rose-50/80 hover:text-rose-800 dark:hover:bg-slate-800/80 dark:hover:text-rose-300',
+      iconInactive: 'text-rose-600 dark:text-rose-400',
       items: [
         { id: 'internal-control', label: 'การควบคุมภายใน (ปค.4/5)', icon: ShieldCheck },
         { id: 'risk-management', label: 'การบริหารความเสี่ยงองค์กร', icon: AlertTriangle },
@@ -109,7 +129,11 @@ export default function Sidebar({
     {
       pillarId: 'pillar-5',
       pillarNumber: 'หมวดที่ 5',
-      pillarTitle: 'คลังระเบียบ & บริหารระบบ',
+      pillarTitle: 'คลังระเบียบ & จัดการระบบ',
+      badgeClass: 'bg-slate-100 text-slate-800 border-slate-300/80 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700/80',
+      activeClass: 'bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 text-white shadow-xs font-semibold',
+      hoverClass: 'hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800/80 dark:hover:text-slate-200',
+      iconInactive: 'text-slate-500 dark:text-slate-400',
       items: [
         { id: 'knowledge', label: 'คลังระเบียบและกฎหมาย', icon: BookOpen },
         { id: 'forms', label: 'แบบฟอร์มมาตรฐาน', icon: FileSpreadsheet },
@@ -147,7 +171,7 @@ export default function Sidebar({
   return (
     <aside className="w-68 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 flex flex-col shrink-0 h-full border-r border-slate-200/80 dark:border-slate-800 transition-colors overflow-hidden">
       {/* Sidebar Header */}
-      <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between shrink-0 bg-slate-50/50 dark:bg-slate-900/50">
+      <div className="px-3.5 py-2.5 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between shrink-0 bg-slate-50/60 dark:bg-slate-900/60">
         <div>
           <span className="text-[10px] font-black uppercase tracking-wider text-blue-600 dark:text-cyan-400 block font-mono">
             อบต.ฝางคำ
@@ -159,6 +183,10 @@ export default function Sidebar({
         {isAdmin ? (
           <span className="text-[10px] bg-indigo-50 dark:bg-indigo-950/80 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300 font-black px-2 py-0.5 rounded-full shadow-2xs">
             👑 ADMIN
+          </span>
+        ) : isExecutive ? (
+          <span className="text-[10px] bg-amber-50 dark:bg-amber-950/80 border border-amber-200/80 dark:border-amber-800/60 text-amber-700 dark:text-amber-300 font-bold px-2 py-0.5 rounded-full shadow-2xs">
+            ⭐ EXEC
           </span>
         ) : session?.role === 'guest' ? (
           <span className="text-[10px] bg-purple-50 dark:bg-purple-950/80 border border-purple-200/80 dark:border-purple-800/60 text-purple-700 dark:text-purple-300 font-bold px-2 py-0.5 rounded-full shadow-2xs">
@@ -172,48 +200,51 @@ export default function Sidebar({
       </div>
 
       {/* Navigation Menu List */}
-      <nav className="flex-1 p-2.5 space-y-3 overflow-y-auto custom-scrollbar min-h-0">
-        {/* Welcome / Quick Portal Button */}
-        <button
-          onClick={() => setCurrentTab('welcome')}
-          className={`w-full flex items-center px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-            currentTab === 'welcome'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-          }`}
-        >
-          <div className="flex items-center space-x-2.5">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>หน้าแรก / หน้าต้อนรับ</span>
-          </div>
-        </button>
+      <nav className="flex-1 p-2 space-y-2.5 overflow-y-auto custom-scrollbar min-h-0">
+        {/* Top Quick Portal Card */}
+        <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100/70 dark:bg-slate-800/50 rounded-xl border border-slate-200/70 dark:border-slate-800/80">
+          <button
+            onClick={() => setCurrentTab('welcome')}
+            className={`flex items-center justify-center space-x-1.5 px-2 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              currentTab === 'welcome'
+                ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-cyan-300 shadow-2xs'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+            <span className="truncate">หน้าแรก</span>
+          </button>
 
-        {/* Public Overview Button */}
-        <button
-          onClick={() => setCurrentTab('public-overview')}
-          className={`w-full flex items-center px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-            currentTab === 'public-overview'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-          }`}
-        >
-          <div className="flex items-center space-x-2.5">
-            <Globe className="w-3.5 h-3.5 text-emerald-500" />
-            <span>ภาพรวม</span>
-          </div>
-        </button>
+          <button
+            onClick={() => setCurrentTab('public-overview')}
+            className={`flex items-center justify-center space-x-1.5 px-2 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              currentTab === 'public-overview'
+                ? 'bg-white dark:bg-slate-700 text-emerald-700 dark:text-emerald-300 shadow-2xs'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60'
+            }`}
+          >
+            <Globe className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+            <span className="truncate">ภาพรวม</span>
+          </button>
+        </div>
 
-        {/* 5 Grouped Pillars */}
+        {/* 5 Grouped Pillars + Workspaces */}
         {MENU_PILLARS.map((pillar) => {
           const visibleItems = pillar.items.filter(canAccessItem);
           if (visibleItems.length === 0) return null;
 
           return (
-            <div key={pillar.pillarId} className="space-y-1">
+            <div
+              key={pillar.pillarId}
+              className="bg-slate-50/70 dark:bg-slate-900/40 rounded-2xl p-1.5 border border-slate-200/70 dark:border-slate-800/80 shadow-2xs space-y-1"
+            >
               {/* Pillar Category Header */}
-              <div className="px-2 pt-1 pb-1 flex items-center justify-between">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                  {pillar.pillarNumber}: {pillar.pillarTitle}
+              <div className="px-1.5 pt-0.5 pb-1 flex items-center gap-1.5 border-b border-slate-200/50 dark:border-slate-800/60">
+                <span className={`text-[10px] font-black uppercase px-1.5 py-0.5 rounded-md border tracking-wide ${pillar.badgeClass}`}>
+                  {pillar.pillarNumber}
+                </span>
+                <span className="text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">
+                  {pillar.pillarTitle}
                 </span>
               </div>
 
@@ -233,40 +264,39 @@ export default function Sidebar({
                             setToolkitSubmenuOpen(true);
                           }
                         }}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
+                        className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs transition-all cursor-pointer ${
                           isActive
-                            ? 'bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-800 text-white shadow-xs font-semibold'
-                            : 'text-slate-700 dark:text-slate-300 hover:bg-blue-50/70 dark:hover:bg-slate-800/60 hover:text-blue-700 dark:hover:text-blue-300'
+                            ? `${pillar.activeClass}`
+                            : `text-slate-700 dark:text-slate-300 font-medium ${pillar.hoverClass}`
                         }`}
                       >
-                        <div className="flex items-center space-x-2.5 min-w-0">
-                          <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : 'text-slate-400 dark:text-slate-500'}`} />
+                        <div className="flex items-center space-x-2 min-w-0">
+                          <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : pillar.iconInactive}`} />
                           <span className="truncate text-left">{item.label}</span>
                         </div>
 
                         {hasSubmenu && (
                           <div className="flex items-center space-x-1 shrink-0 ml-1">
-                            <button
-                              type="button"
+                            <span
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setToolkitSubmenuOpen(!toolkitSubmenuOpen);
                               }}
-                              className="p-0.5 hover:bg-white/10 rounded"
+                              className="p-0.5 hover:bg-white/20 rounded cursor-pointer"
                             >
                               {toolkitSubmenuOpen ? (
-                                <ChevronDown className="w-3 h-3 opacity-70" />
+                                <ChevronDown className={`w-3 h-3 ${isActive ? 'text-white' : 'opacity-70'}`} />
                               ) : (
-                                <ChevronRight className="w-3 h-3 opacity-70" />
+                                <ChevronRight className={`w-3 h-3 ${isActive ? 'text-white' : 'opacity-70'}`} />
                               )}
-                            </button>
+                            </span>
                           </div>
                         )}
                       </button>
 
                       {/* Sub-menu items (สำหรับเมนูเครื่องมือเชิงเทคนิค) */}
                       {hasSubmenu && toolkitSubmenuOpen && (
-                        <div className="ml-5 pl-2.5 border-l-2 border-blue-200 dark:border-blue-900/60 space-y-0.5 py-0.5">
+                        <div className="ml-3 pl-2.5 border-l-2 border-amber-300 dark:border-amber-700/60 space-y-0.5 py-0.5">
                           {item.subItems.map((sub) => {
                             const SubIcon = sub.icon;
                             const isSubActive = currentTab === 'audit-toolkits' && activeToolkitTab === sub.toolId;
@@ -280,13 +310,13 @@ export default function Sidebar({
                                     setActiveToolkitTab(sub.toolId);
                                   }
                                 }}
-                                className={`w-full flex items-center space-x-2 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
+                                className={`w-full flex items-center space-x-2 px-2 py-1 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
                                   isSubActive
-                                    ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-bold border border-blue-200 dark:border-blue-800'
-                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/60 dark:hover:bg-slate-800/40'
+                                    ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-200 font-bold border border-amber-300 dark:border-amber-700'
+                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/70 dark:hover:bg-slate-800/50'
                                 }`}
                               >
-                                <SubIcon className={`w-3 h-3 shrink-0 ${isSubActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`} />
+                                <SubIcon className={`w-3 h-3 shrink-0 ${isSubActive ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400'}`} />
                                 <span className="truncate text-left">{sub.label}</span>
                               </button>
                             );
