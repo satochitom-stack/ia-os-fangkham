@@ -307,12 +307,12 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             </span>
           </div>
 
-          {/* Main Title - Majestic, executive scale with perfect hierarchy */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.85rem] font-black text-slate-900 tracking-tight leading-[1.14] animate-fade-slide-in-2 font-['Prompt',sans-serif]">
+          {/* Main Title - Refined modern scale (reduced to ~50% per user request) */}
+          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-[1.95rem] font-extrabold text-slate-900 tracking-tight leading-snug animate-fade-slide-in-2 font-['Prompt',sans-serif]">
             <span className="block drop-shadow-xs">
               {title}
             </span>
-            <span className="inline-block whitespace-nowrap bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 bg-clip-text text-transparent drop-shadow-xs mt-2 sm:mt-2.5">
+            <span className="inline-block whitespace-nowrap bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 bg-clip-text text-transparent drop-shadow-xs mt-1 sm:mt-1.5">
               {titleLine2}
             </span>
           </h1>
