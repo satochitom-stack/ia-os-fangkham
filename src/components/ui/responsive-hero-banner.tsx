@@ -77,7 +77,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   badgeText = "Next-Gen Digital Governance & Internal Audit Platform",
   title = "ระบบงานตรวจสอบภายใน",
   titleLine2 = "องค์การบริหารส่วนตำบลฝางคำ",
-  description = "",
+  description = "แพลตฟอร์มบริหารจัดการงานตรวจสอบภายใน การควบคุมภายใน (ปอ.1 - ปค.5) และการบริหารความเสี่ยง เชื่อมโยง 5 ส่วนราชการตามมาตรฐาน ว 614",
   primaryButtonText = "เข้าสู่ระบบ",
   onPrimaryClick,
   secondaryButtonText = "",
@@ -124,8 +124,8 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   return (
     <section className={`w-full isolate transition-all duration-300 overflow-hidden relative rounded-3xl sm:rounded-[2.5rem] border border-blue-200/80 shadow-[0_20px_60px_-15px_rgba(30,58,138,0.12)] bg-gradient-to-br from-white via-[#f4f8fe] to-[#eaf2fc] text-slate-800 flex flex-col justify-between ${
       fitMode === 'fit'
-        ? 'min-h-[82vh] sm:min-h-[86vh] lg:min-h-[88vh] xl:min-h-[90vh] max-h-[960px]'
-        : 'min-h-[500px] sm:min-h-[540px]'
+        ? 'min-h-[78vh] sm:min-h-[82vh] lg:min-h-[85vh] max-h-[880px]'
+        : 'min-h-[520px] sm:min-h-[560px]'
     }`}>
       {/* 1. Bright Architectural Building Photo Background */}
       <img
@@ -373,11 +373,11 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
         )}
       </header>
 
-      {/* 4. Hero Center Body (Title, Welcome Badge & Sleek Redesigned Buttons) */}
-      <div className="z-10 relative flex-1 flex flex-col justify-center items-center py-10 sm:py-14 lg:py-16 px-6">
-        <div className="max-w-4xl mx-auto text-center">
+      {/* 4. Hero Center Body (Title, Welcome Badge, Subtitle & Balanced Action Buttons) */}
+      <div className="z-10 relative flex-1 flex flex-col justify-center items-center py-6 sm:py-8 lg:py-10 px-6">
+        <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-5">
           {/* Frosted Glass Welcome Badge */}
-          <div className="mb-4 sm:mb-5 inline-flex items-center gap-2 sm:gap-2.5 rounded-full bg-white/90 px-3.5 sm:px-4 py-1.5 border border-blue-200/80 shadow-xs backdrop-blur-md animate-fade-slide-in-1 hover:border-blue-300 transition-all">
+          <div className="inline-flex items-center gap-2 sm:gap-2.5 rounded-full bg-white/90 px-3.5 sm:px-4 py-1.5 border border-blue-200/80 shadow-xs backdrop-blur-md animate-fade-slide-in-1 hover:border-blue-300 transition-all">
             <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-white bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 rounded-full py-0.5 px-2.5 sm:px-3 shadow-2xs font-['Plus_Jakarta_Sans',sans-serif] tracking-wider uppercase">
               <Sparkles className="w-3 h-3 text-cyan-200 animate-pulse" />
               {badgeLabel}
@@ -387,8 +387,8 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             </span>
           </div>
 
-          {/* Main Title - Refined modern scale */}
-          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-[1.95rem] font-extrabold text-slate-900 tracking-tight leading-snug animate-fade-slide-in-2 font-['Prompt',sans-serif]">
+          {/* Main Title - Confident, balanced & modern */}
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.65rem] font-black text-slate-900 tracking-tight leading-[1.22] animate-fade-slide-in-2 font-['Prompt',sans-serif]">
             <span className="block drop-shadow-xs">
               {title}
             </span>
@@ -397,22 +397,22 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             </span>
           </h1>
 
-          {/* Subtitle / Description (Only displayed if provided) */}
+          {/* Subtitle / Description - Connects title to buttons seamlessly */}
           {description && (
-            <p className="mt-4 text-sm sm:text-base text-slate-600 font-normal leading-relaxed max-w-xl mx-auto drop-shadow-2xs animate-fade-slide-in-3">
+            <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow-2xs animate-fade-slide-in-3 pt-0.5">
               {description}
             </p>
           )}
 
-          {/* Redesigned Modern Action Buttons - Sleek, compact & shifted down with breathing room */}
-          <div className="mt-8 sm:mt-10 lg:mt-12 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center animate-fade-slide-in-3">
+          {/* Redesigned Modern Action Buttons - Well-proportioned & balanced */}
+          <div className="pt-2 sm:pt-3 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center animate-fade-slide-in-3">
             {/* Primary Button */}
             <button
               type="button"
               onClick={onPrimaryClick}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-semibold text-sm sm:text-base px-6 py-2.5 sm:py-3 shadow-md shadow-blue-600/25 hover:shadow-lg hover:shadow-blue-600/35 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all cursor-pointer group"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold text-sm sm:text-base px-7 sm:px-8 py-3 sm:py-3.5 shadow-md shadow-blue-600/25 hover:shadow-lg hover:shadow-blue-600/35 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all cursor-pointer group"
             >
-              <LogIn className="w-4 h-4 text-blue-100 group-hover:scale-110 transition-transform" />
+              <LogIn className="w-4.5 h-4.5 text-blue-100 group-hover:scale-110 transition-transform" />
               <span>{session ? "เปิดแดชบอร์ดงานตรวจสอบ" : primaryButtonText}</span>
               <ArrowRight className="w-4 h-4 text-blue-200 group-hover:translate-x-0.5 transition-transform" />
             </button>
@@ -422,9 +422,9 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
               <button
                 type="button"
                 onClick={onGuestClick}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-white/90 hover:bg-white text-slate-700 hover:text-blue-700 font-semibold text-sm sm:text-base px-6 py-2.5 sm:py-3 border border-slate-200/90 hover:border-blue-300 shadow-2xs hover:shadow-xs hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all cursor-pointer group"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-white/95 hover:bg-white text-slate-700 hover:text-blue-700 font-bold text-sm sm:text-base px-7 sm:px-8 py-3 sm:py-3.5 border border-slate-200/90 hover:border-blue-300 shadow-2xs hover:shadow-xs hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all cursor-pointer group"
               >
-                <Eye className="w-4 h-4 text-slate-500 group-hover:text-blue-600 group-hover:scale-110 transition-colors" />
+                <Eye className="w-4.5 h-4.5 text-slate-500 group-hover:text-blue-600 group-hover:scale-110 transition-colors" />
                 <span>{guestButtonText}</span>
               </button>
             )}
@@ -439,6 +439,22 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
                 <span>{secondaryButtonText}</span>
               </button>
             )}
+          </div>
+
+          {/* Micro Trust & Feature Highlights (Harmonizes and grounds the lower space) */}
+          <div className="pt-2 sm:pt-3 flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 text-[11px] sm:text-xs text-slate-500 font-medium">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/70 border border-slate-200/80 shadow-2xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+              <span>มาตรฐาน ว 614</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/70 border border-slate-200/80 shadow-2xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span>ควบคุมภายใน ปอ.1 - ปค.5</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/70 border border-slate-200/80 shadow-2xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+              <span>เชื่อมโยง 5 ส่วนราชการ</span>
+            </span>
           </div>
         </div>
       </div>
