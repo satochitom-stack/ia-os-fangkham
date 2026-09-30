@@ -116,7 +116,7 @@ export default function Sidebar({
     {
       pillarId: 'pillar-4',
       pillarNumber: 'หมวดที่ 4',
-      pillarTitle: 'ควบคุมภายใน & บริหารความเสี่ยง',
+      pillarTitle: 'Risk & Control',
       badgeClass: 'bg-rose-50 text-rose-800 border-rose-200/80 dark:bg-rose-950/70 dark:text-rose-300 dark:border-rose-800/60',
       activeClass: 'bg-gradient-to-r from-rose-600 via-red-600 to-rose-700 text-white shadow-xs font-semibold',
       hoverClass: 'hover:bg-rose-50/80 hover:text-rose-800 dark:hover:bg-slate-800/80 dark:hover:text-rose-300',
@@ -240,11 +240,11 @@ export default function Sidebar({
               className="bg-slate-50/70 dark:bg-slate-900/40 rounded-2xl p-1.5 border border-slate-200/70 dark:border-slate-800/80 shadow-2xs space-y-1"
             >
               {/* Pillar Category Header */}
-              <div className="px-1.5 pt-0.5 pb-1 flex items-center gap-1.5 border-b border-slate-200/50 dark:border-slate-800/60">
-                <span className={`text-[10px] font-black uppercase px-1.5 py-0.5 rounded-md border tracking-wide ${pillar.badgeClass}`}>
+              <div className="px-1.5 pt-0.5 pb-1 flex items-center gap-1.5 border-b border-slate-200/50 dark:border-slate-800/60 min-w-0">
+                <span className={`text-[10px] font-black uppercase px-1.5 py-0.5 rounded-md border tracking-wide shrink-0 whitespace-nowrap ${pillar.badgeClass}`}>
                   {pillar.pillarNumber}
                 </span>
-                <span className="text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">
+                <span className="text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate min-w-0">
                   {pillar.pillarTitle}
                 </span>
               </div>
