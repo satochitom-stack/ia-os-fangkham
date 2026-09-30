@@ -69,9 +69,18 @@ export function getDepartments() {
             cleaned.push(dept);
           }
         });
-        if (cleaned.length !== parsed.length) {
-          saveDepartments(cleaned);
-        }
+
+        // Enforce official hierarchy: สำนักปลัด -> กองคลัง -> กองช่าง -> กองการศึกษา -> กองสวัสดิการสังคม
+        cleaned.sort((a, b) => {
+          const idxA = DEFAULT_DEPARTMENTS.indexOf(a);
+          const idxB = DEFAULT_DEPARTMENTS.indexOf(b);
+          if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+          if (idxA !== -1) return -1;
+          if (idxB !== -1) return 1;
+          return a.localeCompare(b, 'th');
+        });
+
+        saveDepartments(cleaned);
         return cleaned;
       }
     }

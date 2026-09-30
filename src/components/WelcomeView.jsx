@@ -94,13 +94,24 @@ export default function WelcomeView({ session, onLogin, onGuestLogin, onEnterDas
     };
   }, []);
 
+  const DEPARTMENT_ORDER = ['สำนักปลัด', 'กองคลัง', 'กองช่าง', 'กองการศึกษา', 'กองสวัสดิการสังคม'];
+
   // Filter out internal audit, executive titles, and CDCs to get main auditee departments (5 กองหลัก)
-  const auditeeDepartments = departments.filter(
-    (d) => d !== 'หน่วยตรวจสอบภายใน' && 
-           d !== 'ผู้บริหาร' && 
-           d !== 'ปลัด อบต.ฝางคำ' && 
-           !d.startsWith('ศพด.')
-  );
+  const auditeeDepartments = departments
+    .filter(
+      (d) => d !== 'หน่วยตรวจสอบภายใน' && 
+             d !== 'ผู้บริหาร' && 
+             d !== 'ปลัด อบต.ฝางคำ' && 
+             !d.startsWith('ศพด.')
+    )
+    .sort((a, b) => {
+      const idxA = DEPARTMENT_ORDER.indexOf(a);
+      const idxB = DEPARTMENT_ORDER.indexOf(b);
+      if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+      if (idxA !== -1) return -1;
+      if (idxB !== -1) return 1;
+      return a.localeCompare(b, 'th');
+    });
 
   // Child Development Centers (ศูนย์พัฒนาเด็กเล็กในสังกัด อบต.ฝางคำ)
   const childDevelopmentCenters = ['ศพด.วัดเจริญทัศน์', 'ศพด.บ้านฝางเทิง'];
