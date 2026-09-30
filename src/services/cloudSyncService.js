@@ -51,8 +51,9 @@ class CloudSyncService {
    * @param {Object} options
    * @param {Function} options.onRiskManagementUpdate - Callback when risk data changes in cloud
    * @param {Function} options.onDepartmentPermissionsUpdate - Callback when permissions change
+   * @param {Function} options.onPublicOverviewUpdate - Callback when public overview/slogan changes
    */
-  async initRealtimeSync({ onRiskManagementUpdate, onDepartmentPermissionsUpdate } = {}) {
+  async initRealtimeSync({ onRiskManagementUpdate, onDepartmentPermissionsUpdate, onPublicOverviewUpdate } = {}) {
     if (!isSupabaseConfigured()) {
       this.status = 'disconnected';
       this.notifyStatus();
@@ -93,6 +94,14 @@ class CloudSyncService {
             console.log('⚡ [Cloud Realtime] Received risk_management_data event:', payload.eventType, payload.new);
             this.lastSyncTime = new Date().toLocaleTimeString('th-TH');
             this.notifyStatus();
+
+            if (payload.new && (payload.new.department === 'public_overview' || payload.new.fiscal_year === 'global')) {
+              window.dispatchEvent(new CustomEvent('ia-public-overview-updated', { detail: payload.new.data }));
+              if (onPublicOverviewUpdate) {
+                onPublicOverviewUpdate(payload.new.data);
+              }
+              return;
+            }
 
             if (onRiskManagementUpdate && payload.new) {
               const row = payload.new;
@@ -190,8 +199,13 @@ class CloudSyncService {
       };
 
       data.forEach((row) => {
-        // Skip duplicate container row if any exists
-        if (row.department === 'หน่วยตรวจสอบภายใน' || row.department === 'ส่วนกลาง') return;
+        // Skip duplicate container row or public overview row if any exists
+        if (
+          row.department === 'หน่วยตรวจสอบภายใน' ||
+          row.department === 'ส่วนกลาง' ||
+          row.department === 'public_overview' ||
+          row.fiscal_year === 'global'
+        ) return;
 
         const yr = String(row.fiscal_year);
         if (!result[yr]) {
@@ -429,6 +443,74 @@ class CloudSyncService {
     } catch (err) {
       console.warn(`Failed to push permissions for ${department}:`, err);
       return false;
+    }
+  }
+
+  /**
+   * Pull public overview data (slogan, orbital nodes, metrics) from Cloud
+   */
+  async pullPublicOverviewData() {
+    if (!isSupabaseConfigured()) return null;
+    const client = getSupabaseClient();
+    if (!client) return null;
+
+    try {
+      const { data, error } = await client
+        .from('risk_management_data')
+        .select('data')
+        .eq('fiscal_year', 'global')
+        .eq('department', 'public_overview')
+        .maybeSingle();
+
+      if (error) throw error;
+      return data?.data || null;
+    } catch (err) {
+      console.warn('Failed to pull public overview from Supabase:', err);
+      return null;
+    }
+  }
+
+  /**
+   * Push public overview data (slogan, orbital nodes, metrics) to Cloud
+   */
+  async pushPublicOverviewData(overviewData) {
+    if (!isSupabaseConfigured() || !overviewData) return false;
+    const client = getSupabaseClient();
+    if (!client) return false;
+
+    this.isPushing = true;
+    try {
+      this.status = 'syncing';
+      this.notifyStatus();
+
+      const { error } = await client
+        .from('risk_management_data')
+        .upsert(
+          {
+            fiscal_year: 'global',
+            department: 'public_overview',
+            data: overviewData,
+            updated_at: new Date().toISOString()
+          },
+          { onConflict: 'fiscal_year,department' }
+        );
+
+      if (error) throw error;
+
+      this.status = 'connected';
+      this.lastSyncTime = new Date().toLocaleTimeString('th-TH');
+      this.notifyStatus();
+      return true;
+    } catch (err) {
+      console.error('Failed to push public overview to Supabase:', err);
+      this.status = 'error';
+      this.lastError = err.message;
+      this.notifyStatus();
+      return false;
+    } finally {
+      setTimeout(() => {
+        this.isPushing = false;
+      }, 500);
     }
   }
 }

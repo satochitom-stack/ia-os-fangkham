@@ -228,16 +228,37 @@ export default function RadialOrbitalTimeline({
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[580px] h-[580px] bg-blue-300/20 dark:bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] bg-sky-300/25 dark:bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
 
-      {/* Floating Slogan Ribbon (คำขวัญประจำตำบล อบต.ฝางคำ) */}
+      {/* Floating Slogan Ribbon (คำขวัญประจำตำบล อบต.ฝางคำ) - Redesigned Civic Plaque */}
       {slogan && (
-        <div className="absolute top-4 inset-x-3 sm:inset-x-8 z-30 flex justify-center pointer-events-none">
-          <div className="max-w-2xl px-4 py-2 sm:py-2.5 rounded-2xl bg-white/95 dark:bg-slate-900/85 backdrop-blur-xl border border-blue-200/90 dark:border-cyan-400/30 shadow-md shadow-blue-500/5 dark:shadow-blue-950/60 text-center flex items-center justify-center gap-2.5 pointer-events-auto transition-all hover:border-blue-400/60 dark:hover:border-cyan-400/60">
-            <span className="p-1 rounded-lg bg-blue-100 dark:bg-cyan-500/20 text-blue-600 dark:text-cyan-300 shrink-0">
-              <Quote className="w-3.5 h-3.5 transform scale-x-[-1]" />
-            </span>
-            <p className="text-xs sm:text-[13px] font-bold text-slate-800 dark:text-cyan-100 tracking-wide font-['Prompt',sans-serif] leading-tight line-clamp-2">
-              "{slogan}"
-            </p>
+        <div className="absolute top-3.5 inset-x-2 sm:inset-x-6 z-30 flex justify-center pointer-events-none">
+          <div className="group relative max-w-xl lg:max-w-2xl pointer-events-auto transition-all duration-300 hover:scale-[1.01]">
+            {/* Ambient Aura Background */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-400/30 via-blue-500/25 to-cyan-400/30 rounded-2xl blur-xs opacity-75 group-hover:opacity-100 transition duration-300 pointer-events-none" />
+            
+            {/* Gradient Border Shell */}
+            <div className="relative p-[1px] rounded-2xl bg-gradient-to-r from-amber-400/70 via-blue-400/50 to-cyan-400/70 dark:from-amber-400/50 dark:via-cyan-400/60 dark:to-blue-400/50 shadow-md shadow-blue-950/5 dark:shadow-cyan-950/30">
+              {/* Inner Plaque Body */}
+              <div className="flex items-center justify-center gap-2 sm:gap-2.5 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[15px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/50 dark:border-slate-800/80">
+                {/* Civic Crest / Slogan Micro Badge */}
+                <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500/15 to-amber-500/5 dark:from-amber-400/25 dark:to-amber-500/10 border border-amber-300/70 dark:border-amber-400/40 text-amber-800 dark:text-amber-300 shrink-0 shadow-2xs">
+                  <Sparkles className="w-3 h-3 text-amber-500 dark:text-amber-400 animate-pulse" />
+                  <span className="text-[10px] sm:text-[11px] font-extrabold tracking-wider font-['Prompt',sans-serif] whitespace-nowrap">
+                    คำขวัญ
+                  </span>
+                </div>
+
+                {/* Left Quote */}
+                <Quote className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-500/70 dark:text-cyan-400/70 shrink-0 transform scale-x-[-1]" />
+
+                {/* Slogan Text: strictly font size unchanged as requested (text-xs sm:text-[13px]) */}
+                <p className="text-xs sm:text-[13px] font-semibold text-slate-800 dark:text-cyan-50 tracking-wide font-['Prompt',sans-serif] leading-tight text-center line-clamp-2">
+                  {slogan}
+                </p>
+
+                {/* Right Quote */}
+                <Quote className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-500/70 dark:text-cyan-400/70 shrink-0" />
+              </div>
+            </div>
           </div>
         </div>
       )}
