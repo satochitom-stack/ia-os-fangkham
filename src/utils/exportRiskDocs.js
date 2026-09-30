@@ -61,7 +61,7 @@ export function exportBsToWord({
     formNumber = '1';
     formName = 'บส.1';
     title = 'กำหนดขอบเขตความรับผิดชอบตามประเด็นยุทธศาสตร์/ข้อบัญญัติ/เทศบัญญัติ/อื่น ๆ (ถ้ามี)';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
+    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
     signatureNumber = { sign: '10', pos: '11', date: '12' };
 
     tableHeaderHtml = `
@@ -93,7 +93,7 @@ export function exportBsToWord({
     formNumber = '2';
     formName = 'บส.2';
     title = 'การวิเคราะห์โอกาส ผลกระทบ และการตอบสนองความเสี่ยง';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
+    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
     signatureNumber = { sign: '13', pos: '14', date: '15' };
 
     tableHeaderHtml = `
@@ -139,7 +139,7 @@ export function exportBsToWord({
     formNumber = '3';
     formName = 'บส.3';
     title = 'รายงานการจัดทำแผนบริหารความเสี่ยง';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
+    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
     signatureNumber = { sign: '12', pos: '13', date: '14' };
 
     tableHeaderHtml = `
@@ -174,7 +174,7 @@ export function exportBsToWord({
     formName = 'บส.4';
     const periodLabel = bs4Period === '3month' ? 'รอบ 3 เดือน' : bs4Period === '6month' ? 'รอบ 6 เดือน' : 'รอบ 12 เดือน';
     title = `รายงานการติดตามผลการบริหารความเสี่ยง (${periodLabel})`;
-    subtitle = `ประจำปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
+    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
     signatureNumber = { sign: '12', pos: '13', date: '14' };
 
     tableHeaderHtml = `
@@ -208,7 +208,7 @@ export function exportBsToWord({
     formNumber = '5';
     formName = 'บส.5';
     title = 'รายงานผลการดำเนินการและทบทวนแผนการบริหารความเสี่ยง';
-    subtitle = `สำหรับปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
+    subtitle = `สำหรับปีงบประมาณ พ.ศ. ${selectedYear}`;
     signatureNumber = { sign: '14', pos: '15', date: '16' };
 
     tableHeaderHtml = `
@@ -359,7 +359,7 @@ export function exportBsToWord({
       <div class="Section1">
         <div class="header-top">แบบ บส. ${formNumber}</div>
         <div class="header-center">
-          <h2>ชื่อหน่วยงาน (1) ${escapeHtml(orgName)}</h2>
+          <h2>${escapeHtml(orgName)}</h2>
           <h3>${escapeHtml(title)}</h3>
           <p>${escapeHtml(subtitle)}</p>
         </div>
@@ -428,7 +428,7 @@ export function exportBsToExcel({
     formNumber = '1';
     formName = 'บส.1';
     title = 'กำหนดขอบเขตความรับผิดชอบตามประเด็นยุทธศาสตร์/ข้อบัญญัติ/เทศบัญญัติ/อื่น ๆ (ถ้ามี)';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
+    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
     colSpanTotal = 8;
     signatureNumber = { sign: '10', pos: '11', date: '12' };
 
@@ -461,7 +461,7 @@ export function exportBsToExcel({
     formNumber = '2';
     formName = 'บส.2';
     title = 'การวิเคราะห์โอกาส ผลกระทบ และการตอบสนองความเสี่ยง';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
+    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
     colSpanTotal = 12;
     signatureNumber = { sign: '13', pos: '14', date: '15' };
 
@@ -508,7 +508,7 @@ export function exportBsToExcel({
     formNumber = '3';
     formName = 'บส.3';
     title = 'รายงานการจัดทำแผนบริหารความเสี่ยง';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
+    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
     colSpanTotal = 9;
     signatureNumber = { sign: '12', pos: '13', date: '14' };
 
@@ -544,7 +544,7 @@ export function exportBsToExcel({
     formName = 'บส.4';
     const periodLabel = bs4Period === '3month' ? 'รอบ 3 เดือน' : bs4Period === '6month' ? 'รอบ 6 เดือน' : 'รอบ 12 เดือน';
     title = `รายงานการติดตามผลการบริหารความเสี่ยง (${periodLabel})`;
-    subtitle = `ประจำปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
+    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
     colSpanTotal = 9;
     signatureNumber = { sign: '12', pos: '13', date: '14' };
 
@@ -579,7 +579,7 @@ export function exportBsToExcel({
     formNumber = '5';
     formName = 'บส.5';
     title = 'รายงานผลการดำเนินการและทบทวนแผนการบริหารความเสี่ยง';
-    subtitle = `สำหรับปีงบประมาณ พ.ศ. (2) ${selectedYear}`;
+    subtitle = `สำหรับปีงบประมาณ พ.ศ. ${selectedYear}`;
     colSpanTotal = 16;
     signatureNumber = { sign: '14', pos: '15', date: '16' };
 
@@ -688,7 +688,7 @@ export function exportBsToExcel({
           <td colspan="${colSpanTotal}" class="header-tag">แบบ บส. ${formNumber}</td>
         </tr>
         <tr>
-          <td colspan="${colSpanTotal}" class="title-row">ชื่อหน่วยงาน (1) ${escapeHtml(orgName)}</td>
+          <td colspan="${colSpanTotal}" class="title-row">${escapeHtml(orgName)}</td>
         </tr>
         <tr>
           <td colspan="${colSpanTotal}" class="subtitle-row">${escapeHtml(title)}</td>

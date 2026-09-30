@@ -2111,13 +2111,13 @@ export default function RiskManagementView({
               <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. 1</span>
             </div>
             <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 print:text-black print:text-lg">
-              ชื่อหน่วยงาน (1) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
+              {orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}
             </h3>
             <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
               กำหนดขอบเขตความรับผิดชอบตามประเด็นยุทธศาสตร์/ข้อบัญญัติ/เทศบัญญัติ/อื่น ๆ (ถ้ามี)
             </p>
             <p className="text-xs text-slate-600 dark:text-slate-400 print:text-black print:text-xs">
-              ประจำปีงบประมาณ พ.ศ. (2) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
+              ประจำปีงบประมาณ พ.ศ. <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
             </p>
           </div>
 
@@ -2267,19 +2267,19 @@ export default function RiskManagementView({
             {/* Official Signature Section */}
             <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-4 print-signature-block break-inside-avoid print:break-inside-avoid">
               <div className="w-72 text-center space-y-1.5 print:text-[8.5pt]">
-                <div>ลายมือชื่อ................................................... (๑๐)</div>
+                <div>ลายมือชื่อ...................................................</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
-                    <div>ตำแหน่ง .................................................... (๑๑)</div>
+                    <div>ตำแหน่ง ....................................................</div>
                   </>
                 ) : (
                   <>
                     <div>( {orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
-                    <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} (๑๑)</div>
+                    <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
                   </>
                 )}
-                <div>วันที่...............เดือน.....................พ.ศ. .............. (๑๒)</div>
+                <div>วันที่...............เดือน.....................พ.ศ. ..............</div>
               </div>
             </div>
           </div>
@@ -2298,13 +2298,13 @@ export default function RiskManagementView({
               <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. 2</span>
             </div>
             <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 print:text-black print:text-lg">
-              ชื่อหน่วยงาน (1) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
+              {orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}
             </h3>
             <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
               การวิเคราะห์โอกาส ผลกระทบ และการตอบสนองความเสี่ยง
             </p>
             <p className="text-xs text-slate-600 dark:text-slate-400 print:text-black print:text-xs">
-              ประจำปีงบประมาณ พ.ศ. (2) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
+              ประจำปีงบประมาณ พ.ศ. <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
             </p>
           </div>
 
@@ -2419,19 +2419,19 @@ export default function RiskManagementView({
             {/* Official Signature Section */}
             <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-4 print-signature-block break-inside-avoid print:break-inside-avoid">
               <div className="w-72 text-center space-y-1.5 print:text-[8.5pt]">
-                <div>ลายมือชื่อ................................................... (๑๓)</div>
+                <div>ลายมือชื่อ...................................................</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
-                    <div>ตำแหน่ง .................................................... (๑๔)</div>
+                    <div>ตำแหน่ง ....................................................</div>
                   </>
                 ) : (
                   <>
                     <div>( {orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
-                    <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} (๑๔)</div>
+                    <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
                   </>
                 )}
-                <div>วันที่...............เดือน.....................พ.ศ. .............. (๑๕)</div>
+                <div>วันที่...............เดือน.....................พ.ศ. ..............</div>
               </div>
             </div>
           </div>
@@ -2450,13 +2450,13 @@ export default function RiskManagementView({
               <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. 3</span>
             </div>
             <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 print:text-black print:text-lg">
-              ชื่อหน่วยงาน (1) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
+              {orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}
             </h3>
             <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
               รายงานการจัดทำแผนบริหารความเสี่ยง
             </p>
             <p className="text-xs text-slate-600 dark:text-slate-400 print:text-black print:text-xs">
-              ประจำปีงบประมาณ พ.ศ. (2) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
+              ประจำปีงบประมาณ พ.ศ. <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
             </p>
           </div>
 
@@ -2562,19 +2562,19 @@ export default function RiskManagementView({
             {/* Official Signature Section */}
             <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-4 print-signature-block break-inside-avoid print:break-inside-avoid">
               <div className="w-72 text-center space-y-1.5 print:text-[8.5pt]">
-                <div>ลายมือชื่อ................................................... (๑๒)</div>
+                <div>ลายมือชื่อ...................................................</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
-                    <div>ตำแหน่ง .................................................... (๑๓)</div>
+                    <div>ตำแหน่ง ....................................................</div>
                   </>
                 ) : (
                   <>
                     <div>( {orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
-                    <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} (๑๓)</div>
+                    <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
                   </>
                 )}
-                <div>วันที่...............เดือน.....................พ.ศ. .............. (๑๔)</div>
+                <div>วันที่...............เดือน.....................พ.ศ. ..............</div>
               </div>
             </div>
           </div>
@@ -2593,7 +2593,7 @@ export default function RiskManagementView({
               <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. 4</span>
             </div>
             <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 print:text-black print:text-lg">
-              ชื่อหน่วยงาน (1) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
+              {orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}
             </h3>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-xs font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
@@ -2636,7 +2636,7 @@ export default function RiskManagementView({
             </div>
 
             <p className="text-xs text-slate-600 dark:text-slate-400 print:text-black print:text-xs">
-              สำหรับปีงบประมาณ พ.ศ. (2) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
+              สำหรับปีงบประมาณ พ.ศ. <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
             </p>
           </div>
 
@@ -2744,19 +2744,19 @@ export default function RiskManagementView({
             {/* Official Signature Section */}
             <div className="p-6 bg-slate-50/50 dark:bg-slate-850/50 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-4 print-signature-block break-inside-avoid print:break-inside-avoid">
               <div className="w-72 text-center space-y-1.5 print:text-[8.5pt]">
-                <div>ลายมือชื่อ................................................... (๑๒)</div>
+                <div>ลายมือชื่อ...................................................</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
-                    <div>ตำแหน่ง .................................................... (๑๓)</div>
+                    <div>ตำแหน่ง ....................................................</div>
                   </>
                 ) : (
                   <>
                     <div>( {orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
-                    <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} (๑๓)</div>
+                    <div>ตำแหน่ง {orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
                   </>
                 )}
-                <div>วันที่...............เดือน.....................พ.ศ. .............. (๑๔)</div>
+                <div>วันที่...............เดือน.....................พ.ศ. ..............</div>
               </div>
             </div>
           </div>
@@ -2775,13 +2775,13 @@ export default function RiskManagementView({
               <span className="font-mono text-sm font-black text-slate-800 dark:text-slate-200 print:text-black print:text-sm ml-auto">แบบ บส. 5</span>
             </div>
             <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 print:text-black print:text-lg">
-              ชื่อหน่วยงาน (1) <span className="underline decoration-blue-500/50 print:decoration-black underline-offset-4">{orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}</span>
+              {orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}
             </h3>
             <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
               รายงานผลการดำเนินการและทบทวนแผนการบริหารความเสี่ยง
             </p>
             <p className="text-xs text-slate-600 dark:text-slate-400 print:text-black print:text-xs">
-              สำหรับปีงบประมาณ พ.ศ. (2) <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
+              สำหรับปีงบประมาณ พ.ศ. <span className="font-mono font-bold text-slate-900 dark:text-slate-100 print:text-black">{selectedYear}</span>
             </p>
           </div>
 
@@ -2963,19 +2963,19 @@ export default function RiskManagementView({
             {/* Official Signature Section */}
             <div className="p-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex flex-col items-end text-xs space-y-1.5 text-slate-700 dark:text-slate-300 print:bg-transparent print:border-none print:text-black print:pt-4 print-signature-block break-inside-avoid print:break-inside-avoid">
               <div className="w-72 text-center space-y-1.5 print:text-[8.5pt]">
-                <div>ลายมือชื่อ................................................... (๑๔)</div>
+                <div>ลายมือชื่อ...................................................</div>
                 {isSubDivision ? (
                   <>
                     <div>( .................................................... )</div>
-                    <div>ตำแหน่ง .................................................... (๑๕)</div>
+                    <div>ตำแหน่ง ....................................................</div>
                   </>
                 ) : (
                   <>
                     <div>( {bs5Data.approvedBy || orgProfile?.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} )</div>
-                    <div>ตำแหน่ง {bs5Data.approverPosition || orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'} (๑๕)</div>
+                    <div>ตำแหน่ง {bs5Data.approverPosition || orgProfile?.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ'}</div>
                   </>
                 )}
-                <div>วันที่...............เดือน.....................พ.ศ. .............. (๑๖)</div>
+                <div>วันที่...............เดือน.....................พ.ศ. ..............</div>
               </div>
             </div>
           </div>
