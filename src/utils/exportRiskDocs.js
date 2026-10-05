@@ -64,6 +64,7 @@ export function exportBsToWord({
     subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
     signatureNumber = { sign: '10', pos: '11', date: '12' };
 
+    const showDeptCol = (!effectiveDept || effectiveDept === 'all');
     tableHeaderHtml = `
       <tr>
         <th style="width: 70px;">(3)<br/>รหัสความเสี่ยง</th>
@@ -73,7 +74,7 @@ export function exportBsToWord({
         <th>(7)<br/>วัตถุประสงค์</th>
         <th>(8)<br/>ตัวชี้วัด</th>
         <th>(9)<br/>เป้าหมาย</th>
-        <th style="width: 110px;">ส่วนราชการ</th>
+        ${showDeptCol ? '<th style="width: 110px;">ส่วนราชการ</th>' : ''}
       </tr>
     `;
 
@@ -86,7 +87,7 @@ export function exportBsToWord({
         <td>${escapeHtml(item.objective || '')}</td>
         <td>${escapeHtml(item.kpi || '')}</td>
         <td>${escapeHtml(item.target || '')}</td>
-        <td style="text-align: center;">${escapeHtml(item.department || '')}</td>
+        ${showDeptCol ? `<td style="text-align: center;">${escapeHtml(item.department || '')}</td>` : ''}
       </tr>
     `).join('');
   } else if (activeTab === 'bs2') {
@@ -98,40 +99,38 @@ export function exportBsToWord({
 
     tableHeaderHtml = `
       <tr>
-        <th style="width: 70px;">(3)<br/>รหัส</th>
-        <th>(4)<br/>โครงการ/กิจกรรม</th>
+        <th style="width: 70px;">(3)<br/>รหัสความเสี่ยง</th>
+        <th>(4)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
         <th>(5)<br/>วัตถุประสงค์</th>
-        <th>(6)<br/>เหตุการณ์ความเสี่ยง</th>
-        <th>(7)<br/>ปัจจัยเสี่ยง</th>
-        <th>(8)<br/>ประเภทความเสี่ยง</th>
-        <th>(9)<br/>การควบคุมที่มีอยู่</th>
-        <th style="width: 45px;">(10)<br/>โอกาส(L)</th>
-        <th style="width: 45px;">(10)<br/>ผลกระทบ(I)</th>
-        <th style="width: 65px;">(10)<br/>ระดับ(LxI)</th>
-        <th>(11)<br/>วิธีการตอบสนองความเสี่ยง</th>
-        <th style="width: 100px;">ส่วนราชการ</th>
+        <th style="width: 110px;">(6)<br/>ผู้รับผิดชอบ</th>
+        <th>(7)<br/>ความเสี่ยง</th>
+        <th style="width: 110px;">(8)<br/>ประเภทความเสี่ยง</th>
+        <th style="width: 45px;">(9)<br/>คะแนนโอกาส</th>
+        <th style="width: 45px;">(10)<br/>คะแนนผลกระทบ</th>
+        <th style="width: 75px;">(11)<br/>ระดับความเสี่ยง<br/>(9) x (10)</th>
+        <th>(12)<br/>วิธีการตอบสนองความเสี่ยง</th>
       </tr>
     `;
 
     tableBodyHtml = filteredBs2.map((item) => {
       const l = Number(item.likelihood) || 1;
       const i = Number(item.impact) || 1;
-      const score = l * i;
-      const level = score >= 15 ? 'สูงมาก' : score >= 10 ? 'สูง' : score >= 5 ? 'ปานกลาง' : 'ต่ำ';
+      const score = item.riskScore !== undefined && item.riskScore !== null && item.riskScore !== ''
+        ? item.riskScore
+        : (l * i);
+      const level = item.riskLevel || (score >= 15 ? 'สูงมาก' : score >= 10 ? 'สูง' : score >= 5 ? 'ปานกลาง' : 'ต่ำ');
       return `
         <tr>
-          <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode)}</td>
-          <td style="font-weight: bold;">${escapeHtml(item.activity)}</td>
+          <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || '')}</td>
+          <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
           <td>${escapeHtml(item.objective || '')}</td>
-          <td style="color: #b91c1c; font-weight: bold;">${escapeHtml(item.riskEvent)}</td>
-          <td>${escapeHtml(item.cause || '')}</td>
+          <td>${escapeHtml(item.responsiblePerson || '')}</td>
+          <td style="color: #b91c1c; font-weight: bold;">${escapeHtml(item.riskEvent || '')}</td>
           <td>${escapeHtml(item.riskCategory || '')}</td>
-          <td>${escapeHtml(item.existingControl || '-')}</td>
           <td style="text-align: center;">${l}</td>
           <td style="text-align: center;">${i}</td>
           <td style="text-align: center; font-weight: bold;">${score} (${level})</td>
           <td style="color: #1d4ed8;">${escapeHtml(item.riskResponse || '')}</td>
-          <td style="text-align: center;">${escapeHtml(item.department || '')}</td>
         </tr>
       `;
     }).join('');
@@ -144,29 +143,29 @@ export function exportBsToWord({
 
     tableHeaderHtml = `
       <tr>
-        <th style="width: 70px;">(3)<br/>รหัส</th>
+        <th style="width: 70px;">(3)<br/>รหัสความเสี่ยง</th>
         <th>(4)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
         <th>(5)<br/>ความเสี่ยง</th>
         <th>(6)<br/>วิธีการตอบสนองความเสี่ยง</th>
         <th style="width: 100px;">(7)<br/>ผู้รับผิดชอบ</th>
         <th>(8)<br/>วิธีการจัดการความเสี่ยง (มาตรการ)</th>
         <th>(9)<br/>ตัวชี้วัด</th>
-        <th style="width: 100px;">(10)<br/>ระยะเวลา</th>
-        <th>(11)<br/>วิธีการติดตามและการรายงาน</th>
+        <th style="width: 100px;">(10)<br/>ระยะเวลาดำเนินการ</th>
+        <th>(11)<br/>วิธีการติดตาม และการรายงาน</th>
       </tr>
     `;
 
     tableBodyHtml = filteredBs3.map((item) => `
       <tr>
-        <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode)}</td>
-        <td style="font-weight: bold;">${escapeHtml(item.activity)}</td>
-        <td style="color: #b91c1c; font-weight: bold;">${escapeHtml(item.riskEvent)}</td>
-        <td>${escapeHtml(item.riskResponse)}</td>
-        <td>${escapeHtml(item.responsiblePerson)}</td>
-        <td>${escapeHtml(item.measures)}</td>
-        <td>${escapeHtml(item.kpi)}</td>
-        <td style="text-align: center;">${escapeHtml(item.timeline)}</td>
-        <td>${escapeHtml(item.monitoringMethod)}</td>
+        <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || '')}</td>
+        <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
+        <td style="color: #b91c1c; font-weight: bold;">${escapeHtml(item.riskEvent || '')}</td>
+        <td>${escapeHtml(item.riskResponse || '')}</td>
+        <td>${escapeHtml(item.responsiblePerson || '')}</td>
+        <td>${escapeHtml(item.measures || '')}</td>
+        <td>${escapeHtml(item.kpi || '')}</td>
+        <td style="text-align: center;">${escapeHtml(item.timeline || '')}</td>
+        <td>${escapeHtml(item.monitoringMethod || '')}</td>
       </tr>
     `).join('');
   } else if (activeTab === 'bs4') {
@@ -174,33 +173,33 @@ export function exportBsToWord({
     formName = 'บส.4';
     const periodLabel = bs4Period === '3month' ? 'รอบ 3 เดือน' : bs4Period === '6month' ? 'รอบ 6 เดือน' : 'รอบ 12 เดือน';
     title = `รายงานการติดตามผลการบริหารความเสี่ยง (${periodLabel})`;
-    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
+    subtitle = `สำหรับปีงบประมาณ พ.ศ. ${selectedYear}`;
     signatureNumber = { sign: '12', pos: '13', date: '14' };
 
     tableHeaderHtml = `
       <tr>
-        <th style="width: 70px;">(3)<br/>รหัส</th>
-        <th>(4)<br/>โครงการ/กิจกรรม</th>
+        <th style="width: 70px;">(3)<br/>รหัสความเสี่ยง</th>
+        <th>(4)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
         <th>(5)<br/>วิธีการจัดการความเสี่ยง</th>
-        <th style="width: 90px;">(6)<br/>ระยะเวลา</th>
+        <th style="width: 90px;">(6)<br/>ระยะเวลาดำเนินการ</th>
         <th style="width: 100px;">(7)<br/>ผู้รับผิดชอบ</th>
-        <th>(8)<br/>ผลการดำเนินงาน</th>
-        <th>(9)<br/>หลักฐานอ้างอิง</th>
-        <th style="width: 65px;">(10)<br/>ร้อยละ</th>
-        <th>(11)<br/>ปัญหา อุปสรรค และแนวทางแก้ไข</th>
+        <th>(8)<br/>ผลลัพธ์การดำเนินการจัดการความเสี่ยง</th>
+        <th>(9)<br/>เอกสาร/หลักฐาน</th>
+        <th style="width: 65px;">(10)<br/>ร้อยละความคืบหน้า</th>
+        <th>(11)<br/>ปัญหาอุปสรรค และแนวทางแก้ไข</th>
       </tr>
     `;
 
     tableBodyHtml = filteredBs4.map((item) => `
       <tr>
-        <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode)}</td>
-        <td style="font-weight: bold;">${escapeHtml(item.activity)}</td>
-        <td>${escapeHtml(item.measures)}</td>
-        <td style="text-align: center;">${escapeHtml(item.timeline)}</td>
-        <td>${escapeHtml(item.responsiblePerson)}</td>
-        <td>${escapeHtml(item.result)}</td>
-        <td>${escapeHtml(item.evidence)}</td>
-        <td style="text-align: center; font-weight: bold;">${item.progressPercent}%</td>
+        <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || '')}</td>
+        <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
+        <td>${escapeHtml(item.measures || '')}</td>
+        <td style="text-align: center;">${escapeHtml(item.timeline || '')}</td>
+        <td>${escapeHtml(item.responsiblePerson || '')}</td>
+        <td>${escapeHtml(item.result || '')}</td>
+        <td>${escapeHtml(item.evidence || '')}</td>
+        <td style="text-align: center; font-weight: bold;">${item.progressPercent || 0}%</td>
         <td>${escapeHtml(item.problemSolution || '-')}</td>
       </tr>
     `).join('');
@@ -213,25 +212,25 @@ export function exportBsToWord({
 
     tableHeaderHtml = `
       <tr>
-        <th rowspan="2" style="width: 60px;">(3)<br/>รหัส</th>
-        <th rowspan="2">(4)<br/>โครงการ/กิจกรรม</th>
+        <th rowspan="2" style="width: 65px;">(3)<br/>รหัสความเสี่ยง</th>
+        <th rowspan="2">(4)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
         <th rowspan="2">(5)<br/>ความเสี่ยง</th>
-        <th colspan="3">(6) คะแนนก่อนดำเนินการ</th>
-        <th rowspan="2">(7)<br/>วิธีการจัดการ</th>
-        <th rowspan="2">(8)<br/>ผลการจัดการ</th>
-        <th colspan="3">(9) คะแนนหลังดำเนินการ</th>
-        <th rowspan="2" style="width: 60px;">(10)<br/>การเปลี่ยน</th>
-        <th rowspan="2">(11)<br/>ความเสี่ยงคงเหลือ</th>
-        <th colspan="2">(12) สรุปผล</th>
-        <th rowspan="2">(13)<br/>มาตรการปีถัดไป</th>
+        <th colspan="3">(6) คะแนนระดับความเสี่ยงก่อนดำเนินการ</th>
+        <th rowspan="2">(7)<br/>วิธีการจัดการความเสี่ยง</th>
+        <th rowspan="2">(8)<br/>ผลดำเนินการจากการจัดการ</th>
+        <th colspan="3">(9) คะแนนระดับความเสี่ยงภายหลังดำเนินการ</th>
+        <th rowspan="2" style="width: 65px;">(10)<br/>การเปลี่ยนแปลง</th>
+        <th rowspan="2">(11)<br/>ความเสี่ยงคงเหลือ/เกิดใหม่</th>
+        <th colspan="2">(12) สรุปความเสี่ยง</th>
+        <th rowspan="2">(13)<br/>มาตรการสำหรับปีถัดไป</th>
       </tr>
       <tr>
-        <th style="width: 35px;">(1)L</th>
-        <th style="width: 35px;">(2)I</th>
-        <th style="width: 45px;">(3)คะแนน</th>
-        <th style="width: 35px;">(1)L</th>
-        <th style="width: 35px;">(2)I</th>
-        <th style="width: 45px;">(3)คะแนน</th>
+        <th style="width: 35px;">โอกาส (1)</th>
+        <th style="width: 35px;">ผลกระทบ (2)</th>
+        <th style="width: 45px;">คะแนน (3)</th>
+        <th style="width: 35px;">โอกาส (1)</th>
+        <th style="width: 35px;">ผลกระทบ (2)</th>
+        <th style="width: 45px;">คะแนน (3)</th>
         <th style="width: 50px;">ควบคุมได้</th>
         <th style="width: 55px;">ควบคุมไม่ได้</th>
       </tr>
@@ -243,22 +242,22 @@ export function exportBsToWord({
       const isControllable = item.controllable === 'ควบคุมได้';
       return `
         <tr>
-          <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode)}</td>
-          <td style="font-weight: bold;">${escapeHtml(item.activity)}</td>
-          <td style="color: #b91c1c;">${escapeHtml(item.riskEvent)}</td>
-          <td style="text-align: center;">${item.preLikelihood}</td>
-          <td style="text-align: center;">${item.preImpact}</td>
+          <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || '')}</td>
+          <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
+          <td style="color: #b91c1c;">${escapeHtml(item.riskEvent || '')}</td>
+          <td style="text-align: center;">${item.preLikelihood || 1}</td>
+          <td style="text-align: center;">${item.preImpact || 1}</td>
           <td style="text-align: center; font-weight: bold;">${preScore}</td>
-          <td>${escapeHtml(item.measures)}</td>
-          <td>${escapeHtml(item.result)}</td>
-          <td style="text-align: center;">${item.postLikelihood}</td>
-          <td style="text-align: center;">${item.postImpact}</td>
+          <td>${escapeHtml(item.measures || '')}</td>
+          <td>${escapeHtml(item.result || '')}</td>
+          <td style="text-align: center;">${item.postLikelihood || 1}</td>
+          <td style="text-align: center;">${item.postImpact || 1}</td>
           <td style="text-align: center; font-weight: bold; color: #15803d;">${postScore}</td>
           <td style="text-align: center;">${escapeHtml(item.riskChange || 'ลดลง')}</td>
           <td>${escapeHtml(item.residualRisk || '-')}</td>
           <td style="text-align: center; font-weight: bold;">${isControllable ? '✓' : ''}</td>
           <td style="text-align: center; font-weight: bold; color: #b91c1c;">${!isControllable ? '✓' : ''}</td>
-          <td>${escapeHtml(item.nextYearMeasures)}</td>
+          <td>${escapeHtml(item.nextYearMeasures || '')}</td>
         </tr>
       `;
     }).join('');
@@ -381,7 +380,7 @@ export function exportBsToWord({
           <div>(ลงชื่อ)...................................................</div>
           <div>( ${escapeHtml(approverName)} )</div>
           <div>ตำแหน่ง ${escapeHtml(approverPosition)}</div>
-          <div>วันที่......................................................</div>
+          <div>วันที่..........เดือน........................พ.ศ. ............</div>
         </div>
       </div>
     </body>
@@ -429,7 +428,8 @@ export function exportBsToExcel({
     formName = 'บส.1';
     title = 'กำหนดขอบเขตความรับผิดชอบตามประเด็นยุทธศาสตร์/ข้อบัญญัติ/เทศบัญญัติ/อื่น ๆ (ถ้ามี)';
     subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
-    colSpanTotal = 8;
+    const showDeptCol = (!effectiveDept || effectiveDept === 'all');
+    colSpanTotal = showDeptCol ? 8 : 7;
     signatureNumber = { sign: '10', pos: '11', date: '12' };
 
     tableHeaderHtml = `
@@ -441,7 +441,7 @@ export function exportBsToExcel({
         <th style="background-color: #D9E1F2;">(7) วัตถุประสงค์</th>
         <th style="background-color: #D9E1F2;">(8) ตัวชี้วัด</th>
         <th style="background-color: #D9E1F2;">(9) เป้าหมาย</th>
-        <th style="background-color: #D9E1F2;">ส่วนราชการ</th>
+        ${showDeptCol ? '<th style="background-color: #D9E1F2;">ส่วนราชการ</th>' : ''}
       </tr>
     `;
 
@@ -454,7 +454,7 @@ export function exportBsToExcel({
         <td>${escapeHtml(item.objective || '')}</td>
         <td>${escapeHtml(item.kpi || '')}</td>
         <td>${escapeHtml(item.target || '')}</td>
-        <td style="text-align: center;">${escapeHtml(item.department || '')}</td>
+        ${showDeptCol ? `<td style="text-align: center;">${escapeHtml(item.department || '')}</td>` : ''}
       </tr>
     `).join('');
   } else if (activeTab === 'bs2') {
@@ -462,45 +462,43 @@ export function exportBsToExcel({
     formName = 'บส.2';
     title = 'การวิเคราะห์โอกาส ผลกระทบ และการตอบสนองความเสี่ยง';
     subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
-    colSpanTotal = 12;
+    colSpanTotal = 10;
     signatureNumber = { sign: '13', pos: '14', date: '15' };
 
     tableHeaderHtml = `
       <tr>
-        <th style="background-color: #D9E1F2;">(3) รหัส</th>
-        <th style="background-color: #D9E1F2;">(4) โครงการ/กิจกรรม</th>
+        <th style="background-color: #D9E1F2;">(3) รหัสความเสี่ยง</th>
+        <th style="background-color: #D9E1F2;">(4) โครงการ/กิจกรรม/ภารกิจ</th>
         <th style="background-color: #D9E1F2;">(5) วัตถุประสงค์</th>
-        <th style="background-color: #D9E1F2;">(6) เหตุการณ์ความเสี่ยง</th>
-        <th style="background-color: #D9E1F2;">(7) ปัจจัยเสี่ยง</th>
+        <th style="background-color: #D9E1F2;">(6) ผู้รับผิดชอบ</th>
+        <th style="background-color: #D9E1F2;">(7) ความเสี่ยง</th>
         <th style="background-color: #D9E1F2;">(8) ประเภทความเสี่ยง</th>
-        <th style="background-color: #D9E1F2;">(9) การควบคุมที่มีอยู่</th>
-        <th style="background-color: #D9E1F2;">(10) โอกาส(L)</th>
-        <th style="background-color: #D9E1F2;">(10) ผลกระทบ(I)</th>
-        <th style="background-color: #D9E1F2;">(10) ระดับ(LxI)</th>
-        <th style="background-color: #D9E1F2;">(11) วิธีการตอบสนองความเสี่ยง</th>
-        <th style="background-color: #D9E1F2;">ส่วนราชการ</th>
+        <th style="background-color: #D9E1F2;">(9) คะแนนโอกาส</th>
+        <th style="background-color: #D9E1F2;">(10) คะแนนผลกระทบ</th>
+        <th style="background-color: #D9E1F2;">(11) ระดับความเสี่ยง (9) x (10)</th>
+        <th style="background-color: #D9E1F2;">(12) วิธีการตอบสนองความเสี่ยง</th>
       </tr>
     `;
 
     tableBodyHtml = filteredBs2.map((item) => {
       const l = Number(item.likelihood) || 1;
       const i = Number(item.impact) || 1;
-      const score = l * i;
-      const level = score >= 15 ? 'สูงมาก' : score >= 10 ? 'สูง' : score >= 5 ? 'ปานกลาง' : 'ต่ำ';
+      const score = item.riskScore !== undefined && item.riskScore !== null && item.riskScore !== ''
+        ? item.riskScore
+        : (l * i);
+      const level = item.riskLevel || (score >= 15 ? 'สูงมาก' : score >= 10 ? 'สูง' : score >= 5 ? 'ปานกลาง' : 'ต่ำ');
       return `
         <tr>
-          <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode)}</td>
-          <td>${escapeHtml(item.activity)}</td>
+          <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || '')}</td>
+          <td>${escapeHtml(item.activity || '')}</td>
           <td>${escapeHtml(item.objective || '')}</td>
-          <td style="color: #b91c1c; font-weight: bold;">${escapeHtml(item.riskEvent)}</td>
-          <td>${escapeHtml(item.cause || '')}</td>
+          <td>${escapeHtml(item.responsiblePerson || '')}</td>
+          <td style="color: #b91c1c; font-weight: bold;">${escapeHtml(item.riskEvent || '')}</td>
           <td>${escapeHtml(item.riskCategory || '')}</td>
-          <td>${escapeHtml(item.existingControl || '-')}</td>
           <td style="text-align: center;">${l}</td>
           <td style="text-align: center;">${i}</td>
           <td style="text-align: center; font-weight: bold;">${score} (${level})</td>
           <td>${escapeHtml(item.riskResponse || '')}</td>
-          <td style="text-align: center;">${escapeHtml(item.department || '')}</td>
         </tr>
       `;
     }).join('');
@@ -514,29 +512,29 @@ export function exportBsToExcel({
 
     tableHeaderHtml = `
       <tr>
-        <th style="background-color: #D9E1F2;">(3) รหัส</th>
+        <th style="background-color: #D9E1F2;">(3) รหัสความเสี่ยง</th>
         <th style="background-color: #D9E1F2;">(4) โครงการ/กิจกรรม/ภารกิจ</th>
         <th style="background-color: #D9E1F2;">(5) ความเสี่ยง</th>
         <th style="background-color: #D9E1F2;">(6) วิธีการตอบสนองความเสี่ยง</th>
         <th style="background-color: #D9E1F2;">(7) ผู้รับผิดชอบ</th>
         <th style="background-color: #D9E1F2;">(8) วิธีการจัดการความเสี่ยง (มาตรการ)</th>
         <th style="background-color: #D9E1F2;">(9) ตัวชี้วัด</th>
-        <th style="background-color: #D9E1F2;">(10) ระยะเวลา</th>
-        <th style="background-color: #D9E1F2;">(11) วิธีการติดตามและการรายงาน</th>
+        <th style="background-color: #D9E1F2;">(10) ระยะเวลาดำเนินการ</th>
+        <th style="background-color: #D9E1F2;">(11) วิธีการติดตาม และการรายงาน</th>
       </tr>
     `;
 
     tableBodyHtml = filteredBs3.map((item) => `
       <tr>
-        <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode)}</td>
-        <td>${escapeHtml(item.activity)}</td>
-        <td style="color: #b91c1c; font-weight: bold;">${escapeHtml(item.riskEvent)}</td>
-        <td>${escapeHtml(item.riskResponse)}</td>
-        <td>${escapeHtml(item.responsiblePerson)}</td>
-        <td>${escapeHtml(item.measures)}</td>
-        <td>${escapeHtml(item.kpi)}</td>
-        <td style="text-align: center;">${escapeHtml(item.timeline)}</td>
-        <td>${escapeHtml(item.monitoringMethod)}</td>
+        <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || '')}</td>
+        <td>${escapeHtml(item.activity || '')}</td>
+        <td style="color: #b91c1c; font-weight: bold;">${escapeHtml(item.riskEvent || '')}</td>
+        <td>${escapeHtml(item.riskResponse || '')}</td>
+        <td>${escapeHtml(item.responsiblePerson || '')}</td>
+        <td>${escapeHtml(item.measures || '')}</td>
+        <td>${escapeHtml(item.kpi || '')}</td>
+        <td style="text-align: center;">${escapeHtml(item.timeline || '')}</td>
+        <td>${escapeHtml(item.monitoringMethod || '')}</td>
       </tr>
     `).join('');
   } else if (activeTab === 'bs4') {
@@ -544,34 +542,34 @@ export function exportBsToExcel({
     formName = 'บส.4';
     const periodLabel = bs4Period === '3month' ? 'รอบ 3 เดือน' : bs4Period === '6month' ? 'รอบ 6 เดือน' : 'รอบ 12 เดือน';
     title = `รายงานการติดตามผลการบริหารความเสี่ยง (${periodLabel})`;
-    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
+    subtitle = `สำหรับปีงบประมาณ พ.ศ. ${selectedYear}`;
     colSpanTotal = 9;
     signatureNumber = { sign: '12', pos: '13', date: '14' };
 
     tableHeaderHtml = `
       <tr>
-        <th style="background-color: #D9E1F2;">(3) รหัส</th>
-        <th style="background-color: #D9E1F2;">(4) โครงการ/กิจกรรม</th>
+        <th style="background-color: #D9E1F2;">(3) รหัสความเสี่ยง</th>
+        <th style="background-color: #D9E1F2;">(4) โครงการ/กิจกรรม/ภารกิจ</th>
         <th style="background-color: #D9E1F2;">(5) วิธีการจัดการความเสี่ยง</th>
-        <th style="background-color: #D9E1F2;">(6) ระยะเวลา</th>
+        <th style="background-color: #D9E1F2;">(6) ระยะเวลาดำเนินการ</th>
         <th style="background-color: #D9E1F2;">(7) ผู้รับผิดชอบ</th>
-        <th style="background-color: #D9E1F2;">(8) ผลการดำเนินงาน</th>
-        <th style="background-color: #D9E1F2;">(9) หลักฐานอ้างอิง</th>
-        <th style="background-color: #D9E1F2;">(10) ร้อยละความก้าวหน้า</th>
-        <th style="background-color: #D9E1F2;">(11) ปัญหา อุปสรรค และแนวทางแก้ไข</th>
+        <th style="background-color: #D9E1F2;">(8) ผลลัพธ์การดำเนินการจัดการความเสี่ยง</th>
+        <th style="background-color: #D9E1F2;">(9) เอกสาร/หลักฐาน</th>
+        <th style="background-color: #D9E1F2;">(10) ร้อยละความคืบหน้า</th>
+        <th style="background-color: #D9E1F2;">(11) ปัญหาอุปสรรค และแนวทางแก้ไข</th>
       </tr>
     `;
 
     tableBodyHtml = filteredBs4.map((item) => `
       <tr>
-        <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode)}</td>
-        <td>${escapeHtml(item.activity)}</td>
-        <td>${escapeHtml(item.measures)}</td>
-        <td style="text-align: center;">${escapeHtml(item.timeline)}</td>
-        <td>${escapeHtml(item.responsiblePerson)}</td>
-        <td>${escapeHtml(item.result)}</td>
-        <td>${escapeHtml(item.evidence)}</td>
-        <td style="text-align: center; font-weight: bold;">${item.progressPercent}%</td>
+        <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || '')}</td>
+        <td>${escapeHtml(item.activity || '')}</td>
+        <td>${escapeHtml(item.measures || '')}</td>
+        <td style="text-align: center;">${escapeHtml(item.timeline || '')}</td>
+        <td>${escapeHtml(item.responsiblePerson || '')}</td>
+        <td>${escapeHtml(item.result || '')}</td>
+        <td>${escapeHtml(item.evidence || '')}</td>
+        <td style="text-align: center; font-weight: bold;">${item.progressPercent || 0}%</td>
         <td>${escapeHtml(item.problemSolution || '-')}</td>
       </tr>
     `).join('');
@@ -585,25 +583,25 @@ export function exportBsToExcel({
 
     tableHeaderHtml = `
       <tr>
-        <th rowspan="2" style="background-color: #D9E1F2;">(3) รหัส</th>
-        <th rowspan="2" style="background-color: #D9E1F2;">(4) โครงการ/กิจกรรม</th>
+        <th rowspan="2" style="background-color: #D9E1F2;">(3) รหัสความเสี่ยง</th>
+        <th rowspan="2" style="background-color: #D9E1F2;">(4) โครงการ/กิจกรรม/ภารกิจ</th>
         <th rowspan="2" style="background-color: #D9E1F2;">(5) ความเสี่ยง</th>
-        <th colspan="3" style="background-color: #D9E1F2;">(6) คะแนนก่อนดำเนินการ</th>
-        <th rowspan="2" style="background-color: #D9E1F2;">(7) วิธีการจัดการ</th>
-        <th rowspan="2" style="background-color: #D9E1F2;">(8) ผลการจัดการ</th>
-        <th colspan="3" style="background-color: #D9E1F2;">(9) คะแนนหลังดำเนินการ</th>
-        <th rowspan="2" style="background-color: #D9E1F2;">(10) การเปลี่ยน</th>
-        <th rowspan="2" style="background-color: #D9E1F2;">(11) ความเสี่ยงคงเหลือ</th>
-        <th colspan="2" style="background-color: #D9E1F2;">(12) สรุปผล</th>
-        <th rowspan="2" style="background-color: #D9E1F2;">(13) มาตรการปีถัดไป</th>
+        <th colspan="3" style="background-color: #D9E1F2;">(6) คะแนนระดับความเสี่ยงก่อนดำเนินการ</th>
+        <th rowspan="2" style="background-color: #D9E1F2;">(7) วิธีการจัดการความเสี่ยง</th>
+        <th rowspan="2" style="background-color: #D9E1F2;">(8) ผลดำเนินการจากการจัดการ</th>
+        <th colspan="3" style="background-color: #D9E1F2;">(9) คะแนนระดับความเสี่ยงภายหลังดำเนินการ</th>
+        <th rowspan="2" style="background-color: #D9E1F2;">(10) การเปลี่ยนแปลง</th>
+        <th rowspan="2" style="background-color: #D9E1F2;">(11) ความเสี่ยงคงเหลือ/เกิดใหม่</th>
+        <th colspan="2" style="background-color: #D9E1F2;">(12) สรุปความเสี่ยง</th>
+        <th rowspan="2" style="background-color: #D9E1F2;">(13) มาตรการสำหรับปีถัดไป</th>
       </tr>
       <tr>
-        <th style="background-color: #D9E1F2;">(1)L</th>
-        <th style="background-color: #D9E1F2;">(2)I</th>
-        <th style="background-color: #D9E1F2;">(3)คะแนน</th>
-        <th style="background-color: #D9E1F2;">(1)L</th>
-        <th style="background-color: #D9E1F2;">(2)I</th>
-        <th style="background-color: #D9E1F2;">(3)คะแนน</th>
+        <th style="background-color: #D9E1F2;">โอกาส (1)</th>
+        <th style="background-color: #D9E1F2;">ผลกระทบ (2)</th>
+        <th style="background-color: #D9E1F2;">คะแนน (3)</th>
+        <th style="background-color: #D9E1F2;">โอกาส (1)</th>
+        <th style="background-color: #D9E1F2;">ผลกระทบ (2)</th>
+        <th style="background-color: #D9E1F2;">คะแนน (3)</th>
         <th style="background-color: #D9E1F2;">ควบคุมได้</th>
         <th style="background-color: #D9E1F2;">ควบคุมไม่ได้</th>
       </tr>
@@ -615,22 +613,22 @@ export function exportBsToExcel({
       const isControllable = item.controllable === 'ควบคุมได้';
       return `
         <tr>
-          <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode)}</td>
-          <td>${escapeHtml(item.activity)}</td>
-          <td style="color: #b91c1c;">${escapeHtml(item.riskEvent)}</td>
-          <td style="text-align: center;">${item.preLikelihood}</td>
-          <td style="text-align: center;">${item.preImpact}</td>
+          <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || '')}</td>
+          <td>${escapeHtml(item.activity || '')}</td>
+          <td style="color: #b91c1c;">${escapeHtml(item.riskEvent || '')}</td>
+          <td style="text-align: center;">${item.preLikelihood || 1}</td>
+          <td style="text-align: center;">${item.preImpact || 1}</td>
           <td style="text-align: center; font-weight: bold;">${preScore}</td>
-          <td>${escapeHtml(item.measures)}</td>
-          <td>${escapeHtml(item.result)}</td>
-          <td style="text-align: center;">${item.postLikelihood}</td>
-          <td style="text-align: center;">${item.postImpact}</td>
+          <td>${escapeHtml(item.measures || '')}</td>
+          <td>${escapeHtml(item.result || '')}</td>
+          <td style="text-align: center;">${item.postLikelihood || 1}</td>
+          <td style="text-align: center;">${item.postImpact || 1}</td>
           <td style="text-align: center; font-weight: bold; color: #15803d;">${postScore}</td>
           <td style="text-align: center;">${escapeHtml(item.riskChange || 'ลดลง')}</td>
           <td>${escapeHtml(item.residualRisk || '-')}</td>
           <td style="text-align: center; font-weight: bold;">${isControllable ? '✓' : ''}</td>
           <td style="text-align: center; font-weight: bold; color: #b91c1c;">${!isControllable ? '✓' : ''}</td>
-          <td>${escapeHtml(item.nextYearMeasures)}</td>
+          <td>${escapeHtml(item.nextYearMeasures || '')}</td>
         </tr>
       `;
     }).join('');
@@ -715,7 +713,7 @@ export function exportBsToExcel({
         </tr>
         <tr>
           <td colspan="${colSpanTotal - 4}" style="border:none;"></td>
-          <td colspan="4" style="border:none; text-align: center;">วันที่......................................................</td>
+          <td colspan="4" style="border:none; text-align: center;">วันที่..........เดือน........................พ.ศ. ............</td>
         </tr>
       </table>
     </body>
