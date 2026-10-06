@@ -45,7 +45,7 @@ import {
   CloudOff
 } from 'lucide-react';
 import { getDepartments, getSession } from '../utils/auth';
-import { exportBsToWord, exportBsToExcel } from '../utils/exportRiskDocs';
+import { exportBsToWord, exportBsToExcel, exportBsToPdf } from '../utils/exportRiskDocs';
 import ConfirmModal from './ConfirmModal';
 import { cloudSyncService, mergeRiskManagement } from '../services/cloudSyncService';
 import { isSupabaseConfigured } from '../services/supabaseClient';
@@ -280,6 +280,25 @@ export default function RiskManagementView({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showCalendarPopup]);
+
+  // Dropdown menus & Collapsible Tracker states
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [showGuideMenu, setShowGuideMenu] = useState(false);
+  const [showDataMenu, setShowDataMenu] = useState(false);
+  const [showTrackerBoard, setShowTrackerBoard] = useState(false);
+
+  // Close dropdown menus on outside click
+  React.useEffect(() => {
+    const handleOutsideMenuClick = (e) => {
+      if (!e.target.closest('.dropdown-trigger-area')) {
+        setShowExportMenu(false);
+        setShowGuideMenu(false);
+        setShowDataMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideMenuClick);
+    return () => document.removeEventListener('mousedown', handleOutsideMenuClick);
+  }, []);
 
   const handleToggleCalendarPopup = () => {
     if (!showCalendarPopup) {
@@ -1729,13 +1748,52 @@ export default function RiskManagementView({
     e.target.value = '';
   };
 
-  // Handle Print Action
+  // Handle Print Action (Standard A4 Landscape)
   const handlePrint = () => {
-    window.print();
+    setShowExportMenu(false);
+    exportBsToPdf({
+      activeTab,
+      filteredBs1,
+      filteredBs2,
+      filteredBs3,
+      filteredBs4,
+      filteredBs5Items,
+      bs5Data,
+      bs4Period,
+      orgProfile,
+      selectedYear,
+      isSubDivision,
+      effectiveDept: isAdmin ? filterDept : userDept
+    });
+  };
+
+  // Handle Download PDF (.pdf)
+  const handleDownloadPdf = () => {
+    setShowExportMenu(false);
+    setCascadeSuccessMsg('กำลังเตรียมเอกสาร PDF มาตรฐาน ว 3482 (A4 แนวนอน)...');
+    exportBsToPdf({
+      activeTab,
+      filteredBs1,
+      filteredBs2,
+      filteredBs3,
+      filteredBs4,
+      filteredBs5Items,
+      bs5Data,
+      bs4Period,
+      orgProfile,
+      selectedYear,
+      isSubDivision,
+      effectiveDept: isAdmin ? filterDept : userDept
+    });
+    setTimeout(() => {
+      setCascadeSuccessMsg('✓ หน้าต่างพิมพ์เอกสารเปิดแล้ว ท่านสามารถเลือก "Save as PDF (บันทึกเป็น PDF)" ในช่องปลายทางเพื่อบันทึกไฟล์ได้ทันที');
+      setTimeout(() => setCascadeSuccessMsg(''), 6000);
+    }, 1200);
   };
 
   // Handle Download Word (.doc)
   const handleDownloadWord = () => {
+    setShowExportMenu(false);
     exportBsToWord({
       activeTab,
       filteredBs1,
@@ -1754,6 +1812,7 @@ export default function RiskManagementView({
 
   // Handle Download Excel (.xls)
   const handleDownloadExcel = () => {
+    setShowExportMenu(false);
     exportBsToExcel({
       activeTab,
       filteredBs1,
@@ -1802,39 +1861,15 @@ export default function RiskManagementView({
           </p>
         </div>
 
-        {/* Action Buttons: Export & Official Ref */}
-        <div className="flex flex-wrap items-center gap-1.5 shrink-0 no-print">
-          <a
-            href="/docs/w3482-risk-forms.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1"
-            title="เปิดดูหนังสือสั่งการ มท 0805.2/ว 3482 ฉบับจริง"
-          >
-            <FileText className="w-3.5 h-3.5 text-slate-500" />
-            <span>PDF ว 3482</span>
-          </a>
-
-          <button
-            type="button"
-            onClick={() => setShowGuide(!showGuide)}
-            className={`border text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1 cursor-pointer ${
-              showGuide
-                ? 'bg-blue-50 text-blue-700 border-blue-300 dark:bg-blue-900/50 dark:text-blue-300'
-                : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700'
-            }`}
-            title="คำอธิบายการจัดทำแบบรายงาน"
-          >
-            <BookOpen className="w-3.5 h-3.5 text-slate-500" />
-            <span>{showGuide ? 'ซ่อนคำอธิบาย' : 'คำอธิบาย'}</span>
-          </button>
-
+        {/* Action Buttons: Streamlined Dropdowns & Gemini AI */}
+        <div className="flex flex-wrap items-center gap-2 shrink-0 no-print">
+          {/* 1. Gemini AI Button */}
           <button
             type="button"
             onClick={() => setShowGeminiModal(true)}
-            className={`border text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-all flex items-center space-x-1.5 cursor-pointer ${
+            className={`border text-xs font-semibold px-3 py-1.5 rounded-lg transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs ${
               geminiReady
-                ? 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800 shadow-xs'
+                ? 'bg-gradient-to-r from-purple-50 to-indigo-50 hover:from-purple-100 hover:to-indigo-100 text-purple-700 dark:from-purple-950/40 dark:to-indigo-950/40 dark:text-purple-300 border-purple-200 dark:border-purple-800'
                 : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700'
             }`}
             title="ตั้งค่าเชื่อมต่อ Google Gemini Generative AI สำหรับงานวิเคราะห์ความเสี่ยง"
@@ -1843,35 +1878,152 @@ export default function RiskManagementView({
             <span>{geminiReady ? 'Gemini AI (ออนไลน์)' : 'ตั้งค่า Gemini AI'}</span>
           </button>
 
-          <button
-            type="button"
-            onClick={handleDownloadWord}
-            className="text-blue-700 dark:text-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/60 border border-blue-200 dark:border-blue-800 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1 cursor-pointer"
-            title="ดาวน์โหลด Word (.doc)"
-          >
-            <FileText className="w-3.5 h-3.5 text-blue-600" />
-            <span>Word</span>
-          </button>
+          {/* 2. Guidelines & Help Dropdown */}
+          <div className="relative dropdown-trigger-area">
+            <button
+              type="button"
+              onClick={() => {
+                setShowGuideMenu(!showGuideMenu);
+                setShowExportMenu(false);
+              }}
+              className="text-slate-700 dark:text-slate-200 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5 cursor-pointer shadow-xs"
+              title="คู่มือ ระเบียบ และคำอธิบายการจัดทำแบบรายงาน"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-slate-500" />
+              <span>คู่มือ & ระเบียบ</span>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            </button>
 
-          <button
-            type="button"
-            onClick={handleDownloadExcel}
-            className="text-emerald-700 dark:text-emerald-300 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1 cursor-pointer"
-            title="ดาวน์โหลด Excel (.xls)"
-          >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Excel</span>
-          </button>
+            {showGuideMenu && (
+              <div className="absolute right-0 mt-1.5 w-60 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg py-1.5 z-50 text-xs animate-in fade-in zoom-in-95 duration-100">
+                <a
+                  href="/docs/w3482-risk-forms.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setShowGuideMenu(false)}
+                  className="flex items-center px-3.5 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                >
+                  <FileText className="w-4 h-4 text-rose-500 mr-2.5 shrink-0" />
+                  <div>
+                    <div className="font-bold">หนังสือสั่งการ มท ว 3482</div>
+                    <div className="text-[10px] text-slate-400">เปิดเอกสารทางการฉบับจริง (PDF)</div>
+                  </div>
+                </a>
 
-          <button
-            type="button"
-            onClick={handlePrint}
-            className="text-white bg-blue-600 hover:bg-blue-700 text-xs font-semibold px-3 py-1.5 rounded-lg shadow-xs transition-colors flex items-center space-x-1 cursor-pointer"
-            title="พิมพ์เอกสาร (A4 แนวนอน)"
-          >
-            <Printer className="w-3.5 h-3.5 text-white" />
-            <span>พิมพ์ (A4)</span>
-          </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowGuide(!showGuide);
+                    setShowGuideMenu(false);
+                  }}
+                  className="w-full text-left flex items-center px-3.5 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                >
+                  <Info className="w-4 h-4 text-blue-500 mr-2.5 shrink-0" />
+                  <div>
+                    <div className="font-bold">{showGuide ? 'ซ่อนคำอธิบายแบบ' : 'แสดงคำอธิบายแบบ'}</div>
+                    <div className="text-[10px] text-slate-400">คำอธิบายจัดทำแบบ บส.1 - บส.5</div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCrossMachineInfo(true);
+                    setShowGuideMenu(false);
+                  }}
+                  className="w-full text-left flex items-center px-3.5 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                >
+                  <HelpCircle className="w-4 h-4 text-amber-500 mr-2.5 shrink-0" />
+                  <div>
+                    <div className="font-bold">การเชื่อมข้อมูลข้ามเครื่อง</div>
+                    <div className="text-[10px] text-slate-400">วิธีส่งออก/นำเข้าไฟล์และ Cloud</div>
+                  </div>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* 3. Export / Download Dropdown */}
+          <div className="relative dropdown-trigger-area">
+            <button
+              type="button"
+              onClick={() => {
+                setShowExportMenu(!showExportMenu);
+                setShowGuideMenu(false);
+              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs hover:shadow"
+              title="ส่งออกรายงานในรูปแบบ PDF, Word, Excel หรือสั่งพิมพ์"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>ดาวน์โหลด / ส่งออก</span>
+              <ChevronDown className="w-3.5 h-3.5" />
+            </button>
+
+            {showExportMenu && (
+              <div className="absolute right-0 mt-1.5 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl py-1.5 z-50 text-xs animate-in fade-in zoom-in-95 duration-100 divide-y divide-slate-100 dark:divide-slate-800">
+                <div className="py-1">
+                  <button
+                    type="button"
+                    onClick={handleDownloadPdf}
+                    className="w-full text-left flex items-center px-3.5 py-2 text-slate-800 dark:text-slate-200 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer group"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center mr-2.5 shrink-0 group-hover:scale-105 transition-transform">
+                      <FileText className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <span>ส่งออกเป็น PDF</span>
+                        <span className="text-[9px] px-1.5 py-0.2 bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300 rounded font-semibold">แนะนำ</span>
+                      </div>
+                      <div className="text-[10px] text-slate-400">บันทึกเป็น PDF มาตรฐาน ว 3482 (A4 แนวนอน)</div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleDownloadWord}
+                    className="w-full text-left flex items-center px-3.5 py-2 text-slate-800 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors cursor-pointer group"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center mr-2.5 shrink-0 group-hover:scale-105 transition-transform">
+                      <FileText className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-slate-900 dark:text-white">เอกสาร Word (.doc)</div>
+                      <div className="text-[10px] text-slate-400">แบบฟอร์มราชการ เลขไทย ตารางไม่แตก</div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleDownloadExcel}
+                    className="w-full text-left flex items-center px-3.5 py-2 text-slate-800 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-colors cursor-pointer group"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mr-2.5 shrink-0 group-hover:scale-105 transition-transform">
+                      <FileSpreadsheet className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-slate-900 dark:text-white">ตาราง Excel (.xls)</div>
+                      <div className="text-[10px] text-slate-400">สำหรับนำข้อมูลไปวิเคราะห์หรือคำนวณ</div>
+                    </div>
+                  </button>
+                </div>
+
+                <div className="py-1">
+                  <button
+                    type="button"
+                    onClick={handlePrint}
+                    className="w-full text-left flex items-center px-3.5 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                  >
+                    <Printer className="w-4 h-4 text-slate-500 mr-2.5 ml-1.5 shrink-0" />
+                    <div>
+                      <div className="font-bold">พิมพ์เอกสาร (Print A4)</div>
+                      <div className="text-[10px] text-slate-400">พิมพ์ออกทางเครื่องพิมพ์โดยตรง</div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -2066,24 +2218,28 @@ export default function RiskManagementView({
 
       {/* 1.2 Auditor / Admin: Submission Tracker Board across all main departments */}
       {isAdmin && (
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-3 no-print">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
-            <div className="flex items-center space-x-2">
-              <div className="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs overflow-hidden no-print">
+          {/* Tracker Header Bar (Always visible, acts as compact summary and toggle) */}
+          <div className="p-3 sm:px-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-slate-50/70 dark:bg-slate-850/70 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
                 <Layers className="w-4 h-4" />
               </div>
-              <div>
+              <div className="flex flex-wrap items-center gap-2">
                 <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
-                  กระดานติดตามการส่งแบบ บส.1 - บส.5 ของส่วนราชการ (Internal Audit Submission Tracker)
+                  กระดานติดตามการส่งแบบ บส.1 - บส.5 ของส่วนราชการ
                 </h3>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  ระบบรับ-ส่งแบบรายงานการบริหารความเสี่ยง มท 0805.2/ว 3482 เพื่อการสอบทานของหน่วยตรวจสอบภายใน
-                </p>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                  ส่งแล้ว {departmentsList.filter(d => submissions[d]?.status === 'submitted' || submissions[d]?.status === 'reviewed').length} / {departmentsList.length} กอง
+                </span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                  สอบทานแล้ว {departmentsList.filter(d => submissions[d]?.status === 'reviewed').length} กอง
+                </span>
               </div>
             </div>
 
-            {/* Summary stats counters & Cross-Machine Action */}
-            <div className="flex flex-wrap items-center gap-1.5 text-xs font-semibold">
+            {/* Right: Data Management Dropdown + Expand/Collapse Button */}
+            <div className="flex items-center gap-1.5 self-end sm:self-auto text-xs font-semibold">
               <input
                 type="file"
                 ref={fileInputRef}
@@ -2091,73 +2247,116 @@ export default function RiskManagementView({
                 onChange={handleImportBsFile}
                 className="hidden"
               />
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white flex items-center space-x-1.5 shadow-xs transition-colors cursor-pointer"
-                title="นำเข้าไฟล์ JSON แบบ บส. ที่กองอื่นส่งมาให้"
-              >
-                <Upload className="w-3.5 h-3.5" />
-                <span>นำเข้าไฟล์ บส. จากกองอื่น</span>
-              </button>
 
-              <button
-                type="button"
-                onClick={() => handleExportBsData(null)}
-                className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 flex items-center space-x-1 transition-colors cursor-pointer"
-                title="สำรองข้อมูล บส.1 - บส.5 ของทุกกองเป็นไฟล์ JSON"
-              >
-                <Download className="w-3.5 h-3.5 text-slate-500" />
-                <span>สำรองทั้งหมด (JSON)</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setShowCrossMachineInfo(true)}
-                className="px-2 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center space-x-1 transition-colors cursor-pointer"
-                title="คำอธิบายการเชื่อมโยงข้อมูลระหว่างเครื่อง / Cloud Sync"
-              >
-                <HelpCircle className="w-3.5 h-3.5 text-blue-500" />
-                <span className="hidden sm:inline">การเชื่อมข้อมูล</span>
-              </button>
-
-              {isSupabaseConfigured() && (
+              {/* Data Management Dropdown */}
+              <div className="relative dropdown-trigger-area">
                 <button
                   type="button"
-                  onClick={async () => {
-                    try {
-                      setCascadeSuccessMsg('กำลังเชื่อมต่อและดึงข้อมูลล่าสุดจาก Supabase Cloud...');
-                      const cloudData = await cloudSyncService.pullAllRiskManagement();
-                      if (cloudData && cloudData[selectedYear] && setRiskManagement) {
-                        setRiskManagement((prev) => mergeRiskManagement(prev, cloudData[selectedYear]));
-                        setCascadeSuccessMsg('✓ ซิงค์และผสานรวมข้อมูลล่าสุดจาก Supabase Cloud สำเร็จสมบูรณ์!');
-                      } else {
-                        setCascadeSuccessMsg('✓ ฐานข้อมูลในเครื่องของคุณเป็นข้อมูลล่าสุดตรงกับ Cloud เรียบร้อยแล้ว');
-                      }
-                      setTimeout(() => setCascadeSuccessMsg(''), 5000);
-                    } catch (err) {
-                      setCascadeSuccessMsg(`❌ ซิงค์ข้อมูลไม่สำเร็จ: ${err.message}`);
-                    }
-                  }}
-                  className="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center space-x-1.5 transition-colors cursor-pointer"
-                  title="ซิงค์ข้อมูลล่าสุดจาก Supabase Cloud ทันที"
+                  onClick={() => setShowDataMenu(!showDataMenu)}
+                  className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 flex items-center space-x-1.5 transition-colors cursor-pointer shadow-xs"
+                  title="จัดการไฟล์ JSON และการซิงค์ Cloud"
                 >
-                  <RefreshCw className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>ซิงค์ Cloud</span>
+                  <Upload className="w-3.5 h-3.5 text-slate-500" />
+                  <span>จัดการข้อมูล JSON</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
                 </button>
-              )}
 
-              <span className="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                ส่งแล้ว: {departmentsList.filter(d => submissions[d]?.status === 'submitted' || submissions[d]?.status === 'reviewed').length} / {departmentsList.length}
-              </span>
-              <span className="px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                สอบทานแล้ว: {departmentsList.filter(d => submissions[d]?.status === 'reviewed').length}
-              </span>
+                {showDataMenu && (
+                  <div className="absolute right-0 mt-1.5 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl py-1.5 z-50 text-xs animate-in fade-in zoom-in-95 duration-100 divide-y divide-slate-100 dark:divide-slate-800">
+                    <div className="py-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          fileInputRef.current?.click();
+                          setShowDataMenu(false);
+                        }}
+                        className="w-full text-left flex items-center px-3.5 py-2 text-slate-800 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 transition-colors cursor-pointer"
+                      >
+                        <Upload className="w-4 h-4 text-indigo-600 mr-2.5 shrink-0" />
+                        <div>
+                          <div className="font-bold">นำเข้าไฟล์ บส. จากกองอื่น</div>
+                          <div className="text-[10px] text-slate-400">นำเข้าไฟล์ .json ที่ได้รับจากกอง</div>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleExportBsData(null);
+                          setShowDataMenu(false);
+                        }}
+                        className="w-full text-left flex items-center px-3.5 py-2 text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                      >
+                        <Download className="w-4 h-4 text-blue-600 mr-2.5 shrink-0" />
+                        <div>
+                          <div className="font-bold">สำรองข้อมูลทั้งหมด (JSON)</div>
+                          <div className="text-[10px] text-slate-400">บันทึกข้อมูลทุกกองเป็นไฟล์สำรอง</div>
+                        </div>
+                      </button>
+
+                      {isSupabaseConfigured() && (
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            setShowDataMenu(false);
+                            try {
+                              setCascadeSuccessMsg('กำลังเชื่อมต่อและดึงข้อมูลล่าสุดจาก Supabase Cloud...');
+                              const cloudData = await cloudSyncService.pullAllRiskManagement();
+                              if (cloudData && cloudData[selectedYear] && setRiskManagement) {
+                                setRiskManagement((prev) => mergeRiskManagement(prev, cloudData[selectedYear]));
+                                setCascadeSuccessMsg('✓ ซิงค์และผสานรวมข้อมูลล่าสุดจาก Supabase Cloud สำเร็จสมบูรณ์!');
+                              } else {
+                                setCascadeSuccessMsg('✓ ฐานข้อมูลในเครื่องของคุณเป็นข้อมูลล่าสุดตรงกับ Cloud เรียบร้อยแล้ว');
+                              }
+                              setTimeout(() => setCascadeSuccessMsg(''), 5000);
+                            } catch (err) {
+                              setCascadeSuccessMsg(`❌ ซิงค์ข้อมูลไม่สำเร็จ: ${err.message}`);
+                            }
+                          }}
+                          className="w-full text-left flex items-center px-3.5 py-2 text-slate-800 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-colors cursor-pointer"
+                        >
+                          <RefreshCw className="w-4 h-4 text-emerald-600 mr-2.5 shrink-0" />
+                          <div>
+                            <div className="font-bold">ซิงค์กับ Supabase Cloud</div>
+                            <div className="text-[10px] text-slate-400">ดึงและอัปเดตข้อมูลล่าสุดจากเซิร์ฟเวอร์</div>
+                          </div>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Toggle Expand/Collapse Tracker Board */}
+              <button
+                type="button"
+                onClick={() => setShowTrackerBoard(!showTrackerBoard)}
+                className={`px-3 py-1.5 rounded-lg border text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs ${
+                  showTrackerBoard
+                    ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-800'
+                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
+                }`}
+                title={showTrackerBoard ? 'คลิกเพื่อย่อซ่อนกระดานติดตาม' : 'คลิกเพื่อขยายดูกระดานติดตามทั้ง 5 กอง'}
+              >
+                {showTrackerBoard ? (
+                  <>
+                    <ChevronUp className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>ซ่อนกระดาน</span>
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+                    <span>แสดงกระดาน (5 กอง)</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
 
-          {/* Department Submission Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+          {/* Department Cards Grid (Collapsible) */}
+          {showTrackerBoard && (
+            <div className="p-4 border-t border-slate-100 dark:border-slate-800 animate-in fade-in duration-200">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
             {departmentsList.map((dept) => {
               const sub = submissions[dept] || { status: 'draft' };
               const deptRisksCount = bs1List.filter(b => b.department === dept).length;
@@ -2305,7 +2504,9 @@ export default function RiskManagementView({
                 </div>
               );
             })}
-          </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
