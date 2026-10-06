@@ -54,6 +54,7 @@ import {
   getAllStandardRisks,
   auditW3482Compliance,
   cascadeAllBsForms,
+  getSmartProblemSolution,
   STANDARD_RISK_LIBRARY
 } from '../data/standardRiskLibrary';
 
@@ -411,7 +412,10 @@ export default function RiskManagementView({
   }, [riskManagement?.bs3, bs2List, bs1List]);
 
   const bs4List = useMemo(() => {
-    return (riskManagement?.bs4 || []).map((item, idx) => {
+    const rawBs4 = Array.isArray(riskManagement?.bs4) ? riskManagement.bs4 : [];
+
+    // Process explicit items in riskManagement.bs4
+    const processedRaw = rawBs4.map((item, idx) => {
       const matchBs3 = bs3List.find((b) => b.id === item.id || b.riskCode === item.riskCode);
       return {
         ...item,
@@ -423,11 +427,82 @@ export default function RiskManagementView({
         responsiblePerson: item.responsiblePerson || matchBs3?.responsiblePerson || `ผู้อำนวยการ${item.department || ''}`,
         result: item.result || item.progressDetail || '',
         evidence: item.evidence || 'บันทึกข้อความ, รายงานสรุปผล',
-        progressPercent: item.progressPercent !== undefined ? item.progressPercent : 80,
+        progressPercent: item.progressPercent !== undefined ? item.progressPercent : (item.period === '12month' ? 100 : 80),
         problemSolution: item.problemSolution || ''
       };
     });
-  }, [riskManagement?.bs4, bs3List]);
+
+    // Ensure items exist for both 6month and 12month (and 3month if selected)
+    const virtualItems = [];
+    const targetPeriods = ['6month', '12month'];
+    if (bs4Period === '3month') targetPeriods.push('3month');
+
+    bs3List.forEach((b3, idx) => {
+      targetPeriods.forEach((p) => {
+        const exists = processedRaw.some(
+          (x) => x.period === p && (x.riskCode === b3.riskCode || x.id === b3.id)
+        );
+        if (!exists) {
+          const m6 = processedRaw.find(
+            (x) => x.period === '6month' && (x.riskCode === b3.riskCode || x.id === b3.id)
+          );
+
+          if (p === '12month') {
+            virtualItems.push({
+              id: `BS4-12m-${b3.id || b3.riskCode || idx}`,
+              period: '12month',
+              riskCode: b3.riskCode,
+              department: b3.department,
+              activity: b3.activity,
+              measures: b3.measures,
+              timeline: b3.timeline || 'ตลอดปีงบประมาณ',
+              responsiblePerson: b3.responsiblePerson,
+              result: m6?.result
+                ? `${m6.result} (ผลดำเนินงานสิ้นปีงบประมาณ: ดำเนินการแล้วเสร็จตามเป้าหมาย 100%)`
+                : 'ดำเนินการตามมาตรการครบถ้วนตลอดปีงบประมาณ ความเสี่ยงลดลงสู่ระดับที่ยอมรับได้',
+              evidence: m6?.evidence || 'รายงานสรุปผลการดำเนินงานประจำปี, ฎีกาเบิกจ่าย, ภาพถ่ายผลสำเร็จของโครงการ',
+              progressPercent: 100,
+              problemSolution: m6?.problemSolution && m6.problemSolution.trim() !== '-'
+                ? `${m6.problemSolution} (ได้รับการแก้ไขและติดตามผลแล้วเสร็จ)`
+                : getSmartProblemSolution(b3.riskCode, b3.activity, '12month')
+            });
+          } else if (p === '6month') {
+            virtualItems.push({
+              id: `BS4-6m-${b3.id || b3.riskCode || idx}`,
+              period: '6month',
+              riskCode: b3.riskCode,
+              department: b3.department,
+              activity: b3.activity,
+              measures: b3.measures,
+              timeline: b3.timeline || 'ไตรมาส 1 - 2',
+              responsiblePerson: b3.responsiblePerson,
+              result: 'ได้ดำเนินการตามมาตรการควบคุมภายในรอบ 6 เดือน ความเสี่ยงลดลงสู่ระดับที่ยอมรับได้',
+              evidence: 'บันทึกข้อความ, รายงานสรุปผลรอบ 6 เดือน, ภาพถ่ายกิจกรรม',
+              progressPercent: 80,
+              problemSolution: getSmartProblemSolution(b3.riskCode, b3.activity, '6month')
+            });
+          } else if (p === '3month') {
+            virtualItems.push({
+              id: `BS4-3m-${b3.id || b3.riskCode || idx}`,
+              period: '3month',
+              riskCode: b3.riskCode,
+              department: b3.department,
+              activity: b3.activity,
+              measures: b3.measures,
+              timeline: 'ไตรมาสที่ 1 (ต.ค. - ธ.ค.)',
+              responsiblePerson: b3.responsiblePerson,
+              result: 'อยู่ระหว่างเริ่มดำเนินโครงการและจัดเตรียมความพร้อมตามมาตรการควบคุม',
+              evidence: 'บันทึกข้อความขออนุมัติโครงการ, แผนการปฏิบัติงาน',
+              progressPercent: 35,
+              problemSolution: getSmartProblemSolution(b3.riskCode, b3.activity, '3month')
+            });
+          }
+        }
+      });
+    });
+
+    return [...processedRaw, ...virtualItems];
+  }, [riskManagement?.bs4, bs3List, bs4Period]);
 
   const bs5Data = useMemo(() => {
     const raw = riskManagement?.bs5 || {};
@@ -436,7 +511,7 @@ export default function RiskManagementView({
       : bs1List.map((b, idx) => {
           const m2 = bs2List.find((x) => x.riskCode === b.riskCode || x.id === b.id);
           const m3 = bs3List.find((x) => x.riskCode === b.riskCode || x.id === b.id);
-          const m4 = bs4List.find((x) => x.riskCode === b.riskCode || x.id === b.id);
+          const m4 = bs4List.find((x) => (x.period === '12month' || x.period === '6month') && (x.riskCode === b.riskCode || x.id === b.id));
           const preL = m2?.likelihood || 3;
           const preI = m2?.impact || 3;
           const postL = 1;
@@ -1082,15 +1157,118 @@ export default function RiskManagementView({
     e.preventDefault();
     if (!editingBs4) return;
     if (setRiskManagement) {
-      setRiskManagement((prev) => ({
-        ...prev,
-        bs4: (prev?.bs4 || bs4List).map((item) =>
-          item.id === editingBs4.id ? { ...item, ...editingBs4 } : item
-        )
-      }));
+      setRiskManagement((prev) => {
+        const currentList = prev?.bs4 || bs4List;
+        const targetPeriod = editingBs4.period || '6month';
+        const existsIndex = currentList.findIndex(
+          (item) => item.id === editingBs4.id || 
+                    (item.riskCode === editingBs4.riskCode && (item.period || '6month') === targetPeriod)
+        );
+        let updatedBs4;
+        if (existsIndex >= 0) {
+          updatedBs4 = currentList.map((item, idx) =>
+            idx === existsIndex ? { ...item, ...editingBs4 } : item
+          );
+        } else {
+          updatedBs4 = [...currentList, editingBs4];
+        }
+        return {
+          ...prev,
+          bs4: updatedBs4
+        };
+      });
     }
     setEditingBs4(null);
   };
+
+  // Copy 6-month tracking data to 12-month
+  const handleCopy6MonthTo12Month = () => {
+    if (!setRiskManagement) return;
+    const sixMonthItems = bs4List.filter((b) => (b.period || '6month') === '6month');
+    if (sixMonthItems.length === 0) return;
+
+    setRiskManagement((prev) => {
+      const currentBs4 = prev?.bs4 || bs4List;
+      const otherBs4 = currentBs4.filter((b) => b.period !== '12month');
+      const new12m = sixMonthItems.map((item, idx) => ({
+        id: `BS4-12m-${item.id || item.riskCode || idx}`,
+        period: '12month',
+        riskCode: item.riskCode,
+        department: item.department,
+        activity: item.activity,
+        measures: item.measures,
+        timeline: item.timeline || 'ตลอดปีงบประมาณ',
+        responsiblePerson: item.responsiblePerson,
+        result: item.result
+          ? `${item.result} (ผลดำเนินงานสิ้นปีงบประมาณ: ดำเนินการแล้วเสร็จตามเป้าหมาย 100%)`
+          : 'ดำเนินการตามมาตรการครบถ้วนตลอดปีงบประมาณ ความเสี่ยงลดลงสู่ระดับที่ยอมรับได้',
+        evidence: item.evidence || 'รายงานสรุปผลการดำเนินงานประจำปี, ฎีกาเบิกจ่าย, ภาพถ่ายผลสำเร็จของโครงการ',
+        progressPercent: 100,
+        problemSolution: item.problemSolution && item.problemSolution.trim() !== '-'
+          ? `${item.problemSolution} (ได้รับการแก้ไขและติดตามผลแล้วเสร็จ)`
+          : getSmartProblemSolution(item.riskCode, item.activity, '12month')
+      }));
+
+      return {
+        ...prev,
+        bs4: [...otherBs4, ...new12m]
+      };
+    });
+
+    setCascadeSuccessMsg('🎉 คัดลอกและอัปเดตข้อมูลการติดตามผลจากรอบ 6 เดือน สู่รอบ 12 เดือน (สิ้นปีงบประมาณ) สำเร็จเรียบร้อยแล้ว!');
+    setTimeout(() => setCascadeSuccessMsg(''), 5000);
+  };
+
+  // Set all 12-month progress to 100%
+  const handleSetAll12mTo100Percent = () => {
+    if (!setRiskManagement) return;
+    setRiskManagement((prev) => {
+      const currentBs4 = prev?.bs4 || bs4List;
+      const updated = currentBs4.map((item) => {
+        if (item.period === '12month') {
+          return {
+            ...item,
+            progressPercent: 100,
+            result: item.result || 'ดำเนินการตามมาตรการครบถ้วนตลอดปีงบประมาณ บรรลุตามวัตถุประสงค์และตัวชี้วัดที่กำหนด'
+          };
+        }
+        return item;
+      });
+      return {
+        ...prev,
+        bs4: updated
+      };
+    });
+    setCascadeSuccessMsg('⚡ ปรับความคืบหน้ารอบ 12 เดือนเป็น 100% ครบทุกรายการเรียบร้อยแล้ว!');
+    setTimeout(() => setCascadeSuccessMsg(''), 4000);
+  };
+
+  // Auto fill problem and solution for current filtered view
+  const handleAutoFillProblemsSolutions = () => {
+    if (!setRiskManagement) return;
+    const targetPeriod = bs4Period || '6month';
+    setRiskManagement((prev) => {
+      const currentBs4 = prev?.bs4 || bs4List;
+      const updated = currentBs4.map((item) => {
+        if ((item.period || '6month') === targetPeriod) {
+          if (!item.problemSolution || item.problemSolution.trim() === '' || item.problemSolution.trim() === '-') {
+            return {
+              ...item,
+              problemSolution: getSmartProblemSolution(item.riskCode, item.activity, targetPeriod)
+            };
+          }
+        }
+        return item;
+      });
+      return {
+        ...prev,
+        bs4: updated
+      };
+    });
+    setCascadeSuccessMsg(`✨ เติมข้อความวิเคราะห์ปัญหาอุปสรรคและแนวทางแก้ไขสำหรับรอบ ${bs4Period === '12month' ? '12 เดือน' : bs4Period === '3month' ? '3 เดือน' : '6 เดือน'} อัตโนมัติเรียบร้อยแล้ว!`);
+    setTimeout(() => setCascadeSuccessMsg(''), 5000);
+  };
+
 
   // Save Edit BS.5 Row
   const handleSaveEditBs5 = (e) => {
@@ -2596,8 +2774,14 @@ export default function RiskManagementView({
               {orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'}
             </h3>
             
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-xs font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
-              <span>รายงานการติดตามผลการบริหารความเสี่ยง <span className="hidden print:inline">({bs4Period === '3month' ? 'รอบ 3 เดือน' : bs4Period === '6month' ? 'รอบ 6 เดือน' : 'รอบ 12 เดือน'})</span></span>
+            <div className="flex flex-col items-center justify-center gap-3 text-xs font-bold text-slate-800 dark:text-slate-200 print:text-black print:text-sm">
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <span>รายงานการติดตามผลการบริหารความเสี่ยง <span className="hidden print:inline">({bs4Period === '3month' ? 'รอบ 3 เดือน' : bs4Period === '6month' ? 'รอบ 6 เดือน' : 'รอบ 12 เดือน'})</span></span>
+                <span className="no-print text-[11px] px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-normal">
+                  กำลังแสดง: {filteredBs4.length} รายการ
+                </span>
+              </div>
+
               <div className="flex items-center space-x-3 bg-slate-50 dark:bg-slate-800 px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 no-print">
                 <label className="inline-flex items-center space-x-1.5 cursor-pointer">
                   <input
@@ -2608,7 +2792,7 @@ export default function RiskManagementView({
                     onChange={() => setBs4Period('3month')}
                     className="text-blue-600 focus:ring-blue-500"
                   />
-                  <span>รอบ 3 เดือน</span>
+                  <span>รอบ 3 เดือน ({bs4List.filter(b => b.period === '3month').length})</span>
                 </label>
                 <label className="inline-flex items-center space-x-1.5 cursor-pointer">
                   <input
@@ -2619,7 +2803,7 @@ export default function RiskManagementView({
                     onChange={() => setBs4Period('6month')}
                     className="text-blue-600 focus:ring-blue-500"
                   />
-                  <span>รอบ 6 เดือน</span>
+                  <span>รอบ 6 เดือน ({bs4List.filter(b => (b.period || '6month') === '6month').length})</span>
                 </label>
                 <label className="inline-flex items-center space-x-1.5 cursor-pointer">
                   <input
@@ -2630,9 +2814,47 @@ export default function RiskManagementView({
                     onChange={() => setBs4Period('12month')}
                     className="text-blue-600 focus:ring-blue-500"
                   />
-                  <span>รอบ 12 เดือน</span>
+                  <span>รอบ 12 เดือน ({bs4List.filter(b => b.period === '12month').length})</span>
                 </label>
               </div>
+
+              {/* Quick Action Tools for Period */}
+              {setRiskManagement && (
+                <div className="flex flex-wrap items-center justify-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800/80 no-print w-full max-w-2xl">
+                  <span className="text-[11px] font-bold text-slate-500">เครื่องมือจัดการรอบ:</span>
+                  {bs4Period === '12month' && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={handleCopy6MonthTo12Month}
+                        className="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/40 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                        title="คัดลอกข้อมูลและผลการดำเนินงานจากรอบ 6 เดือนมาตั้งต้นในรอบ 12 เดือน"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        คัดลอกผลจากรอบ 6 เดือนสู่รอบ 12 เดือน
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleSetAll12mTo100Percent}
+                        className="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/40 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                        title="ปรับความคืบหน้ารอบ 12 เดือนให้เป็น 100% (สิ้นสุดปีงบประมาณ)"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        ปรับความคืบหน้ารอบ 12 เดือนเป็น 100% ทั้งหมด
+                      </button>
+                    </>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleAutoFillProblemsSolutions}
+                    className="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/40 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                    title="เติมปัญหาอุปสรรคและแนวทางแก้ไขในข้อที่ยังว่างอัตโนมัติ"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    ✨ เติมปัญหา/แนวทางแก้ไขอัตโนมัติในช่องที่ว่าง
+                  </button>
+                </div>
+              )}
             </div>
 
             <p className="text-xs text-slate-600 dark:text-slate-400 print:text-black print:text-xs">
@@ -3864,11 +4086,25 @@ export default function RiskManagementView({
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  (11) ปัญหาอุปสรรค และแนวทางแก้ไข:
-                </label>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300">
+                    (11) ปัญหาอุปสรรค และแนวทางแก้ไข:
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const rec = getSmartProblemSolution(editingBs4.riskCode, editingBs4.activity, editingBs4.period || '6month');
+                      setEditingBs4({ ...editingBs4, problemSolution: rec });
+                    }}
+                    className="text-xs px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/40 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 font-bold flex items-center gap-1 transition-all cursor-pointer"
+                    title="แนะนำข้อความวิเคราะห์ปัญหาอุปสรรคและแนวทางแก้ไขที่สอดคล้องกับภารกิจ"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    ✨ แนะนำปัญหา & แนวทางแก้ไข
+                  </button>
+                </div>
                 <textarea
-                  rows={2}
+                  rows={3}
                   value={editingBs4.problemSolution || ''}
                   onChange={(e) => setEditingBs4({ ...editingBs4, problemSolution: e.target.value })}
                   placeholder="ระบุปัญหาอุปสรรคและแนวทางแก้ไข (ถ้ามี)"
