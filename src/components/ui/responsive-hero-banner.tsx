@@ -389,12 +389,12 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
         </div>
 
         {/* Middle: Main Title - Centered in middle area for perfect visual balance */}
-        <div className="w-full max-w-4xl mx-auto text-center my-auto py-6 sm:py-8 lg:py-10 animate-fade-slide-in-2">
-          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-[1.95rem] font-extrabold text-slate-900 tracking-tight leading-snug font-['Prompt',sans-serif]">
-            <span className="block drop-shadow-xs">
+        <div className="w-full max-w-5xl mx-auto text-center my-auto py-4 sm:py-6 lg:py-8 animate-fade-slide-in-2">
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-[2.5rem] xl:text-[2.85rem] font-extrabold text-slate-900 tracking-tight leading-tight md:leading-snug font-['Prompt',sans-serif]">
+            <span className="block drop-shadow-sm">
               {title}
             </span>
-            <span className="inline-block whitespace-nowrap bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 bg-clip-text text-transparent drop-shadow-xs mt-1 sm:mt-1.5">
+            <span className="inline-block whitespace-nowrap bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 bg-clip-text text-transparent drop-shadow-sm mt-1.5 sm:mt-2 md:mt-2.5">
               {titleLine2}
             </span>
           </h1>
