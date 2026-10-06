@@ -94,7 +94,7 @@ export const THAI_MONTH_FULL = [
   'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
 ];
 
-// 7 ยุทธศาสตร์การบริหารความเสี่ยง องค์การบริหารส่วนตำบลฝางคำ (๕.๒)
+// 7 ยุทธศาสตร์การบริหารความเสี่ยง องค์การบริหารส่วนตำบลฝางคำ (5.2)
 export const FANGKHAM_STRATEGIES = [
   'ยุทธศาสตร์ที่ 1 การพัฒนาโครงสร้างพื้นฐาน',
   'ยุทธศาสตร์ที่ 2 การพัฒนาคุณภาพชีวิต',
@@ -1835,8 +1835,8 @@ export default function RiskManagementView({
     {
       id: 'bs1',
       step: 1,
-      thaiNum: '๑',
-      code: 'บส.๑',
+      num: '1',
+      code: 'บส. 1',
       shortLabel: 'ขอบเขต',
       title: 'กำหนดขอบเขตความรับผิดชอบ',
       desc: 'ภารกิจยุทธศาสตร์ / โครงการ / วัตถุประสงค์ / ระบุความเสี่ยง',
@@ -1845,8 +1845,8 @@ export default function RiskManagementView({
     {
       id: 'bs2',
       step: 2,
-      thaiNum: '๒',
-      code: 'บส.๒',
+      num: '2',
+      code: 'บส. 2',
       shortLabel: 'วิเคราะห์',
       title: 'วิเคราะห์โอกาส ผลกระทบ & ตอบสนอง',
       desc: 'ประเมิน 6 ด้าน / โอกาส x ผลกระทบ (1-25) / 8 วิธีตอบสนอง',
@@ -1855,8 +1855,8 @@ export default function RiskManagementView({
     {
       id: 'bs3',
       step: 3,
-      thaiNum: '๓',
-      code: 'บส.๓',
+      num: '3',
+      code: 'บส. 3',
       shortLabel: 'แผนบริหาร',
       title: 'แผนการบริหารความเสี่ยง',
       desc: 'มาตรการจัดการ / ผู้รับผิดชอบ / ระยะเวลา / ตัวชี้วัด',
@@ -1865,8 +1865,8 @@ export default function RiskManagementView({
     {
       id: 'bs4',
       step: 4,
-      thaiNum: '๔',
-      code: 'บส.๔',
+      num: '4',
+      code: 'บส. 4',
       shortLabel: 'ติดตามผล',
       title: 'ติดตามผลการบริหารความเสี่ยง',
       desc: 'ผลดำเนินการรอบ 6/12 ด. / ความคืบหน้า / ปัญหาอุปสรรค & แก้ไข',
@@ -1875,8 +1875,8 @@ export default function RiskManagementView({
     {
       id: 'bs5',
       step: 5,
-      thaiNum: '๕',
-      code: 'บส.๕',
+      num: '5',
+      code: 'บส. 5',
       shortLabel: 'ทบทวนองค์กร',
       title: 'รายงานผล & ทบทวนระดับองค์กร',
       desc: 'สรุปภาพรวมสิ้นปี / ประเมินความเสี่ยงคงเหลือ / มาตรการปีถัดไป',
@@ -2648,10 +2648,10 @@ export default function RiskManagementView({
                 type="button"
                 onClick={() => setShowFormSelectorMenu(!showFormSelectorMenu)}
                 className="flex items-center space-x-3 bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 hover:from-blue-800 hover:to-indigo-800 text-white px-3.5 py-2 rounded-xl shadow-md shadow-blue-900/20 hover:shadow-lg transition-all font-bold cursor-pointer border border-blue-400/30 group"
-                title="คลิกเพื่อเลือกแบบรายงาน บส. ๑ - บส. ๕"
+                title="คลิกเพื่อเลือกแบบรายงาน บส. 1 - บส. 5"
               >
                 <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-white/20 text-white font-black text-sm shadow-inner group-hover:scale-105 transition-transform">
-                  {currentFormMeta.thaiNum}
+                  {currentFormMeta.num}
                 </div>
                 <div className="text-left">
                   <div className="text-[10px] font-semibold text-blue-200 tracking-wide flex items-center space-x-1.5">
@@ -2672,7 +2672,7 @@ export default function RiskManagementView({
               {showFormSelectorMenu && (
                 <div className="absolute left-0 top-full mt-2 w-80 sm:w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
                   <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
-                    <span>เลือกแบบรายงานหลัก (บส. ๑ - บส. ๕)</span>
+                    <span>เลือกแบบรายงานหลัก (บส. 1 - บส. 5)</span>
                     <span className="text-[10px] bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-md font-semibold">ตามเกณฑ์ ว 3482</span>
                   </div>
                   <div className="space-y-1 mt-1.5">
@@ -2695,7 +2695,7 @@ export default function RiskManagementView({
                           <div className={`flex items-center justify-center w-8 h-8 rounded-lg font-black text-sm shrink-0 shadow-xs ${
                             isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                           }`}>
-                            {f.thaiNum}
+                            {f.num}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
@@ -2751,7 +2751,7 @@ export default function RiskManagementView({
                   >
                     <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-black ${
                       isCurrent ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
-                    }`}>{f.thaiNum}</span>
+                    }`}>{f.num}</span>
                     <span>{f.shortLabel}</span>
                     <span className={`text-[10px] px-1 py-0.2 rounded-full font-mono ${
                       isCurrent ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
