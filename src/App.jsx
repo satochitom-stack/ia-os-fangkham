@@ -666,7 +666,17 @@ export default function App() {
             currentBs5.items = nextBs5Items;
 
             const nextBs5Summary = { ...(currentYearData.bs5Summary || {}), ...(data.bs5Summary || {}) };
-            const nextSubmissions = { ...(currentYearData.submissions || {}), ...(data.submissions || {}) };
+            const nextSubmissions = { ...(currentYearData.submissions || {}) };
+            if (data.submissions) {
+              Object.entries(data.submissions).forEach(([d, incomingSub]) => {
+                const currentSub = nextSubmissions[d];
+                // Never downgrade 'reviewed' to 'submitted' or 'draft'
+                if (currentSub?.status === 'reviewed' && incomingSub?.status !== 'reviewed') {
+                  return;
+                }
+                nextSubmissions[d] = { ...(currentSub || {}), ...(incomingSub || {}) };
+              });
+            }
 
             return {
               ...prev,

@@ -614,14 +614,34 @@ export function mergeRiskManagement(localYearData, cloudYearData, activeUserDept
 
   result.bs5 = localBs5;
 
-  // 3. Merge submissions and bs5Summary
-  const combinedSubmissions = { ...(result.submissions || {}), ...(cloudYearData.submissions || {}) };
-  protectedDepts.forEach((dept) => {
-    if (result.submissions?.[dept]) {
-      combinedSubmissions[dept] = result.submissions[dept];
+  // 3. Smart Merge for submissions:
+  // Status hierarchy: 'reviewed' (สอบทานแล้ว) > 'submitted' (ส่งแล้ว) > 'draft' (ร่าง)
+  const mergedSubmissions = {};
+  const allSubDepts = new Set([
+    ...Object.keys(result.submissions || {}),
+    ...Object.keys(cloudYearData.submissions || {})
+  ]);
+
+  allSubDepts.forEach((dept) => {
+    const localSub = result.submissions?.[dept];
+    const cloudSub = cloudYearData.submissions?.[dept];
+
+    if (localSub && !cloudSub) {
+      mergedSubmissions[dept] = localSub;
+    } else if (!localSub && cloudSub) {
+      mergedSubmissions[dept] = cloudSub;
+    } else if (localSub && cloudSub) {
+      if (localSub.status === 'reviewed' && cloudSub.status !== 'reviewed') {
+        mergedSubmissions[dept] = { ...cloudSub, ...localSub, status: 'reviewed', reviewStatus: 'reviewed' };
+      } else if (cloudSub.status === 'reviewed' && localSub.status !== 'reviewed') {
+        mergedSubmissions[dept] = { ...localSub, ...cloudSub, status: 'reviewed', reviewStatus: 'reviewed' };
+      } else {
+        mergedSubmissions[dept] = { ...cloudSub, ...localSub };
+      }
     }
   });
-  result.submissions = combinedSubmissions;
+
+  result.submissions = mergedSubmissions;
   result.bs5Summary = { ...(result.bs5Summary || {}), ...(cloudYearData.bs5Summary || {}) };
 
   return result;

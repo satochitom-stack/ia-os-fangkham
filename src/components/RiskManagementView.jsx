@@ -1401,24 +1401,50 @@ export default function RiskManagementView({
     });
     const submitter = currentSession?.displayName || currentSession?.username || deptToSend;
 
+    const newSubRecord = {
+      status: 'submitted',
+      submittedAt: dateStr,
+      submittedBy: submitter,
+      notes: notesText.trim(),
+      reviewStatus: 'pending',
+      reviewedAt: '',
+      reviewedBy: '',
+      reviewOpinion: ''
+    };
+
     if (setRiskManagement) {
       setRiskManagement((prev) => ({
         ...prev,
         submissions: {
           ...(prev?.submissions || {}),
-          [deptToSend]: {
-            status: 'submitted',
-            submittedAt: dateStr,
-            submittedBy: submitter,
-            notes: notesText.trim(),
-            reviewStatus: 'pending',
-            reviewedAt: '',
-            reviewedBy: '',
-            reviewOpinion: ''
-          }
+          [deptToSend]: newSubRecord
         }
       }));
     }
+
+    if (isSupabaseConfigured()) {
+      const filterFn = (i) => i && i.department === deptToSend;
+      const bs5Items = Array.isArray(riskManagement?.bs5)
+        ? riskManagement.bs5
+        : Array.isArray(riskManagement?.bs5?.items)
+        ? riskManagement.bs5.items
+        : [];
+
+      const deptPayload = {
+        bs1: (riskManagement?.bs1 || []).filter(filterFn),
+        bs2: (riskManagement?.bs2 || []).filter(filterFn),
+        bs3: (riskManagement?.bs3 || []).filter(filterFn),
+        bs4: (riskManagement?.bs4 || []).filter(filterFn),
+        bs5: bs5Items.filter(filterFn),
+        bs5Summary: riskManagement?.bs5Summary || {},
+        submissions: {
+          [deptToSend]: newSubRecord
+        }
+      };
+
+      cloudSyncService.pushDeptRiskManagement(selectedYear, deptToSend, deptPayload).catch((e) => console.warn('Send cloud push notice:', e));
+    }
+
     setCascadeSuccessMsg(`ส่งแบบ บส.1 - บส.5 ของ "${deptToSend}" ให้หน่วยตรวจสอบภายในเรียบร้อยแล้ว`);
     setShowSubmitModal(false);
     setSubmitNotes('');
@@ -1432,19 +1458,45 @@ export default function RiskManagementView({
       type: 'warning',
       confirmText: 'ดึงกลับมาแก้ไข',
       onConfirm: () => {
+        const recalledSub = {
+          ...(riskManagement?.submissions?.[deptToRecall] || {}),
+          status: 'draft',
+          reviewStatus: 'pending'
+        };
+
         if (setRiskManagement) {
           setRiskManagement((prev) => ({
             ...prev,
             submissions: {
               ...(prev?.submissions || {}),
-              [deptToRecall]: {
-                ...(prev?.submissions?.[deptToRecall] || {}),
-                status: 'draft',
-                reviewStatus: 'pending'
-              }
+              [deptToRecall]: recalledSub
             }
           }));
         }
+
+        if (isSupabaseConfigured()) {
+          const filterFn = (i) => i && i.department === deptToRecall;
+          const bs5Items = Array.isArray(riskManagement?.bs5)
+            ? riskManagement.bs5
+            : Array.isArray(riskManagement?.bs5?.items)
+            ? riskManagement.bs5.items
+            : [];
+
+          const deptPayload = {
+            bs1: (riskManagement?.bs1 || []).filter(filterFn),
+            bs2: (riskManagement?.bs2 || []).filter(filterFn),
+            bs3: (riskManagement?.bs3 || []).filter(filterFn),
+            bs4: (riskManagement?.bs4 || []).filter(filterFn),
+            bs5: bs5Items.filter(filterFn),
+            bs5Summary: riskManagement?.bs5Summary || {},
+            submissions: {
+              [deptToRecall]: recalledSub
+            }
+          };
+
+          cloudSyncService.pushDeptRiskManagement(selectedYear, deptToRecall, deptPayload).catch((e) => console.warn('Recall cloud push notice:', e));
+        }
+
         setCascadeSuccessMsg(`ดึงรายงานแบบ บส. ของ "${deptToRecall}" กลับมาเป็นฉบับร่างแล้ว สามารถปรับปรุงและกดส่งใหม่ได้`);
       }
     });
@@ -1462,23 +1514,54 @@ export default function RiskManagementView({
     });
     const auditorName = currentSession?.displayName || orgProfile?.auditorName || 'ผู้ตรวจสอบภายใน';
 
+    const newReviewedRecord = {
+      ...(riskManagement?.submissions?.[deptToReview] || {}),
+      status: 'reviewed',
+      reviewStatus: 'reviewed',
+      reviewedAt: dateStr,
+      reviewedBy: auditorName,
+      reviewOpinion: opinionText.trim()
+    };
+
     if (setRiskManagement) {
       setRiskManagement((prev) => ({
         ...prev,
         submissions: {
           ...(prev?.submissions || {}),
-          [deptToReview]: {
-            ...(prev?.submissions?.[deptToReview] || {}),
-            status: 'reviewed',
-            reviewStatus: 'reviewed',
-            reviewedAt: dateStr,
-            reviewedBy: auditorName,
-            reviewOpinion: opinionText.trim()
-          }
+          [deptToReview]: newReviewedRecord
         }
       }));
     }
-    setCascadeSuccessMsg(`บันทึกผลการสอบทานแบบ บส. ของ "${deptToReview}" เรียบร้อยแล้ว`);
+
+    // Direct push to Cloud if Supabase is active
+    if (isSupabaseConfigured()) {
+      const filterFn = (i) => i && i.department === deptToReview;
+      const bs5Items = Array.isArray(riskManagement?.bs5)
+        ? riskManagement.bs5
+        : Array.isArray(riskManagement?.bs5?.items)
+        ? riskManagement.bs5.items
+        : [];
+
+      const deptPayload = {
+        bs1: (riskManagement?.bs1 || []).filter(filterFn),
+        bs2: (riskManagement?.bs2 || []).filter(filterFn),
+        bs3: (riskManagement?.bs3 || []).filter(filterFn),
+        bs4: (riskManagement?.bs4 || []).filter(filterFn),
+        bs5: bs5Items.filter(filterFn),
+        bs5Summary: riskManagement?.bs5Summary || {},
+        submissions: {
+          [deptToReview]: newReviewedRecord
+        }
+      };
+
+      cloudSyncService.pushDeptRiskManagement(selectedYear, deptToReview, deptPayload)
+        .then((ok) => {
+          if (ok) console.log(`☁️ [Cloud Sync] Review saved for ${deptToReview}`);
+        })
+        .catch((e) => console.warn('Review cloud push notice:', e));
+    }
+
+    setCascadeSuccessMsg(`บันทึกผลการสอบทานแบบ บส. ของ "${deptToReview}" เรียบร้อยแล้ว (ซิงค์ Cloud ทันที)`);
     setShowReviewModal(false);
     setReviewOpinion('');
   };
