@@ -255,6 +255,7 @@ export default function RiskManagementView({
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewModalDept, setReviewModalDept] = useState('');
   const [reviewOpinion, setReviewOpinion] = useState('');
+  const [reviewDate, setReviewDate] = useState('');
 
   // Cross-Machine file transfer ref & info state
   const fileInputRef = useRef(null);
@@ -1503,22 +1504,19 @@ export default function RiskManagementView({
   };
 
   // Internal Audit review action
-  const handleSaveAuditReview = (deptToReview, opinionText = '') => {
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('th-TH', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  const handleSaveAuditReview = (deptToReview, opinionText = '', customDate = '') => {
+    const finalDate = (customDate || reviewDate || '').trim();
+    if (!finalDate) {
+      alert('กรุณาระบุหรือเลือกวันที่สอบทาน');
+      return;
+    }
     const auditorName = currentSession?.displayName || orgProfile?.auditorName || 'ผู้ตรวจสอบภายใน';
 
     const newReviewedRecord = {
       ...(riskManagement?.submissions?.[deptToReview] || {}),
       status: 'reviewed',
       reviewStatus: 'reviewed',
-      reviewedAt: dateStr,
+      reviewedAt: finalDate,
       reviewedBy: auditorName,
       reviewOpinion: opinionText.trim()
     };
@@ -1564,6 +1562,7 @@ export default function RiskManagementView({
     setCascadeSuccessMsg(`บันทึกผลการสอบทานแบบ บส. ของ "${deptToReview}" เรียบร้อยแล้ว (ซิงค์ Cloud ทันที)`);
     setShowReviewModal(false);
     setReviewOpinion('');
+    setReviewDate('');
   };
 
   // Export Risk Data (JSON) for Cross-Machine Transfer / Backup
@@ -2194,6 +2193,7 @@ export default function RiskManagementView({
                           onClick={() => {
                             setReviewModalDept(dept);
                             setReviewOpinion(sub.reviewOpinion || 'เอกสารแบบ บส.1 - บส.5 จัดทำได้ครบถ้วน ถูกต้องตามหลักเกณฑ์ มท 0805.2/ว 3482 และมีการกำหนดมาตรการควบคุมความเสี่ยงอย่างเหมาะสม');
+                            setReviewDate(sub.reviewedAt || '');
                             setShowReviewModal(true);
                           }}
                           className="text-[11px] font-bold px-2 py-1 rounded bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-colors flex items-center space-x-1 cursor-pointer"
@@ -2208,6 +2208,7 @@ export default function RiskManagementView({
                           onClick={() => {
                             setReviewModalDept(dept);
                             setReviewOpinion(sub.reviewOpinion || '');
+                            setReviewDate(sub.reviewedAt || '');
                             setShowReviewModal(true);
                           }}
                           className="text-[11px] font-semibold px-2 py-1 rounded text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors flex items-center space-x-1 cursor-pointer"
@@ -5191,7 +5192,10 @@ export default function RiskManagementView({
               </div>
               <button
                 type="button"
-                onClick={() => setShowReviewModal(false)}
+                onClick={() => {
+                  setShowReviewModal(false);
+                  setReviewDate('');
+                }}
                 className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg"
               >
                 <X className="w-5 h-5" />
@@ -5215,6 +5219,87 @@ export default function RiskManagementView({
                 </div>
               )}
 
+              {/* Review Date Selector */}
+              <div>
+                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <span className="flex items-center space-x-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                    <span>วันที่สอบทาน:</span>
+                    <span className="text-rose-500">*</span>
+                  </span>
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={reviewDate}
+                    onChange={(e) => setReviewDate(e.target.value)}
+                    placeholder="เช่น 30 ก.ย. 2569 หรือเลือกจากปฏิทิน"
+                    className="flex-1 p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  />
+                  <div className="relative shrink-0">
+                    <input
+                      type="date"
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (!val) return;
+                        const [y, m, d] = val.split('-');
+                        const thaiMonthsShort = ['', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+                        const thaiYear = parseInt(y, 10) + 543;
+                        const thaiMonth = thaiMonthsShort[parseInt(m, 10)] || m;
+                        setReviewDate(`${parseInt(d, 10)} ${thaiMonth} ${thaiYear}`);
+                      }}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      title="เลือกวันที่จากปฏิทิน"
+                    />
+                    <button
+                      type="button"
+                      className="px-3 py-2.5 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-bold text-xs flex items-center space-x-1.5 cursor-pointer"
+                    >
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span>เลือกจากปฏิทิน</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Quick preset buttons */}
+                <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                  <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">เลือกเร็ว:</span>
+                  <button
+                    type="button"
+                    onClick={() => setReviewDate(`30 ก.ย. ${selectedYear}`)}
+                    className="px-2 py-0.5 rounded-md text-[11px] bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200 dark:border-slate-700 cursor-pointer transition-colors"
+                  >
+                    30 ก.ย. {selectedYear} (สิ้นปีงบ)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setReviewDate(`31 มี.ค. ${selectedYear}`)}
+                    className="px-2 py-0.5 rounded-md text-[11px] bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200 dark:border-slate-700 cursor-pointer transition-colors"
+                  >
+                    31 มี.ค. {selectedYear} (รอบ 6 เดือน)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const now = new Date();
+                      setReviewDate(now.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }));
+                    }}
+                    className="px-2 py-0.5 rounded-md text-[11px] bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200 dark:border-slate-700 cursor-pointer transition-colors"
+                  >
+                    วันนี้
+                  </button>
+                  {reviewDate && (
+                    <button
+                      type="button"
+                      onClick={() => setReviewDate('')}
+                      className="px-2 py-0.5 rounded-md text-[11px] text-slate-400 hover:text-rose-500 cursor-pointer transition-colors ml-auto"
+                    >
+                      ล้างค่า
+                    </button>
+                  )}
+                </div>
+              </div>
+
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   ข้อคิดเห็น / ข้อเสนอแนะการสอบทานของหน่วยตรวจสอบภายใน:
@@ -5236,15 +5321,23 @@ export default function RiskManagementView({
             <div className="flex justify-end space-x-2 pt-3 border-t border-slate-100 dark:border-slate-800">
               <button
                 type="button"
-                onClick={() => setShowReviewModal(false)}
+                onClick={() => {
+                  setShowReviewModal(false);
+                  setReviewDate('');
+                }}
                 className="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs cursor-pointer"
               >
                 ยกเลิก
               </button>
               <button
                 type="button"
-                onClick={() => handleSaveAuditReview(reviewModalDept, reviewOpinion)}
-                className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs cursor-pointer flex items-center space-x-1.5"
+                disabled={!reviewDate.trim()}
+                onClick={() => handleSaveAuditReview(reviewModalDept, reviewOpinion, reviewDate)}
+                className={`px-5 py-2 rounded-xl font-bold text-xs shadow-xs flex items-center space-x-1.5 transition-all ${
+                  !reviewDate.trim()
+                    ? 'bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed'
+                    : 'bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer'
+                }`}
               >
                 <Check className="w-3.5 h-3.5" />
                 <span>บันทึกผลการสอบทาน</span>
