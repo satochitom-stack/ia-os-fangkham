@@ -373,12 +373,11 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
         )}
       </header>
 
-      {/* 4. Hero Content: Text Group at Top under Header & Buttons at Bottom */}
+      {/* 4. Hero Content: Welcome at Top, Title in Center, Buttons at Bottom */}
       <div className="z-10 relative flex-1 flex flex-col justify-between items-center pt-7 sm:pt-9 lg:pt-11 pb-5 sm:pb-7 px-6">
-        {/* Upper Text Group: Comfortably below header bar */}
-        <div className="max-w-4xl mx-auto text-center animate-fade-slide-in-1">
-          {/* Frosted Glass Welcome Badge */}
-          <div className="mb-3.5 sm:mb-4 inline-flex items-center gap-2 sm:gap-2.5 rounded-full bg-white/90 px-3.5 sm:px-4 py-1.5 border border-blue-200/80 shadow-xs backdrop-blur-md hover:border-blue-300 transition-all">
+        {/* Upper: Frosted Glass Welcome Badge - at original position below header bar */}
+        <div className="w-full max-w-4xl mx-auto text-center animate-fade-slide-in-1">
+          <div className="inline-flex items-center gap-2 sm:gap-2.5 rounded-full bg-white/90 px-3.5 sm:px-4 py-1.5 border border-blue-200/80 shadow-xs backdrop-blur-md hover:border-blue-300 transition-all">
             <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-white bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 rounded-full py-0.5 px-2.5 sm:px-3 shadow-2xs font-['Plus_Jakarta_Sans',sans-serif] tracking-wider uppercase">
               <Sparkles className="w-3 h-3 text-cyan-200 animate-pulse" />
               {badgeLabel}
@@ -387,9 +386,11 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
               {badgeText}
             </span>
           </div>
+        </div>
 
-          {/* Main Title - Original ~50% reduced scale */}
-          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-[1.95rem] font-extrabold text-slate-900 tracking-tight leading-snug animate-fade-slide-in-2 font-['Prompt',sans-serif]">
+        {/* Middle: Main Title - Centered in middle area for perfect visual balance */}
+        <div className="w-full max-w-4xl mx-auto text-center my-auto py-6 sm:py-8 lg:py-10 animate-fade-slide-in-2">
+          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-[1.95rem] font-extrabold text-slate-900 tracking-tight leading-snug font-['Prompt',sans-serif]">
             <span className="block drop-shadow-xs">
               {title}
             </span>
@@ -400,7 +401,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
         </div>
 
         {/* Lower Section: Action Buttons positioned down below */}
-        <div className="w-full max-w-4xl mx-auto text-center mt-auto pt-8 sm:pt-12 pb-3 sm:pb-4 animate-fade-slide-in-3">
+        <div className="w-full max-w-4xl mx-auto text-center pt-4 sm:pt-6 pb-3 sm:pb-4 animate-fade-slide-in-3">
           <div className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 items-center justify-center">
             {/* Primary Button */}
             <button
