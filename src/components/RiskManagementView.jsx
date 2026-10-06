@@ -57,6 +57,12 @@ import {
   getSmartProblemSolution,
   STANDARD_RISK_LIBRARY
 } from '../data/standardRiskLibrary';
+import GeminiConfigModal from './GeminiConfigModal';
+import {
+  isGeminiConfigured,
+  analyzeProblemAndSolutionWithAI,
+  evaluateResidualRiskWithAI
+} from '../services/geminiAiService';
 
 // 6 ประเภทความเสี่ยง ตามหนังสือสั่งการ มท 0805.2/ว 3482 (แบบ บส.2 ข้อ 8)
 export const RISK_CATEGORIES = [
@@ -253,6 +259,21 @@ export default function RiskManagementView({
   // Cross-Machine file transfer ref & info state
   const fileInputRef = useRef(null);
   const [showCrossMachineInfo, setShowCrossMachineInfo] = useState(false);
+
+  // Google Gemini AI Integration state
+  const [showGeminiModal, setShowGeminiModal] = useState(false);
+  const [geminiReady, setGeminiReady] = useState(() => isGeminiConfigured());
+  const [isAiAnalyzing, setIsAiAnalyzing] = useState(false);
+  const [isBs5AiAnalyzing, setIsBs5AiAnalyzing] = useState(false);
+  const [isBatchAiAnalyzing, setIsBatchAiAnalyzing] = useState(false);
+
+  React.useEffect(() => {
+    const handleConfigChange = () => {
+      setGeminiReady(isGeminiConfigured());
+    };
+    window.addEventListener('ia-gemini-config-changed', handleConfigChange);
+    return () => window.removeEventListener('ia-gemini-config-changed', handleConfigChange);
+  }, []);
 
   // Reusable Elegant Confirm Modal State
   const [confirmModalConfig, setConfirmModalConfig] = useState({
@@ -1243,30 +1264,85 @@ export default function RiskManagementView({
     setTimeout(() => setCascadeSuccessMsg(''), 4000);
   };
 
-  // Auto fill problem and solution for current filtered view
-  const handleAutoFillProblemsSolutions = () => {
+  // Auto fill problem and solution for current filtered view (supports Gemini AI or local rule-based)
+  const handleAutoFillProblemsSolutions = async () => {
     if (!setRiskManagement) return;
     const targetPeriod = bs4Period || '6month';
-    setRiskManagement((prev) => {
-      const currentBs4 = prev?.bs4 || bs4List;
-      const updated = currentBs4.map((item) => {
-        if ((item.period || '6month') === targetPeriod) {
-          if (!item.problemSolution || item.problemSolution.trim() === '' || item.problemSolution.trim() === '-') {
-            return {
-              ...item,
-              problemSolution: getSmartProblemSolution(item.riskCode, item.activity, targetPeriod)
-            };
+    const periodName = targetPeriod === '12month' ? '12 เดือน' : targetPeriod === '3month' ? '3 เดือน' : '6 เดือน';
+    const currentBs4 = riskManagement?.bs4 || bs4List;
+    const itemsToFill = currentBs4.filter(
+      (item) => (item.period || '6month') === targetPeriod && (!item.problemSolution || item.problemSolution.trim() === '' || item.problemSolution.trim() === '-')
+    );
+
+    if (itemsToFill.length === 0) {
+      setCascadeSuccessMsg(`ℹ️ ข้อมูลรอบ ${periodName} มีข้อความปัญหาและแนวทางแก้ไขครบถ้วนแล้วทุกรายการ`);
+      setTimeout(() => setCascadeSuccessMsg(''), 4000);
+      return;
+    }
+
+    if (geminiReady) {
+      setIsBatchAiAnalyzing(true);
+      setCascadeSuccessMsg(`🤖 Google Gemini AI กำลังวิเคราะห์ปัญหาและแนวทางแก้ไข (${itemsToFill.length} รายการ)...`);
+      try {
+        const filledMap = {};
+        for (const item of itemsToFill) {
+          try {
+            const sol = await analyzeProblemAndSolutionWithAI({
+              riskCode: item.riskCode,
+              department: item.department || userDept || '',
+              activity: item.activity,
+              measures: item.measures,
+              progressPercent: item.progressPercent ?? 80,
+              period: targetPeriod,
+              result: item.result
+            });
+            filledMap[item.id] = sol;
+          } catch (e) {
+            filledMap[item.id] = getSmartProblemSolution(item.riskCode, item.activity, targetPeriod);
           }
         }
-        return item;
+
+        setRiskManagement((prev) => {
+          const bs4Arr = prev?.bs4 || bs4List;
+          const updated = bs4Arr.map((item) => {
+            if (filledMap[item.id]) {
+              return { ...item, problemSolution: filledMap[item.id] };
+            }
+            return item;
+          });
+          return { ...prev, bs4: updated };
+        });
+
+        setCascadeSuccessMsg(`✨ Google Gemini AI วิเคราะห์และเติมปัญหา/แนวทางแก้ไขรอบ ${periodName} ครบ ${itemsToFill.length} รายการเรียบร้อยแล้ว!`);
+      } catch (err) {
+        console.error('Batch AI error:', err);
+      } finally {
+        setIsBatchAiAnalyzing(false);
+        setTimeout(() => setCascadeSuccessMsg(''), 5000);
+      }
+    } else {
+      // Offline fallback: instantaneous rule-based fill
+      setRiskManagement((prev) => {
+        const bs4Arr = prev?.bs4 || bs4List;
+        const updated = bs4Arr.map((item) => {
+          if ((item.period || '6month') === targetPeriod) {
+            if (!item.problemSolution || item.problemSolution.trim() === '' || item.problemSolution.trim() === '-') {
+              return {
+                ...item,
+                problemSolution: getSmartProblemSolution(item.riskCode, item.activity, targetPeriod)
+              };
+            }
+          }
+          return item;
+        });
+        return {
+          ...prev,
+          bs4: updated
+        };
       });
-      return {
-        ...prev,
-        bs4: updated
-      };
-    });
-    setCascadeSuccessMsg(`✨ เติมข้อความวิเคราะห์ปัญหาอุปสรรคและแนวทางแก้ไขสำหรับรอบ ${bs4Period === '12month' ? '12 เดือน' : bs4Period === '3month' ? '3 เดือน' : '6 เดือน'} อัตโนมัติเรียบร้อยแล้ว!`);
-    setTimeout(() => setCascadeSuccessMsg(''), 5000);
+      setCascadeSuccessMsg(`✨ เติมข้อความวิเคราะห์ปัญหาอุปสรรคและแนวทางแก้ไขสำหรับรอบ ${periodName} อัตโนมัติเรียบร้อยแล้ว!`);
+      setTimeout(() => setCascadeSuccessMsg(''), 5000);
+    }
   };
 
 
@@ -1600,6 +1676,20 @@ export default function RiskManagementView({
           >
             <BookOpen className="w-3.5 h-3.5 text-slate-500" />
             <span>{showGuide ? 'ซ่อนคำอธิบาย' : 'คำอธิบาย'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setShowGeminiModal(true)}
+            className={`border text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-all flex items-center space-x-1.5 cursor-pointer ${
+              geminiReady
+                ? 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+            }`}
+            title="ตั้งค่าเชื่อมต่อ Google Gemini Generative AI สำหรับงานวิเคราะห์ความเสี่ยง"
+          >
+            <Sparkles className={`w-3.5 h-3.5 ${geminiReady ? 'text-purple-600 dark:text-purple-400' : 'text-slate-400'}`} />
+            <span>{geminiReady ? 'Gemini AI (ออนไลน์)' : 'ตั้งค่า Gemini AI'}</span>
           </button>
 
           <button
@@ -2846,12 +2936,21 @@ export default function RiskManagementView({
                   )}
                   <button
                     type="button"
+                    disabled={isBatchAiAnalyzing}
                     onClick={handleAutoFillProblemsSolutions}
-                    className="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/40 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
-                    title="เติมปัญหาอุปสรรคและแนวทางแก้ไขในข้อที่ยังว่างอัตโนมัติ"
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                      geminiReady
+                        ? 'bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/40 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300'
+                        : 'bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/40 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300'
+                    }`}
+                    title={geminiReady ? "ให้ Google Gemini AI วิเคราะห์และเติมปัญหา/แนวทางแก้ไขในช่องที่ว่างอัตโนมัติ" : "เติมปัญหาอุปสรรคและแนวทางแก้ไขในข้อที่ยังว่างอัตโนมัติ"}
                   >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    ✨ เติมปัญหา/แนวทางแก้ไขอัตโนมัติในช่องที่ว่าง
+                    {isBatchAiAnalyzing ? (
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Sparkles className="w-3.5 h-3.5" />
+                    )}
+                    <span>{isBatchAiAnalyzing ? 'AI กำลังวิเคราะห์...' : (geminiReady ? '✨ AI เติมปัญหา/แนวทางแก้ไขในช่องว่าง' : '✨ เติมปัญหา/แนวทางแก้ไขอัตโนมัติในช่องที่ว่าง')}</span>
                   </button>
                 </div>
               )}
@@ -4092,15 +4191,37 @@ export default function RiskManagementView({
                   </label>
                   <button
                     type="button"
-                    onClick={() => {
-                      const rec = getSmartProblemSolution(editingBs4.riskCode, editingBs4.activity, editingBs4.period || '6month');
-                      setEditingBs4({ ...editingBs4, problemSolution: rec });
+                    disabled={isAiAnalyzing}
+                    onClick={async () => {
+                      setIsAiAnalyzing(true);
+                      try {
+                        const rec = await analyzeProblemAndSolutionWithAI({
+                          riskCode: editingBs4.riskCode,
+                          department: editingBs4.department || userDept || '',
+                          activity: editingBs4.activity,
+                          measures: editingBs4.measures,
+                          progressPercent: editingBs4.progressPercent ?? 80,
+                          period: editingBs4.period || '6month',
+                          result: editingBs4.result
+                        });
+                        setEditingBs4(prev => ({ ...prev, problemSolution: rec }));
+                      } finally {
+                        setIsAiAnalyzing(false);
+                      }
                     }}
-                    className="text-xs px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/40 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 font-bold flex items-center gap-1 transition-all cursor-pointer"
-                    title="แนะนำข้อความวิเคราะห์ปัญหาอุปสรรคและแนวทางแก้ไขที่สอดคล้องกับภารกิจ"
+                    className={`text-xs px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                      geminiReady
+                        ? 'bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/40 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300'
+                        : 'bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/40 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300'
+                    }`}
+                    title={geminiReady ? "วิเคราะห์ข้อความด้วย Google Gemini Generative AI" : "แนะนำข้อความวิเคราะห์ปัญหาอุปสรรคและแนวทางแก้ไขที่สอดคล้องกับภารกิจ"}
                   >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    ✨ แนะนำปัญหา & แนวทางแก้ไข
+                    {isAiAnalyzing ? (
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Sparkles className="w-3.5 h-3.5" />
+                    )}
+                    <span>{isAiAnalyzing ? 'AI กำลังวิเคราะห์...' : (geminiReady ? '✨ วิเคราะห์ด้วย Gemini AI' : '✨ แนะนำปัญหา & แนวทางแก้ไข')}</span>
                   </button>
                 </div>
                 <textarea
@@ -4236,9 +4357,52 @@ export default function RiskManagementView({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    (11) ความเสี่ยงคงเหลือหรือเกิดขึ้นใหม่:
-                  </label>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="block font-semibold text-slate-700 dark:text-slate-300">
+                      (11) ความเสี่ยงคงเหลือหรือเกิดขึ้นใหม่:
+                    </label>
+                    <button
+                      type="button"
+                      disabled={isBs5AiAnalyzing}
+                      onClick={async () => {
+                        setIsBs5AiAnalyzing(true);
+                        try {
+                          const evalRes = await evaluateResidualRiskWithAI({
+                            riskCode: editingBs5.riskCode,
+                            department: editingBs5.department,
+                            activity: editingBs5.activity,
+                            riskEvent: editingBs5.riskEvent,
+                            preScore: Number(editingBs5.preLikelihood) * Number(editingBs5.preImpact),
+                            measures: editingBs5.measures || '',
+                            result12m: editingBs5.result || ''
+                          });
+                          setEditingBs5(prev => ({
+                            ...prev,
+                            postLikelihood: evalRes.postLikelihood ?? prev.postLikelihood,
+                            postImpact: evalRes.postImpact ?? prev.postImpact,
+                            residualRisk: evalRes.residualRisk || prev.residualRisk,
+                            controllable: evalRes.controllable || prev.controllable,
+                            nextYearMeasures: evalRes.nextYearMeasures || prev.nextYearMeasures
+                          }));
+                        } finally {
+                          setIsBs5AiAnalyzing(false);
+                        }
+                      }}
+                      className={`text-[11px] px-2 py-0.5 rounded-lg font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                        geminiReady
+                          ? 'bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/40 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300'
+                          : 'bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/40 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300'
+                      }`}
+                      title={geminiReady ? "วิเคราะห์ความเสี่ยงคงเหลือและมาตรการปีถัดไปด้วย Gemini AI" : "ช่วยแนะนำความเสี่ยงคงเหลือ"}
+                    >
+                      {isBs5AiAnalyzing ? (
+                        <RefreshCw className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <Sparkles className="w-3 h-3" />
+                      )}
+                      <span>{isBs5AiAnalyzing ? 'กำลังประเมิน...' : (geminiReady ? '✨ วิเคราะห์ด้วย Gemini AI' : '✨ แนะนำความเสี่ยงคงเหลือ')}</span>
+                    </button>
+                  </div>
                   <input
                     type="text"
                     value={editingBs5.residualRisk || ''}
@@ -5098,6 +5262,12 @@ export default function RiskManagementView({
           </div>
         </div>
       )}
+
+      {/* Google Gemini Generative AI Configuration Modal */}
+      <GeminiConfigModal
+        isOpen={showGeminiModal}
+        onClose={() => setShowGeminiModal(false)}
+      />
 
       {/* Reusable Elegant Confirm Modal */}
       <ConfirmModal
