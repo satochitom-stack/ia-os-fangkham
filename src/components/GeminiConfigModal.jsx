@@ -56,7 +56,19 @@ export default function GeminiConfigModal({ isOpen, onClose }) {
     setIsTesting(true);
     setTestResult(null);
     try {
-      const res = await testGeminiConnection(apiKey.trim(), model);
+      let activeModel = model;
+      let res = await testGeminiConnection(apiKey.trim(), activeModel);
+
+      // If Google rejects 2.5-flash for new users, automatically switch and re-test with 3.8-flash
+      if (!res.success && res.message && (res.message.includes('gemini-2.5-flash') || res.message.includes('gemini-3.8-flash'))) {
+        activeModel = 'gemini-3.8-flash';
+        setModel('gemini-3.8-flash');
+        res = await testGeminiConnection(apiKey.trim(), 'gemini-3.8-flash');
+        if (res.success) {
+          res.message = '✓ ปรับเปลี่ยนเป็น Gemini 3.8 Flash (มาตรฐานใหม่ล่าสุดของ Google) และเชื่อมต่อสำเร็จเรียบร้อยแล้ว!';
+        }
+      }
+
       setTestResult(res);
     } catch (err) {
       setTestResult({
@@ -233,6 +245,19 @@ export default function GeminiConfigModal({ isOpen, onClose }) {
                     )}
                   </div>
                   <div className="text-[11px] leading-relaxed opacity-90">{testResult.message}</div>
+                  {!testResult.success && testResult.message && testResult.message.includes('gemini-3.8-flash') && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setModel('gemini-3.8-flash');
+                        setTimeout(() => handleTest(), 50);
+                      }}
+                      className="mt-2 text-xs font-bold px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-rose-200" />
+                      เปลี่ยนเป็น Gemini 3.8 Flash และทดสอบใหม่ทันที
+                    </button>
+                  )}
                 </div>
               </div>
             )}

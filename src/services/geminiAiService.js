@@ -8,13 +8,13 @@ import { getSmartProblemSolution } from '../data/standardRiskLibrary';
 
 const STORAGE_KEY = 'ia_gemini_config';
 
-// Default model recommendation
-export const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash';
+// Default model recommendation (Gemini 3.8 Flash is Google's current standard)
+export const DEFAULT_GEMINI_MODEL = 'gemini-3.8-flash';
 
 export const AVAILABLE_GEMINI_MODELS = [
-  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (แนะนำ - เร็ว ฉลาด ประหยัด)', desc: 'รุ่นยอดนิยมสำหรับงานวิเคราะห์เอกสารราชการและประมวลผลความเสี่ยง' },
-  { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash (รุ่นใหม่ล่าสุด)', desc: 'โมเดลรุ่นใหม่ล่าสุด ความสามารถรอบด้านและรองรับบริบทขนาดยาว' },
+  { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash (แนะนำล่าสุด - เร็ว ฉลาด ประหยัด)', desc: 'โมเดลรุ่นใหม่ล่าสุด มาตรฐานหลักของ Google รองรับการวิเคราะห์เอกสารราชการและบริบทขนาดยาว' },
   { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash Lite (เร็วที่สุด)', desc: 'รุ่นประหยัดพลังงาน ตอบสนองรวดเร็ว เหมาะสำหรับงานที่มีความถี่สูง' },
+  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (สำหรับบัญชีเดิม)', desc: 'รุ่นก่อนหน้า (หากเป็น API Key บัญชีใหม่ Google จะแนะนำให้ใช้ 3.8 Flash)' },
   { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash (Legacy)', desc: 'รุ่นเสถียรดั้งเดิม รองรับการใช้งานทั่วไป' }
 ];
 
@@ -34,6 +34,11 @@ export function getGeminiConfig() {
     }
   } catch (e) {
     console.error('Failed to parse Gemini config from localStorage:', e);
+  }
+
+  // Auto-migrate legacy 2.5-flash to 3.8-flash if Google deprecated it for the user
+  if (model === 'gemini-2.5-flash') {
+    model = 'gemini-3.8-flash';
   }
 
   return { apiKey, model };
