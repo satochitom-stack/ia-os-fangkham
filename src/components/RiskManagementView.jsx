@@ -19,6 +19,8 @@ import {
   BookOpen,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   Info,
   Calendar,
   Sparkles,
@@ -84,6 +86,12 @@ export const RISK_RESPONSES = [
   { id: 'monitor', label: '6. ใช้มาตรการการเฝ้าระวัง (Monitor & Early Warning)', desc: 'กำหนดข้อมูลที่ต้องเก็บรวบรวม การวิเคราะห์ การแจ้งเตือนเมื่อเหตุการณ์เกิดขึ้น' },
   { id: 'contingency', label: '7. การทำแผนฉุกเฉิน (Contingency Plan)', desc: 'ระบุขั้นตอนเมื่อเกิดเหตุการณ์ความเสี่ยงขึ้น โดยระบุบุคคลและวิธีดำเนินการที่ชัดเจน' },
   { id: 'exploit', label: '8. การส่งเสริมหรือผลักดันเหตุการณ์ (Exploit / Enhance)', desc: 'เมื่อเหตุการณ์ที่อาจเกิดขึ้นส่งผลกระทบเชิงบวกกับองค์กร' },
+];
+
+export const THAI_MONTH_SHORT = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+export const THAI_MONTH_FULL = [
+  'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+  'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
 ];
 
 // 7 ยุทธศาสตร์การบริหารความเสี่ยง องค์การบริหารส่วนตำบลฝางคำ (๕.๒)
@@ -256,6 +264,66 @@ export default function RiskManagementView({
   const [reviewModalDept, setReviewModalDept] = useState('');
   const [reviewOpinion, setReviewOpinion] = useState('');
   const [reviewDate, setReviewDate] = useState('');
+  const [showCalendarPopup, setShowCalendarPopup] = useState(false);
+  const [calMonth, setCalMonth] = useState(8); // 8 = กันยายน
+  const [calYear, setCalYear] = useState(() => parseInt(selectedYear, 10) || 2569);
+  const calendarPopupRef = useRef(null);
+
+  // Close calendar popup on outside click
+  React.useEffect(() => {
+    if (!showCalendarPopup) return;
+    const handleClickOutside = (e) => {
+      if (calendarPopupRef.current && !calendarPopupRef.current.contains(e.target)) {
+        setShowCalendarPopup(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showCalendarPopup]);
+
+  const handleToggleCalendarPopup = () => {
+    if (!showCalendarPopup) {
+      if (reviewDate) {
+        const match = reviewDate.match(/(\d{1,2})\s+([^\s\d]+)\s+(\d{4})/);
+        if (match) {
+          const mIdx = THAI_MONTH_SHORT.indexOf(match[2]);
+          if (mIdx !== -1) {
+            setCalMonth(mIdx);
+          } else {
+            const fullIdx = THAI_MONTH_FULL.indexOf(match[2]);
+            if (fullIdx !== -1) setCalMonth(fullIdx);
+          }
+          const yVal = parseInt(match[3], 10);
+          if (yVal > 2500) setCalYear(yVal);
+        }
+      } else {
+        setCalMonth(8); // กันยายน (วันสิ้นปีงบประมาณ)
+        setCalYear(parseInt(selectedYear, 10) || 2569);
+      }
+    }
+    setShowCalendarPopup((prev) => !prev);
+  };
+
+  const calendarDays = useMemo(() => {
+    const ceYear = calYear > 2400 ? calYear - 543 : calYear;
+    const firstDayOfWeek = new Date(ceYear, calMonth, 1).getDay(); // 0 = Sun
+    const totalDays = new Date(ceYear, calMonth + 1, 0).getDate(); // 28-31
+    return { firstDayOfWeek, totalDays };
+  }, [calYear, calMonth]);
+
+  const selectedDayNum = useMemo(() => {
+    if (!reviewDate) return null;
+    const match = reviewDate.match(/(\d{1,2})\s+([^\s\d]+)\s+(\d{4})/);
+    if (!match) return null;
+    const day = parseInt(match[1], 10);
+    const mStr = match[2];
+    const yVal = parseInt(match[3], 10);
+    const mIdx = THAI_MONTH_SHORT.indexOf(mStr) !== -1 ? THAI_MONTH_SHORT.indexOf(mStr) : THAI_MONTH_FULL.indexOf(mStr);
+    if (mIdx === calMonth && yVal === calYear) {
+      return day;
+    }
+    return null;
+  }, [reviewDate, calMonth, calYear]);
 
   // Cross-Machine file transfer ref & info state
   const fileInputRef = useRef(null);
@@ -1561,6 +1629,7 @@ export default function RiskManagementView({
 
     setCascadeSuccessMsg(`บันทึกผลการสอบทานแบบ บส. ของ "${deptToReview}" เรียบร้อยแล้ว (ซิงค์ Cloud ทันที)`);
     setShowReviewModal(false);
+    setShowCalendarPopup(false);
     setReviewOpinion('');
     setReviewDate('');
   };
@@ -5194,6 +5263,7 @@ export default function RiskManagementView({
                 type="button"
                 onClick={() => {
                   setShowReviewModal(false);
+                  setShowCalendarPopup(false);
                   setReviewDate('');
                 }}
                 className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg"
@@ -5228,36 +5298,168 @@ export default function RiskManagementView({
                     <span className="text-rose-500">*</span>
                   </span>
                 </label>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 relative">
                   <input
                     type="text"
                     value={reviewDate}
                     onChange={(e) => setReviewDate(e.target.value)}
-                    placeholder="เช่น 30 ก.ย. 2569 หรือเลือกจากปฏิทิน"
+                    placeholder="เช่น 30 ก.ย. 2569 หรือคลิกเลือกจากปฏิทิน"
                     className="flex-1 p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                   />
                   <div className="relative shrink-0">
-                    <input
-                      type="date"
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        if (!val) return;
-                        const [y, m, d] = val.split('-');
-                        const thaiMonthsShort = ['', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-                        const thaiYear = parseInt(y, 10) + 543;
-                        const thaiMonth = thaiMonthsShort[parseInt(m, 10)] || m;
-                        setReviewDate(`${parseInt(d, 10)} ${thaiMonth} ${thaiYear}`);
-                      }}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                      title="เลือกวันที่จากปฏิทิน"
-                    />
                     <button
                       type="button"
-                      className="px-3 py-2.5 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-bold text-xs flex items-center space-x-1.5 cursor-pointer"
+                      onClick={handleToggleCalendarPopup}
+                      className={`px-3 py-2.5 rounded-xl border font-bold text-xs flex items-center space-x-1.5 cursor-pointer transition-all shadow-xs ${
+                        showCalendarPopup
+                          ? 'border-indigo-600 bg-indigo-600 text-white'
+                          : 'border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300'
+                      }`}
+                      title="คลิกเพื่อเปิดปฏิทินเลือกวันที่"
                     >
                       <Calendar className="w-3.5 h-3.5" />
                       <span>เลือกจากปฏิทิน</span>
                     </button>
+
+                    {/* Interactive Thai Buddhist Calendar Popover */}
+                    {showCalendarPopup && (
+                      <div
+                        ref={calendarPopupRef}
+                        className="absolute right-0 top-full mt-2 z-50 w-72 p-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl space-y-2.5 animate-in fade-in zoom-in-95 duration-100"
+                      >
+                        {/* Header: Month / Year selection and navigation */}
+                        <div className="flex items-center justify-between gap-1 pb-1.5 border-b border-slate-100 dark:border-slate-800">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (calMonth === 0) {
+                                setCalMonth(11);
+                                setCalYear((y) => y - 1);
+                              } else {
+                                setCalMonth((m) => m - 1);
+                              }
+                            }}
+                            className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 cursor-pointer"
+                            title="เดือนก่อนหน้า"
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                          </button>
+
+                          <div className="flex items-center gap-1">
+                            <select
+                              value={calMonth}
+                              onChange={(e) => setCalMonth(Number(e.target.value))}
+                              className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs font-bold text-slate-800 dark:text-slate-200 outline-none cursor-pointer"
+                            >
+                              {THAI_MONTH_FULL.map((name, idx) => (
+                                <option key={name} value={idx}>{name}</option>
+                              ))}
+                            </select>
+
+                            <select
+                              value={calYear}
+                              onChange={(e) => setCalYear(Number(e.target.value))}
+                              className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-1.5 py-1 text-xs font-bold text-slate-800 dark:text-slate-200 outline-none cursor-pointer"
+                            >
+                              {[2566, 2567, 2568, 2569, 2570, 2571, 2572].map((y) => (
+                                <option key={y} value={y}>{y}</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (calMonth === 11) {
+                                setCalMonth(0);
+                                setCalYear((y) => y + 1);
+                              } else {
+                                setCalMonth((m) => m + 1);
+                              }
+                            }}
+                            className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 cursor-pointer"
+                            title="เดือนถัดไป"
+                          >
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        {/* Day of Week Labels */}
+                        <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 dark:text-slate-500">
+                          <span className="text-rose-500">อา</span>
+                          <span>จ</span>
+                          <span>อ</span>
+                          <span>พ</span>
+                          <span>พฤ</span>
+                          <span>ศ</span>
+                          <span className="text-indigo-500">ส</span>
+                        </div>
+
+                        {/* Day Grid */}
+                        <div className="grid grid-cols-7 gap-1">
+                          {Array.from({ length: calendarDays.firstDayOfWeek }).map((_, i) => (
+                            <div key={`blank-${i}`} className="h-7 w-7" />
+                          ))}
+                          {Array.from({ length: calendarDays.totalDays }, (_, i) => i + 1).map((day) => {
+                            const isSelected = selectedDayNum === day;
+                            const dayOfWeek = (calendarDays.firstDayOfWeek + day - 1) % 7;
+                            const isSunday = dayOfWeek === 0;
+
+                            return (
+                              <button
+                                key={`day-${day}`}
+                                type="button"
+                                onClick={() => {
+                                  setReviewDate(`${day} ${THAI_MONTH_SHORT[calMonth]} ${calYear}`);
+                                  setShowCalendarPopup(false);
+                                }}
+                                className={`h-7 w-7 rounded-lg text-xs font-semibold flex items-center justify-center transition-all cursor-pointer ${
+                                  isSelected
+                                    ? 'bg-indigo-600 text-white font-bold shadow-xs scale-105'
+                                    : isSunday
+                                    ? 'text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40'
+                                    : 'text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 hover:text-indigo-600'
+                                }`}
+                              >
+                                {day}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* Quick actions at bottom of popover */}
+                        <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px]">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setReviewDate(`30 ก.ย. ${selectedYear}`);
+                              setShowCalendarPopup(false);
+                            }}
+                            className="text-indigo-600 dark:text-indigo-400 hover:underline font-semibold cursor-pointer"
+                          >
+                            30 ก.ย. {selectedYear}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const now = new Date();
+                              setReviewDate(now.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }));
+                              setShowCalendarPopup(false);
+                            }}
+                            className="text-slate-600 dark:text-slate-400 hover:underline font-medium cursor-pointer"
+                          >
+                            วันนี้
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setShowCalendarPopup(false)}
+                            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer font-medium"
+                          >
+                            ปิด
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -5323,6 +5525,7 @@ export default function RiskManagementView({
                 type="button"
                 onClick={() => {
                   setShowReviewModal(false);
+                  setShowCalendarPopup(false);
                   setReviewDate('');
                 }}
                 className="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs cursor-pointer"
