@@ -446,8 +446,7 @@ export default function WelcomeView({ session, onLogin, onGuestLogin, onEnterDas
           navLinks={[
             { label: "ภาพรวมระบบ", href: "#welcome-features", isActive: true },
             { label: "หน่วยรับตรวจและหน่วยงานในสังกัด", href: "#departments" },
-            { label: "ฟังก์ชันการตรวจสอบ", href: "#modules" },
-            { label: "คลังระเบียบ ว 614", href: "#standards" }
+            { label: "ฟังก์ชันการตรวจสอบ", href: "#modules" }
           ]}
         />
       </section>

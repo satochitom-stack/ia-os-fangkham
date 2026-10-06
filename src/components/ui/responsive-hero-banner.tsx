@@ -67,9 +67,8 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
   backgroundImageUrl = "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=80",
   navLinks = [
     { label: "ภาพรวมระบบ", href: "#welcome-features", isActive: true },
-    { label: "หน่วยรับตรวจ", href: "#departments" },
-    { label: "ฟังก์ชันการตรวจสอบ", href: "#modules" },
-    { label: "คลังระเบียบ ว 614", href: "#standards" }
+    { label: "หน่วยรับตรวจและหน่วยงานในสังกัด", href: "#departments" },
+    { label: "ฟังก์ชันการตรวจสอบ", href: "#modules" }
   ],
   ctaButtonText = "เข้าสู่ระบบ",
   onCtaClick,
@@ -244,7 +243,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
 
       {/* 3. Integrated Modern Glass Header */}
       <header className="z-20 relative pt-5 sm:pt-6 px-4 sm:px-8">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-7xl mx-auto relative flex items-center justify-between">
           {/* Left: Modern Government Tech Brand */}
           <div className="flex items-center space-x-3 bg-white/85 backdrop-blur-md px-3.5 py-1.5 rounded-2xl border border-blue-100/80 shadow-xs">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/25">
@@ -266,8 +265,8 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             </div>
           </div>
 
-          {/* Center: Frosted Glass Capsule Navigation Pill */}
-          <nav className="hidden md:flex items-center gap-1 rounded-full bg-white/85 px-2 py-1.5 border border-slate-200/80 shadow-xs backdrop-blur-md">
+          {/* Center: Frosted Glass Capsule Navigation Pill - Perfectly Centered on Central Axis */}
+          <nav className="hidden md:flex items-center gap-1 rounded-full bg-white/90 px-2 py-1.5 border border-slate-200/80 shadow-xs backdrop-blur-md md:absolute md:left-1/2 md:-translate-x-1/2">
             {navLinks.map((link, index) => (
               <a
                 key={index}
@@ -374,7 +373,7 @@ export const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
       </header>
 
       {/* 4. Hero Content: Welcome at Top, Title in Center, Buttons at Bottom */}
-      <div className="z-10 relative flex-1 flex flex-col justify-between items-center pt-7 sm:pt-9 lg:pt-11 pb-5 sm:pb-7 px-6">
+      <div className="z-10 relative flex-1 flex flex-col justify-between items-center pt-6 sm:pt-7 lg:pt-8 pb-5 sm:pb-7 px-6">
         {/* Upper: Frosted Glass Welcome Badge - at original position below header bar */}
         <div className="w-full max-w-4xl mx-auto text-center animate-fade-slide-in-1">
           <div className="inline-flex items-center gap-2 sm:gap-2.5 rounded-full bg-white/90 px-3.5 sm:px-4 py-1.5 border border-blue-200/80 shadow-xs backdrop-blur-md hover:border-blue-300 transition-all">
