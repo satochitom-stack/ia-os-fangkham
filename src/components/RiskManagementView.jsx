@@ -286,6 +286,7 @@ export default function RiskManagementView({
   const [showGuideMenu, setShowGuideMenu] = useState(false);
   const [showDataMenu, setShowDataMenu] = useState(false);
   const [showTrackerBoard, setShowTrackerBoard] = useState(false);
+  const [showFormSelectorMenu, setShowFormSelectorMenu] = useState(false);
 
   // Close dropdown menus on outside click
   React.useEffect(() => {
@@ -294,6 +295,7 @@ export default function RiskManagementView({
         setShowExportMenu(false);
         setShowGuideMenu(false);
         setShowDataMenu(false);
+        setShowFormSelectorMenu(false);
       }
     };
     document.addEventListener('mousedown', handleOutsideMenuClick);
@@ -1829,6 +1831,62 @@ export default function RiskManagementView({
     });
   };
 
+  const FORMS_METADATA = [
+    {
+      id: 'bs1',
+      step: 1,
+      thaiNum: '๑',
+      code: 'บส.๑',
+      shortLabel: 'ขอบเขต',
+      title: 'กำหนดขอบเขตความรับผิดชอบ',
+      desc: 'ภารกิจยุทธศาสตร์ / โครงการ / วัตถุประสงค์ / ระบุความเสี่ยง',
+      count: filteredBs1.length
+    },
+    {
+      id: 'bs2',
+      step: 2,
+      thaiNum: '๒',
+      code: 'บส.๒',
+      shortLabel: 'วิเคราะห์',
+      title: 'วิเคราะห์โอกาส ผลกระทบ & ตอบสนอง',
+      desc: 'ประเมิน 6 ด้าน / โอกาส x ผลกระทบ (1-25) / 8 วิธีตอบสนอง',
+      count: filteredBs2.length
+    },
+    {
+      id: 'bs3',
+      step: 3,
+      thaiNum: '๓',
+      code: 'บส.๓',
+      shortLabel: 'แผนบริหาร',
+      title: 'แผนการบริหารความเสี่ยง',
+      desc: 'มาตรการจัดการ / ผู้รับผิดชอบ / ระยะเวลา / ตัวชี้วัด',
+      count: filteredBs3.length
+    },
+    {
+      id: 'bs4',
+      step: 4,
+      thaiNum: '๔',
+      code: 'บส.๔',
+      shortLabel: 'ติดตามผล',
+      title: 'ติดตามผลการบริหารความเสี่ยง',
+      desc: 'ผลดำเนินการรอบ 6/12 ด. / ความคืบหน้า / ปัญหาอุปสรรค & แก้ไข',
+      count: filteredBs4.length
+    },
+    {
+      id: 'bs5',
+      step: 5,
+      thaiNum: '๕',
+      code: 'บส.๕',
+      shortLabel: 'ทบทวนองค์กร',
+      title: 'รายงานผล & ทบทวนระดับองค์กร',
+      desc: 'สรุปภาพรวมสิ้นปี / ประเมินความเสี่ยงคงเหลือ / มาตรการปีถัดไป',
+      count: filteredBs5Items.length
+    },
+  ];
+
+  const currentFormIndex = Math.max(0, FORMS_METADATA.findIndex(f => f.id === activeTab));
+  const currentFormMeta = FORMS_METADATA[currentFormIndex];
+
   return (
     <div className="space-y-6">
       {/* 1. Clean & Streamlined Header Card */}
@@ -2579,145 +2637,215 @@ export default function RiskManagementView({
         </div>
       )}
 
-      {/* 2. Unified Navigation Tabs & Working Tools Toolbar */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3 no-print">
-        {/* Tabs บส. 1 - 5 */}
-        <div className="flex flex-wrap items-center gap-1.5 bg-slate-100/80 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
-          <button
-            onClick={() => setActiveTab('bs1')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
-              activeTab === 'bs1'
-                ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-            }`}
-          >
-            <span>บส. 1 กำหนดขอบเขต</span>
-            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-              activeTab === 'bs1' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
-            }`}>{filteredBs1.length}</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('bs2')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
-              activeTab === 'bs2'
-                ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-            }`}
-          >
-            <span>บส. 2 วิเคราะห์</span>
-            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-              activeTab === 'bs2' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
-            }`}>{filteredBs2.length}</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('bs3')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
-              activeTab === 'bs3'
-                ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-            }`}
-          >
-            <span>บส. 3 แผนบริหาร</span>
-            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-              activeTab === 'bs3' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
-            }`}>{filteredBs3.length}</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('bs4')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
-              activeTab === 'bs4'
-                ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-            }`}
-          >
-            <span>บส. 4 ติดตามผล</span>
-            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-              activeTab === 'bs4' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
-            }`}>{filteredBs4.length}</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('bs5')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
-              activeTab === 'bs5'
-                ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-            }`}
-          >
-            <span>บส. 5 ทบทวนระดับองค์กร</span>
-          </button>
-        </div>
-
-        {/* Right Toolbar: Admin Filter + AI Assistant + Cascade + Add New */}
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Admin Dept Selector (if admin) */}
-          {isAdmin && (
-            <div className="flex items-center space-x-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1">
-              <Filter className="w-3.5 h-3.5 text-slate-400" />
-              <select
-                value={filterDept}
-                onChange={(e) => setFilterDept(e.target.value)}
-                className="bg-transparent text-xs font-bold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
+      {/* 2. Executive Form Command Hub (บส. 1 - 5 Navigation & Working Tools) */}
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200/90 dark:border-slate-800 p-3 no-print">
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+          {/* Left: Hero Form Dropdown + Quick Stepper */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* 1. Hero Dropdown Selector */}
+            <div className="relative dropdown-trigger-area">
+              <button
+                type="button"
+                onClick={() => setShowFormSelectorMenu(!showFormSelectorMenu)}
+                className="flex items-center space-x-3 bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 hover:from-blue-800 hover:to-indigo-800 text-white px-3.5 py-2 rounded-xl shadow-md shadow-blue-900/20 hover:shadow-lg transition-all font-bold cursor-pointer border border-blue-400/30 group"
+                title="คลิกเพื่อเลือกแบบรายงาน บส. ๑ - บส. ๕"
               >
-                <option value="all">🏢 ทุกส่วนราชการ ({departmentsList.length})</option>
-                {departmentsList.map((dept) => (
-                  <option key={dept} value={dept}>📁 {dept}</option>
-                ))}
-              </select>
-            </div>
-          )}
+                <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-white/20 text-white font-black text-sm shadow-inner group-hover:scale-105 transition-transform">
+                  {currentFormMeta.thaiNum}
+                </div>
+                <div className="text-left">
+                  <div className="text-[10px] font-semibold text-blue-200 tracking-wide flex items-center space-x-1.5">
+                    <span>แบบรายงานหลัก</span>
+                    <span className="w-1 h-1 rounded-full bg-blue-300"></span>
+                    <span>ขั้นตอนที่ {currentFormMeta.step}/5</span>
+                  </div>
+                  <div className="text-xs sm:text-sm font-black flex items-center space-x-2 text-white">
+                    <span>{currentFormMeta.code} {currentFormMeta.title}</span>
+                    <span className="bg-white/20 text-blue-50 text-[10px] px-2 py-0.5 rounded-full font-mono font-bold">
+                      {currentFormMeta.count}
+                    </span>
+                  </div>
+                </div>
+                <ChevronDown className={`w-4 h-4 text-blue-200 transition-transform ml-1 group-hover:text-white ${showFormSelectorMenu ? 'rotate-180' : ''}`} />
+              </button>
 
-          {setRiskManagement && (
-            <>
+              {showFormSelectorMenu && (
+                <div className="absolute left-0 top-full mt-2 w-80 sm:w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
+                    <span>เลือกแบบรายงานหลัก (บส. ๑ - บส. ๕)</span>
+                    <span className="text-[10px] bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-md font-semibold">ตามเกณฑ์ ว 3482</span>
+                  </div>
+                  <div className="space-y-1 mt-1.5">
+                    {FORMS_METADATA.map((f) => {
+                      const isSelected = activeTab === f.id;
+                      return (
+                        <button
+                          key={f.id}
+                          type="button"
+                          onClick={() => {
+                            setActiveTab(f.id);
+                            setShowFormSelectorMenu(false);
+                          }}
+                          className={`w-full text-left p-2.5 rounded-xl transition-all flex items-start space-x-3 cursor-pointer ${
+                            isSelected
+                              ? 'bg-blue-50/90 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 border border-blue-200 dark:border-blue-800 shadow-xs'
+                              : 'hover:bg-slate-50 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300 border border-transparent'
+                          }`}
+                        >
+                          <div className={`flex items-center justify-center w-8 h-8 rounded-lg font-black text-sm shrink-0 shadow-xs ${
+                            isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                          }`}>
+                            {f.thaiNum}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <span className={`text-xs font-black ${isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                                {f.code} {f.title}
+                              </span>
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
+                                isSelected ? 'bg-blue-200/90 dark:bg-blue-900 text-blue-900 dark:text-blue-200' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                              }`}>
+                                {f.count} รายการ
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">{f.desc}</p>
+                          </div>
+                          {isSelected && (
+                            <Check className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0 mt-1" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 2. Quick Stepper Pills (Desktop & Tablet) */}
+            <div className="hidden sm:flex items-center bg-slate-100/90 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
               <button
                 type="button"
                 onClick={() => {
-                  setSmartDept(isAdmin ? (filterDept !== 'all' ? filterDept : 'กองคลัง') : userDept);
-                  setShowSmartAssistant(true);
+                  const prevIdx = Math.max(0, currentFormIndex - 1);
+                  setActiveTab(FORMS_METADATA[prevIdx].id);
                 }}
-                className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-bold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5 cursor-pointer"
-                title="ผู้ช่วยวิเคราะห์และจับคู่ความเสี่ยงมาตรฐานตาม ว 3482"
+                disabled={currentFormIndex === 0}
+                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                title="ขั้นตอนก่อนหน้า"
               >
-                <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                <span>ผู้ช่วยวิเคราะห์ (ว 3482)</span>
+                <ChevronLeft className="w-4 h-4" />
               </button>
-
+              {FORMS_METADATA.map((f) => {
+                const isCurrent = activeTab === f.id;
+                return (
+                  <button
+                    key={f.id}
+                    type="button"
+                    onClick={() => setActiveTab(f.id)}
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                      isCurrent
+                        ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs border border-blue-200/60 dark:border-blue-700'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                    }`}
+                    title={`${f.code} ${f.title} (${f.count} รายการ)`}
+                  >
+                    <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-black ${
+                      isCurrent ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                    }`}>{f.thaiNum}</span>
+                    <span>{f.shortLabel}</span>
+                    <span className={`text-[10px] px-1 py-0.2 rounded-full font-mono ${
+                      isCurrent ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+                    }`}>{f.count}</span>
+                  </button>
+                );
+              })}
               <button
                 type="button"
-                onClick={() => setShowCascadeConfirm(true)}
-                className="bg-slate-50 hover:bg-slate-100 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5 cursor-pointer"
-                title="ซิงค์เชื่อมโยงข้อมูลจาก บส.1 ไปยัง บส.2, บส.3, บส.4, บส.5 อัตโนมัติ"
+                onClick={() => {
+                  const nextIdx = Math.min(FORMS_METADATA.length - 1, currentFormIndex + 1);
+                  setActiveTab(FORMS_METADATA[nextIdx].id);
+                }}
+                disabled={currentFormIndex === FORMS_METADATA.length - 1}
+                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                title="ขั้นตอนถัดไป"
               >
-                <Zap className="w-3.5 h-3.5 text-amber-500" />
-                <span>ซิงค์ 1 ➜ 5 (Cascade)</span>
+                <ChevronRight className="w-4 h-4" />
               </button>
+            </div>
+          </div>
 
-              {activeTab === 'bs1' && (
+          {/* Right Toolbar: Admin Filter + AI Assistant + Cascade + Add New */}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Admin Dept Selector (if admin) */}
+            {isAdmin && (
+              <div className="flex items-center space-x-1.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5">
+                <Filter className="w-3.5 h-3.5 text-slate-400" />
+                <select
+                  value={filterDept}
+                  onChange={(e) => setFilterDept(e.target.value)}
+                  className="bg-transparent text-xs font-bold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
+                >
+                  <option value="all">🏢 ทุกส่วนราชการ ({departmentsList.length})</option>
+                  {departmentsList.map((dept) => (
+                    <option key={dept} value={dept}>📁 {dept}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {setRiskManagement && (
+              <>
                 <button
                   type="button"
                   onClick={() => {
-                    setFormBs1({
-                      department: isAdmin ? (filterDept !== 'all' ? filterDept : 'กองคลัง') : userDept,
-                      riskCode: `RSK-0${bs1List.length + 1}`,
-                      strategy: '',
-                      activity: '',
-                      budget: '',
-                      objective: '',
-                      kpi: '',
-                      target: '',
-                      riskEvent: '',
-                      cause: '',
-                      riskCategory: 'ด้านการดำเนินงาน (Operation Risks)'
-                    });
-                    setShowAddModal(true);
+                    setSmartDept(isAdmin ? (filterDept !== 'all' ? filterDept : 'กองคลัง') : userDept);
+                    setShowSmartAssistant(true);
                   }}
-                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs transition-colors flex items-center space-x-1.5 cursor-pointer"
+                  className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-bold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5 cursor-pointer"
+                  title="ผู้ช่วยวิเคราะห์และจับคู่ความเสี่ยงมาตรฐานตาม ว 3482"
                 >
-                  <Plus className="w-3.5 h-3.5 text-white" />
-                  <span>+ กำหนดความเสี่ยงใหม่ (บส.1)</span>
+                  <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                  <span>ผู้ช่วยวิเคราะห์ (ว 3482)</span>
                 </button>
-              )}
-            </>
-          )}
+
+                <button
+                  type="button"
+                  onClick={() => setShowCascadeConfirm(true)}
+                  className="bg-slate-50 hover:bg-slate-100 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold px-2.5 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5 cursor-pointer"
+                  title="ซิงค์เชื่อมโยงข้อมูลจาก บส.1 ไปยัง บส.2, บส.3, บส.4, บส.5 อัตโนมัติ"
+                >
+                  <Zap className="w-3.5 h-3.5 text-amber-500" />
+                  <span>ซิงค์ 1 ➜ 5 (Cascade)</span>
+                </button>
+
+                {activeTab === 'bs1' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormBs1({
+                        department: isAdmin ? (filterDept !== 'all' ? filterDept : 'กองคลัง') : userDept,
+                        riskCode: `RSK-0${bs1List.length + 1}`,
+                        strategy: '',
+                        activity: '',
+                        budget: '',
+                        objective: '',
+                        kpi: '',
+                        target: '',
+                        riskEvent: '',
+                        cause: '',
+                        riskCategory: 'ด้านการดำเนินงาน (Operation Risks)'
+                      });
+                      setShowAddModal(true);
+                    }}
+                    className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs transition-colors flex items-center space-x-1.5 cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5 text-white" />
+                    <span>+ กำหนดความเสี่ยงใหม่ (บส.1)</span>
+                  </button>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
 
