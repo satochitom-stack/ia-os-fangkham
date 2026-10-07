@@ -495,51 +495,101 @@ export async function exportBsToPdf({
     effectiveDept
   });
 
-  const pdfContainer = document.createElement('div');
-  pdfContainer.style.position = 'fixed';
-  pdfContainer.style.left = '-9999px';
-  pdfContainer.style.top = '0';
-  pdfContainer.style.width = '1060px'; // A4 Landscape printable width (~277mm)
-  pdfContainer.style.background = '#ffffff';
-  pdfContainer.style.color = '#000000';
-  pdfContainer.style.padding = '0';
-  pdfContainer.style.margin = '0';
-  pdfContainer.style.fontFamily = "'TH Sarabun New', 'Sarabun', 'Angsana New', sans-serif";
-  pdfContainer.style.zIndex = '-9999';
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'fixed';
+  iframe.style.top = '0';
+  iframe.style.left = '0';
+  iframe.style.width = '1200px';
+  iframe.style.height = '1200px';
+  iframe.style.zIndex = '-9999';
+  iframe.style.border = 'none';
+  iframe.style.opacity = '0.01';
+  iframe.style.pointerEvents = 'none';
+  document.body.appendChild(iframe);
 
-  pdfContainer.innerHTML = `
-    <div style="width: 100%; padding: 4px; box-sizing: border-box; background: #ffffff;">
-      <div style="text-align: right; font-weight: bold; font-size: 13pt; margin-bottom: 2px;">แบบ บส. ${formData.formNumber}</div>
-      <div style="text-align: center; margin-bottom: 6px;">
-        <p style="font-weight: bold; font-size: 13pt; margin: 0 0 2px 0;">ชื่อหน่วยงาน ${escapeHtml(orgName)} (1)</p>
-        <h2 style="font-size: 14pt; font-weight: bold; margin: 0 0 2px 0;">${escapeHtml(formData.title)}</h2>
-        <p style="font-size: 12.5pt; margin: 0 0 2px 0;">${formData.subtitle} (2)</p>
+  const doc = iframe.contentWindow.document;
+  doc.open();
+  doc.write(`
+    <!DOCTYPE html>
+    <html lang="th">
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body {
+          margin: 0;
+          padding: 10px;
+          font-family: 'TH Sarabun New', 'TH Sarabun PSK', 'Sarabun', 'Angsana New', sans-serif;
+          background: #ffffff;
+          color: #000000;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          table-layout: fixed;
+          margin-top: 4px;
+          margin-bottom: 6px;
+          font-size: ${activeTab === 'bs5' ? '9.5pt' : '10.5pt'};
+        }
+        th, td {
+          border: 1px solid #000000;
+          padding: 3px 2px;
+          vertical-align: top;
+          word-wrap: break-word;
+        }
+        th {
+          background-color: #f1f5f9;
+          font-weight: bold;
+          text-align: center;
+          vertical-align: middle;
+        }
+      </style>
+    </head>
+    <body>
+      <div id="pdf-content-root" style="width: 1060px; background: #ffffff; color: #000000;">
+        <div style="text-align: right; font-weight: bold; font-size: 13pt; margin-bottom: 2px;">แบบ บส. ${formData.formNumber}</div>
+        <div style="text-align: center; margin-bottom: 6px;">
+          <p style="font-weight: bold; font-size: 13pt; margin: 0 0 2px 0;">ชื่อหน่วยงาน ${escapeHtml(orgName)} (1)</p>
+          <h2 style="font-size: 14pt; font-weight: bold; margin: 0 0 2px 0;">${escapeHtml(formData.title)}</h2>
+          <p style="font-size: 12.5pt; margin: 0 0 2px 0;">${formData.subtitle} (2)</p>
+        </div>
+
+        <table>
+          <thead>
+            ${formData.tableHeaderHtml}
+          </thead>
+          <tbody>
+            ${formData.tableBodyHtml || `<tr><td colspan="${formData.totalCols}" style="text-align:center; padding: 15px;">ไม่พบข้อมูล</td></tr>`}
+          </tbody>
+        </table>
+
+        ${formData.extraHtml}
+
+        <div style="clear: both;"></div>
+
+        <div style="width: 330pt; float: right; margin-top: 15pt; font-size: 12pt; line-height: 1.6;">
+          <div>ลายมือชื่อ...................................................(${formData.signatureNumber.sign})...................................................</div>
+          <div style="text-indent: 40pt;">( ${escapeHtml(approverName)} )</div>
+          <div>ตำแหน่ง .................................................(${formData.signatureNumber.pos}).................................................</div>
+          <div style="text-indent: 40pt;">${escapeHtml(approverPosition)}</div>
+          <div>วันที่............เดือน...............(${formData.signatureNumber.date}).............พ.ศ. .....................</div>
+        </div>
       </div>
+    </body>
+    </html>
+  `);
+  doc.close();
 
-      <table style="width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 4px; margin-bottom: 6px; font-size: ${activeTab === 'bs5' ? '9.5pt' : '10.5pt'};">
-        <thead>
-          ${formData.tableHeaderHtml}
-        </thead>
-        <tbody>
-          ${formData.tableBodyHtml || `<tr><td colspan="${formData.totalCols}" style="text-align:center; padding: 15px;">ไม่พบข้อมูล</td></tr>`}
-        </tbody>
-      </table>
+  // Wait for fonts to be ready
+  if (doc.fonts && doc.fonts.ready) {
+    try {
+      await doc.fonts.ready;
+    } catch {
+      // ignore font loading error
+    }
+  }
+  await new Promise(resolve => setTimeout(resolve, 150));
 
-      ${formData.extraHtml}
-
-      <div style="clear: both;"></div>
-
-      <div style="width: 330pt; float: right; margin-top: 15pt; font-size: 12pt; line-height: 1.6;">
-        <div>ลายมือชื่อ...................................................(${formData.signatureNumber.sign})...................................................</div>
-        <div style="text-indent: 40pt;">( ${escapeHtml(approverName)} )</div>
-        <div>ตำแหน่ง .................................................(${formData.signatureNumber.pos}).................................................</div>
-        <div style="text-indent: 40pt;">${escapeHtml(approverPosition)}</div>
-        <div>วันที่............เดือน...............(${formData.signatureNumber.date}).............พ.ศ. .....................</div>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(pdfContainer);
+  const targetEl = doc.getElementById('pdf-content-root');
 
   const opt = {
     margin: [8, 10, 8, 10], // mm: top, left, bottom, right
@@ -549,7 +599,6 @@ export async function exportBsToPdf({
       scale: 2,
       useCORS: true,
       logging: false,
-      letterRendering: true,
       backgroundColor: '#ffffff'
     },
     jsPDF: {
@@ -561,10 +610,10 @@ export async function exportBsToPdf({
   };
 
   try {
-    await html2pdf().set(opt).from(pdfContainer).save();
+    await html2pdf().set(opt).from(targetEl).save();
   } finally {
-    if (document.body.contains(pdfContainer)) {
-      document.body.removeChild(pdfContainer);
+    if (document.body.contains(iframe)) {
+      document.body.removeChild(iframe);
     }
   }
 }
