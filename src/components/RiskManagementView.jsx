@@ -1968,6 +1968,19 @@ export default function RiskManagementView({
                   </div>
                 </a>
 
+                <a
+                  href="/docs/meeting_minutes_risk_2569.docx"
+                  download="รายงานการประชุมคณะกรรมการบริหารจัดการความเสี่ยง_ปี2569.docx"
+                  onClick={() => setShowGuideMenu(false)}
+                  className="flex items-center px-3.5 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-t border-slate-100 dark:border-slate-800/60"
+                >
+                  <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400 mr-2.5 shrink-0" />
+                  <div>
+                    <div className="font-bold">รายงานการประชุมปี 2569</div>
+                    <div className="text-[10px] text-slate-400">ดาวน์โหลดเอกสาร Word (.docx)</div>
+                  </div>
+                </a>
+
                 <button
                   type="button"
                   onClick={() => {
