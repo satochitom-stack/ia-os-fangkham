@@ -1,11 +1,14 @@
+import html2pdf from 'html2pdf.js';
+
 /**
  * exportRiskDocs.js
  * ส่งออกรายงานการบริหารจัดการความเสี่ยง (แบบ บส. 1 ถึง บส. 5)
  * ตามหนังสือสั่งการกระทรวงมหาดไทย ที่ มท 0805.2/ว 3482
  * รองรับการส่งออกเป็นไฟล์:
- * 1. Microsoft Word (.doc) - ฟอร์มตรงตามมาตรฐาน ว 3482 สมบูรณ์
- * 2. Adobe PDF (.pdf / Print A4 Landscape) - คุณภาพสูง พิมพ์/บันทึก PDF ทันที
- * 3. Microsoft Excel (.xls) - สรุปตารางคำนวณและวิเคราะห์ผล
+ * 1. Microsoft Word (.doc) - ฟอร์มตรงตามมาตรฐาน ว 3482 สมบูรณ์ ตารางไม่แตก
+ * 2. Adobe PDF (.pdf) - ดาวน์โหลดเป็นไฟล์ PDF คุณภาพสูงโดยตรง ไม่เปิดหน้าต่างพิมพ์ ไม่มีหัวท้ายระบบ
+ * 3. พิมพ์เอกสาร (Print A4 แนวนอน) - สั่งพิมพ์ผ่านเบราว์เซอร์ ตัดหัวท้าย URL / วันที่อัตโนมัติ
+ * 4. Microsoft Excel (.xls) - สรุปตารางคำนวณและวิเคราะห์ผล
  */
 
 function escapeHtml(str) {
@@ -35,6 +38,264 @@ export function toThaiDigits(str) {
   return String(str).replace(/[0-9]/g, (d) => thaiDigits[d]);
 }
 
+/**
+ * Helper รวบรวมข้อมูลโครงสร้างและตารางของ แบบ บส. 1 - 5
+ * เพื่อให้ Word, PDF และ Print แสดงผลถูกต้องตรงกัน 100% ตามมาตรฐาน ว 3482
+ */
+function getBsFormData({
+  activeTab,
+  filteredBs1 = [],
+  filteredBs2 = [],
+  filteredBs3 = [],
+  filteredBs4 = [],
+  filteredBs5Items = [],
+  bs5Data = {},
+  bs4Period = '6month',
+  selectedYear = '2569',
+  effectiveDept = ''
+}) {
+  let formNumber = '1';
+  let formName = 'บส.1';
+  let title = '';
+  let subtitle = '';
+  let tableHeaderHtml = '';
+  let tableBodyHtml = '';
+  let extraHtml = '';
+  let totalCols = 8;
+  let signatureNumber = { sign: '10', pos: '11', date: '12' };
+
+  if (activeTab === 'bs1') {
+    formNumber = '1';
+    formName = 'บส.1';
+    title = 'กำหนดขอบเขตความรับผิดชอบตามประเด็นยุทธศาสตร์/ข้อบัญญัติ/เทศบัญญัติ/อื่น ๆ (ถ้ามี)';
+    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
+    signatureNumber = { sign: '10', pos: '11', date: '12' };
+
+    const showDeptCol = (!effectiveDept || effectiveDept === 'all');
+    totalCols = showDeptCol ? 8 : 7;
+
+    tableHeaderHtml = `
+      <tr style="mso-yfti-tblheader: yes; background-color: #f1f5f9;">
+        <th style="width: 45pt; text-align: center; vertical-align: middle;">(3)<br/>รหัสความเสี่ยง</th>
+        <th style="width: 110pt; text-align: center; vertical-align: middle;">(4)<br/>ยุทธศาสตร์ที่รับผิดชอบ</th>
+        <th style="width: 140pt; text-align: center; vertical-align: middle;">(5)<br/>โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ</th>
+        <th style="width: 65pt; text-align: center; vertical-align: middle;">(6)<br/>งบประมาณ (บาท)</th>
+        <th style="width: 130pt; text-align: center; vertical-align: middle;">(7)<br/>วัตถุประสงค์</th>
+        <th style="width: 85pt; text-align: center; vertical-align: middle;">(8)<br/>ตัวชี้วัด</th>
+        <th style="width: 85pt; text-align: center; vertical-align: middle;">(9)<br/>เป้าหมาย</th>
+        ${showDeptCol ? '<th style="width: 75pt; text-align: center; vertical-align: middle;">ส่วนราชการ</th>' : ''}
+      </tr>
+    `;
+
+    tableBodyHtml = filteredBs1.map((item, idx) => `
+      <tr>
+        <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || `RSK-0${idx + 1}`)}</td>
+        <td>${escapeHtml(item.strategy || '')}</td>
+        <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
+        <td style="text-align: right;">${item.budget ? Number(item.budget).toLocaleString() : '-'}</td>
+        <td>${escapeHtml(item.objective || '')}</td>
+        <td>${escapeHtml(item.kpi || '')}</td>
+        <td>${escapeHtml(item.target || '')}</td>
+        ${showDeptCol ? `<td style="text-align: center;">${escapeHtml(item.department || '')}</td>` : ''}
+      </tr>
+    `).join('');
+  } else if (activeTab === 'bs2') {
+    formNumber = '2';
+    formName = 'บส.2';
+    title = 'การวิเคราะห์โอกาส ผลกระทบ และการตอบสนองความเสี่ยง';
+    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
+    signatureNumber = { sign: '13', pos: '14', date: '15' };
+    totalCols = 10;
+
+    tableHeaderHtml = `
+      <tr style="mso-yfti-tblheader: yes; background-color: #f1f5f9;">
+        <th style="width: 45pt; text-align: center; vertical-align: middle;">(3)<br/>รหัสความเสี่ยง</th>
+        <th style="width: 95pt; text-align: center; vertical-align: middle;">(4)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
+        <th style="width: 95pt; text-align: center; vertical-align: middle;">(5)<br/>วัตถุประสงค์</th>
+        <th style="width: 70pt; text-align: center; vertical-align: middle;">(6)<br/>ผู้รับผิดชอบ</th>
+        <th style="width: 95pt; text-align: center; vertical-align: middle;">(7)<br/>ความเสี่ยง</th>
+        <th style="width: 75pt; text-align: center; vertical-align: middle;">(8)<br/>ประเภทความเสี่ยง</th>
+        <th style="width: 30pt; text-align: center; vertical-align: middle;">(9)<br/>คะแนนโอกาส</th>
+        <th style="width: 30pt; text-align: center; vertical-align: middle;">(10)<br/>คะแนนผลกระทบ</th>
+        <th style="width: 65pt; text-align: center; vertical-align: middle;">(11)<br/>ระดับความเสี่ยง<br/>(9) x (10)</th>
+        <th style="width: 140pt; text-align: center; vertical-align: middle;">(12)<br/>วิธีการตอบสนองความเสี่ยง</th>
+      </tr>
+    `;
+
+    tableBodyHtml = filteredBs2.map((item) => {
+      const l = Number(item.likelihood) || 1;
+      const i = Number(item.impact) || 1;
+      const score = item.riskScore !== undefined && item.riskScore !== null && item.riskScore !== ''
+        ? Number(item.riskScore)
+        : (l * i);
+      const level = item.riskLevel || (score >= 15 ? 'สูงมาก' : score >= 10 ? 'สูง' : score >= 5 ? 'ปานกลาง' : 'ต่ำ');
+      return `
+        <tr>
+          <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || '')}</td>
+          <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
+          <td>${escapeHtml(item.objective || '')}</td>
+          <td>${escapeHtml(item.responsiblePerson || '')}</td>
+          <td style="color: #b91c1c; font-weight: bold;">${escapeHtml(item.riskEvent || '')}</td>
+          <td>${escapeHtml(item.riskCategory || '')}</td>
+          <td style="text-align: center;">${l}</td>
+          <td style="text-align: center;">${i}</td>
+          <td style="text-align: center; font-weight: bold;">${score} (${level})</td>
+          <td style="color: #1d4ed8;">${escapeHtml(item.riskResponse || '')}</td>
+        </tr>
+      `;
+    }).join('');
+  } else if (activeTab === 'bs3') {
+    formNumber = '3';
+    formName = 'บส.3';
+    title = 'รายงานการจัดทำแผนบริหารความเสี่ยง';
+    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
+    signatureNumber = { sign: '12', pos: '13', date: '14' };
+    totalCols = 9;
+
+    tableHeaderHtml = `
+      <tr style="mso-yfti-tblheader: yes; background-color: #f1f5f9;">
+        <th style="width: 45pt; text-align: center; vertical-align: middle;">(3)<br/>รหัสความเสี่ยง</th>
+        <th style="width: 95pt; text-align: center; vertical-align: middle;">(4)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
+        <th style="width: 90pt; text-align: center; vertical-align: middle;">(5)<br/>ความเสี่ยง</th>
+        <th style="width: 85pt; text-align: center; vertical-align: middle;">(6)<br/>วิธีการตอบสนองความเสี่ยง</th>
+        <th style="width: 70pt; text-align: center; vertical-align: middle;">(7)<br/>ผู้รับผิดชอบ</th>
+        <th style="width: 120pt; text-align: center; vertical-align: middle;">(8)<br/>วิธีการจัดการความเสี่ยง (มาตรการ)</th>
+        <th style="width: 75pt; text-align: center; vertical-align: middle;">(9)<br/>ตัวชี้วัด</th>
+        <th style="width: 70pt; text-align: center; vertical-align: middle;">(10)<br/>ระยะเวลาดำเนินการ</th>
+        <th style="width: 90pt; text-align: center; vertical-align: middle;">(11)<br/>วิธีการติดตาม และการรายงาน</th>
+      </tr>
+    `;
+
+    tableBodyHtml = filteredBs3.map((item) => `
+      <tr>
+        <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || '')}</td>
+        <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
+        <td style="color: #b91c1c; font-weight: bold;">${escapeHtml(item.riskEvent || '')}</td>
+        <td>${escapeHtml(item.riskResponse || '')}</td>
+        <td>${escapeHtml(item.responsiblePerson || '')}</td>
+        <td>${escapeHtml(item.measures || '')}</td>
+        <td>${escapeHtml(item.kpi || '')}</td>
+        <td style="text-align: center;">${escapeHtml(item.timeline || '')}</td>
+        <td>${escapeHtml(item.monitoringMethod || '')}</td>
+      </tr>
+    `).join('');
+  } else if (activeTab === 'bs4') {
+    formNumber = '4';
+    formName = 'บส.4';
+    title = 'รายงานการติดตามผลการบริหารความเสี่ยง';
+    subtitle = `สำหรับปีงบประมาณ พ.ศ. ${selectedYear} &nbsp;&nbsp;&nbsp; [${bs4Period === '3month' ? '✓' : ' '}] รอบ 3 เดือน &nbsp;&nbsp;&nbsp; [${bs4Period === '6month' ? '✓' : ' '}] รอบ 6 เดือน &nbsp;&nbsp;&nbsp; [${bs4Period === '12month' ? '✓' : ' '}] รอบ 12 เดือน`;
+    signatureNumber = { sign: '12', pos: '13', date: '14' };
+    totalCols = 9;
+
+    tableHeaderHtml = `
+      <tr style="mso-yfti-tblheader: yes; background-color: #f1f5f9;">
+        <th style="width: 45pt; text-align: center; vertical-align: middle;">(3)<br/>รหัสความเสี่ยง</th>
+        <th style="width: 90pt; text-align: center; vertical-align: middle;">(4)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
+        <th style="width: 100pt; text-align: center; vertical-align: middle;">(5)<br/>วิธีการจัดการความเสี่ยง</th>
+        <th style="width: 65pt; text-align: center; vertical-align: middle;">(6)<br/>ระยะเวลาดำเนินการ</th>
+        <th style="width: 65pt; text-align: center; vertical-align: middle;">(7)<br/>ผู้รับผิดชอบ</th>
+        <th style="width: 110pt; text-align: center; vertical-align: middle;">(8)<br/>ผลลัพธ์การดำเนินการจัดการความเสี่ยง</th>
+        <th style="width: 80pt; text-align: center; vertical-align: middle;">(9)<br/>เอกสาร/หลักฐาน</th>
+        <th style="width: 45pt; text-align: center; vertical-align: middle;">(10)<br/>ร้อยละความคืบหน้า</th>
+        <th style="width: 140pt; text-align: center; vertical-align: middle;">(11)<br/>ปัญหาอุปสรรค และแนวทางแก้ไข</th>
+      </tr>
+    `;
+
+    tableBodyHtml = filteredBs4.map((item) => `
+      <tr>
+        <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || '')}</td>
+        <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
+        <td>${escapeHtml(item.measures || '')}</td>
+        <td style="text-align: center;">${escapeHtml(item.timeline || '')}</td>
+        <td>${escapeHtml(item.responsiblePerson || '')}</td>
+        <td>${escapeHtml(item.result || '')}</td>
+        <td>${escapeHtml(item.evidence || '')}</td>
+        <td style="text-align: center; font-weight: bold;">${item.progressPercent || 0}%</td>
+        <td>${escapeHtml(item.problemSolution || '-')}</td>
+      </tr>
+    `).join('');
+  } else if (activeTab === 'bs5') {
+    formNumber = '5';
+    formName = 'บส.5';
+    title = 'รายงานผลการดำเนินการและทบทวนแผนการบริหารความเสี่ยง';
+    subtitle = `สำหรับปีงบประมาณ พ.ศ. ${selectedYear}`;
+    signatureNumber = { sign: '14', pos: '15', date: '16' };
+    totalCols = 16;
+
+    // Header 16 คอลัมน์มาตรฐาน ว 3482 (ความกว้างรวม = 744pt พอดีกับขนาดหน้ากระดาษ A4 แนวนอน ไม่แตก ไม่ล้น)
+    tableHeaderHtml = `
+      <tr style="mso-yfti-tblheader: yes; background-color: #f1f5f9;">
+        <th rowspan="2" style="width: 38pt; vertical-align: middle; text-align: center;">(3)<br/>รหัสความเสี่ยง</th>
+        <th rowspan="2" style="width: 85pt; vertical-align: middle; text-align: center;">(4)<br/>โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ</th>
+        <th rowspan="2" style="width: 75pt; vertical-align: middle; text-align: center;">(5)<br/>ความเสี่ยง</th>
+        <th colspan="3" style="width: 80pt; vertical-align: middle; text-align: center;">(6)<br/>คะแนนระดับความเสี่ยง<br/>ก่อนการดำเนินการ</th>
+        <th rowspan="2" style="width: 75pt; vertical-align: middle; text-align: center;">(7)<br/>วิธีการจัดการความเสี่ยง</th>
+        <th rowspan="2" style="width: 75pt; vertical-align: middle; text-align: center;">(8)<br/>ผลดำเนินการจากการจัดการความเสี่ยง</th>
+        <th colspan="3" style="width: 80pt; vertical-align: middle; text-align: center;">(9)<br/>คะแนนระดับความเสี่ยง<br/>ภายหลังการดำเนินการ</th>
+        <th rowspan="2" style="width: 45pt; vertical-align: middle; text-align: center;">(10)<br/>การเปลี่ยนแปลงระดับความเสี่ยง</th>
+        <th rowspan="2" style="width: 65pt; vertical-align: middle; text-align: center;">(11)<br/>ความเสี่ยงคงเหลือ/เกิดขึ้นใหม่</th>
+        <th colspan="2" style="width: 60pt; vertical-align: middle; text-align: center;">(12)<br/>สรุปความเสี่ยง</th>
+        <th rowspan="2" style="width: 75pt; vertical-align: middle; text-align: center;">(13)<br/>แนวทาง/มาตรการจัดการความเสี่ยง สำหรับปีถัดไป</th>
+      </tr>
+      <tr style="mso-yfti-tblheader: yes; background-color: #f1f5f9;">
+        <th style="width: 24pt; vertical-align: middle; text-align: center;">โอกาส<br/>(1)</th>
+        <th style="width: 24pt; vertical-align: middle; text-align: center;">ผลกระทบ<br/>(2)</th>
+        <th style="width: 32pt; vertical-align: middle; text-align: center;">คะแนน<br/>(3)=(1)x(2)</th>
+        <th style="width: 24pt; vertical-align: middle; text-align: center;">โอกาส<br/>(1)</th>
+        <th style="width: 24pt; vertical-align: middle; text-align: center;">ผลกระทบ<br/>(2)</th>
+        <th style="width: 32pt; vertical-align: middle; text-align: center;">คะแนน<br/>(3)=(1)x(2)</th>
+        <th style="width: 30pt; vertical-align: middle; text-align: center;">ควบคุมได้</th>
+        <th style="width: 30pt; vertical-align: middle; text-align: center;">ควบคุมไม่ได้</th>
+      </tr>
+    `;
+
+    tableBodyHtml = filteredBs5Items.map((item) => {
+      const preScore = (Number(item.preLikelihood) || 1) * (Number(item.preImpact) || 1);
+      const postScore = (Number(item.postLikelihood) || 1) * (Number(item.postImpact) || 1);
+      const isControllable = item.controllable === 'ควบคุมได้';
+      return `
+        <tr>
+          <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || '')}</td>
+          <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
+          <td style="color: #b91c1c;">${escapeHtml(item.riskEvent || '')}</td>
+          <td style="text-align: center;">${item.preLikelihood || 1}</td>
+          <td style="text-align: center;">${item.preImpact || 1}</td>
+          <td style="text-align: center; font-weight: bold;">${preScore}</td>
+          <td>${escapeHtml(item.measures || '')}</td>
+          <td>${escapeHtml(item.result || '')}</td>
+          <td style="text-align: center;">${item.postLikelihood || 1}</td>
+          <td style="text-align: center;">${item.postImpact || 1}</td>
+          <td style="text-align: center; font-weight: bold; color: #15803d;">${postScore}</td>
+          <td style="text-align: center;">${escapeHtml(item.riskChange || 'ลดลง')}</td>
+          <td>${escapeHtml(item.residualRisk || '-')}</td>
+          <td style="text-align: center; font-weight: bold;">${isControllable ? '✓' : ''}</td>
+          <td style="text-align: center; font-weight: bold; color: #b91c1c;">${!isControllable ? '✓' : ''}</td>
+          <td>${escapeHtml(item.nextYearMeasures || '')}</td>
+        </tr>
+      `;
+    }).join('');
+
+    extraHtml = `
+      <div style="margin-top: 8px; padding: 6px 10px; border: 1px solid #000; background-color: #f8fafc; font-size: 11pt;">
+        <b>สรุปภาพรวมผลการดำเนินการและการทบทวนแผนบริหารความเสี่ยง ประจำปี พ.ศ. ${selectedYear}:</b>
+        <p style="text-indent: 1.5cm; margin: 3px 0 0 0;">${escapeHtml(bs5Data.summary || '')}</p>
+      </div>
+    `;
+  }
+
+  return {
+    formNumber,
+    formName,
+    title,
+    subtitle,
+    signatureNumber,
+    totalCols,
+    tableHeaderHtml,
+    tableBodyHtml,
+    extraHtml
+  };
+}
+
 // -------------------------------------------------------------
 // 1. ส่งออกเป็น Microsoft Word (.doc)
 // -------------------------------------------------------------
@@ -57,264 +318,25 @@ export function exportBsToWord({
   const approverPosition = isSubDivision ? '....................................................' : (orgProfile.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ');
   const deptLabel = effectiveDept && effectiveDept !== 'all' ? `_${effectiveDept}` : '';
 
-  let formNumber = '1';
-  let formName = 'บส.1';
-  let title = '';
-  let subtitle = '';
-  let tableHeaderHtml = '';
-  let tableBodyHtml = '';
-  let colgroupHtml = '';
-  let extraHtml = '';
-  let signatureNumber = { sign: '๑๐', pos: '๑๑', date: '๑๒' };
-
-  if (activeTab === 'bs1') {
-    formNumber = '1';
-    formName = 'บส.1';
-    title = 'กำหนดขอบเขตความรับผิดชอบตามประเด็นยุทธศาสตร์/ข้อบัญญัติ/เทศบัญญัติ/อื่น ๆ (ถ้ามี)';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
-    signatureNumber = { sign: '๑๐', pos: '๑๑', date: '๑๒' };
-
-    const showDeptCol = (!effectiveDept || effectiveDept === 'all');
-    tableHeaderHtml = `
-      <tr style="mso-yfti-tblheader: yes; background-color: #f8fafc;">
-        <th style="width: 55pt; text-align: center;">(๓)<br/>รหัสความเสี่ยง</th>
-        <th style="width: 120pt; text-align: center;">(๔)<br/>ยุทธศาสตร์ที่รับผิดชอบ</th>
-        <th style="text-align: center;">(๕)<br/>โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ</th>
-        <th style="width: 75pt; text-align: center;">(๖)<br/>งบประมาณ (บาท)</th>
-        <th style="text-align: center;">(๗)<br/>วัตถุประสงค์</th>
-        <th style="width: 90pt; text-align: center;">(๘)<br/>ตัวชี้วัด</th>
-        <th style="width: 85pt; text-align: center;">(๙)<br/>เป้าหมาย</th>
-        ${showDeptCol ? '<th style="width: 85pt; text-align: center;">ส่วนราชการ</th>' : ''}
-      </tr>
-    `;
-
-    tableBodyHtml = filteredBs1.map((item, idx) => `
-      <tr>
-        <td style="text-align: center; font-weight: bold;">${escapeHtml(toThaiDigits(item.riskCode || `RSK-0${idx + 1}`))}</td>
-        <td>${escapeHtml(item.strategy || '')}</td>
-        <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
-        <td style="text-align: right;">${item.budget ? escapeHtml(toThaiDigits(Number(item.budget).toLocaleString())) : '-'}</td>
-        <td>${escapeHtml(item.objective || '')}</td>
-        <td>${escapeHtml(item.kpi || '')}</td>
-        <td>${escapeHtml(item.target || '')}</td>
-        ${showDeptCol ? `<td style="text-align: center;">${escapeHtml(item.department || '')}</td>` : ''}
-      </tr>
-    `).join('');
-  } else if (activeTab === 'bs2') {
-    formNumber = '2';
-    formName = 'บส.2';
-    title = 'การวิเคราะห์โอกาส ผลกระทบ และการตอบสนองความเสี่ยง';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
-    signatureNumber = { sign: '๑๓', pos: '๑๔', date: '๑๕' };
-
-    tableHeaderHtml = `
-      <tr style="mso-yfti-tblheader: yes; background-color: #f8fafc;">
-        <th style="width: 55pt; text-align: center;">(๓)<br/>รหัสความเสี่ยง</th>
-        <th style="text-align: center;">(๔)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
-        <th style="text-align: center;">(๕)<br/>วัตถุประสงค์</th>
-        <th style="width: 90pt; text-align: center;">(๖)<br/>ผู้รับผิดชอบ</th>
-        <th style="text-align: center;">(๗)<br/>ความเสี่ยง</th>
-        <th style="width: 95pt; text-align: center;">(๘)<br/>ประเภทความเสี่ยง</th>
-        <th style="width: 35pt; text-align: center;">(๙)<br/>คะแนนโอกาส</th>
-        <th style="width: 35pt; text-align: center;">(๑๐)<br/>คะแนนผลกระทบ</th>
-        <th style="width: 65pt; text-align: center;">(๑๑)<br/>ระดับความเสี่ยง<br/>(๙) x (๑๐)</th>
-        <th style="text-align: center;">(๑๒)<br/>วิธีการตอบสนองความเสี่ยง</th>
-      </tr>
-    `;
-
-    tableBodyHtml = filteredBs2.map((item) => {
-      const l = Number(item.likelihood) || 1;
-      const i = Number(item.impact) || 1;
-      const score = item.riskScore !== undefined && item.riskScore !== null && item.riskScore !== ''
-        ? item.riskScore
-        : (l * i);
-      const level = item.riskLevel || (score >= 15 ? 'สูงมาก' : score >= 10 ? 'สูง' : score >= 5 ? 'ปานกลาง' : 'ต่ำ');
-      return `
-        <tr>
-          <td style="text-align: center; font-weight: bold;">${escapeHtml(toThaiDigits(item.riskCode || ''))}</td>
-          <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
-          <td>${escapeHtml(item.objective || '')}</td>
-          <td>${escapeHtml(item.responsiblePerson || '')}</td>
-          <td style="color: #b91c1c; font-weight: bold;">${escapeHtml(item.riskEvent || '')}</td>
-          <td>${escapeHtml(item.riskCategory || '')}</td>
-          <td style="text-align: center;">${toThaiDigits(l)}</td>
-          <td style="text-align: center;">${toThaiDigits(i)}</td>
-          <td style="text-align: center; font-weight: bold;">${toThaiDigits(score)} (${level})</td>
-          <td style="color: #1d4ed8;">${escapeHtml(item.riskResponse || '')}</td>
-        </tr>
-      `;
-    }).join('');
-  } else if (activeTab === 'bs3') {
-    formNumber = '3';
-    formName = 'บส.3';
-    title = 'รายงานการจัดทำแผนบริหารความเสี่ยง';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
-    signatureNumber = { sign: '๑๒', pos: '๑๓', date: '๑๔' };
-
-    tableHeaderHtml = `
-      <tr style="mso-yfti-tblheader: yes; background-color: #f8fafc;">
-        <th style="width: 55pt; text-align: center;">(๓)<br/>รหัสความเสี่ยง</th>
-        <th style="text-align: center;">(๔)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
-        <th style="text-align: center;">(๕)<br/>ความเสี่ยง</th>
-        <th style="text-align: center;">(๖)<br/>วิธีการตอบสนองความเสี่ยง</th>
-        <th style="width: 85pt; text-align: center;">(๗)<br/>ผู้รับผิดชอบ</th>
-        <th style="text-align: center;">(๘)<br/>วิธีการจัดการความเสี่ยง (มาตรการ)</th>
-        <th style="width: 85pt; text-align: center;">(๙)<br/>ตัวชี้วัด</th>
-        <th style="width: 80pt; text-align: center;">(๑๐)<br/>ระยะเวลาดำเนินการ</th>
-        <th style="text-align: center;">(๑๑)<br/>วิธีการติดตาม และการรายงาน</th>
-      </tr>
-    `;
-
-    tableBodyHtml = filteredBs3.map((item) => `
-      <tr>
-        <td style="text-align: center; font-weight: bold;">${escapeHtml(toThaiDigits(item.riskCode || ''))}</td>
-        <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
-        <td style="color: #b91c1c; font-weight: bold;">${escapeHtml(item.riskEvent || '')}</td>
-        <td>${escapeHtml(item.riskResponse || '')}</td>
-        <td>${escapeHtml(item.responsiblePerson || '')}</td>
-        <td>${escapeHtml(item.measures || '')}</td>
-        <td>${escapeHtml(item.kpi || '')}</td>
-        <td style="text-align: center;">${escapeHtml(item.timeline || '')}</td>
-        <td>${escapeHtml(item.monitoringMethod || '')}</td>
-      </tr>
-    `).join('');
-  } else if (activeTab === 'bs4') {
-    formNumber = '4';
-    formName = 'บส.4';
-    const periodLabel = bs4Period === '3month' ? 'รอบ 3 เดือน' : bs4Period === '6month' ? 'รอบ 6 เดือน' : 'รอบ 12 เดือน';
-    title = `รายงานการติดตามผลการบริหารความเสี่ยง (${periodLabel})`;
-    subtitle = `สำหรับปีงบประมาณ พ.ศ. ${selectedYear}`;
-    signatureNumber = { sign: '๑๒', pos: '๑๓', date: '๑๔' };
-
-    tableHeaderHtml = `
-      <tr style="mso-yfti-tblheader: yes; background-color: #f8fafc;">
-        <th style="width: 55pt; text-align: center;">(๓)<br/>รหัสความเสี่ยง</th>
-        <th style="text-align: center;">(๔)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
-        <th style="text-align: center;">(๕)<br/>วิธีการจัดการความเสี่ยง</th>
-        <th style="width: 75pt; text-align: center;">(๖)<br/>ระยะเวลาดำเนินการ</th>
-        <th style="width: 85pt; text-align: center;">(๗)<br/>ผู้รับผิดชอบ</th>
-        <th style="text-align: center;">(๘)<br/>ผลลัพธ์การดำเนินการจัดการความเสี่ยง</th>
-        <th style="width: 85pt; text-align: center;">(๙)<br/>เอกสาร/หลักฐาน</th>
-        <th style="width: 55pt; text-align: center;">(๑๐)<br/>ร้อยละความคืบหน้า</th>
-        <th style="text-align: center;">(๑๑)<br/>ปัญหาอุปสรรค และแนวทางแก้ไข</th>
-      </tr>
-    `;
-
-    tableBodyHtml = filteredBs4.map((item) => `
-      <tr>
-        <td style="text-align: center; font-weight: bold;">${escapeHtml(toThaiDigits(item.riskCode || ''))}</td>
-        <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
-        <td>${escapeHtml(item.measures || '')}</td>
-        <td style="text-align: center;">${escapeHtml(item.timeline || '')}</td>
-        <td>${escapeHtml(item.responsiblePerson || '')}</td>
-        <td>${escapeHtml(item.result || '')}</td>
-        <td>${escapeHtml(item.evidence || '')}</td>
-        <td style="text-align: center; font-weight: bold;">${toThaiDigits(item.progressPercent || 0)}%</td>
-        <td>${escapeHtml(item.problemSolution || '-')}</td>
-      </tr>
-    `).join('');
-  } else if (activeTab === 'bs5') {
-    formNumber = '5';
-    formName = 'บส.5';
-    title = 'รายงานผลการดำเนินการและทบทวนแผนการบริหารความเสี่ยง';
-    subtitle = `สำหรับปีงบประมาณ พ.ศ. ${selectedYear}`;
-    signatureNumber = { sign: '๑๔', pos: '๑๕', date: '๑๖' };
-
-    colgroupHtml = `
-      <colgroup>
-        <col style="width: 45pt;" />
-        <col style="width: 90pt;" />
-        <col style="width: 85pt;" />
-        <col style="width: 28pt;" />
-        <col style="width: 28pt;" />
-        <col style="width: 40pt;" />
-        <col style="width: 80pt;" />
-        <col style="width: 80pt;" />
-        <col style="width: 28pt;" />
-        <col style="width: 28pt;" />
-        <col style="width: 40pt;" />
-        <col style="width: 45pt;" />
-        <col style="width: 75pt;" />
-        <col style="width: 38pt;" />
-        <col style="width: 38pt;" />
-        <col style="width: 80pt;" />
-      </colgroup>
-    `;
-
-    tableHeaderHtml = `
-      <tr style="mso-yfti-tblheader: yes; background-color: #f8fafc;">
-        <th rowspan="2" style="width: 45pt; vertical-align: middle; text-align: center;"><!--[if gte mso 9]><w:tcPr><w:vMerge w:val="restart"/></w:tcPr><![endif]-->(๓)<br/>รหัสความเสี่ยง</th>
-        <th rowspan="2" style="width: 90pt; vertical-align: middle; text-align: center;"><!--[if gte mso 9]><w:tcPr><w:vMerge w:val="restart"/></w:tcPr><![endif]-->(๔)<br/>โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ</th>
-        <th rowspan="2" style="width: 85pt; vertical-align: middle; text-align: center;"><!--[if gte mso 9]><w:tcPr><w:vMerge w:val="restart"/></w:tcPr><![endif]-->(๕)<br/>ความเสี่ยง</th>
-        <th colspan="3" style="vertical-align: middle; text-align: center;">(๖)<br/>คะแนนระดับความเสี่ยง<br/>ก่อนการดำเนินการจัดการความเสี่ยง</th>
-        <th rowspan="2" style="width: 80pt; vertical-align: middle; text-align: center;"><!--[if gte mso 9]><w:tcPr><w:vMerge w:val="restart"/></w:tcPr><![endif]-->(๗)<br/>วิธีการจัดการความเสี่ยง</th>
-        <th rowspan="2" style="width: 80pt; vertical-align: middle; text-align: center;"><!--[if gte mso 9]><w:tcPr><w:vMerge w:val="restart"/></w:tcPr><![endif]-->(๘)<br/>ผลดำเนินการจากการจัดการความเสี่ยง</th>
-        <th colspan="3" style="vertical-align: middle; text-align: center;">(๙)<br/>คะแนนระดับความเสี่ยง<br/>ภายหลังการดำเนินการจัดการความเสี่ยง</th>
-        <th rowspan="2" style="width: 45pt; vertical-align: middle; text-align: center;"><!--[if gte mso 9]><w:tcPr><w:vMerge w:val="restart"/></w:tcPr><![endif]-->(๑๐)<br/>การเปลี่ยนแปลงระดับความเสี่ยง</th>
-        <th rowspan="2" style="width: 75pt; vertical-align: middle; text-align: center;"><!--[if gte mso 9]><w:tcPr><w:vMerge w:val="restart"/></w:tcPr><![endif]-->(๑๑)<br/>ความเสี่ยงคงเหลือ/เกิดขึ้นใหม่</th>
-        <th colspan="2" style="vertical-align: middle; text-align: center;">(๑๒)<br/>สรุปความเสี่ยง</th>
-        <th rowspan="2" style="width: 80pt; vertical-align: middle; text-align: center;"><!--[if gte mso 9]><w:tcPr><w:vMerge w:val="restart"/></w:tcPr><![endif]-->(๑๓)<br/>แนวทาง/มาตรการจัดการความเสี่ยง/วิธีการดำเนินการ สำหรับปีถัดไป</th>
-      </tr>
-      <tr style="mso-yfti-tblheader: yes; background-color: #f8fafc;">
-        <!--[if gte mso 9]><th style="border-top: none; mso-border-top-alt: none; padding: 0; height: 0;"><w:tcPr><w:vMerge/></w:tcPr></th><![endif]-->
-        <!--[if gte mso 9]><th style="border-top: none; mso-border-top-alt: none; padding: 0; height: 0;"><w:tcPr><w:vMerge/></w:tcPr></th><![endif]-->
-        <!--[if gte mso 9]><th style="border-top: none; mso-border-top-alt: none; padding: 0; height: 0;"><w:tcPr><w:vMerge/></w:tcPr></th><![endif]-->
-        <th style="width: 28pt; vertical-align: middle; text-align: center;">โอกาส<br/>(๑)</th>
-        <th style="width: 28pt; vertical-align: middle; text-align: center;">ผลกระทบ<br/>(๒)</th>
-        <th style="width: 40pt; vertical-align: middle; text-align: center;">คะแนนระดับความเสี่ยง<br/>(๓) = (๑) x (๒)</th>
-        <!--[if gte mso 9]><th style="border-top: none; mso-border-top-alt: none; padding: 0; height: 0;"><w:tcPr><w:vMerge/></w:tcPr></th><![endif]-->
-        <!--[if gte mso 9]><th style="border-top: none; mso-border-top-alt: none; padding: 0; height: 0;"><w:tcPr><w:vMerge/></w:tcPr></th><![endif]-->
-        <th style="width: 28pt; vertical-align: middle; text-align: center;">โอกาส<br/>(๑)</th>
-        <th style="width: 28pt; vertical-align: middle; text-align: center;">ผลกระทบ<br/>(๒)</th>
-        <th style="width: 40pt; vertical-align: middle; text-align: center;">คะแนนระดับความเสี่ยง<br/>(๓) = (๑) x (๒)</th>
-        <!--[if gte mso 9]><th style="border-top: none; mso-border-top-alt: none; padding: 0; height: 0;"><w:tcPr><w:vMerge/></w:tcPr></th><![endif]-->
-        <!--[if gte mso 9]><th style="border-top: none; mso-border-top-alt: none; padding: 0; height: 0;"><w:tcPr><w:vMerge/></w:tcPr></th><![endif]-->
-        <th style="width: 38pt; vertical-align: middle; text-align: center;">ควบคุมได้</th>
-        <th style="width: 38pt; vertical-align: middle; text-align: center;">ควบคุมไม่ได้</th>
-        <!--[if gte mso 9]><th style="border-top: none; mso-border-top-alt: none; padding: 0; height: 0;"><w:tcPr><w:vMerge/></w:tcPr></th><![endif]-->
-      </tr>
-    `;
-
-    tableBodyHtml = filteredBs5Items.map((item) => {
-      const preScore = (Number(item.preLikelihood) || 1) * (Number(item.preImpact) || 1);
-      const postScore = (Number(item.postLikelihood) || 1) * (Number(item.postImpact) || 1);
-      const isControllable = item.controllable === 'ควบคุมได้';
-      return `
-        <tr>
-          <td style="text-align: center; font-weight: bold;">${escapeHtml(toThaiDigits(item.riskCode || ''))}</td>
-          <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
-          <td style="color: #b91c1c;">${escapeHtml(item.riskEvent || '')}</td>
-          <td style="text-align: center;">${toThaiDigits(item.preLikelihood || 1)}</td>
-          <td style="text-align: center;">${toThaiDigits(item.preImpact || 1)}</td>
-          <td style="text-align: center; font-weight: bold;">${toThaiDigits(preScore)}</td>
-          <td>${escapeHtml(item.measures || '')}</td>
-          <td>${escapeHtml(item.result || '')}</td>
-          <td style="text-align: center;">${toThaiDigits(item.postLikelihood || 1)}</td>
-          <td style="text-align: center;">${toThaiDigits(item.postImpact || 1)}</td>
-          <td style="text-align: center; font-weight: bold; color: #15803d;">${toThaiDigits(postScore)}</td>
-          <td style="text-align: center;">${escapeHtml(item.riskChange || 'ลดลง')}</td>
-          <td>${escapeHtml(item.residualRisk || '-')}</td>
-          <td style="text-align: center; font-weight: bold;">${isControllable ? '✓' : ''}</td>
-          <td style="text-align: center; font-weight: bold; color: #b91c1c;">${!isControllable ? '✓' : ''}</td>
-          <td>${escapeHtml(item.nextYearMeasures || '')}</td>
-        </tr>
-      `;
-    }).join('');
-
-    extraHtml = `
-      <div style="margin-top: 15px; padding: 10px; border: 1px solid #ccc; background-color: #f8fafc;">
-        <strong>สรุปภาพรวมผลการดำเนินการและการทบทวนแผนบริหารความเสี่ยง ประจำปี พ.ศ. ${toThaiDigits(selectedYear)}:</strong><br/>
-        <p style="text-indent: 2em; margin-top: 5px;">${escapeHtml(bs5Data.summary || '')}</p>
-      </div>
-    `;
-  }
+  const formData = getBsFormData({
+    activeTab,
+    filteredBs1,
+    filteredBs2,
+    filteredBs3,
+    filteredBs4,
+    filteredBs5Items,
+    bs5Data,
+    bs4Period,
+    selectedYear,
+    effectiveDept
+  });
 
   const wordHtml = `
     <!DOCTYPE html>
     <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
     <head>
       <meta charset='utf-8'>
-      <title>แบบ ${formName} - ${escapeHtml(orgName)}</title>
+      <title>แบบ ${formData.formName} - ${escapeHtml(orgName)}</title>
       <!--[if gte mso 9]>
       <xml>
         <w:WordDocument>
@@ -328,51 +350,46 @@ export function exportBsToWord({
         @page Section1 {
           size: 841.95pt 595.35pt; /* A4 Landscape */
           mso-page-orientation: landscape;
-          margin: 1.0cm 1.2cm 1.0cm 1.2cm;
-          mso-header-margin: 35.4pt;
-          mso-footer-margin: 35.4pt;
+          margin: 1.0cm 1.0cm 1.0cm 1.0cm;
+          mso-header-margin: 20pt;
+          mso-footer-margin: 20pt;
           mso-paper-source: 0;
         }
         div.Section1 {
           page: Section1;
         }
         body {
-          font-family: 'TH Sarabun New', 'TH Sarabun PSK', 'Angsana New', sans-serif;
-          font-size: 15pt;
+          font-family: 'TH SarabunPSK', 'TH Sarabun New', 'Angsana New', sans-serif;
+          font-size: 13pt;
           color: #000000;
-          line-height: 1.25;
+          line-height: 1.15;
         }
         .header-top {
           text-align: right;
           font-weight: bold;
-          font-size: 15pt;
-          margin-bottom: 6px;
+          font-size: 14pt;
+          margin-bottom: 2px;
         }
         .header-center {
           text-align: center;
-          margin-bottom: 14px;
+          margin-bottom: 6px;
         }
         .header-center h2 {
-          font-size: 17pt;
+          font-size: 15pt;
           font-weight: bold;
-          margin: 0 0 3px 0;
-        }
-        .header-center h3 {
-          font-size: 16pt;
-          font-weight: bold;
-          margin: 0 0 3px 0;
+          margin: 0 0 2px 0;
         }
         .header-center p {
-          font-size: 15pt;
-          margin: 0;
+          font-size: 14pt;
+          margin: 0 0 2px 0;
         }
         table {
           border-collapse: collapse;
+          table-layout: fixed;
           mso-table-layout-alt: fixed;
-          mso-padding-alt: 4pt 4pt 4pt 4pt;
           width: 100%;
-          margin-top: 8px;
-          margin-bottom: 12px;
+          margin-top: 4px;
+          margin-bottom: 8px;
         }
         tr {
           mso-yfti-irow: 0;
@@ -383,68 +400,70 @@ export function exportBsToWord({
         }
         th, td {
           border: 1px solid #000000;
-          padding: 5px 6px;
+          padding: 3px 2px;
           vertical-align: top;
-          font-size: 13pt;
+          font-size: ${activeTab === 'bs5' ? '10pt' : '10.5pt'};
+          line-height: 1.15;
+          word-wrap: break-word;
         }
         th {
           background-color: #f1f5f9;
           font-weight: bold;
           text-align: center;
+          vertical-align: middle;
         }
         .sig-block {
-          width: 380pt;
+          width: 320pt;
           float: right;
           text-align: left;
-          margin-top: 25pt;
-          font-size: 14pt;
-          line-height: 1.8;
+          margin-top: 15pt;
+          font-size: 12pt;
+          line-height: 1.6;
         }
       </style>
     </head>
     <body>
       <div class="Section1">
-        <div class="header-top">แบบ บส. ${toThaiDigits(formNumber)}</div>
+        <div class="header-top">แบบ บส. ${formData.formNumber}</div>
         <div class="header-center">
-          <p style="font-size: 16pt; font-weight: bold; margin: 0 0 3px 0;">ชื่อหน่วยงาน ${escapeHtml(orgName)} (๑)</p>
-          <h2 style="font-size: 17pt; font-weight: bold; margin: 0 0 3px 0;">${escapeHtml(title)}</h2>
-          <p style="font-size: 15pt; margin: 0;">${escapeHtml(subtitle ? subtitle.replace(/[0-9]/g, d => toThaiDigits(d)) : '')} (๒)</p>
+          <p style="font-weight: bold;">ชื่อหน่วยงาน ${escapeHtml(orgName)} (1)</p>
+          <h2>${escapeHtml(formData.title)}</h2>
+          <p>${formData.subtitle} (2)</p>
         </div>
 
         <table>
-          ${colgroupHtml}
           <thead>
-            ${tableHeaderHtml}
+            ${formData.tableHeaderHtml}
           </thead>
           <tbody>
-            ${tableBodyHtml || '<tr><td colspan="16" style="text-align:center; padding: 20px;">ไม่พบข้อมูล</td></tr>'}
+            ${formData.tableBodyHtml || `<tr><td colspan="${formData.totalCols}" style="text-align:center; padding: 15px;">ไม่พบข้อมูล</td></tr>`}
           </tbody>
         </table>
 
-        ${extraHtml}
+        ${formData.extraHtml}
 
         <div style="clear: both;"></div>
 
         <div class="sig-block">
-          <div>ลายมือชื่อ...................................................(${signatureNumber.sign})...................................................</div>
+          <div>ลายมือชื่อ...................................................(${formData.signatureNumber.sign})...................................................</div>
           <div style="text-indent: 40pt;">( ${escapeHtml(approverName)} )</div>
-          <div>ตำแหน่ง .................................................(${signatureNumber.pos}).................................................</div>
+          <div>ตำแหน่ง .................................................(${formData.signatureNumber.pos}).................................................</div>
           <div style="text-indent: 40pt;">${escapeHtml(approverPosition)}</div>
-          <div>วันที่............เดือน...............(${signatureNumber.date}).............พ.ศ. .....................</div>
+          <div>วันที่............เดือน...............(${formData.signatureNumber.date}).............พ.ศ. .....................</div>
         </div>
       </div>
     </body>
     </html>
   `;
 
-  const fileName = `แบบ_${formName}${deptLabel}_ปี${selectedYear}.doc`;
+  const fileName = `แบบ_${formData.formName}${deptLabel}_ปี${selectedYear}.doc`;
   downloadBlob(wordHtml, fileName, 'application/msword');
 }
 
 // -------------------------------------------------------------
-// 2. ส่งออกและพิมพ์เป็น PDF (A4 แนวนอน มาตรฐาน ว 3482)
+// 2. ดาวน์โหลดเป็นไฟล์ PDF (.pdf) โดยตรง (ไม่มีหน้าต่างพิมพ์ ไม่มีหัวท้ายระบบ)
 // -------------------------------------------------------------
-export function exportBsToPdf({
+export async function exportBsToPdf({
   activeTab,
   filteredBs1 = [],
   filteredBs2 = [],
@@ -463,250 +482,149 @@ export function exportBsToPdf({
   const approverPosition = isSubDivision ? '....................................................' : (orgProfile.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ');
   const deptLabel = effectiveDept && effectiveDept !== 'all' ? `_${effectiveDept}` : '';
 
-  let formNumber = '1';
-  let formName = 'บส.1';
-  let title = '';
-  let subtitle = '';
-  let tableHeaderHtml = '';
-  let tableBodyHtml = '';
-  let extraHtml = '';
-  let signatureNumber = { sign: '๑๐', pos: '๑๑', date: '๑๒' };
+  const formData = getBsFormData({
+    activeTab,
+    filteredBs1,
+    filteredBs2,
+    filteredBs3,
+    filteredBs4,
+    filteredBs5Items,
+    bs5Data,
+    bs4Period,
+    selectedYear,
+    effectiveDept
+  });
 
-  if (activeTab === 'bs1') {
-    formNumber = '1';
-    formName = 'บส.1';
-    title = 'กำหนดขอบเขตความรับผิดชอบตามประเด็นยุทธศาสตร์/ข้อบัญญัติ/เทศบัญญัติ/อื่น ๆ (ถ้ามี)';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
-    signatureNumber = { sign: '๑๐', pos: '๑๑', date: '๑๒' };
+  const pdfContainer = document.createElement('div');
+  pdfContainer.style.position = 'fixed';
+  pdfContainer.style.left = '-9999px';
+  pdfContainer.style.top = '0';
+  pdfContainer.style.width = '1060px'; // A4 Landscape printable width (~277mm)
+  pdfContainer.style.background = '#ffffff';
+  pdfContainer.style.color = '#000000';
+  pdfContainer.style.padding = '0';
+  pdfContainer.style.margin = '0';
+  pdfContainer.style.fontFamily = "'TH Sarabun New', 'Sarabun', 'Angsana New', sans-serif";
+  pdfContainer.style.zIndex = '-9999';
 
-    const showDeptCol = (!effectiveDept || effectiveDept === 'all');
-    tableHeaderHtml = `
-      <tr>
-        <th style="width: 55pt; text-align: center;">(๓)<br/>รหัสความเสี่ยง</th>
-        <th style="width: 120pt; text-align: center;">(๔)<br/>ยุทธศาสตร์ที่รับผิดชอบ</th>
-        <th style="text-align: center;">(๕)<br/>โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ</th>
-        <th style="width: 75pt; text-align: center;">(๖)<br/>งบประมาณ (บาท)</th>
-        <th style="text-align: center;">(๗)<br/>วัตถุประสงค์</th>
-        <th style="width: 90pt; text-align: center;">(๘)<br/>ตัวชี้วัด</th>
-        <th style="width: 85pt; text-align: center;">(๙)<br/>เป้าหมาย</th>
-        ${showDeptCol ? '<th style="width: 85pt; text-align: center;">ส่วนราชการ</th>' : ''}
-      </tr>
-    `;
-
-    tableBodyHtml = filteredBs1.map((item, idx) => `
-      <tr>
-        <td style="text-align: center; font-weight: bold;">${escapeHtml(toThaiDigits(item.riskCode || `RSK-0${idx + 1}`))}</td>
-        <td>${escapeHtml(item.strategy || '')}</td>
-        <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
-        <td style="text-align: right;">${item.budget ? escapeHtml(toThaiDigits(Number(item.budget).toLocaleString())) : '-'}</td>
-        <td>${escapeHtml(item.objective || '')}</td>
-        <td>${escapeHtml(item.kpi || '')}</td>
-        <td>${escapeHtml(item.target || '')}</td>
-        ${showDeptCol ? `<td style="text-align: center;">${escapeHtml(item.department || '')}</td>` : ''}
-      </tr>
-    `).join('');
-  } else if (activeTab === 'bs2') {
-    formNumber = '2';
-    formName = 'บส.2';
-    title = 'การวิเคราะห์โอกาส ผลกระทบ และการตอบสนองความเสี่ยง';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
-    signatureNumber = { sign: '๑๓', pos: '๑๔', date: '๑๕' };
-
-    tableHeaderHtml = `
-      <tr>
-        <th style="width: 55pt; text-align: center;">(๓)<br/>รหัสความเสี่ยง</th>
-        <th style="text-align: center;">(๔)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
-        <th style="text-align: center;">(๕)<br/>วัตถุประสงค์</th>
-        <th style="width: 90pt; text-align: center;">(๖)<br/>ผู้รับผิดชอบ</th>
-        <th style="text-align: center;">(๗)<br/>ความเสี่ยง</th>
-        <th style="width: 95pt; text-align: center;">(๘)<br/>ประเภทความเสี่ยง</th>
-        <th style="width: 35pt; text-align: center;">(๙)<br/>คะแนนโอกาส</th>
-        <th style="width: 35pt; text-align: center;">(๑๐)<br/>คะแนนผลกระทบ</th>
-        <th style="width: 65pt; text-align: center;">(๑๑)<br/>ระดับความเสี่ยง<br/>(๙) x (๑๐)</th>
-        <th style="text-align: center;">(๑๒)<br/>วิธีการตอบสนองความเสี่ยง</th>
-      </tr>
-    `;
-
-    tableBodyHtml = filteredBs2.map((item) => {
-      const l = Number(item.likelihood) || 1;
-      const i = Number(item.impact) || 1;
-      const score = item.riskScore !== undefined && item.riskScore !== null && item.riskScore !== ''
-        ? item.riskScore
-        : (l * i);
-      const level = item.riskLevel || (score >= 15 ? 'สูงมาก' : score >= 10 ? 'สูง' : score >= 5 ? 'ปานกลาง' : 'ต่ำ');
-      return `
-        <tr>
-          <td style="text-align: center; font-weight: bold;">${escapeHtml(toThaiDigits(item.riskCode || ''))}</td>
-          <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
-          <td>${escapeHtml(item.objective || '')}</td>
-          <td>${escapeHtml(item.responsiblePerson || '')}</td>
-          <td style="color: #b91c1c; font-weight: bold;">${escapeHtml(item.riskEvent || '')}</td>
-          <td>${escapeHtml(item.riskCategory || '')}</td>
-          <td style="text-align: center;">${toThaiDigits(l)}</td>
-          <td style="text-align: center;">${toThaiDigits(i)}</td>
-          <td style="text-align: center; font-weight: bold;">${toThaiDigits(score)} (${level})</td>
-          <td style="color: #1d4ed8;">${escapeHtml(item.riskResponse || '')}</td>
-        </tr>
-      `;
-    }).join('');
-  } else if (activeTab === 'bs3') {
-    formNumber = '3';
-    formName = 'บส.3';
-    title = 'รายงานการจัดทำแผนบริหารความเสี่ยง';
-    subtitle = `ประจำปีงบประมาณ พ.ศ. ${selectedYear}`;
-    signatureNumber = { sign: '๑๒', pos: '๑๓', date: '๑๔' };
-
-    tableHeaderHtml = `
-      <tr>
-        <th style="width: 55pt; text-align: center;">(๓)<br/>รหัสความเสี่ยง</th>
-        <th style="text-align: center;">(๔)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
-        <th style="text-align: center;">(๕)<br/>ความเสี่ยง</th>
-        <th style="text-align: center;">(๖)<br/>วิธีการตอบสนองความเสี่ยง</th>
-        <th style="width: 85pt; text-align: center;">(๗)<br/>ผู้รับผิดชอบ</th>
-        <th style="text-align: center;">(๘)<br/>วิธีการจัดการความเสี่ยง (มาตรการ)</th>
-        <th style="width: 85pt; text-align: center;">(๙)<br/>ตัวชี้วัด</th>
-        <th style="width: 80pt; text-align: center;">(๑๐)<br/>ระยะเวลาดำเนินการ</th>
-        <th style="text-align: center;">(๑๑)<br/>วิธีการติดตาม และการรายงาน</th>
-      </tr>
-    `;
-
-    tableBodyHtml = filteredBs3.map((item) => `
-      <tr>
-        <td style="text-align: center; font-weight: bold;">${escapeHtml(toThaiDigits(item.riskCode || ''))}</td>
-        <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
-        <td style="color: #b91c1c; font-weight: bold;">${escapeHtml(item.riskEvent || '')}</td>
-        <td>${escapeHtml(item.riskResponse || '')}</td>
-        <td>${escapeHtml(item.responsiblePerson || '')}</td>
-        <td>${escapeHtml(item.measures || '')}</td>
-        <td>${escapeHtml(item.kpi || '')}</td>
-        <td style="text-align: center;">${escapeHtml(item.timeline || '')}</td>
-        <td>${escapeHtml(item.monitoringMethod || '')}</td>
-      </tr>
-    `).join('');
-  } else if (activeTab === 'bs4') {
-    formNumber = '4';
-    formName = 'บส.4';
-    const periodLabel = bs4Period === '3month' ? 'รอบ 3 เดือน' : bs4Period === '6month' ? 'รอบ 6 เดือน' : 'รอบ 12 เดือน';
-    title = `รายงานการติดตามผลการบริหารความเสี่ยง (${periodLabel})`;
-    subtitle = `สำหรับปีงบประมาณ พ.ศ. ${selectedYear}`;
-    signatureNumber = { sign: '๑๒', pos: '๑๓', date: '๑๔' };
-
-    tableHeaderHtml = `
-      <tr>
-        <th style="width: 55pt; text-align: center;">(๓)<br/>รหัสความเสี่ยง</th>
-        <th style="text-align: center;">(๔)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
-        <th style="text-align: center;">(๕)<br/>วิธีการจัดการความเสี่ยง</th>
-        <th style="width: 75pt; text-align: center;">(๖)<br/>ระยะเวลาดำเนินการ</th>
-        <th style="width: 85pt; text-align: center;">(๗)<br/>ผู้รับผิดชอบ</th>
-        <th style="text-align: center;">(๘)<br/>ผลลัพธ์การดำเนินการจัดการความเสี่ยง</th>
-        <th style="width: 85pt; text-align: center;">(๙)<br/>เอกสาร/หลักฐาน</th>
-        <th style="width: 55pt; text-align: center;">(๑๐)<br/>ร้อยละความคืบหน้า</th>
-        <th style="text-align: center;">(๑๑)<br/>ปัญหาอุปสรรค และแนวทางแก้ไข</th>
-      </tr>
-    `;
-
-    tableBodyHtml = filteredBs4.map((item) => `
-      <tr>
-        <td style="text-align: center; font-weight: bold;">${escapeHtml(toThaiDigits(item.riskCode || ''))}</td>
-        <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
-        <td>${escapeHtml(item.measures || '')}</td>
-        <td style="text-align: center;">${escapeHtml(item.timeline || '')}</td>
-        <td>${escapeHtml(item.responsiblePerson || '')}</td>
-        <td>${escapeHtml(item.result || '')}</td>
-        <td>${escapeHtml(item.evidence || '')}</td>
-        <td style="text-align: center; font-weight: bold;">${toThaiDigits(item.progressPercent || 0)}%</td>
-        <td>${escapeHtml(item.problemSolution || '-')}</td>
-      </tr>
-    `).join('');
-  } else if (activeTab === 'bs5') {
-    formNumber = '5';
-    formName = 'บส.5';
-    title = 'รายงานผลการดำเนินการและทบทวนแผนการบริหารความเสี่ยง';
-    subtitle = `สำหรับปีงบประมาณ พ.ศ. ${selectedYear}`;
-    signatureNumber = { sign: '๑๔', pos: '๑๕', date: '๑๖' };
-
-    tableHeaderHtml = `
-      <tr>
-        <th rowspan="2" style="width: 45pt; vertical-align: middle; text-align: center;">(๓)<br/>รหัสความเสี่ยง</th>
-        <th rowspan="2" style="width: 95pt; vertical-align: middle; text-align: center;">(๔)<br/>โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ</th>
-        <th rowspan="2" style="width: 85pt; vertical-align: middle; text-align: center;">(๕)<br/>ความเสี่ยง</th>
-        <th colspan="3" style="vertical-align: middle; text-align: center;">(๖)<br/>คะแนนระดับความเสี่ยง<br/>ก่อนการดำเนินการจัดการความเสี่ยง</th>
-        <th rowspan="2" style="width: 80pt; vertical-align: middle; text-align: center;">(๗)<br/>วิธีการจัดการความเสี่ยง</th>
-        <th rowspan="2" style="width: 80pt; vertical-align: middle; text-align: center;">(๘)<br/>ผลดำเนินการจากการจัดการความเสี่ยง</th>
-        <th colspan="3" style="vertical-align: middle; text-align: center;">(๙)<br/>คะแนนระดับความเสี่ยง<br/>ภายหลังการดำเนินการจัดการความเสี่ยง</th>
-        <th rowspan="2" style="width: 50pt; vertical-align: middle; text-align: center;">(๑๐)<br/>การเปลี่ยนแปลงระดับความเสี่ยง</th>
-        <th rowspan="2" style="width: 75pt; vertical-align: middle; text-align: center;">(๑๑)<br/>ความเสี่ยงคงเหลือ/เกิดขึ้นใหม่</th>
-        <th colspan="2" style="vertical-align: middle; text-align: center;">(๑๒)<br/>สรุปความเสี่ยง</th>
-        <th rowspan="2" style="width: 85pt; vertical-align: middle; text-align: center;">(๑๓)<br/>แนวทาง/มาตรการจัดการความเสี่ยง/วิธีการดำเนินการ สำหรับปีถัดไป</th>
-      </tr>
-      <tr>
-        <th style="width: 28pt; vertical-align: middle; text-align: center;">โอกาส<br/>(๑)</th>
-        <th style="width: 28pt; vertical-align: middle; text-align: center;">ผลกระทบ<br/>(๒)</th>
-        <th style="width: 42pt; vertical-align: middle; text-align: center;">คะแนนระดับความเสี่ยง<br/>(๓) = (๑) x (๒)</th>
-        <th style="width: 28pt; vertical-align: middle; text-align: center;">โอกาส<br/>(๑)</th>
-        <th style="width: 28pt; vertical-align: middle; text-align: center;">ผลกระทบ<br/>(๒)</th>
-        <th style="width: 42pt; vertical-align: middle; text-align: center;">คะแนนระดับความเสี่ยง<br/>(๓) = (๑) x (๒)</th>
-        <th style="width: 38pt; vertical-align: middle; text-align: center;">ควบคุมได้</th>
-        <th style="width: 38pt; vertical-align: middle; text-align: center;">ควบคุมไม่ได้</th>
-      </tr>
-    `;
-
-    tableBodyHtml = filteredBs5Items.map((item) => {
-      const preScore = (Number(item.preLikelihood) || 1) * (Number(item.preImpact) || 1);
-      const postScore = (Number(item.postLikelihood) || 1) * (Number(item.postImpact) || 1);
-      const isControllable = item.controllable === 'ควบคุมได้';
-      return `
-        <tr>
-          <td style="text-align: center; font-weight: bold;">${escapeHtml(toThaiDigits(item.riskCode || ''))}</td>
-          <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
-          <td style="color: #b91c1c;">${escapeHtml(item.riskEvent || '')}</td>
-          <td style="text-align: center;">${toThaiDigits(item.preLikelihood || 1)}</td>
-          <td style="text-align: center;">${toThaiDigits(item.preImpact || 1)}</td>
-          <td style="text-align: center; font-weight: bold;">${toThaiDigits(preScore)}</td>
-          <td>${escapeHtml(item.measures || '')}</td>
-          <td>${escapeHtml(item.result || '')}</td>
-          <td style="text-align: center;">${toThaiDigits(item.postLikelihood || 1)}</td>
-          <td style="text-align: center;">${toThaiDigits(item.postImpact || 1)}</td>
-          <td style="text-align: center; font-weight: bold; color: #15803d;">${toThaiDigits(postScore)}</td>
-          <td style="text-align: center;">${escapeHtml(item.riskChange || 'ลดลง')}</td>
-          <td>${escapeHtml(item.residualRisk || '-')}</td>
-          <td style="text-align: center; font-weight: bold;">${isControllable ? '✓' : ''}</td>
-          <td style="text-align: center; font-weight: bold; color: #b91c1c;">${!isControllable ? '✓' : ''}</td>
-          <td>${escapeHtml(item.nextYearMeasures || '')}</td>
-        </tr>
-      `;
-    }).join('');
-
-    extraHtml = `
-      <div style="margin-top: 12px; padding: 10px; border: 1px solid #999; background-color: #f8fafc; font-size: 13pt;">
-        <strong>สรุปภาพรวมผลการดำเนินการและการทบทวนแผนบริหารความเสี่ยง ประจำปี พ.ศ. ${toThaiDigits(selectedYear)}:</strong>
-        <p style="text-indent: 2em; margin-top: 4px; margin-bottom: 0;">${escapeHtml(bs5Data.summary || '')}</p>
+  pdfContainer.innerHTML = `
+    <div style="width: 100%; padding: 4px; box-sizing: border-box; background: #ffffff;">
+      <div style="text-align: right; font-weight: bold; font-size: 13pt; margin-bottom: 2px;">แบบ บส. ${formData.formNumber}</div>
+      <div style="text-align: center; margin-bottom: 6px;">
+        <p style="font-weight: bold; font-size: 13pt; margin: 0 0 2px 0;">ชื่อหน่วยงาน ${escapeHtml(orgName)} (1)</p>
+        <h2 style="font-size: 14pt; font-weight: bold; margin: 0 0 2px 0;">${escapeHtml(formData.title)}</h2>
+        <p style="font-size: 12.5pt; margin: 0 0 2px 0;">${formData.subtitle} (2)</p>
       </div>
-    `;
-  }
 
-  const pdfHtml = `
+      <table style="width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 4px; margin-bottom: 6px; font-size: ${activeTab === 'bs5' ? '9.5pt' : '10.5pt'};">
+        <thead>
+          ${formData.tableHeaderHtml}
+        </thead>
+        <tbody>
+          ${formData.tableBodyHtml || `<tr><td colspan="${formData.totalCols}" style="text-align:center; padding: 15px;">ไม่พบข้อมูล</td></tr>`}
+        </tbody>
+      </table>
+
+      ${formData.extraHtml}
+
+      <div style="clear: both;"></div>
+
+      <div style="width: 330pt; float: right; margin-top: 15pt; font-size: 12pt; line-height: 1.6;">
+        <div>ลายมือชื่อ...................................................(${formData.signatureNumber.sign})...................................................</div>
+        <div style="text-indent: 40pt;">( ${escapeHtml(approverName)} )</div>
+        <div>ตำแหน่ง .................................................(${formData.signatureNumber.pos}).................................................</div>
+        <div style="text-indent: 40pt;">${escapeHtml(approverPosition)}</div>
+        <div>วันที่............เดือน...............(${formData.signatureNumber.date}).............พ.ศ. .....................</div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(pdfContainer);
+
+  const opt = {
+    margin: [8, 10, 8, 10], // mm: top, left, bottom, right
+    filename: `แบบ_${formData.formName}${deptLabel}_ปี${selectedYear}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      letterRendering: true,
+      backgroundColor: '#ffffff'
+    },
+    jsPDF: {
+      unit: 'mm',
+      format: 'a4',
+      orientation: 'landscape'
+    },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+  };
+
+  try {
+    await html2pdf().set(opt).from(pdfContainer).save();
+  } finally {
+    if (document.body.contains(pdfContainer)) {
+      document.body.removeChild(pdfContainer);
+    }
+  }
+}
+
+// -------------------------------------------------------------
+// 3. สั่งพิมพ์เอกสารทางเครื่องพิมพ์ (Print A4 แนวนอน - ตัดหัวท้ายเบราว์เซอร์อัตโนมัติ)
+// -------------------------------------------------------------
+export function exportBsToPrint({
+  activeTab,
+  filteredBs1 = [],
+  filteredBs2 = [],
+  filteredBs3 = [],
+  filteredBs4 = [],
+  filteredBs5Items = [],
+  bs5Data = {},
+  bs4Period = '6month',
+  orgProfile = {},
+  selectedYear = '2569',
+  isSubDivision = false,
+  effectiveDept = ''
+}) {
+  const orgName = orgProfile.name || 'องค์การบริหารส่วนตำบลฝางคำ';
+  const approverName = isSubDivision ? '....................................................' : (orgProfile.approverName || 'นายกองค์การบริหารส่วนตำบลฝางคำ');
+  const approverPosition = isSubDivision ? '....................................................' : (orgProfile.approverPosition || 'นายกองค์การบริหารส่วนตำบลฝางคำ');
+  const deptLabel = effectiveDept && effectiveDept !== 'all' ? `_${effectiveDept}` : '';
+
+  const formData = getBsFormData({
+    activeTab,
+    filteredBs1,
+    filteredBs2,
+    filteredBs3,
+    filteredBs4,
+    filteredBs5Items,
+    bs5Data,
+    bs4Period,
+    selectedYear,
+    effectiveDept
+  });
+
+  const printHtml = `
     <!DOCTYPE html>
     <html lang="th">
     <head>
       <meta charset="utf-8">
-      <title>แบบ_บส.${toThaiDigits(formNumber)}${deptLabel}_ปี${selectedYear}</title>
+      <title>แบบ_${formData.formName}${deptLabel}_ปี${selectedYear}</title>
       <style>
-        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
         @page {
           size: A4 landscape;
-          margin: 10mm 12mm 10mm 12mm;
+          margin: 0; /* ตัดหัวท้าย URL / วันที่ของเบราว์เซอร์ออกโดยอัตโนมัติ */
         }
         * {
           box-sizing: border-box;
         }
         body {
           font-family: 'TH Sarabun New', 'TH Sarabun PSK', 'Sarabun', 'Angsana New', sans-serif;
-          font-size: 14pt;
+          font-size: 13pt;
           color: #000;
-          margin: 0;
+          margin: 8mm 10mm;
           padding: 0;
-          line-height: 1.25;
+          line-height: 1.2;
           background: #fff;
           -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
@@ -714,33 +632,29 @@ export function exportBsToPdf({
         .header-top {
           text-align: right;
           font-weight: bold;
-          font-size: 14pt;
-          margin-bottom: 4px;
+          font-size: 13pt;
+          margin-bottom: 2px;
         }
         .header-center {
           text-align: center;
-          margin-bottom: 10px;
+          margin-bottom: 6px;
         }
-        .header-center .org-line {
-          font-size: 15pt;
-          font-weight: bold;
+        .header-center p {
+          font-size: 13pt;
           margin: 0 0 2px 0;
         }
-        .header-center .title-line {
-          font-size: 16pt;
-          font-weight: bold;
-          margin: 0 0 2px 0;
-        }
-        .header-center .sub-line {
+        .header-center h2 {
           font-size: 14pt;
-          margin: 0;
+          font-weight: bold;
+          margin: 0 0 2px 0;
         }
         table {
           border-collapse: collapse;
           width: 100%;
-          margin-top: 6px;
-          margin-bottom: 10px;
-          font-size: 11.5pt;
+          table-layout: fixed;
+          margin-top: 4px;
+          margin-bottom: 6px;
+          font-size: ${activeTab === 'bs5' ? '9.5pt' : '10.5pt'};
         }
         thead {
           display: table-header-group;
@@ -750,8 +664,9 @@ export function exportBsToPdf({
         }
         th, td {
           border: 1px solid #000;
-          padding: 4px 5px;
+          padding: 3px 2px;
           vertical-align: top;
+          word-wrap: break-word;
         }
         th {
           background-color: #f1f5f9;
@@ -760,49 +675,48 @@ export function exportBsToPdf({
           vertical-align: middle;
         }
         .sig-block {
-          width: 380pt;
+          width: 320pt;
           float: right;
           text-align: left;
-          margin-top: 20pt;
-          font-size: 13.5pt;
-          line-height: 1.7;
+          margin-top: 15pt;
+          font-size: 12pt;
+          line-height: 1.6;
           page-break-inside: avoid;
         }
       </style>
     </head>
     <body>
-      <div class="header-top">แบบ บส. ${toThaiDigits(formNumber)}</div>
+      <div class="header-top">แบบ บส. ${formData.formNumber}</div>
       <div class="header-center">
-        <p class="org-line">ชื่อหน่วยงาน ${escapeHtml(orgName)} (๑)</p>
-        <h2 class="title-line">${escapeHtml(title)}</h2>
-        <p class="sub-line">${escapeHtml(subtitle ? subtitle.replace(/[0-9]/g, d => toThaiDigits(d)) : '')} (๒)</p>
+        <p style="font-weight: bold;">ชื่อหน่วยงาน ${escapeHtml(orgName)} (1)</p>
+        <h2>${escapeHtml(formData.title)}</h2>
+        <p>${formData.subtitle} (2)</p>
       </div>
 
       <table>
         <thead>
-          ${tableHeaderHtml}
+          ${formData.tableHeaderHtml}
         </thead>
         <tbody>
-          ${tableBodyHtml || '<tr><td colspan="16" style="text-align:center; padding: 20px;">ไม่พบข้อมูล</td></tr>'}
+          ${formData.tableBodyHtml || `<tr><td colspan="${formData.totalCols}" style="text-align:center; padding: 15px;">ไม่พบข้อมูล</td></tr>`}
         </tbody>
       </table>
 
-      ${extraHtml}
+      ${formData.extraHtml}
 
       <div style="clear: both;"></div>
 
       <div class="sig-block">
-        <div>ลายมือชื่อ...................................................(${signatureNumber.sign})...................................................</div>
+        <div>ลายมือชื่อ...................................................(${formData.signatureNumber.sign})...................................................</div>
         <div style="text-indent: 40pt;">( ${escapeHtml(approverName)} )</div>
-        <div>ตำแหน่ง .................................................(${signatureNumber.pos}).................................................</div>
+        <div>ตำแหน่ง .................................................(${formData.signatureNumber.pos}).................................................</div>
         <div style="text-indent: 40pt;">${escapeHtml(approverPosition)}</div>
-        <div>วันที่............เดือน...............(${signatureNumber.date}).............พ.ศ. .....................</div>
+        <div>วันที่............เดือน...............(${formData.signatureNumber.date}).............พ.ศ. .....................</div>
       </div>
     </body>
     </html>
   `;
 
-  // Hidden iframe for clean print / PDF export
   const iframe = document.createElement('iframe');
   iframe.style.position = 'fixed';
   iframe.style.top = '-10000px';
@@ -814,7 +728,7 @@ export function exportBsToPdf({
 
   const doc = iframe.contentWindow.document;
   doc.open();
-  doc.write(pdfHtml);
+  doc.write(printHtml);
   doc.close();
 
   iframe.contentWindow.focus();
@@ -827,6 +741,7 @@ export function exportBsToPdf({
     }, 2000);
   }, 400);
 }
+
 
 // -------------------------------------------------------------
 // 3. ส่งออกเป็น Microsoft Excel (.xls)

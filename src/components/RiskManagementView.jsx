@@ -45,7 +45,7 @@ import {
   CloudOff
 } from 'lucide-react';
 import { getDepartments, getSession } from '../utils/auth';
-import { exportBsToWord, exportBsToExcel, exportBsToPdf } from '../utils/exportRiskDocs';
+import { exportBsToWord, exportBsToExcel, exportBsToPdf, exportBsToPrint } from '../utils/exportRiskDocs';
 import ConfirmModal from './ConfirmModal';
 import { cloudSyncService, mergeRiskManagement } from '../services/cloudSyncService';
 import { isSupabaseConfigured } from '../services/supabaseClient';
@@ -1753,7 +1753,7 @@ export default function RiskManagementView({
   // Handle Print Action (Standard A4 Landscape)
   const handlePrint = () => {
     setShowExportMenu(false);
-    exportBsToPdf({
+    exportBsToPrint({
       activeTab,
       filteredBs1,
       filteredBs2,
@@ -1769,33 +1769,37 @@ export default function RiskManagementView({
     });
   };
 
-  // Handle Download PDF (.pdf)
-  const handleDownloadPdf = () => {
+  // Handle Download PDF (.pdf) - Direct file download without print dialog
+  const handleDownloadPdf = async () => {
     setShowExportMenu(false);
-    setCascadeSuccessMsg('กำลังเตรียมเอกสาร PDF มาตรฐาน ว 3482 (A4 แนวนอน)...');
-    exportBsToPdf({
-      activeTab,
-      filteredBs1,
-      filteredBs2,
-      filteredBs3,
-      filteredBs4,
-      filteredBs5Items,
-      bs5Data,
-      bs4Period,
-      orgProfile,
-      selectedYear,
-      isSubDivision,
-      effectiveDept: isAdmin ? filterDept : userDept
-    });
-    setTimeout(() => {
-      setCascadeSuccessMsg('✓ หน้าต่างพิมพ์เอกสารเปิดแล้ว ท่านสามารถเลือก "Save as PDF (บันทึกเป็น PDF)" ในช่องปลายทางเพื่อบันทึกไฟล์ได้ทันที');
-      setTimeout(() => setCascadeSuccessMsg(''), 6000);
-    }, 1200);
+    setCascadeSuccessMsg('กำลังสร้างและดาวน์โหลดไฟล์ PDF มาตรฐาน ว 3482 (A4 แนวนอน)...');
+    try {
+      await exportBsToPdf({
+        activeTab,
+        filteredBs1,
+        filteredBs2,
+        filteredBs3,
+        filteredBs4,
+        filteredBs5Items,
+        bs5Data,
+        bs4Period,
+        orgProfile,
+        selectedYear,
+        isSubDivision,
+        effectiveDept: isAdmin ? filterDept : userDept
+      });
+      setCascadeSuccessMsg('✓ ดาวน์โหลดไฟล์ PDF เรียบร้อยแล้ว (ฟอร์ม บส. ตามมาตรฐาน ไม่มีหัวท้ายระบบ)');
+      setTimeout(() => setCascadeSuccessMsg(''), 5000);
+    } catch (err) {
+      console.error(err);
+      setCascadeSuccessMsg('เกิดข้อผิดพลาดในการดาวน์โหลด PDF: ' + (err.message || err));
+    }
   };
 
   // Handle Download Word (.doc)
   const handleDownloadWord = () => {
     setShowExportMenu(false);
+    setCascadeSuccessMsg('กำลังสร้างเอกสาร Word (.doc) มาตรฐาน บส. (A4 แนวนอน)...');
     exportBsToWord({
       activeTab,
       filteredBs1,
@@ -1810,6 +1814,10 @@ export default function RiskManagementView({
       isSubDivision,
       effectiveDept: isAdmin ? filterDept : userDept
     });
+    setTimeout(() => {
+      setCascadeSuccessMsg('✓ ดาวน์โหลดเอกสาร Word เรียบร้อยแล้ว (ตารางจัดรูปตามมาตรฐาน ไม่แตก)');
+      setTimeout(() => setCascadeSuccessMsg(''), 4000);
+    }, 800);
   };
 
   // Handle Download Excel (.xls)
@@ -2043,10 +2051,10 @@ export default function RiskManagementView({
                     </div>
                     <div>
                       <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                        <span>ส่งออกเป็น PDF</span>
+                        <span>ดาวน์โหลดไฟล์ PDF (.pdf)</span>
                         <span className="text-[9px] px-1.5 py-0.2 bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300 rounded font-semibold">แนะนำ</span>
                       </div>
-                      <div className="text-[10px] text-slate-400">บันทึกเป็น PDF มาตรฐาน ว 3482 (A4 แนวนอน)</div>
+                      <div className="text-[10px] text-slate-400">บันทึกเป็น PDF ทันที ไม่ขึ้นหน้าต่างพิมพ์ ไม่มีหัวท้ายระบบ</div>
                     </div>
                   </button>
 
@@ -2060,7 +2068,7 @@ export default function RiskManagementView({
                     </div>
                     <div>
                       <div className="font-bold text-slate-900 dark:text-white">เอกสาร Word (.doc)</div>
-                      <div className="text-[10px] text-slate-400">แบบฟอร์มราชการ เลขไทย ตารางไม่แตก</div>
+                      <div className="text-[10px] text-slate-400">แบบฟอร์มราชการ ว 3482 ตารางพอดีหน้า A4 ไม่แตก</div>
                     </div>
                   </button>
 
@@ -2088,7 +2096,7 @@ export default function RiskManagementView({
                     <Printer className="w-4 h-4 text-slate-500 mr-2.5 ml-1.5 shrink-0" />
                     <div>
                       <div className="font-bold">พิมพ์เอกสาร (Print A4)</div>
-                      <div className="text-[10px] text-slate-400">พิมพ์ออกทางเครื่องพิมพ์โดยตรง</div>
+                      <div className="text-[10px] text-slate-400">พิมพ์ออกทางเครื่องพิมพ์ (ตัดหัวท้ายเบราว์เซอร์อัตโนมัติ)</div>
                     </div>
                   </button>
                 </div>
