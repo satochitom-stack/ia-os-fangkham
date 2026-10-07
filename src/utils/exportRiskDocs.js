@@ -1,4 +1,5 @@
-import html2pdf from 'html2pdf.js';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 /**
  * exportRiskDocs.js
@@ -60,6 +61,7 @@ function getBsFormData({
   let subtitle = '';
   let tableHeaderHtml = '';
   let tableBodyHtml = '';
+  let rowHtmls = [];
   let extraHtml = '';
   let totalCols = 8;
   let signatureNumber = { sign: '10', pos: '11', date: '12' };
@@ -87,18 +89,24 @@ function getBsFormData({
       </tr>
     `;
 
-    tableBodyHtml = filteredBs1.map((item, idx) => `
-      <tr>
-        <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || `RSK-0${idx + 1}`)}</td>
-        <td>${escapeHtml(item.strategy || '')}</td>
-        <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
-        <td style="text-align: right;">${item.budget ? Number(item.budget).toLocaleString() : '-'}</td>
-        <td>${escapeHtml(item.objective || '')}</td>
-        <td>${escapeHtml(item.kpi || '')}</td>
-        <td>${escapeHtml(item.target || '')}</td>
-        ${showDeptCol ? `<td style="text-align: center;">${escapeHtml(item.department || '')}</td>` : ''}
-      </tr>
-    `).join('');
+    rowHtmls = filteredBs1.map((item, idx) => {
+      const budgetVal = item.budget !== undefined && item.budget !== null && item.budget !== '' && !isNaN(Number(item.budget))
+        ? Number(item.budget).toLocaleString()
+        : (item.budget || '-');
+      return `
+        <tr>
+          <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || `RSK-0${idx + 1}`)}</td>
+          <td>${escapeHtml(item.strategy || '')}</td>
+          <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
+          <td style="text-align: right;">${budgetVal}</td>
+          <td>${escapeHtml(item.objective || '')}</td>
+          <td>${escapeHtml(item.kpi || '')}</td>
+          <td>${escapeHtml(item.target || '')}</td>
+          ${showDeptCol ? `<td style="text-align: center;">${escapeHtml(item.department || '')}</td>` : ''}
+        </tr>
+      `;
+    });
+    tableBodyHtml = rowHtmls.join('');
   } else if (activeTab === 'bs2') {
     formNumber = '2';
     formName = 'บส.2';
@@ -122,7 +130,7 @@ function getBsFormData({
       </tr>
     `;
 
-    tableBodyHtml = filteredBs2.map((item) => {
+    rowHtmls = filteredBs2.map((item) => {
       const l = Number(item.likelihood) || 1;
       const i = Number(item.impact) || 1;
       const score = item.riskScore !== undefined && item.riskScore !== null && item.riskScore !== ''
@@ -143,7 +151,8 @@ function getBsFormData({
           <td style="color: #1d4ed8;">${escapeHtml(item.riskResponse || '')}</td>
         </tr>
       `;
-    }).join('');
+    });
+    tableBodyHtml = rowHtmls.join('');
   } else if (activeTab === 'bs3') {
     formNumber = '3';
     formName = 'บส.3';
@@ -166,7 +175,7 @@ function getBsFormData({
       </tr>
     `;
 
-    tableBodyHtml = filteredBs3.map((item) => `
+    rowHtmls = filteredBs3.map((item) => `
       <tr>
         <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || '')}</td>
         <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
@@ -178,7 +187,8 @@ function getBsFormData({
         <td style="text-align: center;">${escapeHtml(item.timeline || '')}</td>
         <td>${escapeHtml(item.monitoringMethod || '')}</td>
       </tr>
-    `).join('');
+    `);
+    tableBodyHtml = rowHtmls.join('');
   } else if (activeTab === 'bs4') {
     formNumber = '4';
     formName = 'บส.4';
@@ -201,7 +211,7 @@ function getBsFormData({
       </tr>
     `;
 
-    tableBodyHtml = filteredBs4.map((item) => `
+    rowHtmls = filteredBs4.map((item) => `
       <tr>
         <td style="text-align: center; font-weight: bold;">${escapeHtml(item.riskCode || '')}</td>
         <td style="font-weight: bold;">${escapeHtml(item.activity || '')}</td>
@@ -213,7 +223,8 @@ function getBsFormData({
         <td style="text-align: center; font-weight: bold;">${item.progressPercent || 0}%</td>
         <td>${escapeHtml(item.problemSolution || '-')}</td>
       </tr>
-    `).join('');
+    `);
+    tableBodyHtml = rowHtmls.join('');
   } else if (activeTab === 'bs5') {
     formNumber = '5';
     formName = 'บส.5';
@@ -249,7 +260,7 @@ function getBsFormData({
       </tr>
     `;
 
-    tableBodyHtml = filteredBs5Items.map((item) => {
+    rowHtmls = filteredBs5Items.map((item) => {
       const preScore = (Number(item.preLikelihood) || 1) * (Number(item.preImpact) || 1);
       const postScore = (Number(item.postLikelihood) || 1) * (Number(item.postImpact) || 1);
       const isControllable = item.controllable === 'ควบคุมได้';
@@ -273,7 +284,8 @@ function getBsFormData({
           <td>${escapeHtml(item.nextYearMeasures || '')}</td>
         </tr>
       `;
-    }).join('');
+    });
+    tableBodyHtml = rowHtmls.join('');
 
     extraHtml = `
       <div class="extra-summary-box" style="margin-top: 6px; padding: 5px 8px; border: 1px solid #000; background-color: #f8fafc; font-size: 10pt;">
@@ -292,6 +304,7 @@ function getBsFormData({
     totalCols,
     tableHeaderHtml,
     tableBodyHtml,
+    rowHtmls,
     extraHtml
   };
 }
@@ -445,11 +458,10 @@ export function exportBsToWord({
         <div style="clear: both;"></div>
 
         <div class="sig-block">
-          <div>ลายมือชื่อ...................................................(${formData.signatureNumber.sign})...................................................</div>
+          <div>ลายมือชื่อ....................................................................</div>
           <div style="text-indent: 40pt;">( ${escapeHtml(approverName)} )</div>
-          <div>ตำแหน่ง .................................................(${formData.signatureNumber.pos}).................................................</div>
-          <div style="text-indent: 40pt;">${escapeHtml(approverPosition)}</div>
-          <div>วันที่............เดือน...............(${formData.signatureNumber.date}).............พ.ศ. .....................</div>
+          <div>ตำแหน่ง ${escapeHtml(approverPosition)}</div>
+          <div>วันที่............เดือน........................พ.ศ. .....................</div>
         </div>
       </div>
     </body>
@@ -495,161 +507,266 @@ export async function exportBsToPdf({
     effectiveDept
   });
 
-  const iframe = document.createElement('iframe');
-  iframe.style.position = 'fixed';
-  iframe.style.top = '0';
-  iframe.style.left = '0';
-  iframe.style.width = '1200px';
-  iframe.style.height = '1200px';
-  iframe.style.zIndex = '-9999';
-  iframe.style.border = 'none';
-  iframe.style.opacity = '0.01';
-  iframe.style.pointerEvents = 'none';
-  document.body.appendChild(iframe);
+  const commonStyle = `
+    * { box-sizing: border-box !important; }
+    table {
+      width: 100% !important;
+      border-collapse: collapse !important;
+      table-layout: fixed !important;
+      margin-top: ${activeTab === 'bs5' ? '4px' : '6px'} !important;
+      margin-bottom: ${activeTab === 'bs5' ? '4px' : '6px'} !important;
+      border: 1px solid #000000 !important;
+      font-size: ${activeTab === 'bs5' ? '8.5pt' : '10pt'} !important;
+      line-height: 1.15 !important;
+    }
+    th, td {
+      border: 1px solid #000000 !important;
+      border-width: 1px !important;
+      border-style: solid !important;
+      border-color: #000000 !important;
+      padding: ${activeTab === 'bs5' ? '3px 2px' : '4px 3px'} !important;
+      vertical-align: top !important;
+      word-wrap: break-word !important;
+      overflow-wrap: break-word !important;
+      color: #000000 !important;
+    }
+    th {
+      background-color: #f1f5f9 !important;
+      font-weight: bold !important;
+      text-align: center !important;
+      vertical-align: middle !important;
+    }
+    .extra-summary-box {
+      margin-top: 6px !important;
+      padding: 5px 8px !important;
+      border: 1px solid #000000 !important;
+      background-color: #f8fafc !important;
+      font-size: 10pt !important;
+      color: #000000 !important;
+    }
+  `;
 
-  const doc = iframe.contentWindow.document;
-  doc.open();
-  doc.write(`
-    <!DOCTYPE html>
-    <html lang="th">
-    <head>
-      <meta charset="utf-8">
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
-      <style>
-        body {
-          margin: 0;
-          padding: 0;
-          background: #ffffff;
-        }
-      </style>
-    </head>
-    <body>
-      <div id="pdf-content-root" style="width: 1060px; background: #ffffff; color: #000000; padding: ${activeTab === 'bs5' ? '8px 12px' : '10px 15px'}; box-sizing: border-box; font-family: 'Sarabun', 'TH Sarabun New', sans-serif;">
-        <style>
-          #pdf-content-root * {
-            box-sizing: border-box !important;
-          }
-          #pdf-content-root table {
-            width: 100% !important;
-            border-collapse: collapse !important;
-            table-layout: fixed !important;
-            margin-top: ${activeTab === 'bs5' ? '4px' : '6px'} !important;
-            margin-bottom: ${activeTab === 'bs5' ? '6px' : '8px'} !important;
-            border: 1px solid #000000 !important;
-            font-size: ${activeTab === 'bs5' ? '8.5pt' : '10pt'} !important;
-            line-height: 1.15 !important;
-          }
-          #pdf-content-root thead {
-            display: table-header-group !important;
-          }
-          #pdf-content-root tr {
-            page-break-inside: avoid !important;
-          }
-          #pdf-content-root th, #pdf-content-root td {
-            border: 1px solid #000000 !important;
-            border-width: 1px !important;
-            border-style: solid !important;
-            border-color: #000000 !important;
-            padding: ${activeTab === 'bs5' ? '3px 2px' : '4px 3px'} !important;
-            vertical-align: top !important;
-            word-wrap: break-word !important;
-            overflow-wrap: break-word !important;
-            color: #000000 !important;
-          }
-          #pdf-content-root th {
-            background-color: #f1f5f9 !important;
-            font-weight: bold !important;
-            text-align: center !important;
-            vertical-align: middle !important;
-          }
-          #pdf-content-root .extra-summary-box {
-            margin-top: 6px !important;
-            padding: 5px 8px !important;
-            border: 1px solid #000000 !important;
-            background-color: #f8fafc !important;
-            font-size: 10pt !important;
-          }
-          #pdf-content-root .sig-block {
-            width: 330pt !important;
-            float: right !important;
-            text-align: left !important;
-            margin-top: ${activeTab === 'bs5' ? '10pt' : '14pt'} !important;
-            font-size: ${activeTab === 'bs5' ? '11.5pt' : '12pt'} !important;
-            line-height: 1.5 !important;
-            page-break-inside: avoid !important;
-          }
-        </style>
-
-        <div style="text-align: right; font-weight: bold; font-size: ${activeTab === 'bs5' ? '12pt' : '13pt'}; margin-bottom: 2px;">แบบ บส. ${formData.formNumber}</div>
-        <div style="text-align: center; margin-bottom: ${activeTab === 'bs5' ? '6px' : '8px'};">
-          <p style="font-weight: bold; font-size: ${activeTab === 'bs5' ? '13pt' : '14pt'}; margin: 0 0 2px 0;">ชื่อหน่วยงาน ${escapeHtml(orgName)} (1)</p>
-          <h2 style="font-size: ${activeTab === 'bs5' ? '14pt' : '15pt'}; font-weight: bold; margin: 0 0 2px 0;">${escapeHtml(formData.title)}</h2>
-          <p style="font-size: ${activeTab === 'bs5' ? '12pt' : '13pt'}; margin: 0;">${formData.subtitle} (2)</p>
-        </div>
-
-        <table>
-          <thead>
-            ${formData.tableHeaderHtml}
-          </thead>
-          <tbody>
-            ${formData.tableBodyHtml || `<tr><td colspan="${formData.totalCols}" style="text-align:center; padding: 15px;">ไม่พบข้อมูล</td></tr>`}
-          </tbody>
-        </table>
-
-        ${formData.extraHtml}
-
-        <div style="clear: both;"></div>
-
-        <div class="sig-block">
-          <div>ลายมือชื่อ...................................................(${formData.signatureNumber.sign})...................................................</div>
-          <div style="text-indent: 40pt;">( ${escapeHtml(approverName)} )</div>
-          <div>ตำแหน่ง .................................................(${formData.signatureNumber.pos}).................................................</div>
-          <div style="text-indent: 40pt;">${escapeHtml(approverPosition)}</div>
-          <div>วันที่............เดือน...............(${formData.signatureNumber.date}).............พ.ศ. .....................</div>
-        </div>
+  const signatureHtml = `
+    <div style="width: 100%; display: flex; justify-content: flex-end; margin-top: ${activeTab === 'bs5' ? '8px' : '12px'};">
+      <div class="sig-block" style="width: 330pt; text-align: left; font-size: ${activeTab === 'bs5' ? '11pt' : '11.5pt'}; line-height: 1.6; color: #000000;">
+        <div>ลายมือชื่อ....................................................................</div>
+        <div style="text-indent: 35pt;">( ${escapeHtml(approverName)} )</div>
+        <div>ตำแหน่ง ${escapeHtml(approverPosition)}</div>
+        <div>วันที่............เดือน........................พ.ศ. .....................</div>
       </div>
-    </body>
-    </html>
-  `);
-  doc.close();
+    </div>
+  `;
+
+  // Create measurement element off-screen
+  const measureContainer = document.createElement('div');
+  measureContainer.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: -9999px;
+    width: 1060px;
+    background: #ffffff;
+    font-family: 'Sarabun', 'TH Sarabun New', sans-serif;
+    visibility: hidden;
+    z-index: -9999;
+  `;
+  document.body.appendChild(measureContainer);
+
+  const fullHeaderHtml = `
+    <div id="m-header" style="text-align: center; margin-bottom: 6px;">
+      <div style="text-align: right; font-weight: bold; font-size: ${activeTab === 'bs5' ? '12pt' : '13pt'}; margin-bottom: 2px;">แบบ บส. ${formData.formNumber}</div>
+      <p style="font-weight: bold; font-size: ${activeTab === 'bs5' ? '13pt' : '14pt'}; margin: 0 0 2px 0;">ชื่อหน่วยงาน ${escapeHtml(orgName)} (1)</p>
+      <h2 style="font-size: ${activeTab === 'bs5' ? '14pt' : '15pt'}; font-weight: bold; margin: 0 0 2px 0;">${escapeHtml(formData.title)}</h2>
+      <p style="font-size: ${activeTab === 'bs5' ? '12pt' : '13pt'}; margin: 0;">${formData.subtitle} (2)</p>
+    </div>
+  `;
+
+  const compactHeaderTemplate = (pageNum, totalPages) => `
+    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; border-bottom: 1px solid #ccc; padding-bottom: 2px;">
+      <span style="font-size: 12pt; font-weight: bold;">แบบ บส. ${formData.formNumber} (ต่อ) - ${escapeHtml(orgName)}</span>
+      <span style="font-size: 11pt; color: #555;">หน้า ${pageNum} / ${totalPages}</span>
+    </div>
+  `;
+
+  const rowsToMeasure = formData.rowHtmls && formData.rowHtmls.length > 0
+    ? formData.rowHtmls
+    : [`<tr><td colspan="${formData.totalCols}" style="text-align:center; padding: 15px;">ไม่พบข้อมูล</td></tr>`];
+
+  measureContainer.innerHTML = `
+    <style>${commonStyle}</style>
+    ${fullHeaderHtml}
+    <div id="m-header-compact">
+      ${compactHeaderTemplate(2, 2)}
+    </div>
+    <table id="m-table">
+      <thead>${formData.tableHeaderHtml}</thead>
+      <tbody>
+        ${rowsToMeasure.join('')}
+      </tbody>
+    </table>
+    <div id="m-extra">${formData.extraHtml || ''}</div>
+    <div id="m-sig">${signatureHtml}</div>
+  `;
 
   // Wait for fonts to be ready
-  if (doc.fonts && doc.fonts.ready) {
+  if (document.fonts && document.fonts.ready) {
     try {
-      await doc.fonts.ready;
+      await document.fonts.ready;
     } catch {
-      // ignore font loading error
+      // ignore
     }
   }
-  await new Promise(resolve => setTimeout(resolve, 150));
 
-  const targetEl = doc.getElementById('pdf-content-root');
+  const headerHeight = measureContainer.querySelector('#m-header').offsetHeight;
+  const compactHeaderHeight = measureContainer.querySelector('#m-header-compact').offsetHeight;
+  const theadHeight = measureContainer.querySelector('thead').offsetHeight;
+  const extraEl = measureContainer.querySelector('#m-extra');
+  const extraHeight = extraEl && formData.extraHtml ? extraEl.offsetHeight + 8 : 0;
+  const sigHeight = measureContainer.querySelector('#m-sig').offsetHeight + 10;
 
-  const opt = {
-    margin: [8, 10, 8, 10], // mm: top, left, bottom, right
-    filename: `แบบ_${formData.formName}${deptLabel}_ปี${selectedYear}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: {
-      scale: 2,
-      useCORS: true,
-      logging: false,
-      backgroundColor: '#ffffff'
-    },
-    jsPDF: {
-      unit: 'mm',
-      format: 'a4',
-      orientation: 'landscape'
-    },
-    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-  };
+  const rowEls = measureContainer.querySelectorAll('tbody tr');
+  const rowHeights = Array.from(rowEls).map(r => r.offsetHeight);
+
+  document.body.removeChild(measureContainer);
+
+  // A4 Landscape printable height threshold at 1060px width
+  const maxPageHeight = 715;
+
+  // Distribute rows into pages
+  const pages = [];
+  let curRows = [];
+  let curHeight = headerHeight + theadHeight + 15;
+  let isFirst = true;
+
+  for (let i = 0; i < rowsToMeasure.length; i++) {
+    const rh = rowHeights[i] || 60;
+    const isLastRow = (i === rowsToMeasure.length - 1);
+    const needed = rh + (isLastRow ? (extraHeight + sigHeight) : 0);
+
+    if (curHeight + needed > maxPageHeight && curRows.length > 0) {
+      pages.push({
+        isFirstPage: isFirst,
+        items: curRows,
+        hasExtra: false,
+        hasSignature: false
+      });
+      isFirst = false;
+      curRows = [rowsToMeasure[i]];
+      curHeight = compactHeaderHeight + theadHeight + 15 + rh;
+    } else {
+      curRows.push(rowsToMeasure[i]);
+      curHeight += rh;
+    }
+  }
+
+  // Handle final page
+  if (curRows.length > 0) {
+    if (curHeight + extraHeight + sigHeight <= maxPageHeight) {
+      pages.push({
+        isFirstPage: isFirst,
+        items: curRows,
+        hasExtra: !!formData.extraHtml,
+        hasSignature: true
+      });
+    } else {
+      pages.push({
+        isFirstPage: isFirst,
+        items: curRows,
+        hasExtra: false,
+        hasSignature: false
+      });
+      pages.push({
+        isFirstPage: false,
+        items: [],
+        hasExtra: !!formData.extraHtml,
+        hasSignature: true
+      });
+    }
+  }
+
+  // Create temporary container for rendering pages
+  const renderContainer = document.createElement('div');
+  renderContainer.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: -9999px;
+    width: 1060px;
+    background: #ffffff;
+    z-index: -9999;
+  `;
+  document.body.appendChild(renderContainer);
+
+  const pageDivs = [];
+  pages.forEach((page, pageIdx) => {
+    const pageDiv = document.createElement('div');
+    pageDiv.style.cssText = `
+      width: 1060px;
+      background: #ffffff;
+      color: #000000;
+      padding: ${activeTab === 'bs5' ? '8px 12px' : '10px 15px'};
+      box-sizing: border-box;
+      font-family: 'Sarabun', 'TH Sarabun New', sans-serif;
+    `;
+
+    let pageHeader = '';
+    if (page.isFirstPage) {
+      pageHeader = fullHeaderHtml;
+    } else {
+      pageHeader = compactHeaderTemplate(pageIdx + 1, pages.length);
+    }
+
+    let tableHtml = '';
+    if (page.items.length > 0) {
+      tableHtml = `
+        <table>
+          <thead>${formData.tableHeaderHtml}</thead>
+          <tbody>
+            ${page.items.join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    pageDiv.innerHTML = `
+      <style>${commonStyle}</style>
+      ${pageHeader}
+      ${tableHtml}
+      ${page.hasExtra ? formData.extraHtml : ''}
+      ${page.hasSignature ? signatureHtml : ''}
+    `;
+
+    renderContainer.appendChild(pageDiv);
+    pageDivs.push(pageDiv);
+  });
 
   try {
-    await html2pdf().set(opt).from(targetEl).save();
+    const pdf = new jsPDF({
+      orientation: 'landscape',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    for (let i = 0; i < pageDivs.length; i++) {
+      const el = pageDivs[i];
+      const canvas = await html2canvas(el, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
+      if (i > 0) {
+        pdf.addPage('a4', 'landscape');
+      }
+
+      const printWidth = 277; // 297mm - 20mm margins
+      const printHeight = (canvas.height / canvas.width) * printWidth;
+      pdf.addImage(imgData, 'JPEG', 10, 8, printWidth, printHeight);
+    }
+
+    pdf.save(`แบบ_${formData.formName}${deptLabel}_ปี${selectedYear}.pdf`);
   } finally {
-    if (document.body.contains(iframe)) {
-      document.body.removeChild(iframe);
+    if (document.body.contains(renderContainer)) {
+      document.body.removeChild(renderContainer);
     }
   }
 }
@@ -792,11 +909,10 @@ export function exportBsToPrint({
       <div style="clear: both;"></div>
 
       <div class="sig-block">
-        <div>ลายมือชื่อ...................................................(${formData.signatureNumber.sign})...................................................</div>
+        <div>ลายมือชื่อ....................................................................</div>
         <div style="text-indent: 40pt;">( ${escapeHtml(approverName)} )</div>
-        <div>ตำแหน่ง .................................................(${formData.signatureNumber.pos}).................................................</div>
-        <div style="text-indent: 40pt;">${escapeHtml(approverPosition)}</div>
-        <div>วันที่............เดือน...............(${formData.signatureNumber.date}).............พ.ศ. .....................</div>
+        <div>ตำแหน่ง ${escapeHtml(approverPosition)}</div>
+        <div>วันที่............เดือน........................พ.ศ. .....................</div>
       </div>
     </body>
     </html>
