@@ -276,9 +276,9 @@ function getBsFormData({
     }).join('');
 
     extraHtml = `
-      <div style="margin-top: 8px; padding: 6px 10px; border: 1px solid #000; background-color: #f8fafc; font-size: 11pt;">
+      <div class="extra-summary-box" style="margin-top: 6px; padding: 5px 8px; border: 1px solid #000; background-color: #f8fafc; font-size: 10pt;">
         <b>สรุปภาพรวมผลการดำเนินการและการทบทวนแผนบริหารความเสี่ยง ประจำปี พ.ศ. ${selectedYear}:</b>
-        <p style="text-indent: 1.5cm; margin: 3px 0 0 0;">${escapeHtml(bs5Data.summary || '')}</p>
+        <p style="text-indent: 1.5cm; margin: 2px 0 0 0;">${escapeHtml(bs5Data.summary || '')}</p>
       </div>
     `;
   }
@@ -514,43 +514,79 @@ export async function exportBsToPdf({
     <html lang="th">
     <head>
       <meta charset="utf-8">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
       <style>
         body {
           margin: 0;
-          padding: 10px;
-          font-family: 'TH Sarabun New', 'TH Sarabun PSK', 'Sarabun', 'Angsana New', sans-serif;
+          padding: 0;
           background: #ffffff;
-          color: #000000;
-        }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          table-layout: fixed;
-          margin-top: 4px;
-          margin-bottom: 6px;
-          font-size: ${activeTab === 'bs5' ? '9.5pt' : '10.5pt'};
-        }
-        th, td {
-          border: 1px solid #000000;
-          padding: 3px 2px;
-          vertical-align: top;
-          word-wrap: break-word;
-        }
-        th {
-          background-color: #f1f5f9;
-          font-weight: bold;
-          text-align: center;
-          vertical-align: middle;
         }
       </style>
     </head>
     <body>
-      <div id="pdf-content-root" style="width: 1060px; background: #ffffff; color: #000000;">
-        <div style="text-align: right; font-weight: bold; font-size: 13pt; margin-bottom: 2px;">แบบ บส. ${formData.formNumber}</div>
-        <div style="text-align: center; margin-bottom: 6px;">
-          <p style="font-weight: bold; font-size: 13pt; margin: 0 0 2px 0;">ชื่อหน่วยงาน ${escapeHtml(orgName)} (1)</p>
-          <h2 style="font-size: 14pt; font-weight: bold; margin: 0 0 2px 0;">${escapeHtml(formData.title)}</h2>
-          <p style="font-size: 12.5pt; margin: 0 0 2px 0;">${formData.subtitle} (2)</p>
+      <div id="pdf-content-root" style="width: 1060px; background: #ffffff; color: #000000; padding: ${activeTab === 'bs5' ? '8px 12px' : '10px 15px'}; box-sizing: border-box; font-family: 'Sarabun', 'TH Sarabun New', sans-serif;">
+        <style>
+          #pdf-content-root * {
+            box-sizing: border-box !important;
+          }
+          #pdf-content-root table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            table-layout: fixed !important;
+            margin-top: ${activeTab === 'bs5' ? '4px' : '6px'} !important;
+            margin-bottom: ${activeTab === 'bs5' ? '6px' : '8px'} !important;
+            border: 1px solid #000000 !important;
+            font-size: ${activeTab === 'bs5' ? '8.5pt' : '10pt'} !important;
+            line-height: 1.15 !important;
+          }
+          #pdf-content-root thead {
+            display: table-header-group !important;
+          }
+          #pdf-content-root tr {
+            page-break-inside: avoid !important;
+          }
+          #pdf-content-root th, #pdf-content-root td {
+            border: 1px solid #000000 !important;
+            border-width: 1px !important;
+            border-style: solid !important;
+            border-color: #000000 !important;
+            padding: ${activeTab === 'bs5' ? '3px 2px' : '4px 3px'} !important;
+            vertical-align: top !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+            color: #000000 !important;
+          }
+          #pdf-content-root th {
+            background-color: #f1f5f9 !important;
+            font-weight: bold !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+          }
+          #pdf-content-root .extra-summary-box {
+            margin-top: 6px !important;
+            padding: 5px 8px !important;
+            border: 1px solid #000000 !important;
+            background-color: #f8fafc !important;
+            font-size: 10pt !important;
+          }
+          #pdf-content-root .sig-block {
+            width: 330pt !important;
+            float: right !important;
+            text-align: left !important;
+            margin-top: ${activeTab === 'bs5' ? '10pt' : '14pt'} !important;
+            font-size: ${activeTab === 'bs5' ? '11.5pt' : '12pt'} !important;
+            line-height: 1.5 !important;
+            page-break-inside: avoid !important;
+          }
+        </style>
+
+        <div style="text-align: right; font-weight: bold; font-size: ${activeTab === 'bs5' ? '12pt' : '13pt'}; margin-bottom: 2px;">แบบ บส. ${formData.formNumber}</div>
+        <div style="text-align: center; margin-bottom: ${activeTab === 'bs5' ? '6px' : '8px'};">
+          <p style="font-weight: bold; font-size: ${activeTab === 'bs5' ? '13pt' : '14pt'}; margin: 0 0 2px 0;">ชื่อหน่วยงาน ${escapeHtml(orgName)} (1)</p>
+          <h2 style="font-size: ${activeTab === 'bs5' ? '14pt' : '15pt'}; font-weight: bold; margin: 0 0 2px 0;">${escapeHtml(formData.title)}</h2>
+          <p style="font-size: ${activeTab === 'bs5' ? '12pt' : '13pt'}; margin: 0;">${formData.subtitle} (2)</p>
         </div>
 
         <table>
@@ -566,7 +602,7 @@ export async function exportBsToPdf({
 
         <div style="clear: both;"></div>
 
-        <div style="width: 330pt; float: right; margin-top: 15pt; font-size: 12pt; line-height: 1.6;">
+        <div class="sig-block">
           <div>ลายมือชื่อ...................................................(${formData.signatureNumber.sign})...................................................</div>
           <div style="text-indent: 40pt;">( ${escapeHtml(approverName)} )</div>
           <div>ตำแหน่ง .................................................(${formData.signatureNumber.pos}).................................................</div>
@@ -703,7 +739,7 @@ export function exportBsToPrint({
           table-layout: fixed;
           margin-top: 4px;
           margin-bottom: 6px;
-          font-size: ${activeTab === 'bs5' ? '9.5pt' : '10.5pt'};
+          font-size: ${activeTab === 'bs5' ? '8.5pt' : '10pt'};
         }
         thead {
           display: table-header-group;
@@ -713,7 +749,7 @@ export function exportBsToPrint({
         }
         th, td {
           border: 1px solid #000;
-          padding: 3px 2px;
+          padding: ${activeTab === 'bs5' ? '3px 2px' : '4px 3px'};
           vertical-align: top;
           word-wrap: break-word;
         }
@@ -727,9 +763,9 @@ export function exportBsToPrint({
           width: 320pt;
           float: right;
           text-align: left;
-          margin-top: 15pt;
-          font-size: 12pt;
-          line-height: 1.6;
+          margin-top: ${activeTab === 'bs5' ? '10pt' : '14pt'};
+          font-size: ${activeTab === 'bs5' ? '11.5pt' : '12pt'};
+          line-height: 1.5;
           page-break-inside: avoid;
         }
       </style>
