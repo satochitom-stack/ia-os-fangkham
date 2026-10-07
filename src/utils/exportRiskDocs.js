@@ -77,7 +77,7 @@ function getBsFormData({
     totalCols = showDeptCol ? 8 : 7;
 
     tableHeaderHtml = `
-      <tr style="mso-yfti-tblheader: yes; background-color: #f1f5f9;">
+      <tr style="mso-yfti-tblheader: yes;">
         <th style="width: 45pt; text-align: center; vertical-align: middle;">(3)<br/>รหัสความเสี่ยง</th>
         <th style="width: 110pt; text-align: center; vertical-align: middle;">(4)<br/>ยุทธศาสตร์ที่รับผิดชอบ</th>
         <th style="width: 140pt; text-align: center; vertical-align: middle;">(5)<br/>โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ</th>
@@ -116,7 +116,7 @@ function getBsFormData({
     totalCols = 10;
 
     tableHeaderHtml = `
-      <tr style="mso-yfti-tblheader: yes; background-color: #f1f5f9;">
+      <tr style="mso-yfti-tblheader: yes;">
         <th style="width: 45pt; text-align: center; vertical-align: middle;">(3)<br/>รหัสความเสี่ยง</th>
         <th style="width: 95pt; text-align: center; vertical-align: middle;">(4)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
         <th style="width: 95pt; text-align: center; vertical-align: middle;">(5)<br/>วัตถุประสงค์</th>
@@ -162,7 +162,7 @@ function getBsFormData({
     totalCols = 9;
 
     tableHeaderHtml = `
-      <tr style="mso-yfti-tblheader: yes; background-color: #f1f5f9;">
+      <tr style="mso-yfti-tblheader: yes;">
         <th style="width: 45pt; text-align: center; vertical-align: middle;">(3)<br/>รหัสความเสี่ยง</th>
         <th style="width: 95pt; text-align: center; vertical-align: middle;">(4)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
         <th style="width: 90pt; text-align: center; vertical-align: middle;">(5)<br/>ความเสี่ยง</th>
@@ -198,7 +198,7 @@ function getBsFormData({
     totalCols = 9;
 
     tableHeaderHtml = `
-      <tr style="mso-yfti-tblheader: yes; background-color: #f1f5f9;">
+      <tr style="mso-yfti-tblheader: yes;">
         <th style="width: 45pt; text-align: center; vertical-align: middle;">(3)<br/>รหัสความเสี่ยง</th>
         <th style="width: 90pt; text-align: center; vertical-align: middle;">(4)<br/>โครงการ/กิจกรรม/ภารกิจ</th>
         <th style="width: 100pt; text-align: center; vertical-align: middle;">(5)<br/>วิธีการจัดการความเสี่ยง</th>
@@ -233,30 +233,30 @@ function getBsFormData({
     signatureNumber = { sign: '14', pos: '15', date: '16' };
     totalCols = 16;
 
-    // Header 16 คอลัมน์มาตรฐาน ว 3482 (ความกว้างรวม = 744pt พอดีกับขนาดหน้ากระดาษ A4 แนวนอน ไม่แตก ไม่ล้น)
+    // Header 16 คอลัมน์มาตรฐาน ว 3482 (ความกว้างรวม = 770pt พอดีกับขนาดหน้ากระดาษ A4 แนวนอน ไม่แตก ไม่ล้น)
     tableHeaderHtml = `
-      <tr style="mso-yfti-tblheader: yes; background-color: #f1f5f9;">
+      <tr style="mso-yfti-tblheader: yes;">
         <th rowspan="2" style="width: 38pt; vertical-align: middle; text-align: center;">(3)<br/>รหัสความเสี่ยง</th>
-        <th rowspan="2" style="width: 85pt; vertical-align: middle; text-align: center;">(4)<br/>โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ</th>
-        <th rowspan="2" style="width: 75pt; vertical-align: middle; text-align: center;">(5)<br/>ความเสี่ยง</th>
-        <th colspan="3" style="width: 80pt; vertical-align: middle; text-align: center;">(6)<br/>คะแนนระดับความเสี่ยง<br/>ก่อนการดำเนินการ</th>
+        <th rowspan="2" style="width: 90pt; vertical-align: middle; text-align: center;">(4)<br/>โครงการ/กิจกรรม/ภารกิจ อปท. ที่สำคัญ</th>
+        <th rowspan="2" style="width: 72pt; vertical-align: middle; text-align: center;">(5)<br/>ความเสี่ยง</th>
+        <th colspan="3" style="width: 90pt; vertical-align: middle; text-align: center;">(6)<br/>คะแนนระดับความเสี่ยง<br/>ก่อนการดำเนินการ</th>
         <th rowspan="2" style="width: 75pt; vertical-align: middle; text-align: center;">(7)<br/>วิธีการจัดการความเสี่ยง</th>
         <th rowspan="2" style="width: 75pt; vertical-align: middle; text-align: center;">(8)<br/>ผลดำเนินการจากการจัดการความเสี่ยง</th>
-        <th colspan="3" style="width: 80pt; vertical-align: middle; text-align: center;">(9)<br/>คะแนนระดับความเสี่ยง<br/>ภายหลังการดำเนินการ</th>
-        <th rowspan="2" style="width: 45pt; vertical-align: middle; text-align: center;">(10)<br/>การเปลี่ยนแปลงระดับความเสี่ยง</th>
-        <th rowspan="2" style="width: 65pt; vertical-align: middle; text-align: center;">(11)<br/>ความเสี่ยงคงเหลือ/เกิดขึ้นใหม่</th>
-        <th colspan="2" style="width: 60pt; vertical-align: middle; text-align: center;">(12)<br/>สรุปความเสี่ยง</th>
-        <th rowspan="2" style="width: 75pt; vertical-align: middle; text-align: center;">(13)<br/>แนวทาง/มาตรการจัดการความเสี่ยง สำหรับปีถัดไป</th>
+        <th colspan="3" style="width: 90pt; vertical-align: middle; text-align: center;">(9)<br/>คะแนนระดับความเสี่ยง<br/>ภายหลังการดำเนินการ</th>
+        <th rowspan="2" style="width: 50pt; vertical-align: middle; text-align: center;">(10)<br/>การเปลี่ยนแปลง<br/>ระดับความเสี่ยง</th>
+        <th rowspan="2" style="width: 64pt; vertical-align: middle; text-align: center;">(11)<br/>ความเสี่ยงคงเหลือ/<br/>เกิดขึ้นใหม่</th>
+        <th colspan="2" style="width: 50pt; vertical-align: middle; text-align: center;">(12)<br/>สรุปความเสี่ยง</th>
+        <th rowspan="2" style="width: 76pt; vertical-align: middle; text-align: center;">(13)<br/>แนวทาง/มาตรการจัดการความเสี่ยง สำหรับปีถัดไป</th>
       </tr>
-      <tr style="mso-yfti-tblheader: yes; background-color: #f1f5f9;">
-        <th style="width: 24pt; vertical-align: middle; text-align: center;">โอกาส<br/>(1)</th>
-        <th style="width: 24pt; vertical-align: middle; text-align: center;">ผลกระทบ<br/>(2)</th>
-        <th style="width: 32pt; vertical-align: middle; text-align: center;">คะแนน<br/>(3)=(1)x(2)</th>
-        <th style="width: 24pt; vertical-align: middle; text-align: center;">โอกาส<br/>(1)</th>
-        <th style="width: 24pt; vertical-align: middle; text-align: center;">ผลกระทบ<br/>(2)</th>
-        <th style="width: 32pt; vertical-align: middle; text-align: center;">คะแนน<br/>(3)=(1)x(2)</th>
-        <th style="width: 30pt; vertical-align: middle; text-align: center;">ควบคุมได้</th>
-        <th style="width: 30pt; vertical-align: middle; text-align: center;">ควบคุมไม่ได้</th>
+      <tr style="mso-yfti-tblheader: yes;">
+        <th style="width: 27pt; vertical-align: middle; text-align: center; font-size: 7.5pt; padding: 2px 1px;">โอกาส<br/>(1)</th>
+        <th style="width: 31pt; vertical-align: middle; text-align: center; font-size: 7.5pt; padding: 2px 1px;">ผลกระทบ<br/>(2)</th>
+        <th style="width: 32pt; vertical-align: middle; text-align: center; font-size: 7.5pt; padding: 2px 1px;">คะแนน<br/>(3)=(1)x(2)</th>
+        <th style="width: 27pt; vertical-align: middle; text-align: center; font-size: 7.5pt; padding: 2px 1px;">โอกาส<br/>(1)</th>
+        <th style="width: 31pt; vertical-align: middle; text-align: center; font-size: 7.5pt; padding: 2px 1px;">ผลกระทบ<br/>(2)</th>
+        <th style="width: 32pt; vertical-align: middle; text-align: center; font-size: 7.5pt; padding: 2px 1px;">คะแนน<br/>(3)=(1)x(2)</th>
+        <th style="width: 25pt; vertical-align: middle; text-align: center; font-size: 7pt; padding: 2px 1px;">ควบคุมได้</th>
+        <th style="width: 25pt; vertical-align: middle; text-align: center; font-size: 7pt; padding: 2px 1px;">ควบคุมไม่ได้</th>
       </tr>
     `;
 
@@ -439,9 +439,9 @@ export function exportBsToWord({
       <div class="Section1">
         <div class="header-top">แบบ บส. ${formData.formNumber}</div>
         <div class="header-center">
-          <p style="font-weight: bold;">ชื่อหน่วยงาน ${escapeHtml(orgName)} (1)</p>
+          <p style="font-weight: bold;">ชื่อหน่วยงาน ${escapeHtml(orgName)}</p>
           <h2>${escapeHtml(formData.title)}</h2>
-          <p>${formData.subtitle} (2)</p>
+          <p>${formData.subtitle}</p>
         </div>
 
         <table>
@@ -519,6 +519,9 @@ export async function exportBsToPdf({
       font-size: ${activeTab === 'bs5' ? '8.5pt' : '10pt'} !important;
       line-height: 1.15 !important;
     }
+    tr {
+      background: transparent !important;
+    }
     th, td {
       border: 1px solid #000000 !important;
       border-width: 1px !important;
@@ -574,9 +577,9 @@ export async function exportBsToPdf({
   const fullHeaderHtml = `
     <div id="m-header" style="text-align: center; margin-bottom: 6px;">
       <div style="text-align: right; font-weight: bold; font-size: ${activeTab === 'bs5' ? '12pt' : '13pt'}; margin-bottom: 2px;">แบบ บส. ${formData.formNumber}</div>
-      <p style="font-weight: bold; font-size: ${activeTab === 'bs5' ? '13pt' : '14pt'}; margin: 0 0 2px 0;">ชื่อหน่วยงาน ${escapeHtml(orgName)} (1)</p>
+      <p style="font-weight: bold; font-size: ${activeTab === 'bs5' ? '13pt' : '14pt'}; margin: 0 0 2px 0;">ชื่อหน่วยงาน ${escapeHtml(orgName)}</p>
       <h2 style="font-size: ${activeTab === 'bs5' ? '14pt' : '15pt'}; font-weight: bold; margin: 0 0 2px 0;">${escapeHtml(formData.title)}</h2>
-      <p style="font-size: ${activeTab === 'bs5' ? '12pt' : '13pt'}; margin: 0;">${formData.subtitle} (2)</p>
+      <p style="font-size: ${activeTab === 'bs5' ? '12pt' : '13pt'}; margin: 0;">${formData.subtitle}</p>
     </div>
   `;
 
@@ -890,9 +893,9 @@ export function exportBsToPrint({
     <body>
       <div class="header-top">แบบ บส. ${formData.formNumber}</div>
       <div class="header-center">
-        <p style="font-weight: bold;">ชื่อหน่วยงาน ${escapeHtml(orgName)} (1)</p>
+        <p style="font-weight: bold;">ชื่อหน่วยงาน ${escapeHtml(orgName)}</p>
         <h2>${escapeHtml(formData.title)}</h2>
-        <p>${formData.subtitle} (2)</p>
+        <p>${formData.subtitle}</p>
       </div>
 
       <table>
