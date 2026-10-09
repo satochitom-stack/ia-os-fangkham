@@ -710,17 +710,24 @@ export default function HappyHogView() {
     }
   });
 
-  // Crop Plots (4 plots)
+  // Default 4 Crop Plots
+  const DEFAULT_CROPS = [
+    { id: 0, seed: 'corn', plantedAt: Date.now() - 15000, duration: 25 },
+    { id: 1, seed: 'carrot', plantedAt: Date.now() - 25000, duration: 40 },
+    { id: 2, seed: null, plantedAt: null, duration: 0 },
+    { id: 3, seed: null, plantedAt: null, duration: 0 }
+  ];
+
+  // Crop Plots (4 plots) - Guaranteed to have 4 plots
   const [crops, setCrops] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('happy_hog_crops') || '[]');
+      const saved = JSON.parse(localStorage.getItem('happy_hog_crops') || '[]');
+      if (Array.isArray(saved) && saved.length >= 4) {
+        return saved;
+      }
+      return DEFAULT_CROPS;
     } catch {
-      return [
-        { id: 0, seed: 'corn', plantedAt: Date.now() - 15000, duration: 25 },
-        { id: 1, seed: 'carrot', plantedAt: Date.now() - 25000, duration: 40 },
-        { id: 2, seed: null, plantedAt: null, duration: 0 },
-        { id: 3, seed: null, plantedAt: null, duration: 0 }
-      ];
+      return DEFAULT_CROPS;
     }
   });
 
@@ -732,6 +739,76 @@ export default function HappyHogView() {
       return { bran: 3, corn: 2, carrot: 1, pumpkin: 0 };
     }
   });
+
+  // Daily Quests State
+  const INITIAL_QUESTS = [
+    { id: 'feed', title: 'ให้อาหารหมูในคอก', desc: 'ให้อาหารน้องหมูตัวใดก็ได้ 3 ครั้ง', target: 3, current: 0, rewardCoins: 120, rewardEnergy: 20, icon: '🥣', claimed: false },
+    { id: 'bath', title: 'อาบน้ำขัดตัวหมู', desc: 'พาหมูไปแช่น้ำขัดผิว 2 ครั้ง', target: 2, current: 0, rewardCoins: 100, rewardEnergy: 15, icon: '🧼', claimed: false },
+    { id: 'crop', title: 'เก็บเกี่ยวผลผลิตการเกษตร', desc: 'เก็บเกี่ยวพืชผักจากแปลงปลูก 2 แปลง', target: 2, current: 0, rewardCoins: 150, rewardCrops: { bran: 2 }, icon: '🧺', claimed: false },
+    { id: 'clean', title: 'เก็บกวาดลานฟาร์ม', desc: 'เก็บมูลหมูหรือวัชพืชในลานฟาร์ม 3 ชิ้น', target: 3, current: 0, rewardCoins: 120, icon: '🧹', claimed: false },
+    { id: 'visit', title: 'ออกไปเยี่ยมเพื่อน อบต.', desc: 'เยี่ยมคอกเพื่อนร่วมงานและช่วยให้อาหาร', target: 1, current: 0, rewardCoins: 100, icon: '🚜', claimed: false },
+    { id: 'sell', title: 'ขายหมูส่งโรงงานพัสดุ', desc: 'เลี้ยงหมูจนโตแล้วขายทำกำไร 1 ตัว', target: 1, current: 0, rewardCoins: 300, icon: '💰', claimed: false }
+  ];
+
+  const [quests, setQuests] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('happy_hog_quests') || '[]');
+      if (Array.isArray(saved) && saved.length > 0) return saved;
+      return INITIAL_QUESTS;
+    } catch {
+      return INITIAL_QUESTS;
+    }
+  });
+
+  // Yard Drops: Interactive litter / gold drops in the farm pen
+  const [yardDrops, setYardDrops] = useState([
+    { id: 1, type: 'poop', icon: '💩', label: 'มูลหมูชีวภาพ', reward: 25, x: 44, y: 56 },
+    { id: 2, type: 'weed', icon: '🌿', label: 'วัชพืชฟาร์ม', reward: 20, x: 60, y: 44 },
+    { id: 3, type: 'coin', icon: '⭐', label: 'เหรียญทองนำโชค', reward: 50, x: 50, y: 62 }
+  ]);
+
+  // Lucky Piggy Wheel
+  const [showWheelModal, setShowWheelModal] = useState(false);
+  const [wheelSpinsToday, setWheelSpinsToday] = useState(() => {
+    const saved = localStorage.getItem('happy_hog_wheel_spins');
+    return saved !== null ? parseInt(saved, 10) : 3;
+  });
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [wheelRotation, setWheelRotation] = useState(0);
+
+  // Urgent Bounties from Local Government Departments
+  const [bounties, setBounties] = useState([
+    {
+      id: 'b1',
+      dept: 'กองช่าง อบต.',
+      avatar: '👷',
+      title: 'จัดซื้อหมูสายลุยตรวจงาน',
+      desc: 'ต้องการหมูช่าง Factor F หรือหมูน้ำหนัก 45kg ขึ้นไป',
+      rewardCoins: 800,
+      reqBreed: 'engineer',
+      minWeight: 45
+    },
+    {
+      id: 'b2',
+      dept: 'กองคลัง อปท.',
+      avatar: '👩‍💼',
+      title: 'โครงการตรวจนับพัสดุสิ้นปี',
+      desc: 'ต้องการหมูผู้ตรวจ ปค.5 หรือหมูทองคำ 1 ตัว',
+      rewardCoins: 1200,
+      reqBreed: 'auditor',
+      minWeight: 50
+    },
+    {
+      id: 'b3',
+      dept: 'สำนักปลัด อบต.',
+      avatar: '👨‍💼',
+      title: 'มหกรรมสัตว์เลี้ยงชุมชนสัมพันธ์',
+      desc: 'ต้องการหมูซากุระหรือหมูสายรุ้ง สตง.',
+      rewardCoins: 1500,
+      reqBreed: 'sakura',
+      minWeight: 45
+    }
+  ]);
 
   // Daily Login Progress
   const [loginData, setLoginData] = useState(() => {
@@ -759,13 +836,37 @@ export default function HappyHogView() {
   const [hearts, setHearts] = useState([]);
   const [currentTime, setCurrentTime] = useState(Date.now());
 
-  // Timer loop for crop growth and energy regeneration
+  // Timer loop for crop growth, energy regeneration, and yard litter spawning
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(Date.now());
       setEnergy((e) => Math.min(100, e + 1));
     }, 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  // Periodic Litter & Gold Drops Spawner in Farm Yard
+  useEffect(() => {
+    const dropTimer = setInterval(() => {
+      setYardDrops((prev) => {
+        if (prev.length >= 5) return prev;
+        const types = [
+          { type: 'poop', icon: '💩', label: 'มูลหมูชีวภาพ', reward: 25 },
+          { type: 'weed', icon: '🌿', label: 'วัชพืชฟาร์ม', reward: 20 },
+          { type: 'bug', icon: '🐛', label: 'หนอนกินใบไม้', reward: 35 },
+          { type: 'coin', icon: '⭐', label: 'เหรียญทองนำโชค', reward: 50 }
+        ];
+        const selected = types[Math.floor(Math.random() * types.length)];
+        const newDrop = {
+          id: Date.now(),
+          ...selected,
+          x: Math.round(34 + Math.random() * 32),
+          y: Math.round(38 + Math.random() * 26)
+        };
+        return [...prev, newDrop];
+      });
+    }, 12000);
+    return () => clearInterval(dropTimer);
   }, []);
 
   const todayStr = new Date().toISOString().slice(0, 10);
@@ -786,7 +887,9 @@ export default function HappyHogView() {
     localStorage.setItem('happy_hog_crop_inv', JSON.stringify(cropInventory));
     localStorage.setItem('happy_hog_login_data', JSON.stringify(loginData));
     localStorage.setItem('happy_hog_neighbors', JSON.stringify(neighbors));
-  }, [coins, energy, pigs, isLocked, activeThemeId, unlockedThemes, unlockedBreeds, stats, crops, cropInventory, loginData, neighbors]);
+    localStorage.setItem('happy_hog_quests', JSON.stringify(quests));
+    localStorage.setItem('happy_hog_wheel_spins', wheelSpinsToday.toString());
+  }, [coins, energy, pigs, isLocked, activeThemeId, unlockedThemes, unlockedBreeds, stats, crops, cropInventory, loginData, neighbors, quests, wheelSpinsToday]);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -912,6 +1015,18 @@ export default function HappyHogView() {
     }
   };
 
+  const advanceQuest = (questId, amount = 1) => {
+    setQuests((prev) =>
+      prev.map((q) => {
+        if (q.id === questId && !q.claimed) {
+          const nextVal = Math.min(q.target, q.current + amount);
+          return { ...q, current: nextVal };
+        }
+        return q;
+      })
+    );
+  };
+
   const handleDirectFeed = (targetPig, food) => {
     playSound('feed', isMuted);
     setPigs((prev) =>
@@ -930,6 +1045,7 @@ export default function HappyHogView() {
       })
     );
     setStats((s) => ({ ...s, feedCount: s.feedCount + 1 }));
+    advanceQuest('feed', 1);
     setHearts((h) => [...h, { id: Date.now(), x: targetPig.x, y: targetPig.y - 12 }]);
     setTimeout(() => setHearts((h) => h.slice(1)), 1200);
   };
@@ -953,6 +1069,7 @@ export default function HappyHogView() {
       prev.map((p) => (p.id === selectedPig.id ? { ...p, cleanliness: 100 } : p))
     );
     setStats((s) => ({ ...s, bathCount: s.bathCount + 1 }));
+    advanceQuest('bath', 1);
 
     const newBubbles = Array.from({ length: 8 }).map((_, i) => ({
       id: Date.now() + i,
@@ -1012,6 +1129,7 @@ export default function HappyHogView() {
     }
 
     setStats((s) => ({ ...s, soldCount: s.soldCount + 1 }));
+    advanceQuest('sell', 1);
     showToast(`💰 ขาย ${pig.name} (${pig.weight} kg) ได้รับ ${earnings.toLocaleString()} เหรียญ!`);
   };
 
@@ -1147,7 +1265,113 @@ export default function HappyHogView() {
       prev.map((p) => (p.id === plotId ? { id: plotId, seed: null, plantedAt: null, duration: 0 } : p))
     );
 
+    advanceQuest('crop', 1);
     showToast(`🧺 เก็บเกี่ยว "${meta.name}" ได้ผลผลิต +${meta.yieldCount} ถุง เข้าคลังอาหารฟรี!`);
+  };
+
+  const handleCollectYardDrop = (e, drop) => {
+    e.stopPropagation();
+    setYardDrops((prev) => prev.filter((d) => d.id !== drop.id));
+    setCoins((c) => c + drop.reward);
+    advanceQuest('clean', 1);
+    playSound('coin', isMuted);
+    showToast(`✨ เก็บ ${drop.label} ในลานฟาร์ม! ได้รับ +${drop.reward} 🪙`);
+  };
+
+  const handleClaimQuest = (quest) => {
+    if (quest.current < quest.target || quest.claimed) return;
+    if (quest.rewardCoins) setCoins((c) => c + quest.rewardCoins);
+    if (quest.rewardEnergy) setEnergy((e) => Math.min(100, e + quest.rewardEnergy));
+    if (quest.rewardCrops) {
+      setCropInventory((inv) => {
+        const next = { ...inv };
+        Object.entries(quest.rewardCrops).forEach(([k, v]) => {
+          next[k] = (next[k] || 0) + v;
+        });
+        return next;
+      });
+    }
+    setQuests((prev) => prev.map((q) => (q.id === quest.id ? { ...q, claimed: true } : q)));
+    playSound('fanfare', isMuted);
+    showToast(`🎉 รับรางวัลเควส "${quest.title}" สำเร็จ!`);
+  };
+
+  const handleFulfillBounty = (bounty) => {
+    const eligibleIndex = pigs.findIndex((p) =>
+      bounty.reqBreed ? p.breed === bounty.reqBreed : p.weight >= (bounty.minWeight || 45)
+    );
+    if (eligibleIndex === -1) {
+      showToast(`❌ ไม่มีหมูที่ตรงตามความต้องการของ ${bounty.dept}!`);
+      return;
+    }
+    if (pigs.length <= 1) {
+      showToast('⚠️ ไม่ควรส่งหมูตัวสุดท้าย เดี๋ยวฟาร์มจะร้างนะ!');
+      return;
+    }
+    const chosenPig = pigs[eligibleIndex];
+    setPigs((prev) => prev.filter((_, idx) => idx !== eligibleIndex));
+    if (selectedPigId === chosenPig.id) {
+      const remaining = pigs.filter((_, idx) => idx !== eligibleIndex);
+      setSelectedPigId(remaining[0]?.id || null);
+    }
+    setCoins((c) => c + bounty.rewardCoins);
+    setBounties((prev) => prev.filter((b) => b.id !== bounty.id));
+    advanceQuest('sell', 1);
+    playSound('fanfare', isMuted);
+    showToast(`📜 ส่งมอบ ${chosenPig.name} ให้ ${bounty.dept} สำเร็จ! ได้รับค่าตอบแทนพิเศษ +${bounty.rewardCoins.toLocaleString()} 🪙`);
+  };
+
+  const WHEEL_PRIZES = [
+    { label: 'เหรียญ +150', icon: '💰', color: '#f59e0b', coins: 150 },
+    { label: 'ข้าวโพด 3 ถุง', icon: '🌽', color: '#10b981', crops: { corn: 3 } },
+    { label: 'พลังงาน +30', icon: '⚡', color: '#3b82f6', energy: 30 },
+    { label: 'เหรียญ +300', icon: '🪙', color: '#ec4899', coins: 300 },
+    { label: 'แครอททอง 2 ถุง', icon: '🥕', color: '#f97316', crops: { carrot: 2 } },
+    { label: 'เหรียญ +500', icon: '💎', color: '#8b5cf6', coins: 500 },
+    { label: 'ฟักทองยักษ์ 1 ลูก', icon: '🎃', color: '#eab308', crops: { pumpkin: 1 } },
+    { label: 'แจ็กพอต 1,000฿', icon: '👑', color: '#ef4444', coins: 1000 }
+  ];
+
+  const handleSpinWheel = () => {
+    if (isSpinning) return;
+    if (wheelSpinsToday <= 0 && coins < 50) {
+      showToast('❌ สิทธิ์หมุนฟรีหมดแล้ว และเหรียญไม่พอ (รอบละ 50 เหรียญ)');
+      return;
+    }
+
+    if (wheelSpinsToday > 0) {
+      setWheelSpinsToday((s) => s - 1);
+    } else {
+      setCoins((c) => c - 50);
+    }
+
+    setIsSpinning(true);
+    playSound('feed', isMuted);
+    const prizeIndex = Math.floor(Math.random() * WHEEL_PRIZES.length);
+    const numSlices = WHEEL_PRIZES.length;
+    const sliceAngle = 360 / numSlices;
+    const extraTurns = 5 * 360;
+    const stopAngle = 360 - (prizeIndex * sliceAngle + sliceAngle / 2);
+    const finalRot = wheelRotation + extraTurns + (stopAngle - (wheelRotation % 360));
+    setWheelRotation(finalRot);
+
+    setTimeout(() => {
+      setIsSpinning(false);
+      const won = WHEEL_PRIZES[prizeIndex];
+      if (won.coins) setCoins((c) => c + won.coins);
+      if (won.energy) setEnergy((e) => Math.min(100, e + won.energy));
+      if (won.crops) {
+        setCropInventory((inv) => {
+          const next = { ...inv };
+          Object.entries(won.crops).forEach(([k, v]) => {
+            next[k] = (next[k] || 0) + v;
+          });
+          return next;
+        });
+      }
+      playSound('fanfare', isMuted);
+      showToast(`🎉 ยินดีด้วย! วงล้อหมูพารวยมอบ: ${won.label} ${won.icon}`);
+    }, 3600);
   };
 
   const handleAttemptSteal = (neighbor) => {
@@ -1205,6 +1429,7 @@ export default function HappyHogView() {
     }
     setEnergy((e) => Math.max(0, e - 10));
     setCoins((c) => c + 35);
+    advanceQuest('visit', 1);
     playSound('coin', isMuted);
     showToast(`🤝 ช่วยดูแลและให้อาหารหมูฟาร์ม ${neighbor.name} ได้รับเหรียญมิตรภาพ +35 🪙!`);
   };
@@ -1349,6 +1574,20 @@ export default function HappyHogView() {
               <span className="hidden sm:inline">ของขวัญ</span>
             </button>
 
+            {/* Lucky Piggy Wheel Button */}
+            <button
+              onClick={() => setShowWheelModal(true)}
+              className="px-2.5 py-1 bg-gradient-to-b from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-xl font-black text-xs border-2 border-purple-300 shadow-xs flex items-center space-x-1 cursor-pointer"
+            >
+              <span>🎡</span>
+              <span className="hidden sm:inline">หมุนวงล้อ</span>
+              {wheelSpinsToday > 0 && (
+                <span className="bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full">
+                  {wheelSpinsToday}
+                </span>
+              )}
+            </button>
+
             {/* Visiting Neighbors Button */}
             <button
               onClick={() => setShowNeighborsModal(true)}
@@ -1369,7 +1608,7 @@ export default function HappyHogView() {
         </div>
 
         {/* ================= NAVIGATION TABS ================= */}
-        <div className="relative z-10 flex space-x-2 bg-amber-950/60 p-1 rounded-2xl border border-amber-800/80 w-fit">
+        <div className="relative z-10 flex flex-wrap gap-1.5 bg-amber-950/60 p-1.5 rounded-2xl border border-amber-800/80 w-fit">
           <button
             onClick={() => setActiveTab('farm')}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center space-x-1.5 transition-all cursor-pointer ${
@@ -1391,6 +1630,21 @@ export default function HappyHogView() {
           >
             <Sprout className="w-3.5 h-3.5" />
             <span>แปลงปลูกพืชผัก (4 แปลง)</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('quests')}
+            className={`relative px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center space-x-1.5 transition-all cursor-pointer ${
+              activeTab === 'quests'
+                ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 shadow-md scale-102'
+                : 'text-amber-200 hover:text-white'
+            }`}
+          >
+            <Trophy className="w-3.5 h-3.5 text-yellow-400" />
+            <span>ภารกิจ & จัดซื้อ อปท.</span>
+            {quests.some((q) => q.current >= q.target && !q.claimed) && (
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping absolute -top-0.5 -right-0.5" />
+            )}
           </button>
 
           <button
@@ -1524,6 +1778,24 @@ export default function HappyHogView() {
                     className="absolute pointer-events-none text-2xl animate-ping z-40"
                   >
                     🫧
+                  </div>
+                ))}
+
+                {/* ================= INTERACTIVE FARM YARD DROPS (TAP-TO-EARN & CLEANUP) ================= */}
+                {yardDrops.map((drop) => (
+                  <div
+                    key={drop.id}
+                    onClick={(e) => handleCollectYardDrop(e, drop)}
+                    style={{ left: `${drop.x}%`, top: `${drop.y}%` }}
+                    className="absolute z-25 -translate-x-1/2 -translate-y-1/2 cursor-pointer group hover:scale-125 active:scale-95 transition-all select-none"
+                    title={`${drop.label} (แตะเพื่อเก็บรับ +${drop.reward} 🪙)`}
+                  >
+                    <div className="w-9 h-9 rounded-full bg-white/95 backdrop-blur-xs border-2 border-amber-400 shadow-xl flex items-center justify-center text-lg animate-bounce ring-2 ring-amber-300/60">
+                      {drop.icon}
+                    </div>
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-5 left-1/2 -translate-x-1/2 bg-[#2b180d] text-amber-200 text-[9px] font-black px-1.5 py-0.5 rounded-full whitespace-nowrap border border-amber-600 pointer-events-none shadow-md">
+                      +{drop.reward} 🪙
+                    </div>
                   </div>
                 ))}
 
@@ -2012,6 +2284,230 @@ export default function HappyHogView() {
             </button>
           </div>
         )}
+
+        {/* ================= TAB 5: QUESTS & DEPARTMENT BOUNTIES (EARN COINS & PRIZES) ================= */}
+        {activeTab === 'quests' && (
+          <div className="relative z-10 space-y-5">
+            {/* 1. Lucky Wheel Teaser Hero Banner */}
+            <div className="relative overflow-hidden bg-gradient-to-r from-purple-800 via-indigo-900 to-amber-900 border-4 border-amber-500 rounded-3xl p-5 sm:p-6 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="relative z-10 flex items-center space-x-4 text-center md:text-left">
+                <div
+                  className="w-16 h-16 rounded-2xl bg-amber-400 border-2 border-amber-200 flex items-center justify-center text-3xl shadow-lg shrink-0 animate-spin"
+                  style={{ animationDuration: '8s' }}
+                >
+                  🎡
+                </div>
+                <div>
+                  <div className="flex items-center justify-center md:justify-start space-x-2">
+                    <span className="font-black text-amber-300 font-mono text-lg">วงล้อหมูพารวย (Lucky Piggy Wheel)</span>
+                    <span className="bg-rose-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase">
+                      ฟรีวันละ 3 รอบ
+                    </span>
+                  </div>
+                  <p className="text-xs text-amber-100/90 mt-1">
+                    หมุนรับเหรียญทอง อาหารชั้นยอด พลังงาน หรือลุ้นแจ็กพอต 1,000 เหรียญทองคำ!
+                  </p>
+                </div>
+              </div>
+
+              <div className="relative z-10 flex items-center space-x-3">
+                <button
+                  onClick={() => setShowWheelModal(true)}
+                  className="px-6 py-3 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 text-amber-950 rounded-2xl font-black text-sm border-2 border-amber-200 shadow-[0_4px_0_#b45309] active:translate-y-1 active:shadow-none cursor-pointer flex items-center space-x-2 animate-bounce"
+                >
+                  <span>🎡</span>
+                  <span>
+                    {wheelSpinsToday > 0 ? `หมุนวงล้อทันที (ฟรี ${wheelSpinsToday} รอบ)` : 'หมุนวงล้อ (50 🪙)'}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* 2. Daily Quests Grid */}
+            <div className="bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] p-5 sm:p-6 rounded-3xl border-4 border-amber-700 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-amber-300 pb-3">
+                <div>
+                  <h3 className="text-lg font-black text-amber-950 font-mono flex items-center space-x-2">
+                    <Trophy className="w-5 h-5 text-amber-600" />
+                    <span>ภารกิจเกษตรกร อปท. ประจำวัน (Daily Quests)</span>
+                  </h3>
+                  <p className="text-xs text-amber-900 mt-0.5 font-medium">
+                    ทำกิจกรรมดูแลฟาร์มประจำวันเพื่อรับเหรียญทองและอาหารสะสมฟรี
+                  </p>
+                </div>
+
+                <div className="bg-amber-200/90 border border-amber-400 px-3 py-1 rounded-xl text-xs font-black text-amber-950">
+                  สำเร็จแล้ว: {quests.filter((q) => q.claimed).length}/{quests.length}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {quests.map((q) => {
+                  const isCompleted = q.current >= q.target;
+                  const progressPct = Math.min(100, Math.round((q.current / q.target) * 100));
+
+                  return (
+                    <div
+                      key={q.id}
+                      className={`p-3.5 rounded-2xl border-2 flex flex-col justify-between space-y-2.5 transition-all ${
+                        q.claimed
+                          ? 'bg-emerald-50/80 border-emerald-300 opacity-80'
+                          : isCompleted
+                          ? 'bg-amber-100/90 border-amber-500 shadow-md ring-2 ring-amber-400/50'
+                          : 'bg-white border-amber-200'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center space-x-3">
+                          <span className="text-2xl p-2 bg-amber-100 rounded-xl border border-amber-300">
+                            {q.icon}
+                          </span>
+                          <div>
+                            <h4 className="font-black text-xs text-slate-900">{q.title}</h4>
+                            <p className="text-[11px] text-slate-600 font-medium">{q.desc}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center space-x-1 shrink-0">
+                          {q.rewardCoins && (
+                            <span className="text-[10px] font-black bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full border border-amber-300">
+                              +{q.rewardCoins} 🪙
+                            </span>
+                          )}
+                          {q.rewardEnergy && (
+                            <span className="text-[10px] font-black bg-blue-100 text-blue-900 px-2 py-0.5 rounded-full border border-blue-300">
+                              +{q.rewardEnergy} ⚡
+                            </span>
+                          )}
+                          {q.rewardCrops && (
+                            <span className="text-[10px] font-black bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded-full border border-emerald-300">
+                              +2 🌾
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Progress Bar & Claim Button */}
+                      <div className="flex items-center space-x-3 pt-1">
+                        <div className="flex-1">
+                          <div className="flex justify-between text-[10px] font-bold text-slate-600 mb-1">
+                            <span>ความคืบหน้า</span>
+                            <span className="font-mono">{q.current}/{q.target}</span>
+                          </div>
+                          <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden border border-slate-300">
+                            <div
+                              className={`h-full transition-all duration-300 ${
+                                isCompleted ? 'bg-emerald-500' : 'bg-amber-500'
+                              }`}
+                              style={{ width: `${progressPct}%` }}
+                            />
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => handleClaimQuest(q)}
+                          disabled={!isCompleted || q.claimed}
+                          className={`px-3.5 py-1.5 rounded-xl font-black text-xs shrink-0 transition-all cursor-pointer ${
+                            q.claimed
+                              ? 'bg-emerald-600 text-white cursor-default'
+                              : isCompleted
+                              ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-md animate-pulse active:scale-95'
+                              : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                          }`}
+                        >
+                          {q.claimed ? 'รับแล้ว ✅' : isCompleted ? 'รับรางวัล! 🎁' : `${progressPct}%`}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 3. Department Urgent Purchasing Bounties */}
+            <div className="bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] p-5 sm:p-6 rounded-3xl border-4 border-amber-700 shadow-2xl space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-300 pb-3">
+                <div>
+                  <h3 className="text-lg font-black text-amber-950 font-mono flex items-center space-x-2">
+                    <span>📜</span>
+                    <span>ใบสั่งจัดซื้อเร่งด่วนของหน่วยงาน อปท. (Department Bounties)</span>
+                  </h3>
+                  <p className="text-xs text-amber-900 mt-0.5 font-medium">
+                    หน่วยงานท้องถิ่นต้องการหมูตามเกณฑ์เพื่อใช้ในโครงการ ส่งมอบหมูรับเงินรางวัลก้อนโตทันที!
+                  </p>
+                </div>
+                <span className="text-xs bg-amber-200 px-2.5 py-1 rounded-xl text-amber-900 font-bold w-fit">
+                  โครงการรับซื้อ {bounties.length} รายการ
+                </span>
+              </div>
+
+              {bounties.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                  {bounties.map((bounty) => {
+                    const eligiblePig = pigs.find((p) =>
+                      bounty.reqBreed ? p.breed === bounty.reqBreed : p.weight >= (bounty.minWeight || 45)
+                    );
+
+                    return (
+                      <div
+                        key={bounty.id}
+                        className="bg-white p-4 rounded-2xl border-2 border-amber-300 shadow-sm flex flex-col justify-between space-y-3"
+                      >
+                        <div>
+                          <div className="flex items-center space-x-2.5 mb-2">
+                            <span className="text-3xl p-1.5 bg-amber-100 rounded-2xl border border-amber-200">
+                              {bounty.avatar}
+                            </span>
+                            <div>
+                              <div className="text-[10px] font-black text-amber-800 uppercase">
+                                {bounty.dept}
+                              </div>
+                              <div className="text-xs font-black text-slate-900">
+                                {bounty.title}
+                              </div>
+                            </div>
+                          </div>
+                          <p className="text-[11px] text-slate-600 font-medium leading-relaxed">
+                            {bounty.desc}
+                          </p>
+
+                          <div className="mt-3 p-2 bg-amber-50 rounded-xl border border-amber-200 text-center">
+                            <span className="text-[10px] text-slate-500 font-bold block">
+                              ค่าตอบแทนโครงการ
+                            </span>
+                            <span className="text-base font-black text-emerald-700 font-mono">
+                              +{bounty.rewardCoins.toLocaleString()} 🪙
+                            </span>
+                          </div>
+                        </div>
+
+                        <div>
+                          {eligiblePig ? (
+                            <button
+                              onClick={() => handleFulfillBounty(bounty)}
+                              className="w-full py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-black text-xs shadow-md active:scale-95 cursor-pointer flex items-center justify-center space-x-1"
+                            >
+                              <span>🚚</span>
+                              <span>ส่งมอบ {eligiblePig.name}</span>
+                            </button>
+                          ) : (
+                            <div className="p-2 bg-slate-100 text-slate-500 rounded-xl text-[10px] font-bold text-center border border-slate-200">
+                              🔒 ยังไม่มีหมูตรงเกณฑ์ในคอก
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="p-8 text-center text-amber-900 font-bold text-xs">
+                  ✅ ดำเนินการส่งมอบหมูให้ทุกหน่วยงาน อปท. ครบถ้วนแล้ว!
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ================= MODAL 1: 7-DAY DAILY LOGIN REWARDS ================= */}
@@ -2364,6 +2860,126 @@ export default function HappyHogView() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL 5: LUCKY PIGGY WHEEL (วงล้อหมูพารวย) ================= */}
+      {showWheelModal && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-gradient-to-b from-[#2b180d] via-[#451a03] to-[#2b180d] border-4 border-amber-500 rounded-3xl p-6 sm:p-7 max-w-sm w-full shadow-2xl space-y-4 text-center animate-in zoom-in-95 relative overflow-hidden">
+            <div className="flex items-center justify-between border-b border-amber-700/80 pb-2.5">
+              <div className="text-left">
+                <h3 className="text-lg font-black text-amber-300 font-mono flex items-center space-x-1.5">
+                  <span>🎡</span>
+                  <span>วงล้อหมูพารวย</span>
+                </h3>
+                <p className="text-[11px] text-amber-200/90">
+                  สิทธิ์หมุนฟรี: <b className="text-yellow-400 font-mono text-xs">{wheelSpinsToday}</b> รอบ (รอบต่อไป 50 🪙)
+                </p>
+              </div>
+              <button
+                onClick={() => !isSpinning && setShowWheelModal(false)}
+                disabled={isSpinning}
+                className="p-1.5 rounded-full hover:bg-amber-900/80 text-amber-300 cursor-pointer disabled:opacity-30"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Rotating SVG Wheel Container */}
+            <div className="relative w-64 h-64 mx-auto my-2 flex items-center justify-center select-none">
+              {/* Pointer Arrow at Top (pointing down at top-center) */}
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-30 drop-shadow-xl pointer-events-none">
+                <div className="w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[22px] border-t-rose-500" />
+              </div>
+
+              {/* Spinning SVG Circle */}
+              <div
+                style={{
+                  transform: `rotate(${wheelRotation}deg)`,
+                  transition: isSpinning ? 'transform 3.6s cubic-bezier(0.12, 0.8, 0.2, 1)' : 'none'
+                }}
+                className="w-60 h-60 rounded-full border-4 border-amber-400 shadow-2xl overflow-hidden relative"
+              >
+                <svg viewBox="0 0 200 200" className="w-full h-full">
+                  {WHEEL_PRIZES.map((prize, idx) => {
+                    const count = WHEEL_PRIZES.length;
+                    const angle = 360 / count;
+                    const startAngle = idx * angle - 90;
+                    const endAngle = (idx + 1) * angle - 90;
+                    const startRad = (startAngle * Math.PI) / 180;
+                    const endRad = (endAngle * Math.PI) / 180;
+                    const x1 = 100 + 100 * Math.cos(startRad);
+                    const y1 = 100 + 100 * Math.sin(startRad);
+                    const x2 = 100 + 100 * Math.cos(endRad);
+                    const y2 = 100 + 100 * Math.sin(endRad);
+                    const midRad = (((startAngle + endAngle) / 2) * Math.PI) / 180;
+                    const textX = 100 + 64 * Math.cos(midRad);
+                    const textY = 100 + 64 * Math.sin(midRad);
+
+                    return (
+                      <g key={idx}>
+                        <path
+                          d={`M100,100 L${x1},${y1} A100,100 0 0,1 ${x2},${y2} Z`}
+                          fill={prize.color}
+                          stroke="#2b180d"
+                          strokeWidth="1.5"
+                        />
+                        <text
+                          x={textX}
+                          y={textY}
+                          fill="#ffffff"
+                          fontSize="13"
+                          fontWeight="bold"
+                          textAnchor="middle"
+                          dominantBaseline="central"
+                          transform={`rotate(${(startAngle + endAngle) / 2 + 90}, ${textX}, ${textY})`}
+                        >
+                          {prize.icon}
+                        </text>
+                      </g>
+                    );
+                  })}
+                </svg>
+              </div>
+
+              {/* Center Hub Button */}
+              <div
+                onClick={handleSpinWheel}
+                className="absolute w-14 h-14 rounded-full bg-gradient-to-b from-amber-300 to-amber-600 border-2 border-white shadow-xl flex items-center justify-center text-xl z-20 cursor-pointer active:scale-95 hover:scale-105 transition-transform"
+              >
+                🐷
+              </div>
+            </div>
+
+            {/* Spin CTA Button */}
+            <div className="pt-1">
+              <button
+                onClick={handleSpinWheel}
+                disabled={isSpinning || (wheelSpinsToday <= 0 && coins < 50)}
+                className={`w-full py-3 rounded-2xl font-black text-sm flex items-center justify-center space-x-2 transition-all cursor-pointer ${
+                  isSpinning
+                    ? 'bg-amber-800 text-amber-200 cursor-wait'
+                    : wheelSpinsToday > 0
+                    ? 'bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 text-amber-950 shadow-[0_4px_0_#b45309] active:translate-y-1 active:shadow-none animate-pulse'
+                    : coins >= 50
+                    ? 'bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white shadow-[0_4px_0_#4338ca] active:translate-y-1 active:shadow-none'
+                    : 'bg-stone-700 text-stone-500 cursor-not-allowed'
+                }`}
+              >
+                <span>🎡</span>
+                <span>
+                  {isSpinning
+                    ? 'กำลังหมุนลุ้นโชค...'
+                    : wheelSpinsToday > 0
+                    ? `หมุนวงล้อทันที (ฟรี ${wheelSpinsToday} รอบ)`
+                    : coins >= 50
+                    ? 'หมุนเพิ่ม (ใช้ 50 🪙)'
+                    : 'เหรียญไม่พอหมุน (ต้องการ 50 🪙)'}
+                </span>
+              </button>
             </div>
           </div>
         </div>
