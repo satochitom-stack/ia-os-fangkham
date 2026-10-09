@@ -587,165 +587,32 @@ const HayBaleSvg = () => (
   </svg>
 );
 
-// 8. Detailed 2.5D Chibi Pig Sprite Component (Plump 3D Gradient Body, Shiny Eyes, Accessories)
+// 8. High-Fidelity 3D Chibi Pig Sprite Component (Piggy Town & Happy Hog Style)
 const PigSprite = ({ breed, isSelected, direction, weight }) => {
   const b = PIG_BREEDS[breed] || PIG_BREEDS.pink;
-  const sizeScale = Math.min(1.35, 0.88 + (weight / b.maxWeight) * 0.47);
+  const sizeScale = Math.min(1.4, 0.95 + (weight / b.maxWeight) * 0.4);
+  const spriteSrc = `/pigs/${breed}.png`;
 
   return (
     <div
       style={{
         transform: `scale(${sizeScale}) scaleX(${direction})`,
-        transition: 'transform 0.2s ease'
+        transition: 'transform 0.25s ease'
       }}
-      className={`relative select-none ${isSelected ? 'filter drop-shadow-[0_0_8px_rgba(251,191,36,0.9)]' : ''}`}
+      className={`relative select-none flex flex-col items-center justify-center pointer-events-auto cursor-pointer ${
+        isSelected ? 'filter drop-shadow-[0_0_12px_rgba(251,191,36,0.95)]' : ''
+      }`}
     >
-      <svg width="74" height="60" viewBox="0 0 74 60" className="drop-shadow-md">
-        <defs>
-          {/* Plump 3D Radial Body Gradient */}
-          <radialGradient id={`pig-body-${breed}`} cx="35%" cy="30%" r="70%">
-            <stop offset="0%" stopColor={b.secondaryColor} />
-            <stop offset="55%" stopColor={b.primaryColor} />
-            <stop offset="100%" stopColor={b.earColor} />
-          </radialGradient>
-          {/* Snout Radial Gradient */}
-          <radialGradient id={`pig-snout-${breed}`} cx="35%" cy="35%" r="65%">
-            <stop offset="0%" stopColor={b.secondaryColor} />
-            <stop offset="100%" stopColor={b.bellyColor} />
-          </radialGradient>
-        </defs>
+      {/* Soft Ground Contact Shadow */}
+      <div className="w-16 h-3.5 bg-black/30 rounded-full blur-[2px] absolute -bottom-1 pointer-events-none" />
 
-        {/* Soft Drop Shadow under feet */}
-        <ellipse cx="37" cy="52" rx="26" ry="6.5" fill="rgba(0,0,0,0.24)" />
-
-        {/* Curly Tail */}
-        <path
-          d="M62 32 Q70 26 66 21 Q62 16 67 12"
-          stroke={b.earColor}
-          strokeWidth="3.5"
-          fill="none"
-          strokeLinecap="round"
-        />
-
-        {/* 4 Stumpy Feet with Hooves */}
-        <rect x="18" y="44" width="8" height="9" rx="3.5" fill={b.earColor} />
-        <rect x="19" y="50" width="6" height="3" rx="1.5" fill="#701a75" opacity="0.6" />
-
-        <rect x="30" y="44" width="8" height="9" rx="3.5" fill={b.earColor} />
-        <rect x="31" y="50" width="6" height="3" rx="1.5" fill="#701a75" opacity="0.6" />
-
-        <rect x="44" y="44" width="8" height="9" rx="3.5" fill={b.earColor} />
-        <rect x="45" y="50" width="6" height="3" rx="1.5" fill="#701a75" opacity="0.6" />
-
-        <rect x="54" y="44" width="8" height="9" rx="3.5" fill={b.earColor} />
-        <rect x="55" y="50" width="6" height="3" rx="1.5" fill="#701a75" opacity="0.6" />
-
-        {/* Main Plump Body */}
-        <ellipse cx="38" cy="33" rx="27" ry="19" fill={`url(#pig-body-${breed})`} />
-
-        {/* Soft Rounded Belly Highlight */}
-        <ellipse cx="36" cy="36" rx="19" ry="13" fill={b.bellyColor} opacity="0.75" />
-
-        {/* Back Floppy Ear */}
-        <polygon points="30,17 35,4 42,14" fill={b.earColor} stroke="#831843" strokeWidth="0.8" />
-
-        {/* Round Head */}
-        <circle cx="21" cy="28" r="15" fill={`url(#pig-body-${breed})`} />
-
-        {/* Front Floppy Ear */}
-        <polygon points="14,19 10,5 23,12" fill={b.earColor} stroke="#831843" strokeWidth="0.8" />
-        <polygon points="14,17 12,8 19,13" fill={b.secondaryColor} opacity="0.8" />
-
-        {/* Plump Snout */}
-        <ellipse
-          cx="11"
-          cy="32"
-          rx="8"
-          ry="6"
-          fill={`url(#pig-snout-${breed})`}
-          stroke={b.earColor}
-          strokeWidth="1.8"
-        />
-        {/* Nostrils */}
-        <ellipse cx="9" cy="32" rx="1.6" ry="2.2" fill="#831843" />
-        <ellipse cx="13" cy="32" rx="1.6" ry="2.2" fill="#831843" />
-
-        {/* Big Expressive Eye with Catchlight */}
-        <circle cx="19" cy="23" r="3.2" fill="#0f172a" />
-        <circle cx="20.2" cy="22" r="1.1" fill="#ffffff" />
-        <circle cx="18" cy="24.2" r="0.6" fill="#ffffff" />
-
-        {/* Rosy Cheeks */}
-        <ellipse cx="14" cy="27" rx="3" ry="1.8" fill="#f43f5e" opacity="0.45" />
-
-        {/* ================= BREED SPECIFIC ACCESSORIES ================= */}
-        {/* Auditor Glasses */}
-        {b.accessory === 'glasses' && (
-          <g>
-            <circle cx="19" cy="23" r="5.2" fill="none" stroke="#0f172a" strokeWidth="2.2" />
-            <circle cx="10" cy="23" r="5.2" fill="none" stroke="#0f172a" strokeWidth="2.2" />
-            <line x1="15" y1="23" x2="14" y2="23" stroke="#0f172a" strokeWidth="2.2" />
-          </g>
-        )}
-
-        {/* Engineer Hardhat */}
-        {b.accessory === 'helmet' && (
-          <g>
-            <path d="M8 17 Q20 5 32 17 Z" fill="#eab308" stroke="#ca8a04" strokeWidth="2" />
-            <rect x="6" y="16" width="28" height="3.5" rx="1.8" fill="#facc15" stroke="#ca8a04" strokeWidth="1" />
-          </g>
-        )}
-
-        {/* Sakura Flower Hairpin */}
-        {b.accessory === 'sakura' && (
-          <g>
-            <circle cx="12" cy="18" r="3.2" fill="#fda4af" />
-            <circle cx="10" cy="16" r="2.8" fill="#fda4af" />
-            <circle cx="14" cy="16" r="2.8" fill="#fda4af" />
-            <circle cx="12" cy="17" r="1.2" fill="#fef08a" />
-          </g>
-        )}
-
-        {/* Shabu Hotpot on Head */}
-        {b.accessory === 'pot' && (
-          <g>
-            <path d="M10 18 Q20 11 30 18 Z" fill="#b45309" stroke="#78350f" strokeWidth="1.8" />
-            <ellipse cx="20" cy="14" rx="7" ry="2.5" fill="#ea580c" />
-            <line x1="24" y1="14" x2="28" y2="6" stroke="#fef08a" strokeWidth="1.8" />
-          </g>
-        )}
-
-        {/* Golden Royal Crown */}
-        {b.accessory === 'crown' && (
-          <g>
-            <polygon
-              points="10,15 13,7 18,12 23,5 28,12 33,7 36,15"
-              fill="#facc15"
-              stroke="#ca8a04"
-              strokeWidth="1.8"
-            />
-            <circle cx="23" cy="11" r="1.5" fill="#dc2626" />
-          </g>
-        )}
-
-        {/* Radiant Rainbow Aura */}
-        {b.accessory === 'aura' && (
-          <circle cx="21" cy="28" r="20" fill="none" stroke="#d8b4fe" strokeWidth="2.5" strokeDasharray="4 2" />
-        )}
-
-        {/* Knight Wings & Helmet */}
-        {b.accessory === 'wings' && (
-          <g>
-            <path
-              d="M42 20 Q50 6 58 18 Q50 25 42 20 Z"
-              fill="#ffffff"
-              stroke="#38bdf8"
-              strokeWidth="2"
-            />
-            <polygon points="12,15 17,9 22,15" fill="#facc15" />
-          </g>
-        )}
-      </svg>
+      {/* 3D Chibi Illustrated Pig Sprite */}
+      <img
+        src={spriteSrc}
+        alt={b.name}
+        className="w-20 h-20 sm:w-22 sm:h-22 object-contain drop-shadow-md transition-transform duration-200 hover:scale-110 active:scale-95 pointer-events-none select-none"
+        draggable={false}
+      />
     </div>
   );
 };
@@ -976,8 +843,12 @@ export default function HappyHogView() {
       setPigs((prevPigs) =>
         prevPigs.map((p) => {
           if (Math.random() < 0.45) {
-            const nextX = Math.max(22, Math.min(78, p.x + (Math.random() * 22 - 11)));
-            const nextY = Math.max(30, Math.min(74, p.y + (Math.random() * 16 - 8)));
+            const minX = activeThemeId === 'pasture' ? 32 : 22;
+            const maxX = activeThemeId === 'pasture' ? 66 : 78;
+            const minY = activeThemeId === 'pasture' ? 36 : 30;
+            const maxY = activeThemeId === 'pasture' ? 66 : 74;
+            const nextX = Math.max(minX, Math.min(maxX, p.x + (Math.random() * 18 - 9)));
+            const nextY = Math.max(minY, Math.min(maxY, p.y + (Math.random() * 14 - 7)));
             return {
               ...p,
               x: nextX,
@@ -1553,176 +1424,169 @@ export default function HappyHogView() {
             {/* Main Interactive Farm Canvas (3 Columns) */}
             <div className="lg:col-span-3 space-y-2">
               <div
-                className={`relative w-full h-[520px] rounded-3xl overflow-hidden border-4 border-amber-900/80 shadow-2xl bg-gradient-to-b ${activeTheme.bgClass} select-none`}
+                className={`relative w-full h-[540px] rounded-3xl overflow-hidden border-4 border-amber-900/80 shadow-2xl select-none ${
+                  activeThemeId === 'pasture' ? '' : `bg-gradient-to-b ${activeTheme.bgClass}`
+                }`}
+                style={
+                  activeThemeId === 'pasture'
+                    ? {
+                        backgroundImage: `url(/pigs/farm_bg.jpg)`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center 40%'
+                      }
+                    : {}
+                }
               >
-                {/* 1. Lush Pastel Grass Fringe & Stepping Stone Path */}
-                <div className="absolute inset-0 pointer-events-none">
-                  {/* Decorative Daisy Flowers on Grass */}
-                  <div className="absolute top-6 left-1/3 text-lg opacity-80">🌼</div>
-                  <div className="absolute top-10 left-1/2 text-sm opacity-70">🌸</div>
-                  <div className="absolute bottom-8 right-1/4 text-base opacity-75">🌼</div>
-                  <div className="absolute bottom-14 left-16 text-sm opacity-70">🌸</div>
-
-                  {/* Cobblestone Pavers Path */}
-                  <div className="absolute top-24 left-24 w-8 h-4 bg-stone-300/60 rounded-full border border-stone-400/50 rotate-12" />
-                  <div className="absolute top-32 left-20 w-9 h-5 bg-stone-300/60 rounded-full border border-stone-400/50 -rotate-6" />
-                  <div className="absolute top-40 left-18 w-7 h-4 bg-stone-300/60 rounded-full border border-stone-400/50 rotate-45" />
-
-                  {/* 2.5D Apple Tree on the grassy edge */}
-                  <div className="absolute -top-3 right-28 z-5 opacity-95">
-                    <LushFruitTreeSvg />
-                  </div>
-                  {/* Haystack near pasture corner */}
-                  <div className="absolute bottom-3 right-10 z-5 opacity-90">
-                    <HayBaleSvg />
-                  </div>
-                </div>
-
-                {/* 2. Main Sandy Animal Yard (Warm Organic Shape matching Piggy Town / Classic Pen) */}
-                <div
-                  style={{ backgroundColor: activeTheme.penGround }}
-                  className="absolute inset-x-6 inset-y-8 rounded-[48px] border-4 border-[#8c593b] shadow-inner overflow-hidden"
-                >
-                  {/* Subtle sawdust / straw texture */}
-                  <div className="absolute inset-0 bg-[radial-gradient(#b45309_1.5px,transparent_1.5px)] [background-size:24px_24px] opacity-20 pointer-events-none" />
-
-                  {/* Top Fence Posts */}
-                  <div className="absolute top-0 inset-x-0 h-4 border-b-2 border-[#8c593b]/60 flex justify-around">
-                    {Array.from({ length: 12 }).map((_, i) => (
-                      <div key={i} className="w-2 h-4 bg-[#8c593b] rounded-t-xs" />
-                    ))}
-                  </div>
-
-                  {/* Interactive Props on the Pen Yard */}
-
-                  {/* Prop A: 2.5D Barn Cottage (Top-Left) */}
-                  <div
-                    onClick={() => showToast(`🏠 โรงเรือนคอกฟาร์ม: อบอุ่น แข็งแรง จุหมูได้ ${pigs.length}/8 ตัว`)}
-                    className="absolute -top-1 left-2 z-15 cursor-pointer hover:scale-103 transition-transform"
-                    title="โรงเรือนคอกหมู"
-                  >
-                    <BarnCottageSvg />
-                  </div>
-
-                  {/* Prop B: Cooking Stew Hearth (Top-Right) */}
-                  <div
-                    onClick={() => setActiveTab('crops')}
-                    className="absolute top-2 right-4 z-15 cursor-pointer hover:scale-105 transition-transform"
-                    title="หม้อต้มผสมอาหาร (คลิกเพื่อไปที่แปลงปลูกผัก)"
-                  >
-                    <CookingHearthSvg />
-                  </div>
-
-                  {/* Prop C: Cedar Wood Soaking Tub / Onsen (Middle-Right) */}
-                  <div
-                    onClick={handleBath}
-                    className="absolute top-28 right-3 z-15 cursor-pointer hover:scale-105 transition-transform"
-                    title="อ่างอาบน้ำไม้หอม (คลิกเพื่ออาบน้ำขัดตัวให้น้อง)"
-                  >
-                    <BathTubSvg />
-                  </div>
-
-                  {/* Prop D: Classic Water Tap & Log Dispenser (Bottom-Left) */}
-                  <div
-                    onClick={handleDrinkWater}
-                    className="absolute bottom-6 left-3 z-15 cursor-pointer hover:scale-105 transition-transform"
-                    title="ก๊อกน้ำธรรมชาติ (คลิกเพื่อให้น้องดื่มน้ำ)"
-                  >
-                    <WaterTapSvg />
-                  </div>
-
-                  {/* Prop E: Feed Trough with Grain (Bottom-Center) */}
-                  <div
-                    onClick={() => handleFeed(FOODS[0])}
-                    className="absolute bottom-2 left-1/2 -translate-x-1/2 z-15 cursor-pointer hover:scale-105 transition-transform"
-                    title="รางอาหารกลาง (คลิกเพื่อให้อาหาร)"
-                  >
-                    <FeedTroughSvg />
-                  </div>
-
-                  {/* Floating Hearts & Bubbles */}
-                  {hearts.map((h) => (
+                {/* When Theme is Pasture: Show High-Res 2.5D Country Scenery & Hotspots */}
+                {activeThemeId === 'pasture' ? (
+                  <>
+                    {/* Hotspot A: Barn Cottage (Top-Left) */}
                     <div
-                      key={h.id}
-                      style={{ left: `${h.x}%`, top: `${h.y}%` }}
-                      className="absolute pointer-events-none text-3xl animate-bounce z-40 drop-shadow-md"
-                    >
-                      💖
-                    </div>
-                  ))}
+                      onClick={() => showToast(`🏠 โรงเรือนคอกฟาร์ม: อบอุ่น แข็งแรง จุหมูได้ ${pigs.length}/8 ตัว`)}
+                      className="absolute top-12 left-10 w-44 h-36 rounded-2xl cursor-pointer hover:bg-white/10 transition-colors z-15"
+                      title="โรงเรือนคอกหมู (แตะเพื่อดูข้อมูล)"
+                    />
 
-                  {bubbles.map((b) => (
+                    {/* Hotspot B: Stone Water Well (Top-Right) */}
                     <div
-                      key={b.id}
-                      style={{ left: `${b.x}%`, top: `${b.y}%` }}
-                      className="absolute pointer-events-none text-2xl animate-ping z-40"
+                      onClick={handleDrinkWater}
+                      className="absolute top-12 right-28 w-28 h-28 rounded-2xl cursor-pointer hover:bg-white/10 transition-colors z-15"
+                      title="บ่อน้ำธรรมชาติ (แตะเพื่อให้น้องดื่มน้ำ)"
+                    />
+
+                    {/* Hotspot C: Fruit Orchard (Bottom-Right) */}
+                    <div
+                      onClick={() => setActiveTab('crops')}
+                      className="absolute bottom-6 right-8 w-44 h-36 rounded-2xl cursor-pointer hover:bg-white/10 transition-colors z-15"
+                      title="สวนผลไม้ & แปลงเกษตร (แตะเพื่อไปที่แปลงปลูกผัก)"
+                    />
+
+                    {/* Interactive Bath Tub near Well */}
+                    <div
+                      onClick={handleBath}
+                      className="absolute top-44 right-20 z-15 cursor-pointer hover:scale-105 transition-transform"
+                      title="อ่างอาบน้ำไม้หอม (คลิกเพื่ออาบน้ำขัดตัวให้น้อง)"
                     >
-                      🫧
+                      <BathTubSvg />
                     </div>
-                  ))}
 
-                  {/* ================= ROAMING CHIBI PIGS WITH SPEECH BUBBLES ================= */}
-                  {pigs.map((pig) => {
-                    const isSelected = selectedPigId === pig.id;
-                    const need = getPigNeed(pig);
-
-                    return (
-                      <div
-                        key={pig.id}
-                        onClick={() => {
-                          setSelectedPigId(pig.id);
-                          playSound('oink', isMuted);
-                        }}
-                        style={{
-                          left: `${pig.x}%`,
-                          top: `${pig.y}%`,
-                          transform: 'translate(-50%, -50%)',
-                          transition: 'left 2.4s ease-out, top 2.4s ease-out'
-                        }}
-                        className="absolute cursor-pointer z-30 group"
-                      >
-                        {/* 1. Floating Speech Bubble (Piggy Town Style) */}
-                        <div
-                          onClick={(e) => handleBubbleClick(e, pig, need)}
-                          style={{ transform: `scaleX(${pig.direction})` }}
-                          className={`absolute -top-12 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full shadow-lg flex items-center space-x-1 border-2 cursor-pointer transition-transform hover:scale-115 active:scale-95 animate-bounce z-40 ${
-                            need.type === 'feed'
-                              ? 'bg-amber-100 border-amber-500 text-amber-950 ring-2 ring-amber-400'
-                              : need.type === 'bath'
-                              ? 'bg-blue-100 border-blue-500 text-blue-950 ring-2 ring-blue-400'
-                              : need.type === 'heal'
-                              ? 'bg-rose-100 border-rose-500 text-rose-950 ring-2 ring-rose-400'
-                              : need.type === 'love'
-                              ? 'bg-pink-100 border-pink-500 text-pink-950 ring-2 ring-pink-400'
-                              : 'bg-white border-slate-300 text-slate-800'
-                          }`}
-                          title={need.hint}
-                        >
-                          <span className="text-sm">{need.icon}</span>
-                          <span className="text-[9px] font-black whitespace-nowrap">{need.label}</span>
-                          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-inherit border-r-2 border-b-2 border-inherit rotate-45" />
-                        </div>
-
-                        {/* Name and Weight Tag */}
-                        <div
-                          style={{ transform: `scaleX(${pig.direction})` }}
-                          className="absolute -top-5 left-1/2 -translate-x-1/2 bg-[#2b180d]/90 text-amber-200 text-[9px] font-black px-1.5 py-0.2 rounded-md whitespace-nowrap shadow-md pointer-events-none border border-amber-600/70"
-                        >
-                          <span>{pig.name}</span>
-                          <span className="text-amber-400 ml-1 font-mono">({pig.weight}kg)</span>
-                        </div>
-
-                        {/* High-Fidelity 2.5D Illustrated Pig Sprite */}
-                        <PigSprite
-                          breed={pig.breed}
-                          isSelected={isSelected}
-                          direction={pig.direction}
-                          weight={pig.weight}
-                        />
+                    {/* Interactive Feed Trough in Yard */}
+                    <div
+                      onClick={() => handleFeed(FOODS[0])}
+                      className="absolute bottom-6 left-1/2 -translate-x-1/2 z-15 cursor-pointer hover:scale-105 transition-transform"
+                      title="รางอาหารกลาง (คลิกเพื่อให้อาหาร)"
+                    >
+                      <FeedTroughSvg />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Alternative Theme Pen Yard */}
+                    <div
+                      style={{ backgroundColor: activeTheme.penGround }}
+                      className="absolute inset-x-6 inset-y-8 rounded-[48px] border-4 border-[#8c593b] shadow-inner overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-[radial-gradient(#b45309_1.5px,transparent_1.5px)] [background-size:24px_24px] opacity-20 pointer-events-none" />
+                      <div className="absolute -top-1 left-2 z-15 cursor-pointer" onClick={() => showToast('🏠 โรงเรือนคอกหมู')}>
+                        <BarnCottageSvg />
                       </div>
-                    );
-                  })}
-                </div>
+                      <div className="absolute top-2 right-4 z-15 cursor-pointer" onClick={() => setActiveTab('crops')}>
+                        <CookingHearthSvg />
+                      </div>
+                      <div className="absolute top-28 right-3 z-15 cursor-pointer" onClick={handleBath}>
+                        <BathTubSvg />
+                      </div>
+                      <div className="absolute bottom-6 left-3 z-15 cursor-pointer" onClick={handleDrinkWater}>
+                        <WaterTapSvg />
+                      </div>
+                      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-15 cursor-pointer" onClick={() => handleFeed(FOODS[0])}>
+                        <FeedTroughSvg />
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Floating Hearts & Bubbles */}
+                {hearts.map((h) => (
+                  <div
+                    key={h.id}
+                    style={{ left: `${h.x}%`, top: `${h.y}%` }}
+                    className="absolute pointer-events-none text-3xl animate-bounce z-40 drop-shadow-md"
+                  >
+                    💖
+                  </div>
+                ))}
+
+                {bubbles.map((b) => (
+                  <div
+                    key={b.id}
+                    style={{ left: `${b.x}%`, top: `${b.y}%` }}
+                    className="absolute pointer-events-none text-2xl animate-ping z-40"
+                  >
+                    🫧
+                  </div>
+                ))}
+
+                {/* ================= ROAMING CHIBI PIGS WITH SPEECH BUBBLES ================= */}
+                {pigs.map((pig) => {
+                  const isSelected = selectedPigId === pig.id;
+                  const need = getPigNeed(pig);
+
+                  return (
+                    <div
+                      key={pig.id}
+                      onClick={() => {
+                        setSelectedPigId(pig.id);
+                        playSound('oink', isMuted);
+                      }}
+                      style={{
+                        left: `${pig.x}%`,
+                        top: `${pig.y}%`,
+                        transform: 'translate(-50%, -50%)',
+                        transition: 'left 2.4s ease-out, top 2.4s ease-out'
+                      }}
+                      className="absolute cursor-pointer z-30 group"
+                    >
+                      {/* 1. Floating Glass Need Bubble (Piggy Town Style) */}
+                      <div
+                        onClick={(e) => handleBubbleClick(e, pig, need)}
+                        style={{ transform: `scaleX(${pig.direction})` }}
+                        className="absolute -top-14 left-1/2 -translate-x-1/2 flex flex-col items-center cursor-pointer z-40 transition-transform hover:scale-120 active:scale-95 animate-bounce"
+                        title={need.hint}
+                      >
+                        <div className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-md border-2 border-white/95 shadow-[0_4px_12px_rgba(0,0,0,0.22)] flex items-center justify-center text-xl ring-2 ring-amber-400">
+                          <span>{need.icon}</span>
+                        </div>
+                        <div className="w-2.5 h-2.5 bg-white border-r-2 border-b-2 border-amber-300 rotate-45 -mt-1.5 shadow-xs" />
+                      </div>
+
+                      {/* 2. High-Fidelity 3D Chibi Illustrated Pig Sprite */}
+                      <PigSprite
+                        breed={pig.breed}
+                        isSelected={isSelected}
+                        direction={pig.direction}
+                        weight={pig.weight}
+                      />
+
+                      {/* 3. Name, Weight, and Health Status Bar Underneath */}
+                      <div
+                        style={{ transform: `scaleX(${pig.direction})` }}
+                        className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none whitespace-nowrap z-35"
+                      >
+                        <div className="bg-[#2b180d]/90 text-amber-200 text-[10px] font-black px-2 py-0.5 rounded-full border border-amber-500/80 shadow-md flex items-center space-x-1">
+                          <span>{pig.name}</span>
+                          <span className="text-amber-400 font-mono">({pig.weight}kg)</span>
+                        </div>
+                        <div className="w-12 h-1.5 bg-slate-900/80 rounded-full overflow-hidden mt-0.5 border border-white/40 flex shadow-xs">
+                          <div
+                            className={`h-full ${pig.hunger < 40 ? 'bg-rose-500' : 'bg-emerald-400'}`}
+                            style={{ width: `${pig.hunger}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
 
                 {/* Top Corner Controls (Fence lock status and theme pill) */}
                 <div className="absolute top-2 left-6 z-20 flex items-center space-x-2">
@@ -1770,22 +1634,26 @@ export default function HappyHogView() {
             <div className="space-y-3">
               {selectedPig ? (
                 <div className="bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] border-4 border-amber-700/80 rounded-3xl p-4 shadow-2xl space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border ${PIG_BREEDS[selectedPig.breed]?.badgeColor}`}>
-                        {PIG_BREEDS[selectedPig.breed]?.tag}
-                      </span>
-                      <h3 className="text-base font-black text-slate-900 mt-1 font-mono truncate max-w-[150px]">
+                  {/* Selected Pig Avatar Card */}
+                  <div className="flex flex-col items-center justify-center p-2.5 bg-gradient-to-b from-amber-100/90 to-orange-100/90 rounded-2xl border-2 border-amber-300 shadow-inner">
+                    <img
+                      src={`/pigs/${selectedPig.breed}.png`}
+                      alt={selectedPig.name}
+                      className="w-24 h-24 object-contain drop-shadow-xl animate-bounce"
+                      style={{ animationDuration: '3.2s' }}
+                    />
+                    <div className="text-center mt-1 w-full">
+                      <div className="flex items-center justify-between px-2">
+                        <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border ${PIG_BREEDS[selectedPig.breed]?.badgeColor}`}>
+                          {PIG_BREEDS[selectedPig.breed]?.tag}
+                        </span>
+                        <span className="text-xs font-mono font-black text-pink-600">
+                          {selectedPig.weight} kg <span className="text-[9px] text-amber-900 font-normal">/ {PIG_BREEDS[selectedPig.breed]?.maxWeight}kg</span>
+                        </span>
+                      </div>
+                      <h3 className="text-base font-black text-slate-900 mt-0.5 font-mono truncate">
                         {selectedPig.name}
                       </h3>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-xl font-black text-pink-600 font-mono">
-                        {selectedPig.weight} <span className="text-xs text-slate-500 font-sans">kg</span>
-                      </span>
-                      <p className="text-[9px] text-amber-900 font-bold">
-                        สูงสุด {PIG_BREEDS[selectedPig.breed]?.maxWeight} kg
-                      </p>
                     </div>
                   </div>
 
@@ -2065,11 +1933,20 @@ export default function HappyHogView() {
                         </span>
                       </div>
 
-                      <h3 className="font-black text-slate-900 mt-2 font-mono text-sm">{breed.name}</h3>
-                      <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+                      {/* 3D Chibi Sprite Illustration */}
+                      <div className="py-2 flex items-center justify-center">
+                        <img
+                          src={`/pigs/${breed.id}.png`}
+                          alt={breed.name}
+                          className="w-20 h-20 object-contain drop-shadow-md hover:scale-110 transition-transform select-none"
+                        />
+                      </div>
+
+                      <h3 className="font-black text-slate-900 mt-1 font-mono text-sm text-center">{breed.name}</h3>
+                      <p className="text-[11px] text-slate-600 mt-1 leading-relaxed text-center">
                         {breed.description}
                       </p>
-                      <div className="text-[10px] text-slate-700 font-bold mt-2">
+                      <div className="text-[10px] text-slate-700 font-bold mt-2 text-center">
                         น้ำหนักสูงสุด: <b>{breed.maxWeight} kg</b>
                       </div>
                     </div>
@@ -2263,8 +2140,12 @@ export default function HappyHogView() {
                   <div className="text-xs font-bold text-amber-950 mb-2">🐷 หมูในคอกของเพื่อน:</div>
                   <div className="grid grid-cols-2 gap-2">
                     {visitingNeighbor.pigs.map((np) => (
-                      <div key={np.id} className="bg-white p-2.5 rounded-xl border border-amber-200 flex items-center space-x-2">
-                        <span className="text-2xl">🐷</span>
+                      <div key={np.id} className="bg-white p-2 rounded-xl border border-amber-200 flex items-center space-x-2.5 shadow-xs">
+                        <img
+                          src={`/pigs/${np.breed || 'pink'}.png`}
+                          alt={np.name}
+                          className="w-12 h-12 object-contain drop-shadow-sm shrink-0"
+                        />
                         <div>
                           <div className="text-xs font-black text-slate-900">{np.name}</div>
                           <div className="text-[10px] text-amber-800 font-bold">น้ำหนัก {np.weight} kg</div>

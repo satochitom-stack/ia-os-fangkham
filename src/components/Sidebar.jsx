@@ -154,7 +154,7 @@ export default function Sidebar({
       iconInactive: 'text-pink-500 dark:text-pink-400',
       items: [
         { id: 'card-sort', label: 'จัดหมวดหมู่การ์ด (Card Sort)', icon: Sparkles },
-        { id: 'happy-hog', label: 'ฟาร์มหมูผู้ตรวจ (Pixel Art)', icon: Coffee }
+        { id: 'happy-hog', label: 'แฮปปี้คนเลี้ยงหมู (Piggy Town)', icon: Coffee }
       ]
     }
   ];
