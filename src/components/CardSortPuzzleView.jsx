@@ -20,7 +20,8 @@ import {
   Lock,
   Unlock,
   Layers,
-  Award
+  Award,
+  Move
 } from 'lucide-react';
 
 // Web Audio sound synthesizer for responsive tactile game effects
@@ -96,212 +97,308 @@ const playSound = (type, isMuted) => {
   }
 };
 
-// Complete Card Database across all 5 Levels
-const ALL_CARDS = {
-  // Level 1: Pets, Fruits, Vehicles
-  dog: { id: 'dog', name: 'Puppy', icon: '🐶', category: 'pets', thai: 'น้องหมา' },
-  cat: { id: 'cat', name: 'Kitty', icon: '🐱', category: 'pets', thai: 'น้องแมว' },
-  bunny: { id: 'bunny', name: 'Bunny', icon: '🐰', category: 'pets', thai: 'กระต่าย' },
-  hamster: { id: 'hamster', name: 'Hamster', icon: '🐹', category: 'pets', thai: 'แฮมสเตอร์' },
-
-  apple: { id: 'apple', name: 'Apple', icon: '🍎', category: 'fruits', thai: 'แอปเปิ้ล' },
-  banana: { id: 'banana', name: 'Banana', icon: '🍌', category: 'fruits', thai: 'กล้วยหอม' },
-  strawberry: { id: 'strawberry', name: 'Strawberry', icon: '🍓', category: 'fruits', thai: 'สตรอว์เบอร์รี' },
-  grape: { id: 'grape', name: 'Grape', icon: '🍇', category: 'fruits', thai: 'องุ่น' },
-
-  car: { id: 'car', name: 'Car', icon: '🚗', category: 'vehicles', thai: 'รถเก๋ง' },
-  bus: { id: 'bus', name: 'Bus', icon: '🚌', category: 'vehicles', thai: 'รถบัส' },
-  airplane: { id: 'airplane', name: 'Airplane', icon: '✈️', category: 'vehicles', thai: 'เครื่องบิน' },
-  train: { id: 'train', name: 'Train', icon: '🚆', category: 'vehicles', thai: 'รถไฟ' },
-
-  // Level 2: Ocean, Jobs, Can Fly (Cardlings Official Screenshot)
-  dolphin: { id: 'dolphin', name: 'Dolphin', icon: '🐬', category: 'ocean', thai: 'โลมา' },
-  octopus: { id: 'octopus', name: 'Octopus', icon: '🐙', category: 'ocean', thai: 'หมึกยักษ์' },
-  whale: { id: 'whale', name: 'Whale', icon: '🐳', category: 'ocean', thai: 'วาฬสีน้ำเงิน' },
-  clownfish: { id: 'clownfish', name: 'Clownfish', icon: '🐠', category: 'ocean', thai: 'ปลาการ์ตูน' },
-  jellyfish: { id: 'jellyfish', name: 'Jellyfish', icon: '🪼', category: 'ocean', thai: 'แมงกะพรุน' },
-  shark: { id: 'shark', name: 'Shark', icon: '🦈', category: 'ocean', thai: 'ฉลาม' },
-
-  chef: { id: 'chef', name: 'Chef', icon: '👨‍🍳', category: 'jobs', thai: 'เชฟ' },
-  firefighter: { id: 'firefighter', name: 'Firefighter', icon: '👩‍🚒', category: 'jobs', thai: 'นักดับเพลิง' },
-  scientist: { id: 'scientist', name: 'Scientist', icon: '👩‍🔬', category: 'jobs', thai: 'นักวิทยาศาสตร์' },
-  farmer: { id: 'farmer', name: 'Farmer', icon: '👨‍🌾', category: 'jobs', thai: 'ชาวสวน' },
-  princess: { id: 'princess', name: 'Princess', icon: '👸', category: 'jobs', thai: 'เจ้าหญิง' },
-  doctor: { id: 'doctor', name: 'Doctor', icon: '👩‍⚕️', category: 'jobs', thai: 'คุณหมอ' },
-
-  phoenix: { id: 'phoenix', name: 'Phoenix', icon: '🦅', category: 'can_fly', thai: 'ฟีนิกซ์' },
-  griffin: { id: 'griffin', name: 'Griffin', icon: '🦁', category: 'can_fly', thai: 'กริฟฟอน' },
-  eagle: { id: 'eagle', name: 'Eagle', icon: '🦅', category: 'can_fly', thai: 'นกอินทรี' },
-  flamingo: { id: 'flamingo', name: 'Flamingo', icon: '🦩', category: 'can_fly', thai: 'ฟลามิงโก' },
-  hummingbird: { id: 'hummingbird', name: 'Hummingbird', icon: '🐦', category: 'can_fly', thai: 'ฮัมมิงเบิร์ด' },
-  glider: { id: 'glider', name: 'Glider', icon: '🛩️', category: 'can_fly', thai: 'เครื่องร่อน' },
-
-  // Level 3: Bakery, Fast Food, Drinks
-  cupcake: { id: 'cupcake', name: 'Cupcake', icon: '🧁', category: 'bakery', thai: 'คัพเค้ก' },
-  croissant: { id: 'croissant', name: 'Croissant', icon: '🥐', category: 'bakery', thai: 'ครัวซองต์' },
-  donut: { id: 'donut', name: 'Donut', icon: '🍩', category: 'bakery', thai: 'โดนัท' },
-  cookie: { id: 'cookie', name: 'Cookie', icon: '🍪', category: 'bakery', thai: 'คุกกี้' },
-  pancake: { id: 'pancake', name: 'Pancake', icon: '🥞', category: 'bakery', thai: 'แพนเค้ก' },
-  cake: { id: 'cake', name: 'Cake', icon: '🍰', category: 'bakery', thai: 'เค้กช็อกโกแลต' },
-
-  pizza: { id: 'pizza', name: 'Pizza', icon: '🍕', category: 'fastfood', thai: 'พิซซ่า' },
-  burger: { id: 'burger', name: 'Burger', icon: '🍔', category: 'fastfood', thai: 'เบอร์เกอร์' },
-  fries: { id: 'fries', name: 'Fries', icon: '🍟', category: 'fastfood', thai: 'เฟรนช์ฟรายส์' },
-  hotdog: { id: 'hotdog', name: 'Hotdog', icon: '🌭', category: 'fastfood', thai: 'ฮอทดอก' },
-  taco: { id: 'taco', name: 'Taco', icon: '🌮', category: 'fastfood', thai: 'ทาโก้' },
-  popcorn: { id: 'popcorn', name: 'Popcorn', icon: '🍿', category: 'fastfood', thai: 'ป๊อปคอร์น' },
-
-  boba: { id: 'boba', name: 'Boba Tea', icon: '🧋', category: 'drinks', thai: 'ชานมไข่มุก' },
-  coffee: { id: 'coffee', name: 'Coffee', icon: '☕', category: 'drinks', thai: 'กาแฟสด' },
-  juice: { id: 'juice', name: 'Juice', icon: '🧃', category: 'drinks', thai: 'น้ำผลไม้' },
-  soda: { id: 'soda', name: 'Soda', icon: '🥤', category: 'drinks', thai: 'น้ำอัดลม' },
-  milk: { id: 'milk', name: 'Milk', icon: '🥛', category: 'drinks', thai: 'นมสด' },
-  tea: { id: 'tea', name: 'Hot Tea', icon: '🍵', category: 'drinks', thai: 'ชาเขียว' },
-
-  // Level 4: Space, Magic, Dinosaurs
-  astronaut: { id: 'astronaut', name: 'Astronaut', icon: '👨‍🚀', category: 'space', thai: 'นักบินอวกาศ' },
-  rocket: { id: 'rocket', name: 'Rocket', icon: '🚀', category: 'space', thai: 'จรวด' },
-  ufo: { id: 'ufo', name: 'UFO', icon: '🛸', category: 'space', thai: 'จานบิน' },
-  alien: { id: 'alien', name: 'Alien', icon: '👽', category: 'space', thai: 'เอเลี่ยน' },
-  planet: { id: 'planet', name: 'Planet', icon: '🪐', category: 'space', thai: 'ดาวเสาร์' },
-  telescope: { id: 'telescope', name: 'Telescope', icon: '🔭', category: 'space', thai: 'กล้องดูดาว' },
-
-  wizard: { id: 'wizard', name: 'Wizard', icon: '🧙', category: 'magic', thai: 'พ่อมด' },
-  crystal: { id: 'crystal', name: 'Crystal', icon: '🔮', category: 'magic', thai: 'ลูกแก้วพยากรณ์' },
-  wand: { id: 'wand', name: 'Magic Wand', icon: '🪄', category: 'magic', thai: 'ไม้กายสิทธิ์' },
-  potion: { id: 'potion', name: 'Potion', icon: '🧪', category: 'magic', thai: 'น้ำยาเวทมนตร์' },
-  cauldron: { id: 'cauldron', name: 'Cauldron', icon: '🫕', category: 'magic', thai: 'หม้อต้มยา' },
-  scroll: { id: 'scroll', name: 'Spell Scroll', icon: '📜', category: 'magic', thai: 'คัมภีร์เวท' },
-
-  trex: { id: 'trex', name: 'T-Rex', icon: '🦖', category: 'dino', thai: 'ทีเร็กซ์' },
-  sauropod: { id: 'sauropod', name: 'Brontosaurus', icon: '🦕', category: 'dino', thai: 'คอยาว' },
-  pterodactyl: { id: 'pterodactyl', name: 'Pterodactyl', icon: '🦅', category: 'dino', thai: 'เทอโรซอร์' },
-  dino_egg: { id: 'dino_egg', name: 'Dino Egg', icon: '🥚', category: 'dino', thai: 'ไข่ไดโนเสาร์' },
-  volcano: { id: 'volcano', name: 'Volcano', icon: '🌋', category: 'dino', thai: 'ภูเขาไฟ' },
-  meteor: { id: 'meteor', name: 'Meteor', icon: '☄️', category: 'dino', thai: 'อุกกาบาต' },
-
-  // Level 5: ชีวิตผู้ตรวจ อปท. (Audit & Office Life Easter Egg)
-  doc_pk4: { id: 'doc_pk4', name: 'แบบ ปค.4', icon: '📁', category: 'audit_docs', thai: 'แบบ ปค.4' },
-  doc_pk5: { id: 'doc_pk5', name: 'แบบ ปค.5', icon: '📂', category: 'audit_docs', thai: 'แบบ ปค.5' },
-  audit_plan: { id: 'audit_plan', name: 'แผนตรวจสอบ', icon: '📋', category: 'audit_docs', thai: 'แผนประจำปี' },
-  disbursement: { id: 'disbursement', name: 'ฎีกาเบิกจ่าย', icon: '📜', category: 'audit_docs', thai: 'ฎีกา' },
-  audit_stamp: { id: 'audit_stamp', name: 'ตรายาง สตง.', icon: '🔏', category: 'audit_docs', thai: 'ตรายางตรวจผ่าน' },
-  receipt: { id: 'receipt', name: 'ใบเสร็จรับเงิน', icon: '🧾', category: 'audit_docs', thai: 'ใบเสร็จ' },
-
-  coffee_black: { id: 'coffee_black', name: 'อเมริกาโน่เย็น', icon: '☕', category: 'office_fuel', thai: 'กาแฟเข้ม' },
-  boba_milk: { id: 'boba_milk', name: 'ชานม 100% หวาน', icon: '🧋', category: 'office_fuel', thai: 'ชานมดับเครียด' },
-  yadom: { id: 'yadom', name: 'ยาดมตราโป๊ยเซียน', icon: '🌿', category: 'office_fuel', thai: 'ยาดมแก้เวียน' },
-  glasses: { id: 'glasses', name: 'แว่นสายตากรองแสง', icon: '👓', category: 'office_fuel', thai: 'แว่นทำงาน' },
-  mama_cup: { id: 'mama_cup', name: 'มาม่าคัพรอบดึก', icon: '🍜', category: 'office_fuel', thai: 'บะหมี่รอบดึก' },
-  toast: { id: 'toast', name: 'ขนมปังปิ้งเนย', icon: '🍞', category: 'office_fuel', thai: 'ขนมปัง' },
-
-  hard_hat: { id: 'hard_hat', name: 'หมวกนิรภัยช่าง', icon: '⛑️', category: 'engineer_tools', thai: 'หมวกช่าง' },
-  tape_measure: { id: 'tape_measure', name: 'ตลับเมตรเลเซอร์', icon: '📏', category: 'engineer_tools', thai: 'ตลับเมตร' },
-  inspect_car: { id: 'inspect_car', name: 'รถตรวจงาน อปท.', icon: '🚙', category: 'engineer_tools', thai: 'รถราชการ' },
-  factor_f: { id: 'factor_f', name: 'ตาราง Factor F', icon: '🗂️', category: 'engineer_tools', thai: 'ราคากลาง' },
-  calculator: { id: 'calculator', name: 'เครื่องคิดเลข', icon: '🔢', category: 'engineer_tools', thai: 'เครื่องคิดเลข' },
-  desktop_pc: { id: 'desktop_pc', name: 'คอมตรวจ e-LAAS', icon: '💻', category: 'engineer_tools', thai: 'ระบบคอม' }
-};
-
-// 5 Complete Progressive Level Configurations
-const LEVEL_CONFIGS = {
-  1: {
-    levelNumber: 1,
-    title: 'LEVEL 1: สัตว์เลี้ยง ผลไม้ และยานพาหนะ (เริ่มต้น)',
-    moves: 40,
-    rewardCoins: 100,
-    categories: [
-      { id: 'pets', name: 'Pets', max: 4, icon: '🐶', thai: 'สัตว์เลี้ยงแสนรัก' },
-      { id: 'fruits', name: 'Fruits', max: 4, icon: '🍎', thai: 'ผลไม้สดชื่น' },
-      { id: 'vehicles', name: 'Vehicles', max: 4, icon: '🚗', thai: 'ยานพาหนะ' }
-    ],
-    stacks: [
-      [{ top: 'dog', hidden: [] }, { top: 'apple', hidden: [] }, { top: 'car', hidden: [] }, { top: null, hidden: [] }],
-      [{ top: 'cat', hidden: [] }, { top: 'banana', hidden: [] }, { top: 'bus', hidden: [] }, { top: null, hidden: [] }],
-      [{ top: 'bunny', hidden: [] }, { top: 'strawberry', hidden: [] }, { top: 'airplane', hidden: [] }, { top: null, hidden: [] }],
-      [{ top: 'hamster', hidden: [] }, { top: 'grape', hidden: [] }, { top: 'train', hidden: [] }, { top: null, hidden: [] }]
+// Comprehensive Category & Card Database (15 distinct categories for infinite level variety)
+const MASTER_CATEGORIES = {
+  pets: {
+    id: 'pets',
+    name: 'Pets',
+    icon: '🐶',
+    thai: 'สัตว์เลี้ยงแสนรัก',
+    cards: [
+      { id: 'dog', name: 'Puppy', icon: '🐶', category: 'pets', thai: 'น้องหมา' },
+      { id: 'cat', name: 'Kitty', icon: '🐱', category: 'pets', thai: 'น้องแมว' },
+      { id: 'bunny', name: 'Bunny', icon: '🐰', category: 'pets', thai: 'กระต่าย' },
+      { id: 'hamster', name: 'Hamster', icon: '🐹', category: 'pets', thai: 'แฮมสเตอร์' },
+      { id: 'parrot', name: 'Parrot', icon: '🦜', category: 'pets', thai: 'นกแก้ว' },
+      { id: 'turtle', name: 'Turtle', icon: '🐢', category: 'pets', thai: 'เต่าน้อย' }
     ]
   },
-  2: {
-    levelNumber: 2,
-    title: 'LEVEL 2: Ocean, Jobs & Can Fly (Cardlings Official)',
-    moves: 50,
-    rewardCoins: 150,
-    categories: [
-      { id: 'ocean', name: 'Ocean', max: 6, icon: '🌊', thai: 'สัตว์ใต้ทะเล' },
-      { id: 'jobs', name: 'Jobs', max: 6, icon: '💼', thai: 'อาชีพต่างๆ' },
-      { id: 'can_fly', name: 'Can fly', max: 6, icon: '🪽', thai: 'สิ่งที่บินได้' }
-    ],
-    stacks: [
-      [{ top: 'phoenix', hidden: [] }, { top: 'firefighter', hidden: ['shark'] }, { top: 'dolphin', hidden: [] }, { top: 'octopus', hidden: [] }],
-      [{ top: 'chef', hidden: [] }, { top: 'griffin', hidden: ['doctor'] }, { top: 'eagle', hidden: [] }, { top: 'whale', hidden: [] }],
-      [{ top: 'flamingo', hidden: [] }, { top: 'farmer', hidden: [] }, { top: 'princess', hidden: [] }, { top: 'glider', hidden: [] }],
-      [{ top: 'scientist', hidden: [] }, { top: 'jellyfish', hidden: [] }, { top: 'hummingbird', hidden: [] }, { top: 'clownfish', hidden: [] }]
+  fruits: {
+    id: 'fruits',
+    name: 'Fruits',
+    icon: '🍎',
+    thai: 'ผลไม้สดชื่น',
+    cards: [
+      { id: 'apple', name: 'Apple', icon: '🍎', category: 'fruits', thai: 'แอปเปิ้ล' },
+      { id: 'banana', name: 'Banana', icon: '🍌', category: 'fruits', thai: 'กล้วยหอม' },
+      { id: 'strawberry', name: 'Strawberry', icon: '🍓', category: 'fruits', thai: 'สตรอว์เบอร์รี' },
+      { id: 'grape', name: 'Grape', icon: '🍇', category: 'fruits', thai: 'องุ่น' },
+      { id: 'watermelon', name: 'Watermelon', icon: '🍉', category: 'fruits', thai: 'แตงโม' },
+      { id: 'orange', name: 'Orange', icon: '🍊', category: 'fruits', thai: 'ส้มสายน้ำผึ้ง' }
     ]
   },
-  3: {
-    levelNumber: 3,
-    title: 'LEVEL 3: เบเกอรี่ อาหารจานด่วน และเครื่องดื่ม',
-    moves: 55,
-    rewardCoins: 200,
-    categories: [
-      { id: 'bakery', name: 'Bakery', max: 6, icon: '🧁', thai: 'เบเกอรี่แสนหวาน' },
-      { id: 'fastfood', name: 'Fast Food', max: 6, icon: '🍕', thai: 'อาหารจานด่วน' },
-      { id: 'drinks', name: 'Drinks', max: 6, icon: '🧋', thai: 'เครื่องดื่มดับร้อน' }
-    ],
-    stacks: [
-      [{ top: 'cupcake', hidden: ['cake'] }, { top: 'pizza', hidden: [] }, { top: 'boba', hidden: [] }, { top: 'croissant', hidden: [] }],
-      [{ top: 'burger', hidden: [] }, { top: 'coffee', hidden: ['tea'] }, { top: 'donut', hidden: [] }, { top: 'fries', hidden: [] }],
-      [{ top: 'juice', hidden: [] }, { top: 'cookie', hidden: [] }, { top: 'hotdog', hidden: ['popcorn'] }, { top: 'soda', hidden: [] }],
-      [{ top: 'pancake', hidden: [] }, { top: 'taco', hidden: [] }, { top: 'milk', hidden: [] }, { top: null, hidden: [] }]
+  vehicles: {
+    id: 'vehicles',
+    name: 'Vehicles',
+    icon: '🚗',
+    thai: 'ยานพาหนะ',
+    cards: [
+      { id: 'car', name: 'Car', icon: '🚗', category: 'vehicles', thai: 'รถเก๋ง' },
+      { id: 'bus', name: 'Bus', icon: '🚌', category: 'vehicles', thai: 'รถบัส' },
+      { id: 'airplane', name: 'Airplane', icon: '✈️', category: 'vehicles', thai: 'เครื่องบิน' },
+      { id: 'train', name: 'Train', icon: '🚆', category: 'vehicles', thai: 'รถไฟ' },
+      { id: 'helicopter', name: 'Helicopter', icon: '🚁', category: 'vehicles', thai: 'เฮลิคอปเตอร์' },
+      { id: 'sub', name: 'Submarine', icon: '🚢', category: 'vehicles', thai: 'เรือเดินสมุทร' }
     ]
   },
-  4: {
-    levelNumber: 4,
-    title: 'LEVEL 4: อวกาศ เวทมนตร์ และไดโนเสาร์',
-    moves: 55,
-    rewardCoins: 250,
-    categories: [
-      { id: 'space', name: 'Space', max: 6, icon: '🚀', thai: 'อวกาศอันไกลโพ้น' },
-      { id: 'magic', name: 'Magic', max: 6, icon: '🪄', thai: 'มนตร์วิเศษ' },
-      { id: 'dino', name: 'Dino', max: 6, icon: '🦖', thai: 'โลกล้านปี' }
-    ],
-    stacks: [
-      [{ top: 'astronaut', hidden: ['telescope'] }, { top: 'wizard', hidden: [] }, { top: 'trex', hidden: [] }, { top: 'rocket', hidden: [] }],
-      [{ top: 'crystal', hidden: [] }, { top: 'sauropod', hidden: ['meteor'] }, { top: 'ufo', hidden: [] }, { top: 'wand', hidden: [] }],
-      [{ top: 'pterodactyl', hidden: [] }, { top: 'alien', hidden: ['planet'] }, { top: 'potion', hidden: [] }, { top: 'dino_egg', hidden: [] }],
-      [{ top: 'cauldron', hidden: [] }, { top: 'volcano', hidden: [] }, { top: 'scroll', hidden: [] }, { top: null, hidden: [] }]
+  ocean: {
+    id: 'ocean',
+    name: 'Ocean',
+    icon: '🌊',
+    thai: 'สัตว์ใต้ทะเล',
+    cards: [
+      { id: 'dolphin', name: 'Dolphin', icon: '🐬', category: 'ocean', thai: 'โลมา' },
+      { id: 'octopus', name: 'Octopus', icon: '🐙', category: 'ocean', thai: 'หมึกยักษ์' },
+      { id: 'whale', name: 'Whale', icon: '🐳', category: 'ocean', thai: 'วาฬสีน้ำเงิน' },
+      { id: 'clownfish', name: 'Clownfish', icon: '🐠', category: 'ocean', thai: 'ปลาการ์ตูน' },
+      { id: 'jellyfish', name: 'Jellyfish', icon: '🪼', category: 'ocean', thai: 'แมงกะพรุน' },
+      { id: 'shark', name: 'Shark', icon: '🦈', category: 'ocean', thai: 'ฉลาม' }
     ]
   },
-  5: {
-    levelNumber: 5,
-    title: 'LEVEL 5: ชีวิตผู้ตรวจสอบ อปท. (รอบชิงชนะเลิศ)',
-    moves: 60,
-    rewardCoins: 300,
-    categories: [
-      { id: 'audit_docs', name: 'Audit Docs', max: 6, icon: '📂', thai: 'เอกสารรายงานตรวจ' },
-      { id: 'office_fuel', name: 'Office Fuel', max: 6, icon: '☕', thai: 'ของยังชีพห้องตรวจ' },
-      { id: 'engineer_tools', name: 'Engineering', max: 6, icon: '⛑️', thai: 'งานช่าง & พัสดุ' }
-    ],
-    stacks: [
-      [{ top: 'doc_pk4', hidden: ['receipt'] }, { top: 'coffee_black', hidden: [] }, { top: 'hard_hat', hidden: [] }, { top: 'doc_pk5', hidden: [] }],
-      [{ top: 'boba_milk', hidden: ['toast'] }, { top: 'tape_measure', hidden: [] }, { top: 'audit_plan', hidden: [] }, { top: 'yadom', hidden: [] }],
-      [{ top: 'inspect_car', hidden: ['desktop_pc'] }, { top: 'disbursement', hidden: [] }, { top: 'glasses', hidden: [] }, { top: 'factor_f', hidden: [] }],
-      [{ top: 'audit_stamp', hidden: [] }, { top: 'mama_cup', hidden: [] }, { top: 'calculator', hidden: [] }, { top: null, hidden: [] }]
+  jobs: {
+    id: 'jobs',
+    name: 'Jobs',
+    icon: '💼',
+    thai: 'อาชีพต่างๆ',
+    cards: [
+      { id: 'chef', name: 'Chef', icon: '👨‍🍳', category: 'jobs', thai: 'เชฟ' },
+      { id: 'firefighter', name: 'Firefighter', icon: '👩‍🚒', category: 'jobs', thai: 'นักดับเพลิง' },
+      { id: 'scientist', name: 'Scientist', icon: '👩‍🔬', category: 'jobs', thai: 'นักวิทยาศาสตร์' },
+      { id: 'farmer', name: 'Farmer', icon: '👨‍🌾', category: 'jobs', thai: 'ชาวสวน' },
+      { id: 'princess', name: 'Princess', icon: '👸', category: 'jobs', thai: 'เจ้าหญิง' },
+      { id: 'doctor', name: 'Doctor', icon: '👩‍⚕️', category: 'jobs', thai: 'คุณหมอ' }
+    ]
+  },
+  can_fly: {
+    id: 'can_fly',
+    name: 'Can fly',
+    icon: '🪽',
+    thai: 'สิ่งที่บินได้',
+    cards: [
+      { id: 'phoenix', name: 'Phoenix', icon: '🦅', category: 'can_fly', thai: 'ฟีนิกซ์' },
+      { id: 'griffin', name: 'Griffin', icon: '🦁', category: 'can_fly', thai: 'กริฟฟอน' },
+      { id: 'eagle', name: 'Eagle', icon: '🦅', category: 'can_fly', thai: 'นกอินทรี' },
+      { id: 'flamingo', name: 'Flamingo', icon: '🦩', category: 'can_fly', thai: 'ฟลามิงโก' },
+      { id: 'hummingbird', name: 'Hummingbird', icon: '🐦', category: 'can_fly', thai: 'ฮัมมิงเบิร์ด' },
+      { id: 'glider', name: 'Glider', icon: '🛩️', category: 'can_fly', thai: 'เครื่องร่อน' }
+    ]
+  },
+  bakery: {
+    id: 'bakery',
+    name: 'Bakery',
+    icon: '🧁',
+    thai: 'เบเกอรี่แสนหวาน',
+    cards: [
+      { id: 'cupcake', name: 'Cupcake', icon: '🧁', category: 'bakery', thai: 'คัพเค้ก' },
+      { id: 'croissant', name: 'Croissant', icon: '🥐', category: 'bakery', thai: 'ครัวซองต์' },
+      { id: 'donut', name: 'Donut', icon: '🍩', category: 'bakery', thai: 'โดนัท' },
+      { id: 'cookie', name: 'Cookie', icon: '🍪', category: 'bakery', thai: 'คุกกี้' },
+      { id: 'pancake', name: 'Pancake', icon: '🥞', category: 'bakery', thai: 'แพนเค้ก' },
+      { id: 'cake', name: 'Cake', icon: '🍰', category: 'bakery', thai: 'เค้กช็อกโกแลต' }
+    ]
+  },
+  fastfood: {
+    id: 'fastfood',
+    name: 'Fast Food',
+    icon: '🍕',
+    thai: 'อาหารจานด่วน',
+    cards: [
+      { id: 'pizza', name: 'Pizza', icon: '🍕', category: 'fastfood', thai: 'พิซซ่า' },
+      { id: 'burger', name: 'Burger', icon: '🍔', category: 'fastfood', thai: 'เบอร์เกอร์' },
+      { id: 'fries', name: 'Fries', icon: '🍟', category: 'fastfood', thai: 'เฟรนช์ฟรายส์' },
+      { id: 'hotdog', name: 'Hotdog', icon: '🌭', category: 'fastfood', thai: 'ฮอทดอก' },
+      { id: 'taco', name: 'Taco', icon: '🌮', category: 'fastfood', thai: 'ทาโก้' },
+      { id: 'popcorn', name: 'Popcorn', icon: '🍿', category: 'fastfood', thai: 'ป๊อปคอร์น' }
+    ]
+  },
+  drinks: {
+    id: 'drinks',
+    name: 'Drinks',
+    icon: '🧋',
+    thai: 'เครื่องดื่มดับร้อน',
+    cards: [
+      { id: 'boba', name: 'Boba Tea', icon: '🧋', category: 'drinks', thai: 'ชานมไข่มุก' },
+      { id: 'coffee', name: 'Coffee', icon: '☕', category: 'drinks', thai: 'กาแฟสด' },
+      { id: 'juice', name: 'Juice', icon: '🧃', category: 'drinks', thai: 'น้ำผลไม้' },
+      { id: 'soda', name: 'Soda', icon: '🥤', category: 'drinks', thai: 'น้ำอัดลม' },
+      { id: 'milk', name: 'Milk', icon: '🥛', category: 'drinks', thai: 'นมสด' },
+      { id: 'tea', name: 'Hot Tea', icon: '🍵', category: 'drinks', thai: 'ชาเขียว' }
+    ]
+  },
+  space: {
+    id: 'space',
+    name: 'Space',
+    icon: '🚀',
+    thai: 'อวกาศและดวงดาว',
+    cards: [
+      { id: 'astronaut', name: 'Astronaut', icon: '👨‍🚀', category: 'space', thai: 'นักบินอวกาศ' },
+      { id: 'rocket', name: 'Rocket', icon: '🚀', category: 'space', thai: 'จรวด' },
+      { id: 'ufo', name: 'UFO', icon: '🛸', category: 'space', thai: 'จานบิน' },
+      { id: 'alien', name: 'Alien', icon: '👽', category: 'space', thai: 'เอเลี่ยน' },
+      { id: 'planet', name: 'Planet', icon: '🪐', category: 'space', thai: 'ดาวเสาร์' },
+      { id: 'telescope', name: 'Telescope', icon: '🔭', category: 'space', thai: 'กล้องดูดาว' }
+    ]
+  },
+  magic: {
+    id: 'magic',
+    name: 'Magic',
+    icon: '🪄',
+    thai: 'มนตร์วิเศษ',
+    cards: [
+      { id: 'wizard', name: 'Wizard', icon: '🧙', category: 'magic', thai: 'พ่อมด' },
+      { id: 'crystal', name: 'Crystal', icon: '🔮', category: 'magic', thai: 'ลูกแก้วพยากรณ์' },
+      { id: 'wand', name: 'Magic Wand', icon: '🪄', category: 'magic', thai: 'ไม้กายสิทธิ์' },
+      { id: 'potion', name: 'Potion', icon: '🧪', category: 'magic', thai: 'น้ำยาเวทมนตร์' },
+      { id: 'cauldron', name: 'Cauldron', icon: '🫕', category: 'magic', thai: 'หม้อต้มยา' },
+      { id: 'scroll', name: 'Spell Scroll', icon: '📜', category: 'magic', thai: 'คัมภีร์เวท' }
+    ]
+  },
+  dino: {
+    id: 'dino',
+    name: 'Dino',
+    icon: '🦖',
+    thai: 'โลกล้านปี',
+    cards: [
+      { id: 'dino_trex', name: 'T-Rex', icon: '🦖', category: 'dino', thai: 'ทีเร็กซ์' },
+      { id: 'dino_bronto', name: 'Bronto', icon: '🦕', category: 'dino', thai: 'คอยาว' },
+      { id: 'dino_ptero', name: 'Pterodactyl', icon: '🦅', category: 'dino', thai: 'เทอโรซอร์' },
+      { id: 'dino_egg', name: 'Dino Egg', icon: '🥚', category: 'dino', thai: 'ไข่ไดโนเสาร์' },
+      { id: 'volcano', name: 'Volcano', icon: '🌋', category: 'dino', thai: 'ภูเขาไฟ' },
+      { id: 'meteor', name: 'Meteor', icon: '☄️', category: 'dino', thai: 'อุกกาบาต' }
+    ]
+  },
+  audit_life: {
+    id: 'audit_life',
+    name: 'Audit Docs',
+    icon: '📂',
+    thai: 'เอกสารรายงานตรวจ',
+    cards: [
+      { id: 'doc_pk4', name: 'แบบ ปค.4', icon: '📁', category: 'audit_life', thai: 'แบบ ปค.4' },
+      { id: 'doc_pk5', name: 'แบบ ปค.5', icon: '📂', category: 'audit_life', thai: 'แบบ ปค.5' },
+      { id: 'audit_plan', name: 'แผนตรวจ', icon: '📋', category: 'audit_life', thai: 'แผนประจำปี' },
+      { id: 'disbursement', name: 'ฎีกาเบิก', icon: '📜', category: 'audit_life', thai: 'ฎีกา' },
+      { id: 'audit_stamp', name: 'ตรายาง สตง.', icon: '🔏', category: 'audit_life', thai: 'ตรวจผ่าน' },
+      { id: 'receipt', name: 'ใบเสร็จ', icon: '🧾', category: 'audit_life', thai: 'ใบเสร็จ' }
+    ]
+  },
+  office_fuel: {
+    id: 'office_fuel',
+    name: 'Office Fuel',
+    icon: '☕',
+    thai: 'ของยังชีพห้องตรวจ',
+    cards: [
+      { id: 'coffee_black', name: 'อเมริกาโน่', icon: '☕', category: 'office_fuel', thai: 'กาแฟเข้ม' },
+      { id: 'boba_milk', name: 'ชานม 100%', icon: '🧋', category: 'office_fuel', thai: 'ชานมหวาน' },
+      { id: 'yadom', name: 'ยาดมโป๊ยเซียน', icon: '🌿', category: 'office_fuel', thai: 'ยาดม' },
+      { id: 'glasses', name: 'แว่นกรองแสง', icon: '👓', category: 'office_fuel', thai: 'แว่นตา' },
+      { id: 'mama_cup', name: 'มาม่าคัพ', icon: '🍜', category: 'office_fuel', thai: 'บะหมี่ดึก' },
+      { id: 'toast', name: 'ขนมปังปิ้ง', icon: '🍞', category: 'office_fuel', thai: 'ขนมปัง' }
+    ]
+  },
+  engineering: {
+    id: 'engineering',
+    name: 'Engineering',
+    icon: '⛑️',
+    thai: 'งานช่าง & พัสดุ',
+    cards: [
+      { id: 'hard_hat', name: 'หมวกช่าง', icon: '⛑️', category: 'engineering', thai: 'หมวกนิรภัย' },
+      { id: 'tape_measure', name: 'ตลับเมตร', icon: '📏', category: 'engineering', thai: 'ตลับเมตร' },
+      { id: 'inspect_car', name: 'รถตรวจงาน', icon: '🚙', category: 'engineering', thai: 'รถราชการ' },
+      { id: 'factor_f', name: 'Factor F', icon: '🗂️', category: 'engineering', thai: 'ราคากลาง' },
+      { id: 'calc', name: 'เครื่องคิดเลข', icon: '🔢', category: 'engineering', thai: 'เครื่องคิดเลข' },
+      { id: 'pc', name: 'ระบบ e-LAAS', icon: '💻', category: 'engineering', thai: 'คอมตรวจ' }
     ]
   }
 };
 
+// Flatten map of all cards for O(1) lookup
+const ALL_CARDS_MAP = {};
+Object.values(MASTER_CATEGORIES).forEach((cat) => {
+  cat.cards.forEach((c) => {
+    ALL_CARDS_MAP[c.id] = c;
+  });
+});
+
+// Category combinations for 20+ Progressive Levels
+const LEVEL_PRESETS = [
+  { level: 1, cats: ['pets', 'fruits', 'vehicles'], moves: 40, cardsPerCat: 4, name: 'เริ่มต้น: สัตว์เลี้ยง, ผลไม้, ยานพาหนะ' },
+  { level: 2, cats: ['ocean', 'jobs', 'can_fly'], moves: 50, cardsPerCat: 6, name: 'Cardlings: Ocean, Jobs, Can fly' },
+  { level: 3, cats: ['bakery', 'fastfood', 'drinks'], moves: 55, cardsPerCat: 6, name: 'ของหวาน: เบเกอรี่, อาหารจานด่วน, เครื่องดื่ม' },
+  { level: 4, cats: ['space', 'magic', 'dino'], moves: 55, cardsPerCat: 6, name: 'แฟนตาซี: อวกาศ, มนตร์วิเศษ, ไดโนเสาร์' },
+  { level: 5, cats: ['audit_life', 'office_fuel', 'engineering'], moves: 60, cardsPerCat: 6, name: 'ชีวิตผู้ตรวจ อปท.: เอกสารตรวจ, ของยังชีพ, งานช่าง' },
+  { level: 6, cats: ['pets', 'ocean', 'can_fly'], moves: 50, cardsPerCat: 6, name: 'อาณาจักรสัตว์โลก 3 มิติ' },
+  { level: 7, cats: ['fruits', 'bakery', 'drinks'], moves: 50, cardsPerCat: 6, name: 'คาเฟ่ของหวานและผลไม้สด' },
+  { level: 8, cats: ['vehicles', 'space', 'engineering'], moves: 55, cardsPerCat: 6, name: 'ยานยนต์ วิศวกรรม และอวกาศ' },
+  { level: 9, cats: ['jobs', 'audit_life', 'office_fuel'], moves: 55, cardsPerCat: 6, name: 'รวมพลคนทำงานออฟฟิศ อปท.' },
+  { level: 10, cats: ['magic', 'dino', 'ocean'], moves: 50, cardsPerCat: 6, name: 'สิ่งมีชีวิตลึกลับและมนตร์วิเศษ' }
+];
+
+// Helper to get configuration for ANY level (1 to 100+)
+const getLevelData = (lvl) => {
+  const preset = LEVEL_PRESETS[(lvl - 1) % LEVEL_PRESETS.length];
+  const catKeys = preset.cats;
+  const cardsPerCat = preset.cardsPerCat;
+
+  // Selected 3 categories
+  const categories = catKeys.map((k) => ({
+    ...MASTER_CATEGORIES[k],
+    max: cardsPerCat
+  }));
+
+  // Collect all cards for these 3 categories
+  const pool = [];
+  categories.forEach((cat) => {
+    const catCards = MASTER_CATEGORIES[cat.id].cards.slice(0, cardsPerCat);
+    catCards.forEach((c) => pool.push(c.id));
+  });
+
+  // Deterministic shuffle based on level number
+  const shuffled = [...pool].sort((a, b) => {
+    const hashA = (a.charCodeAt(0) * 31 + lvl * 17) % 100;
+    const hashB = (b.charCodeAt(0) * 31 + lvl * 17) % 100;
+    return hashA - hashB;
+  });
+
+  // Distribute into 4 columns (4 slots per column, with hidden cards if level > 1)
+  const stacks = [[], [], [], []];
+  const totalSlots = 16;
+  const cardsPerSlot = Math.ceil(shuffled.length / totalSlots);
+
+  let cardIndex = 0;
+  for (let c = 0; c < 4; c++) {
+    for (let r = 0; r < 4; r++) {
+      if (cardIndex < shuffled.length) {
+        const top = shuffled[cardIndex++];
+        const hidden = [];
+        // Add hidden card depth in later levels
+        if (lvl >= 2 && cardIndex < shuffled.length && Math.random() < 0.35) {
+          hidden.push(shuffled[cardIndex++]);
+        }
+        stacks[c].push({ top, hidden });
+      } else {
+        stacks[c].push({ top: null, hidden: [] });
+      }
+    }
+  }
+
+  return {
+    levelNumber: lvl,
+    name: `LEVEL ${lvl}: ${preset.name}`,
+    moves: preset.moves,
+    rewardCoins: 100 + lvl * 25,
+    categories,
+    stacks
+  };
+};
+
 export default function CardSortPuzzleView() {
-  // Start from Level 1 by default
   const [level, setLevel] = useState(() => {
     const saved = localStorage.getItem('card_sort_level');
     return saved !== null ? parseInt(saved, 10) : 1;
   });
 
-  const currentConfig = LEVEL_CONFIGS[level] || LEVEL_CONFIGS[1];
-
-  const [movesLeft, setMovesLeft] = useState(currentConfig.moves);
+  const [currentConfig, setCurrentConfig] = useState(() => getLevelData(level));
+  const [movesLeft, setMovesLeft] = useState(() => currentConfig.moves);
   const [coins, setCoins] = useState(() => {
     return parseInt(localStorage.getItem('card_sort_coins') || '250', 10);
   });
@@ -313,11 +410,13 @@ export default function CardSortPuzzleView() {
   const [showLevelSelect, setShowLevelSelect] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState(null);
   const [selectedFrom, setSelectedFrom] = useState(null);
+  const [draggedCardInfo, setDraggedCardInfo] = useState(null); // { cardId, from }
+  const [dragHoverTarget, setDragHoverTarget] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
   const [history, setHistory] = useState([]);
   const [isWon, setIsWon] = useState(false);
 
-  // Bench slots on the right
+  // Bench slots on the right (6 slots)
   const [benchSlots, setBenchSlots] = useState([
     { id: 0, card: null, locked: false },
     { id: 1, card: null, locked: false },
@@ -327,7 +426,7 @@ export default function CardSortPuzzleView() {
     { id: 5, card: null, locked: true, unlockCost: 250 }
   ]);
 
-  // Dynamic completed categories based on current level
+  // Completed categories in current level
   const [completedCategories, setCompletedCategories] = useState(() => {
     const initial = {};
     currentConfig.categories.forEach((cat) => {
@@ -339,10 +438,11 @@ export default function CardSortPuzzleView() {
   // Stacks in the grid
   const [gridStacks, setGridStacks] = useState(() => JSON.parse(JSON.stringify(currentConfig.stacks)));
 
-  // Whenever level changes, reset board cleanly
-  const loadLevel = (targetLevel) => {
-    const conf = LEVEL_CONFIGS[targetLevel] || LEVEL_CONFIGS[1];
-    setLevel(targetLevel);
+  // Load a level
+  const loadLevel = (lvlNum) => {
+    const conf = getLevelData(lvlNum);
+    setLevel(lvlNum);
+    setCurrentConfig(conf);
     setMovesLeft(conf.moves);
     setGridStacks(JSON.parse(JSON.stringify(conf.stacks)));
 
@@ -362,6 +462,7 @@ export default function CardSortPuzzleView() {
     ]);
     setSelectedCardId(null);
     setSelectedFrom(null);
+    setDraggedCardInfo(null);
     setHistory([]);
     setIsWon(false);
   };
@@ -386,14 +487,57 @@ export default function CardSortPuzzleView() {
       setIsWon(true);
       playSound('win', isMuted);
       setCoins((c) => c + currentConfig.rewardCoins);
-      showToast(`🎉 ชนะเลิศ! คุณเคลียร์ LEVEL ${level} สำเร็จครบทุกหมวด (+${currentConfig.rewardCoins} เหรียญ)`);
+      showToast(`🎉 ชัยชนะ! คุณลากจัดหมวดหมู่สำเร็จครบทุกใบ (+${currentConfig.rewardCoins} เหรียญ)`);
     }
   }, [completedCategories, isWon, currentConfig, level, isMuted]);
 
-  // SMART CLICK / AUTO-SEND: คลิกซ้ายที่การ์ดเพื่อส่งไปยังหมวดหมู่ทันที
+  // ==========================================
+  // CARD INTERACTION (DRAG & DROP + CLICK-TO-PICK)
+  // ==========================================
+
+  // 1. Click on card: Select/pick up (Does NOT auto-fly!)
   const handleCardClick = (cardId, fromLocation) => {
     if (!cardId) return;
-    const cardData = ALL_CARDS[cardId];
+
+    if (selectedCardId === cardId) {
+      // Deselect
+      setSelectedCardId(null);
+      setSelectedFrom(null);
+      playSound('place', isMuted);
+    } else {
+      // Pick up card
+      setSelectedCardId(cardId);
+      setSelectedFrom(fromLocation);
+      playSound('select', isMuted);
+      showToast(`หยิบ "${ALL_CARDS_MAP[cardId]?.name}" แล้ว! 👉 ลากหรือแตะไปวางที่หมวดหมู่หรือม้านั่ง`);
+    }
+  };
+
+  // 2. Drag Start
+  const handleDragStart = (e, cardId, fromLocation) => {
+    setDraggedCardInfo({ cardId, from: fromLocation });
+    setSelectedCardId(cardId);
+    setSelectedFrom(fromLocation);
+    playSound('select', isMuted);
+    e.dataTransfer.setData('text/plain', cardId);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedCardInfo(null);
+    setDragHoverTarget(null);
+  };
+
+  // 3. Drop / Place onto Category Target
+  const handleDropOrPlaceOnCategory = (targetCatId) => {
+    const activeCardId = draggedCardInfo?.cardId || selectedCardId;
+    const activeFrom = draggedCardInfo?.from || selectedFrom;
+
+    if (!activeCardId || !activeFrom) {
+      showToast('👉 กรุณาลากการ์ด หรือคลิกหยิบการ์ดก่อนนำมาใส่ที่หมวดหมู่นี้ครับ');
+      return;
+    }
+
+    const cardData = ALL_CARDS_MAP[activeCardId];
     if (!cardData) return;
 
     if (movesLeft <= 0) {
@@ -402,80 +546,72 @@ export default function CardSortPuzzleView() {
       return;
     }
 
-    const catId = cardData.category;
-    const targetCat = currentConfig.categories.find((c) => c.id === catId);
-
-    // If matching category is active on board and has room: send immediately!
-    if (targetCat && (completedCategories[catId]?.length || 0) < targetCat.max) {
-      sendCardToCategory(cardId, fromLocation, catId);
-    } else {
-      // Toggle selection to place on bench
-      if (selectedCardId === cardId) {
-        setSelectedCardId(null);
-        setSelectedFrom(null);
-      } else {
-        setSelectedCardId(cardId);
-        setSelectedFrom(fromLocation);
-        playSound('select', isMuted);
-        showToast(`เลือก "${cardData.name}" (แตะม้านั่งสำรองทางขวาเพื่อพักการ์ด)`);
-      }
+    // CHECK VALID CATEGORY
+    if (cardData.category !== targetCatId) {
+      // Penalty move deduction on wrong placement
+      setMovesLeft((m) => Math.max(0, m - 1));
+      playSound('error', isMuted);
+      showToast(`❌ ผิดหมวดหมู่! "${cardData.name}" (${cardData.thai}) ไม่ใช่หมวดนี้ (เสีย 1 Move)`);
+      return;
     }
-  };
 
-  // Send card to Category
-  const sendCardToCategory = (cardId, from, catId) => {
+    const targetCat = currentConfig.categories.find((c) => c.id === targetCatId);
+    if ((completedCategories[targetCatId]?.length || 0) >= (targetCat?.max || 6)) {
+      showToast('⚠️ หมวดหมู่นี้จัดเก็บครบจำนวนแล้ว!');
+      playSound('error', isMuted);
+      return;
+    }
+
+    // SUCCESSFUL TRANSFER
     saveUndoState();
     setMovesLeft((m) => m - 1);
 
-    // Remove card from source and reveal hidden card if any!
-    if (from.type === 'grid') {
-      setGridStacks((prev) => {
-        const next = prev.map((col, cIdx) =>
+    // Remove from source and reveal next card if any
+    if (activeFrom.type === 'grid') {
+      setGridStacks((prev) =>
+        prev.map((col, cIdx) =>
           col.map((slot, rIdx) => {
-            if (cIdx === from.colIdx && rIdx === from.rowIdx) {
+            if (cIdx === activeFrom.colIdx && rIdx === activeFrom.rowIdx) {
               if (slot.hidden.length > 0) {
                 playSound('flip', isMuted);
-                return {
-                  top: slot.hidden[0],
-                  hidden: slot.hidden.slice(1)
-                };
+                return { top: slot.hidden[0], hidden: slot.hidden.slice(1) };
               }
               return { top: null, hidden: [] };
             }
             return slot;
           })
-        );
-        return next;
-      });
-    } else if (from.type === 'bench') {
+        )
+      );
+    } else if (activeFrom.type === 'bench') {
       setBenchSlots((prev) =>
-        prev.map((s, idx) => (idx === from.benchIdx ? { ...s, card: null } : s))
+        prev.map((s, idx) => (idx === activeFrom.benchIdx ? { ...s, card: null } : s))
       );
     }
 
-    // Add to completed category
+    // Add to category
     setCompletedCategories((prev) => ({
       ...prev,
-      [catId]: [...(prev[catId] || []), cardId]
+      [targetCatId]: [...(prev[targetCatId] || []), activeCardId]
     }));
 
     setSelectedCardId(null);
     setSelectedFrom(null);
+    setDraggedCardInfo(null);
+    setDragHoverTarget(null);
     playSound('match', isMuted);
-    const catName = currentConfig.categories.find((c) => c.id === catId)?.name || catId;
-    showToast(`✨ ส่ง "${ALL_CARDS[cardId].name}" เข้าหมวด ${catName}!`);
+    showToast(`✨ ยอดเยี่ยม! จัดเก็บ "${cardData.name}" เข้าหมวด ${targetCat.name} สำเร็จ!`);
   };
 
-  // Click on Bench slot
-  const handleBenchClick = (benchIdx) => {
-    const slot = benchSlots[benchIdx];
+  // 4. Drop / Place onto Bench Target
+  const handleDropOrPlaceOnBench = (targetBenchIdx) => {
+    const slot = benchSlots[targetBenchIdx];
 
     // If locked, attempt unlock
     if (slot.locked) {
       if (coins >= slot.unlockCost) {
         setCoins((c) => c - slot.unlockCost);
         setBenchSlots((prev) =>
-          prev.map((s, i) => (i === benchIdx ? { ...s, locked: false } : s))
+          prev.map((s, i) => (i === targetBenchIdx ? { ...s, locked: false } : s))
         );
         playSound('match', isMuted);
         showToast('🔓 ปลดล็อกม้านั่งสำรองเรียบร้อยแล้ว!');
@@ -486,19 +622,23 @@ export default function CardSortPuzzleView() {
       return;
     }
 
-    // If bench slot has a card: click to auto-send or select!
-    if (slot.card) {
-      handleCardClick(slot.card, { type: 'bench', benchIdx });
+    const activeCardId = draggedCardInfo?.cardId || selectedCardId;
+    const activeFrom = draggedCardInfo?.from || selectedFrom;
+
+    if (!activeCardId || !activeFrom) {
+      // If clicking existing card on bench without dragging: pick it up!
+      if (slot.card) {
+        handleCardClick(slot.card, { type: 'bench', benchIdx: targetBenchIdx });
+      }
       return;
     }
 
-    // Empty bench slot: place selected card here!
-    if (selectedCardId && selectedFrom) {
-      placeCardOnBench(selectedCardId, selectedFrom, benchIdx);
+    // If slot already occupied
+    if (slot.card && slot.card !== activeCardId) {
+      showToast('⚠️ ช่องม้านั่งนี้มีไพ่อื่นวางอยู่แล้ว!');
+      return;
     }
-  };
 
-  const placeCardOnBench = (cardId, from, benchIdx) => {
     if (movesLeft <= 0) {
       showToast('⚠️ จำนวน Moves หมดแล้ว!');
       playSound('error', isMuted);
@@ -508,57 +648,38 @@ export default function CardSortPuzzleView() {
     saveUndoState();
     setMovesLeft((m) => m - 1);
 
-    // Remove from origin
-    if (from.type === 'grid') {
-      setGridStacks((prev) => {
-        const next = prev.map((col, cIdx) =>
-          col.map((slot, rIdx) => {
-            if (cIdx === from.colIdx && rIdx === from.rowIdx) {
-              if (slot.hidden.length > 0) {
+    // Remove from source
+    if (activeFrom.type === 'grid') {
+      setGridStacks((prev) =>
+        prev.map((col, cIdx) =>
+          col.map((s, rIdx) => {
+            if (cIdx === activeFrom.colIdx && rIdx === activeFrom.rowIdx) {
+              if (s.hidden.length > 0) {
                 playSound('flip', isMuted);
-                return { top: slot.hidden[0], hidden: slot.hidden.slice(1) };
+                return { top: s.hidden[0], hidden: s.hidden.slice(1) };
               }
               return { top: null, hidden: [] };
             }
-            return slot;
+            return s;
           })
-        );
-        return next;
-      });
-    } else if (from.type === 'bench') {
+        )
+      );
+    } else if (activeFrom.type === 'bench') {
       setBenchSlots((prev) =>
-        prev.map((s, idx) => (idx === from.benchIdx ? { ...s, card: null } : s))
+        prev.map((s, idx) => (idx === activeFrom.benchIdx ? { ...s, card: null } : s))
       );
     }
 
-    // Place into bench slot
+    // Place into bench
     setBenchSlots((prev) =>
-      prev.map((s, idx) => (idx === benchIdx ? { ...s, card: cardId } : s))
+      prev.map((s, idx) => (idx === targetBenchIdx ? { ...s, card: activeCardId } : s))
     );
 
     setSelectedCardId(null);
     setSelectedFrom(null);
+    setDraggedCardInfo(null);
     playSound('place', isMuted);
-    showToast(`🛋️ พักการ์ด "${ALL_CARDS[cardId].name}" บนม้านั่งสำรอง`);
-  };
-
-  // Direct click on Category Box
-  const handleCategoryBoxClick = (catId) => {
-    if (!selectedCardId || !selectedFrom) {
-      showToast('👉 คลิกที่การ์ดเพื่อส่งเข้าหมวดหมู่โดยตรงได้เลยครับ!');
-      return;
-    }
-
-    const cardData = ALL_CARDS[selectedCardId];
-    if (cardData.category !== catId) {
-      // Penalty: การวางไพ่ผิดหมวดหมู่จะเสีย 1 แต้ม (ตามกฎของเกม)
-      setMovesLeft((m) => Math.max(0, m - 1));
-      playSound('error', isMuted);
-      showToast(`❌ ผิดหมวด! "${cardData.name}" (${cardData.thai}) เสีย 1 Move!`);
-      return;
-    }
-
-    sendCardToCategory(selectedCardId, selectedFrom, catId);
+    showToast(`🛋️ นำการ์ด "${ALL_CARDS_MAP[activeCardId]?.name}" มาพักไว้บนม้านั่ง`);
   };
 
   // Save Undo State
@@ -608,11 +729,10 @@ export default function CardSortPuzzleView() {
     let foundCard = null;
     let foundLocation = null;
 
-    // Check grid top cards
     gridStacks.forEach((col, cIdx) => {
       col.forEach((slot, rIdx) => {
         if (slot.top && !foundCard) {
-          const catId = ALL_CARDS[slot.top]?.category;
+          const catId = ALL_CARDS_MAP[slot.top]?.category;
           const targetCat = currentConfig.categories.find((c) => c.id === catId);
           if (targetCat && (completedCategories[catId]?.length || 0) < targetCat.max) {
             foundCard = slot.top;
@@ -622,11 +742,10 @@ export default function CardSortPuzzleView() {
       });
     });
 
-    // Check bench cards
     if (!foundCard) {
       benchSlots.forEach((slot, bIdx) => {
         if (slot.card && !foundCard) {
-          const catId = ALL_CARDS[slot.card]?.category;
+          const catId = ALL_CARDS_MAP[slot.card]?.category;
           const targetCat = currentConfig.categories.find((c) => c.id === catId);
           if (targetCat && (completedCategories[catId]?.length || 0) < targetCat.max) {
             foundCard = slot.card;
@@ -641,19 +760,19 @@ export default function CardSortPuzzleView() {
       setSelectedFrom(foundLocation);
       setHintCount((h) => h - 1);
       playSound('match', isMuted);
-      showToast(`💡 คำใบ้: แตะส่ง "${ALL_CARDS[foundCard].name}" เข้าหมวด ${ALL_CARDS[foundCard].category}!`);
+      showToast(`💡 คำใบ้: ลาก "${ALL_CARDS_MAP[foundCard]?.name}" ไปใส่ที่หมวด "${ALL_CARDS_MAP[foundCard]?.category}"!`);
     } else {
-      showToast('💡 ตอนนี้ยังไม่มีการ์ดที่เข้าหมวดหมู่ได้ ลองพักการ์ดบนม้านั่งเพื่อเปิดการ์ดด้านล่าง!');
+      showToast('💡 ตอนนี้ยังไม่มีการ์ดที่เข้าหมวดหมู่ได้ ลองลากการ์ดไปพักบนม้านั่งเพื่อเปิดการ์ดด้านล่าง!');
     }
   };
 
-  // Magnet Booster (Lv 7 Power-up)
+  // Magnet Booster
   const handleMagnet = () => {
     let target = null;
     gridStacks.forEach((col, cIdx) => {
       col.forEach((slot, rIdx) => {
         if (slot.top && !target) {
-          const catId = ALL_CARDS[slot.top]?.category;
+          const catId = ALL_CARDS_MAP[slot.top]?.category;
           const targetCat = currentConfig.categories.find((c) => c.id === catId);
           if (targetCat && (completedCategories[catId]?.length || 0) < targetCat.max) {
             target = { cardId: slot.top, from: { type: 'grid', colIdx: cIdx, rowIdx: rIdx }, catId };
@@ -663,7 +782,10 @@ export default function CardSortPuzzleView() {
     });
 
     if (target) {
-      sendCardToCategory(target.cardId, target.from, target.catId);
+      setDraggedCardInfo(target);
+      setTimeout(() => {
+        handleDropOrPlaceOnCategory(target.catId);
+      }, 100);
       playSound('match', isMuted);
       showToast('🧲 พลังแม่เหล็กดูดการ์ดเข้าหมวดหมู่อัตโนมัติ!');
     } else {
@@ -680,9 +802,8 @@ export default function CardSortPuzzleView() {
 
   // Advance to Next Level
   const handleNextLevel = () => {
-    const nextLvl = level < 5 ? level + 1 : 1;
-    loadLevel(nextLvl);
-    showToast(`🚀 เข้าสู่ LEVEL ${nextLvl}!`);
+    loadLevel(level + 1);
+    showToast(`🚀 เข้าสู่ LEVEL ${level + 1}!`);
   };
 
   return (
@@ -695,7 +816,7 @@ export default function CardSortPuzzleView() {
         </div>
       )}
 
-      {/* Main Wood Plank Board Container - Matching Cardlings by blu studios 1:1 */}
+      {/* Main Wood Plank Board Container - Cardlings Board */}
       <div className="relative w-full min-h-[670px] rounded-3xl p-4 sm:p-6 shadow-2xl overflow-hidden border-8 border-[#3b1d0a] bg-gradient-to-b from-[#8b5a2b] via-[#75441e] to-[#552c0f] flex flex-col justify-between">
         {/* Subtle wood plank vertical grain texture lines */}
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.08)_1px,transparent_1px)] [background-size:64px_100%] pointer-events-none" />
@@ -775,7 +896,7 @@ export default function CardSortPuzzleView() {
               <div className="flex flex-col gap-2.5">
                 {[0, 1, 2, 3].map((rowIdx) => {
                   const slot = gridStacks[0]?.[rowIdx];
-                  const card = slot?.top ? ALL_CARDS[slot.top] : null;
+                  const card = slot?.top ? ALL_CARDS_MAP[slot.top] : null;
                   const isSelected = selectedCardId === slot?.top && slot?.top !== null;
 
                   if (!card) {
@@ -790,8 +911,11 @@ export default function CardSortPuzzleView() {
                   return (
                     <div
                       key={rowIdx}
+                      draggable={true}
+                      onDragStart={(e) => handleDragStart(e, slot.top, { type: 'grid', colIdx: 0, rowIdx })}
+                      onDragEnd={handleDragEnd}
                       onClick={() => handleCardClick(slot.top, { type: 'grid', colIdx: 0, rowIdx })}
-                      className={`relative h-24 sm:h-28 rounded-2xl bg-gradient-to-b from-white via-white to-slate-50 border-3 border-slate-300 shadow-[0_5px_0_#94a3b8] hover:-translate-y-1 transition-all cursor-pointer flex flex-col items-center justify-center p-1 text-center select-none ${
+                      className={`relative h-24 sm:h-28 rounded-2xl bg-gradient-to-b from-white via-white to-slate-50 border-3 border-slate-300 shadow-[0_5px_0_#94a3b8] hover:-translate-y-1 transition-all cursor-grab active:cursor-grabbing flex flex-col items-center justify-center p-1 text-center select-none ${
                         isSelected ? 'ring-4 ring-amber-400 scale-105 shadow-xl -translate-y-2' : ''
                       }`}
                     >
@@ -800,8 +924,8 @@ export default function CardSortPuzzleView() {
                           {slot.hidden.length}
                         </div>
                       )}
-                      <span className="text-3xl sm:text-4xl drop-shadow-sm leading-none">{card.icon}</span>
-                      <span className="text-[11px] sm:text-xs font-black text-slate-800 mt-1 truncate max-w-full">
+                      <span className="text-3xl sm:text-4xl drop-shadow-sm leading-none pointer-events-none">{card.icon}</span>
+                      <span className="text-[11px] sm:text-xs font-black text-slate-800 mt-1 truncate max-w-full pointer-events-none">
                         {card.name}
                       </span>
                     </div>
@@ -813,7 +937,7 @@ export default function CardSortPuzzleView() {
               <div className="flex flex-col gap-2.5">
                 {[0, 1, 2, 3].map((rowIdx) => {
                   const slot = gridStacks[1]?.[rowIdx];
-                  const card = slot?.top ? ALL_CARDS[slot.top] : null;
+                  const card = slot?.top ? ALL_CARDS_MAP[slot.top] : null;
                   const isSelected = selectedCardId === slot?.top && slot?.top !== null;
 
                   if (!card) {
@@ -828,8 +952,11 @@ export default function CardSortPuzzleView() {
                   return (
                     <div
                       key={rowIdx}
+                      draggable={true}
+                      onDragStart={(e) => handleDragStart(e, slot.top, { type: 'grid', colIdx: 1, rowIdx })}
+                      onDragEnd={handleDragEnd}
                       onClick={() => handleCardClick(slot.top, { type: 'grid', colIdx: 1, rowIdx })}
-                      className={`relative h-24 sm:h-28 rounded-2xl bg-gradient-to-b from-white via-white to-slate-50 border-3 border-slate-300 shadow-[0_5px_0_#94a3b8] hover:-translate-y-1 transition-all cursor-pointer flex flex-col items-center justify-center p-1 text-center select-none ${
+                      className={`relative h-24 sm:h-28 rounded-2xl bg-gradient-to-b from-white via-white to-slate-50 border-3 border-slate-300 shadow-[0_5px_0_#94a3b8] hover:-translate-y-1 transition-all cursor-grab active:cursor-grabbing flex flex-col items-center justify-center p-1 text-center select-none ${
                         isSelected ? 'ring-4 ring-amber-400 scale-105 shadow-xl -translate-y-2' : ''
                       }`}
                     >
@@ -838,8 +965,8 @@ export default function CardSortPuzzleView() {
                           {slot.hidden.length}
                         </div>
                       )}
-                      <span className="text-3xl sm:text-4xl drop-shadow-sm leading-none">{card.icon}</span>
-                      <span className="text-[11px] sm:text-xs font-black text-slate-800 mt-1 truncate max-w-full">
+                      <span className="text-3xl sm:text-4xl drop-shadow-sm leading-none pointer-events-none">{card.icon}</span>
+                      <span className="text-[11px] sm:text-xs font-black text-slate-800 mt-1 truncate max-w-full pointer-events-none">
                         {card.name}
                       </span>
                     </div>
@@ -847,33 +974,45 @@ export default function CardSortPuzzleView() {
                 })}
               </div>
 
-              {/* Column 2: THE 3 ACTIVE CATEGORIES & PLUS EXPANDER */}
+              {/* Column 2: THE 3 ACTIVE CATEGORIES & PLUS EXPANDER (DROP ZONES) */}
               <div className="flex flex-col gap-2.5">
                 {currentConfig.categories.map((cat) => {
                   const placedList = completedCategories[cat.id] || [];
-                  const isTargetMatch = selectedCardId && ALL_CARDS[selectedCardId]?.category === cat.id;
+                  const isHovered = dragHoverTarget === cat.id;
+                  const isTargetMatch = selectedCardId && ALL_CARDS_MAP[selectedCardId]?.category === cat.id;
 
                   return (
                     <div
                       key={cat.id}
-                      onClick={() => handleCategoryBoxClick(cat.id)}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        setDragHoverTarget(cat.id);
+                      }}
+                      onDragLeave={() => setDragHoverTarget(null)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        handleDropOrPlaceOnCategory(cat.id);
+                      }}
+                      onClick={() => handleDropOrPlaceOnCategory(cat.id)}
                       className={`h-24 sm:h-28 rounded-2xl border-3 border-amber-400/90 bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] shadow-[0_5px_0_#b45309] hover:brightness-105 transition-all cursor-pointer flex flex-col items-center justify-center p-1.5 text-center ${
-                        isTargetMatch ? 'ring-4 ring-amber-400 animate-pulse' : ''
+                        isHovered || isTargetMatch
+                          ? 'ring-4 ring-amber-400 scale-102 bg-amber-100 shadow-xl'
+                          : ''
                       }`}
                     >
-                      <div className="flex items-center space-x-1 text-[11px] font-black text-amber-900">
+                      <div className="flex items-center space-x-1 text-[11px] font-black text-amber-900 pointer-events-none">
                         <span>
                           {placedList.length}/{cat.max}
                         </span>
                         <Star className="w-3 h-3 fill-amber-500 text-amber-600" />
                       </div>
-                      <div className="text-sm sm:text-base font-extrabold text-slate-900 mt-1 truncate max-w-full">
+                      <div className="text-sm sm:text-base font-extrabold text-slate-900 mt-1 truncate max-w-full pointer-events-none">
                         {cat.name}
                       </div>
-                      <div className="text-[10px] text-amber-800 font-bold mt-0.5 truncate max-w-full">
+                      <div className="text-[10px] text-amber-800 font-bold mt-0.5 truncate max-w-full pointer-events-none">
                         {placedList.length > 0
-                          ? placedList.map((c) => ALL_CARDS[c]?.icon).join('')
-                          : 'แตะเพื่อจัดเก็บ'}
+                          ? placedList.map((c) => ALL_CARDS_MAP[c]?.icon).join('')
+                          : 'ลากมาวางที่นี่'}
                       </div>
                     </div>
                   );
@@ -894,7 +1033,7 @@ export default function CardSortPuzzleView() {
               <div className="flex flex-col gap-2.5">
                 {[0, 1, 2, 3].map((rowIdx) => {
                   const slot = gridStacks[2]?.[rowIdx];
-                  const card = slot?.top ? ALL_CARDS[slot.top] : null;
+                  const card = slot?.top ? ALL_CARDS_MAP[slot.top] : null;
                   const isSelected = selectedCardId === slot?.top && slot?.top !== null;
 
                   if (!card) {
@@ -909,8 +1048,11 @@ export default function CardSortPuzzleView() {
                   return (
                     <div
                       key={rowIdx}
+                      draggable={true}
+                      onDragStart={(e) => handleDragStart(e, slot.top, { type: 'grid', colIdx: 2, rowIdx })}
+                      onDragEnd={handleDragEnd}
                       onClick={() => handleCardClick(slot.top, { type: 'grid', colIdx: 2, rowIdx })}
-                      className={`relative h-24 sm:h-28 rounded-2xl bg-gradient-to-b from-white via-white to-slate-50 border-3 border-slate-300 shadow-[0_5px_0_#94a3b8] hover:-translate-y-1 transition-all cursor-pointer flex flex-col items-center justify-center p-1 text-center select-none ${
+                      className={`relative h-24 sm:h-28 rounded-2xl bg-gradient-to-b from-white via-white to-slate-50 border-3 border-slate-300 shadow-[0_5px_0_#94a3b8] hover:-translate-y-1 transition-all cursor-grab active:cursor-grabbing flex flex-col items-center justify-center p-1 text-center select-none ${
                         isSelected ? 'ring-4 ring-amber-400 scale-105 shadow-xl -translate-y-2' : ''
                       }`}
                     >
@@ -919,8 +1061,8 @@ export default function CardSortPuzzleView() {
                           {slot.hidden.length}
                         </div>
                       )}
-                      <span className="text-3xl sm:text-4xl drop-shadow-sm leading-none">{card.icon}</span>
-                      <span className="text-[11px] sm:text-xs font-black text-slate-800 mt-1 truncate max-w-full">
+                      <span className="text-3xl sm:text-4xl drop-shadow-sm leading-none pointer-events-none">{card.icon}</span>
+                      <span className="text-[11px] sm:text-xs font-black text-slate-800 mt-1 truncate max-w-full pointer-events-none">
                         {card.name}
                       </span>
                     </div>
@@ -932,7 +1074,7 @@ export default function CardSortPuzzleView() {
               <div className="flex flex-col gap-2.5">
                 {[0, 1, 2, 3].map((rowIdx) => {
                   const slot = gridStacks[3]?.[rowIdx];
-                  const card = slot?.top ? ALL_CARDS[slot.top] : null;
+                  const card = slot?.top ? ALL_CARDS_MAP[slot.top] : null;
                   const isSelected = selectedCardId === slot?.top && slot?.top !== null;
 
                   if (!card) {
@@ -947,8 +1089,11 @@ export default function CardSortPuzzleView() {
                   return (
                     <div
                       key={rowIdx}
+                      draggable={true}
+                      onDragStart={(e) => handleDragStart(e, slot.top, { type: 'grid', colIdx: 3, rowIdx })}
+                      onDragEnd={handleDragEnd}
                       onClick={() => handleCardClick(slot.top, { type: 'grid', colIdx: 3, rowIdx })}
-                      className={`relative h-24 sm:h-28 rounded-2xl bg-gradient-to-b from-white via-white to-slate-50 border-3 border-slate-300 shadow-[0_5px_0_#94a3b8] hover:-translate-y-1 transition-all cursor-pointer flex flex-col items-center justify-center p-1 text-center select-none ${
+                      className={`relative h-24 sm:h-28 rounded-2xl bg-gradient-to-b from-white via-white to-slate-50 border-3 border-slate-300 shadow-[0_5px_0_#94a3b8] hover:-translate-y-1 transition-all cursor-grab active:cursor-grabbing flex flex-col items-center justify-center p-1 text-center select-none ${
                         isSelected ? 'ring-4 ring-amber-400 scale-105 shadow-xl -translate-y-2' : ''
                       }`}
                     >
@@ -957,8 +1102,8 @@ export default function CardSortPuzzleView() {
                           {slot.hidden.length}
                         </div>
                       )}
-                      <span className="text-3xl sm:text-4xl drop-shadow-sm leading-none">{card.icon}</span>
-                      <span className="text-[11px] sm:text-xs font-black text-slate-800 mt-1 truncate max-w-full">
+                      <span className="text-3xl sm:text-4xl drop-shadow-sm leading-none pointer-events-none">{card.icon}</span>
+                      <span className="text-[11px] sm:text-xs font-black text-slate-800 mt-1 truncate max-w-full pointer-events-none">
                         {card.name}
                       </span>
                     </div>
@@ -968,17 +1113,17 @@ export default function CardSortPuzzleView() {
             </div>
           </div>
 
-          {/* ================= BENCH SLOTS (ม้านั่งพักการ์ด) ================= */}
+          {/* ================= BENCH SLOTS (ม้านั่งพักการ์ด - DROP ZONES) ================= */}
           <div className="flex md:flex-col gap-2.5 shrink-0">
             {benchSlots.map((slot, idx) => {
-              const card = slot.card ? ALL_CARDS[slot.card] : null;
+              const card = slot.card ? ALL_CARDS_MAP[slot.card] : null;
               const isSelected = selectedCardId === slot.card && slot.card !== null;
 
               if (slot.locked) {
                 return (
                   <div
                     key={slot.id}
-                    onClick={() => handleBenchClick(idx)}
+                    onClick={() => handleDropOrPlaceOnBench(idx)}
                     className="w-16 h-18 sm:w-18 sm:h-20 rounded-2xl bg-amber-950/70 border-2 border-amber-900/80 shadow-inner flex flex-col items-center justify-center cursor-pointer hover:bg-amber-900/70 transition-colors"
                     title="คลิกเพื่อปลดล็อกม้านั่งสำรองด้วย 250 เหรียญ"
                   >
@@ -994,13 +1139,16 @@ export default function CardSortPuzzleView() {
                 return (
                   <div
                     key={slot.id}
-                    onClick={() => handleBenchClick(idx)}
-                    className={`w-16 h-18 sm:w-18 sm:h-20 rounded-2xl bg-gradient-to-b from-white via-white to-slate-50 border-3 border-slate-300 shadow-[0_5px_0_#94a3b8] flex flex-col items-center justify-center p-1 text-center cursor-pointer hover:-translate-y-1 transition-all ${
+                    draggable={true}
+                    onDragStart={(e) => handleDragStart(e, slot.card, { type: 'bench', benchIdx: idx })}
+                    onDragEnd={handleDragEnd}
+                    onClick={() => handleCardClick(slot.card, { type: 'bench', benchIdx: idx })}
+                    className={`w-16 h-18 sm:w-18 sm:h-20 rounded-2xl bg-gradient-to-b from-white via-white to-slate-50 border-3 border-slate-300 shadow-[0_5px_0_#94a3b8] flex flex-col items-center justify-center p-1 text-center cursor-grab active:cursor-grabbing hover:-translate-y-1 transition-all ${
                       isSelected ? 'ring-4 ring-amber-400 scale-105 shadow-xl' : ''
                     }`}
                   >
-                    <span className="text-2xl sm:text-3xl leading-none">{card.icon}</span>
-                    <span className="text-[9px] font-black text-slate-800 mt-1 truncate max-w-full">
+                    <span className="text-2xl sm:text-3xl leading-none pointer-events-none">{card.icon}</span>
+                    <span className="text-[9px] font-black text-slate-800 mt-1 truncate max-w-full pointer-events-none">
                       {card.name}
                     </span>
                   </div>
@@ -1010,11 +1158,16 @@ export default function CardSortPuzzleView() {
               return (
                 <div
                   key={slot.id}
-                  onClick={() => handleBenchClick(idx)}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    handleDropOrPlaceOnBench(idx);
+                  }}
+                  onClick={() => handleDropOrPlaceOnBench(idx)}
                   className={`w-16 h-18 sm:w-18 sm:h-20 rounded-2xl bg-amber-950/60 border-2 border-amber-900/80 shadow-inner flex items-center justify-center cursor-pointer transition-colors ${
                     selectedCardId ? 'hover:bg-amber-800/50 ring-2 ring-amber-400/60' : ''
                   }`}
-                  title="ม้านั่งพักการ์ด (คลิกการ์ดแล้วคลิกที่นี่เพื่อนำมาพัก)"
+                  title="ม้านั่งพักการ์ด (ลากการ์ดมาวางที่นี่ หรือแตะเพื่อวาง)"
                 />
               );
             })}
@@ -1075,14 +1228,16 @@ export default function CardSortPuzzleView() {
         {/* BOTTOM HELPER BAR */}
         <div className="relative z-10 mt-4 bg-amber-950/70 backdrop-blur-md rounded-2xl px-4 py-2.5 border border-amber-700/60 flex flex-wrap items-center justify-between text-xs text-amber-200">
           <div className="flex items-center space-x-2">
-            <span className="font-bold">🎯 {currentConfig.title}</span>
+            <Move className="w-4 h-4 text-amber-400" />
+            <span className="font-bold">🎯 {currentConfig.name}</span>
+            <span className="text-amber-300/80">• (ลากการ์ดด้วยเมาส์ หรือแตะเพื่อหยิบไปวางในช่อง)</span>
           </div>
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setShowLevelSelect(true)}
               className="text-amber-300 hover:text-white underline font-bold cursor-pointer"
             >
-              เลือกด่าน (Level 1-5)
+              เลือกระดับด่าน (Level 1-20+)
             </button>
             <span>•</span>
             <button
@@ -1095,7 +1250,7 @@ export default function CardSortPuzzleView() {
         </div>
       </div>
 
-      {/* LEVEL SELECT MODAL */}
+      {/* LEVEL SELECT MODAL (Supports Level 1 to 20+) */}
       {showLevelSelect && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-gradient-to-b from-amber-50 to-orange-100 border-4 border-amber-700 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 animate-in zoom-in-95">
@@ -1105,7 +1260,7 @@ export default function CardSortPuzzleView() {
                   เลือกระดับด่าน (Level Select)
                 </h3>
                 <p className="text-[11px] text-amber-800 font-bold">
-                  เลือกด่านที่ต้องการเล่น มีทั้งหมด 5 ระดับความท้าทาย
+                  เลือกด่านที่ต้องการเล่น มีความท้าทายกว่า 20+ ด่าน
                 </p>
               </div>
               <button
@@ -1117,8 +1272,8 @@ export default function CardSortPuzzleView() {
             </div>
 
             <div className="space-y-2.5 max-h-[60vh] overflow-y-auto pr-1">
-              {[1, 2, 3, 4, 5].map((lvlNum) => {
-                const conf = LEVEL_CONFIGS[lvlNum];
+              {Array.from({ length: 20 }, (_, i) => i + 1).map((lvlNum) => {
+                const conf = getLevelData(lvlNum);
                 const isCurrent = level === lvlNum;
 
                 return (
@@ -1127,7 +1282,7 @@ export default function CardSortPuzzleView() {
                     onClick={() => {
                       loadLevel(lvlNum);
                       setShowLevelSelect(false);
-                      showToast(`เข้าสู่ ${conf.title}`);
+                      showToast(`เข้าสู่ ${conf.name}`);
                     }}
                     className={`p-3.5 rounded-2xl border-2 flex items-center justify-between transition-all cursor-pointer ${
                       isCurrent
@@ -1145,7 +1300,7 @@ export default function CardSortPuzzleView() {
                         )}
                       </div>
                       <p className={`text-xs mt-0.5 ${isCurrent ? 'text-amber-100' : 'text-slate-600'}`}>
-                        {conf.title.split(': ')[1]}
+                        {conf.name.split(': ')[1] || conf.name}
                       </p>
                       <div className={`text-[10px] mt-1 flex space-x-3 ${isCurrent ? 'text-amber-200' : 'text-slate-500'}`}>
                         <span>Moves: {conf.moves}</span>
@@ -1154,7 +1309,7 @@ export default function CardSortPuzzleView() {
                     </div>
 
                     <div className="text-2xl">
-                      {lvlNum === 1 ? '🐶' : lvlNum === 2 ? '🐬' : lvlNum === 3 ? '🧁' : lvlNum === 4 ? '🚀' : '📑'}
+                      {conf.categories[0]?.icon || '⭐'}
                     </div>
                   </div>
                 );
@@ -1194,17 +1349,16 @@ export default function CardSortPuzzleView() {
 
             <div className="space-y-3 text-xs text-amber-950 leading-relaxed max-h-[60vh] overflow-y-auto pr-1">
               <p className="font-bold text-slate-800">
-                สนุกไปกับเกมเรียงการ์ดแสนสนุกนี้ การ์ดแต่ละใบมีรูปภาพน่ารัก และอยู่ในหมวดหมู่ที่กำหนด จับคู่การ์ดแต่ละใบกับหมวดหมู่ เติมให้ครบ และเคลียร์โต๊ะ!
+                สนุกไปกับเกมเรียงการ์ดแสนสนุกนี้ การ์ดแต่ละใบมีรูปภาพน่ารัก และอยู่ในหมวดหมู่ที่กำหนด ลากการ์ดจับคู่เข้าหมวดหมู่ เติมให้ครบ และเคลียร์โต๊ะ!
               </p>
               <div className="space-y-2 bg-white/70 p-4 rounded-2xl border border-amber-200">
-                <div className="font-extrabold text-amber-900 text-sm">💡 วิธีการเล่น:</div>
+                <div className="font-extrabold text-amber-900 text-sm">💡 วิธีการเล่น (ฉบับ Drag & Drop):</div>
                 <ul className="list-disc list-inside space-y-1.5 text-slate-700 font-medium">
-                  <li><b>เปิดให้เล่นได้เพียงสามประเภทในแต่ละครั้ง</b> โปรดคิดให้ดีก่อนเข้าร่วม!</li>
-                  <li><b>วางบัตรไว้บนม้านั่ง</b> ขณะรอให้หมวดหมู่บัตรนั้นว่าง</li>
-                  <li><b>ระวังการเคลื่อนไหวของคุณ:</b> การวางไพ่ผิดหมวดหมู่จะเสียหนึ่งแต้ม (Move)</li>
-                  <li><b>ไพ่คว่ำหน้าที่มีเลขบอกจำนวน</b> จะเปิดออกเมื่อนำไพ่ใบบนออก</li>
-                  <li><b>คลิกซ้าย</b> ที่การ์ดเพื่อส่งไปยังหมวดหมู่ที่ตรงกันทันที</li>
-                  <li>ติดขัดใช่ไหม? ใช้คำใบ้ แม่เหล็ก หรือปุ่มย้อนกลับได้เลย</li>
+                  <li><b>ลากการ์ดด้วยเมาส์</b> หรือคลิกหยิบการ์ดแล้วนำไปวางในช่องหมวดหมู่ที่ถูกต้อง</li>
+                  <li><b>วางการ์ดไว้บนม้านั่ง</b> (ช่องพักทางขวา) เพื่อรอให้หมวดหมู่ว่าง หรือเปิดไพ่ใบที่อยู่ด้านล่าง</li>
+                  <li><b>ระวังการเคลื่อนไหว:</b> หากนำไปวางผิดหมวดหมู่ จะเสีย 1 Move!</li>
+                  <li><b>ไพ่ด้านล่างจะพลิกหงาย</b> เมื่อคุณย้ายไพ่ใบบนออก</li>
+                  <li>ติดขัดใช่ไหม? ใช้คำใบ้ 💡 หรือแม่เหล็ก 🧲 ได้เลย</li>
                 </ul>
               </div>
             </div>
@@ -1213,7 +1367,7 @@ export default function CardSortPuzzleView() {
               onClick={() => setShowHowToPlay(false)}
               className="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white font-black text-sm rounded-2xl shadow-[0_4px_0_#92400e] active:translate-y-1 active:shadow-none cursor-pointer"
             >
-              เข้าใจแล้ว เริ่มเล่นเลย!
+              เข้าใจแล้ว เริ่มลุยเลย!
             </button>
           </div>
         </div>
@@ -1229,7 +1383,7 @@ export default function CardSortPuzzleView() {
             <div>
               <h2 className="text-2xl font-black text-amber-950 font-mono">VICTORY!</h2>
               <p className="text-xs text-amber-800 mt-1 font-bold">
-                ยินดีด้วย! คุณผ่าน LEVEL {level} สำเร็จครบทุกหมวด (+{currentConfig.rewardCoins} เหรียญทอง)
+                ยินดีด้วย! คุณเคลียร์ LEVEL {level} สำเร็จครบทุกหมวด (+{currentConfig.rewardCoins} เหรียญทอง)
               </p>
             </div>
 
@@ -1242,7 +1396,7 @@ export default function CardSortPuzzleView() {
               onClick={handleNextLevel}
               className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-sm rounded-2xl shadow-[0_5px_0_#065f46] active:translate-y-1 active:shadow-none cursor-pointer flex items-center justify-center space-x-2"
             >
-              <span>{level < 5 ? `ไปต่อด่านถัดไป (LEVEL ${level + 1})` : 'จบเกมแล้ว! วนกลับ LEVEL 1'}</span>
+              <span>ไปต่อด่านถัดไป (LEVEL {level + 1})</span>
               <ChevronRight className="w-4 h-4 stroke-[3]" />
             </button>
           </div>
