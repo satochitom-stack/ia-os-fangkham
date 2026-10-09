@@ -37,7 +37,10 @@ import {
   Clock,
   Eye,
   Wheat,
-  Smile
+  Smile,
+  Plus,
+  Home,
+  Gem
 } from 'lucide-react';
 
 // Web Audio sound synthesizer for retro tactile sound effects
@@ -131,21 +134,20 @@ const playSound = (type, isMuted) => {
         o.stop(now + i * 0.08 + 0.25);
       });
     }
-  } catch (e) {
-    // AudioContext blocked
-  }
+  } catch (e) {}
 };
 
-// 8 Distinct Pig Breeds
+// 8 Pig Breeds with Rich Colors and Accessories
 const PIG_BREEDS = {
   pink: {
     id: 'pink',
     name: 'หมูชมพูพันธุ์พื้นเมือง',
     tag: 'ธรรมดา',
     rarity: 'Common',
-    color: '#f472b6',
-    bellyColor: '#fbcfe8',
+    primaryColor: '#f472b6',
+    secondaryColor: '#fbcfe8',
     earColor: '#ec4899',
+    bellyColor: '#fce7f3',
     maxWeight: 120,
     pricePerKg: 15,
     buyCost: 100,
@@ -159,9 +161,10 @@ const PIG_BREEDS = {
     name: 'หมูผู้ตรวจสอบ ปค.5',
     tag: 'นักตรวจมือฉมัง',
     rarity: 'Rare',
-    color: '#60a5fa',
-    bellyColor: '#bfdbfe',
+    primaryColor: '#60a5fa',
+    secondaryColor: '#bfdbfe',
     earColor: '#3b82f6',
+    bellyColor: '#dbeafe',
     maxWeight: 150,
     pricePerKg: 28,
     buyCost: 250,
@@ -175,9 +178,10 @@ const PIG_BREEDS = {
     name: 'หมูช่างตรวจงาน Factor F',
     tag: 'สายลุยหน้างาน',
     rarity: 'Rare',
-    color: '#fbbf24',
-    bellyColor: '#fef08a',
+    primaryColor: '#fbbf24',
+    secondaryColor: '#fef08a',
     earColor: '#f59e0b',
+    bellyColor: '#fef9c3',
     maxWeight: 160,
     pricePerKg: 32,
     buyCost: 320,
@@ -191,9 +195,10 @@ const PIG_BREEDS = {
     name: 'หมูซากุระชมพูหวาน',
     tag: 'ลิมิเต็ด',
     rarity: 'Epic',
-    color: '#f9a8d4',
-    bellyColor: '#fdf2f8',
+    primaryColor: '#f9a8d4',
+    secondaryColor: '#fdf2f8',
     earColor: '#f472b6',
+    bellyColor: '#fff1f2',
     maxWeight: 180,
     pricePerKg: 48,
     buyCost: 500,
@@ -207,9 +212,10 @@ const PIG_BREEDS = {
     name: 'หมูชาบูกระทะทอง',
     tag: 'สายกินจุ',
     rarity: 'Epic',
-    color: '#fb923c',
-    bellyColor: '#ffedd5',
+    primaryColor: '#fb923c',
+    secondaryColor: '#ffedd5',
     earColor: '#ea580c',
+    bellyColor: '#fff7ed',
     maxWeight: 195,
     pricePerKg: 55,
     buyCost: 580,
@@ -223,9 +229,10 @@ const PIG_BREEDS = {
     name: 'หมูพัสดุทองคำแท้',
     tag: 'พรีเมียม',
     rarity: 'Epic',
-    color: '#eab308',
-    bellyColor: '#fef08a',
+    primaryColor: '#eab308',
+    secondaryColor: '#fef08a',
     earColor: '#ca8a04',
+    bellyColor: '#fef9c3',
     maxWeight: 215,
     pricePerKg: 68,
     buyCost: 750,
@@ -239,9 +246,10 @@ const PIG_BREEDS = {
     name: 'หมูสายรุ้ง สตง. ผ่านฉลุย',
     tag: 'ในตำนาน',
     rarity: 'Legendary',
-    color: '#c084fc',
-    bellyColor: '#f5d0fe',
+    primaryColor: '#c084fc',
+    secondaryColor: '#f5d0fe',
     earColor: '#a855f7',
+    bellyColor: '#fae8ff',
     maxWeight: 260,
     pricePerKg: 120,
     buyCost: 1500,
@@ -255,9 +263,10 @@ const PIG_BREEDS = {
     name: 'หมูองค์รักษ์พิทักษ์ อปท.',
     tag: 'ขั้นมหาเทพ',
     rarity: 'Mythic',
-    color: '#38bdf8',
-    bellyColor: '#e0f2fe',
+    primaryColor: '#38bdf8',
+    secondaryColor: '#e0f2fe',
     earColor: '#0284c7',
+    bellyColor: '#f0f9ff',
     maxWeight: 310,
     pricePerKg: 200,
     buyCost: 2500,
@@ -270,47 +279,38 @@ const PIG_BREEDS = {
 
 // 6 Barn Themes
 const BARN_THEMES = {
-  cozy_wood: {
-    id: 'cozy_wood',
-    name: 'คอกไม้ชนบทแสนอบอุ่น',
-    tag: 'คลาสสิก',
-    icon: '🪵',
-    bgClass: 'bg-gradient-to-b from-[#8b5a2b] via-[#75441e] to-[#552c0f]',
-    floorPattern: 'bg-[radial-gradient(#451a03_1px,transparent_1px)] [background-size:20px_20px] opacity-40',
-    fenceBorder: 'border-amber-950',
-    fenceHeader: '🪵 รั้วไม้สักทอง อปท.',
-    troughText: '🥣 รางอาหารไม้คลาสสิก',
-    hayText: '🌾 กองฟางสีทองอุ่น',
-    perk: 'ธีมมาตรฐาน อบอุ่น สบายตา',
+  pasture: {
+    id: 'pasture',
+    name: 'ทุ่งหญ้าธรรมชาติพาสเทล',
+    tag: 'Piggy Town',
+    icon: '🌿',
+    bgClass: 'from-[#7dd3fc] via-[#bbf7d0] to-[#86efac]',
+    penGround: '#f7e7c4',
+    fenceBorder: '#8c593b',
+    perk: 'หมูอารมณ์ดี วิ่งเล่นร่าเริง',
     cost: 0,
     unlockedByDefault: true
   },
-  pasture: {
-    id: 'pasture',
-    name: 'ทุ่งหญ้าธรรมชาติเขียวขจี',
-    tag: 'ธรรมชาติ',
-    icon: '🌿',
-    bgClass: 'bg-gradient-to-b from-emerald-500 via-green-600 to-emerald-800',
-    floorPattern: 'bg-[radial-gradient(#14532d_1px,transparent_1px)] [background-size:16px_16px] opacity-50',
-    fenceBorder: 'border-emerald-950',
-    fenceHeader: '🌿 รั้วพุ่มไม้ดอกธรรมชาติ',
-    troughText: '🥣 รางหินศิลาแลง',
-    hayText: '🌻 แปลงดอกทานตะวัน',
-    perk: 'หมูอารมณ์ดี วิ่งเล่นร่าเริง',
+  cozy_wood: {
+    id: 'cozy_wood',
+    name: 'คอกไม้ชนบทคลาสสิก',
+    tag: 'คลาสสิก',
+    icon: '🪵',
+    bgClass: 'from-[#fed7aa] via-[#fde68a] to-[#d97706]',
+    penGround: '#eedbb3',
+    fenceBorder: '#78350f',
+    perk: 'ธีมมาตรฐาน อบอุ่น สบายตา',
     cost: 0,
     unlockedByDefault: true
   },
   onsen_mud: {
     id: 'onsen_mud',
-    name: 'สปาออนเซ็นโคลนเพื่อสุขภาพ',
+    name: 'สปาออนเซ็นเพื่อสุขภาพ',
     tag: 'รีแลกซ์',
     icon: '♨️',
-    bgClass: 'bg-gradient-to-b from-stone-700 via-stone-800 to-neutral-900',
-    floorPattern: 'bg-[radial-gradient(#292524_1px,transparent_1px)] [background-size:24px_24px] opacity-60',
-    fenceBorder: 'border-stone-900',
-    fenceHeader: '♨️ รั้วหินออนเซ็นธรรมชาติ',
-    troughText: '🥣 รางน้ำแร่สมุนไพร',
-    hayText: '🎋 สวนไผ่ญี่ปุ่นอบอุ่น',
+    bgClass: 'from-[#cbd5e1] via-[#94a3b8] to-[#64748b]',
+    penGround: '#d6cbba',
+    fenceBorder: '#475569',
     perk: 'ความสะอาดลดช้าลง 50%',
     cost: 400,
     unlockDesc: 'อาบน้ำหมูสะสมครบ 8 ครั้ง หรือใช้ 400 เหรียญ'
@@ -320,12 +320,9 @@ const BARN_THEMES = {
     name: 'คอกไม้สักล้านนา อปท.',
     tag: 'วัฒนธรรม',
     icon: '🏮',
-    bgClass: 'bg-gradient-to-b from-amber-700 via-amber-900 to-stone-900',
-    floorPattern: 'bg-[radial-gradient(#451a03_1px,transparent_1px)] [background-size:18px_18px] opacity-50',
-    fenceBorder: 'border-yellow-950',
-    fenceHeader: '🏮 เฮือนไม้สักแป้นเกล็ดล้านนา',
-    troughText: '🥣 ขันโตกอาหารมงคล',
-    hayText: '🪷 ดอกสารภี & ตุงล้านนา',
+    bgClass: 'from-[#fef08a] via-[#fde047] to-[#ca8a04]',
+    penGround: '#fae3b4',
+    fenceBorder: '#854d0e',
     perk: 'หมูเติบโตไวกว่าปกติ 20%',
     cost: 600,
     unlockDesc: 'มีหมูน้ำหนัก 90 kg ขึ้นไป หรือใช้ 600 เหรียญ'
@@ -335,12 +332,9 @@ const BARN_THEMES = {
     name: 'คฤหาสน์หมูทองคำเศรษฐี',
     tag: 'ลักชัวรี่',
     icon: '👑',
-    bgClass: 'bg-gradient-to-b from-amber-400 via-yellow-600 to-amber-900',
-    floorPattern: 'bg-[radial-gradient(#78350f_1px,transparent_1px)] [background-size:22px_22px] opacity-40',
-    fenceBorder: 'border-amber-700',
-    fenceHeader: '👑 คฤหาสน์รั้วทองคำ 24K',
-    troughText: '🥣 รางอาหารชุบทองคำแท้',
-    hayText: '💎 พรมกำมะหยี่สีแดง',
+    bgClass: 'from-[#fef08a] via-[#fbbf24] to-[#d97706]',
+    penGround: '#fff3c4',
+    fenceBorder: '#b45309',
     perk: 'โบนัสราคาขายหมู +20%',
     cost: 1200,
     unlockDesc: 'ครอบครองหมูทองคำ หรือใช้ 1,200 เหรียญ'
@@ -350,12 +344,9 @@ const BARN_THEMES = {
     name: 'สถานีอวกาศหมูไซเบอร์',
     tag: 'ไซไฟ',
     icon: '🚀',
-    bgClass: 'bg-gradient-to-b from-slate-900 via-indigo-950 to-purple-950',
-    floorPattern: 'bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:24px_24px] opacity-35',
-    fenceBorder: 'border-cyan-800',
-    fenceHeader: '🚀 สนามพลังบาเรียไฮเทค',
-    troughText: '🥣 ตู้สังเคราะห์สารอาหารโฮโลแกรม',
-    hayText: '🛸 แท่นชาร์จปฏิสสาร',
+    bgClass: 'from-[#0f172a] via-[#1e1b4b] to-[#312e81]',
+    penGround: '#1e293b',
+    fenceBorder: '#06b6d4',
     perk: 'ป้องกันการถูกขโมยหมู 100% เสมอ',
     cost: 2000,
     unlockDesc: 'ผสมพันธุ์สำเร็จ 3 ครั้ง หรือใช้ 2,000 เหรียญ'
@@ -369,7 +360,6 @@ const FOODS = [
   { id: 'pumpkin', name: 'ฟักทองยักษ์โภชนาการสูง', cost: 100, weightGain: 40, fullness: 95, icon: '🎃' }
 ];
 
-// Seed crops for the Farm Patch
 const CROPS_META = {
   bran: { id: 'bran', name: 'ต้นข้าว/รำข้าว', icon: '🌾', duration: 15, seedCost: 5, yieldCount: 2, foodId: 'bran' },
   corn: { id: 'corn', name: 'ข้าวโพดหวาน', icon: '🌽', duration: 25, seedCost: 15, yieldCount: 2, foodId: 'corn' },
@@ -377,7 +367,6 @@ const CROPS_META = {
   pumpkin: { id: 'pumpkin', name: 'ฟักทองยักษ์', icon: '🎃', duration: 60, seedCost: 55, yieldCount: 1, foodId: 'pumpkin' }
 };
 
-// 7-Day Login Rewards Schedule
 const DAILY_REWARDS = [
   { day: 1, title: 'เงินทุนขวัญถุง', rewardDesc: '+100 เหรียญทอง', icon: '💰', coins: 100 },
   { day: 2, title: 'เมล็ดข้าวโพดหวาน', rewardDesc: 'ข้าวโพด 3 ถุง (+50 เหรียญ)', icon: '🌽', coins: 50 },
@@ -388,7 +377,6 @@ const DAILY_REWARDS = [
   { day: 7, title: 'หมูพัสดุทองคำแท้!', rewardDesc: 'รับลูกหมูทองคำ 1 ตัว + 500 เหรียญ', icon: '👑', coins: 500, grantPig: 'golden' }
 ];
 
-// 4 Simulated Neighbor Farms in the Local Government
 const INITIAL_NEIGHBORS = [
   {
     id: 'eng',
@@ -440,6 +428,328 @@ const INITIAL_NEIGHBORS = [
   }
 ];
 
+// ==========================================
+// DETAILED 2.5D SVG ILLUSTRATIONS
+// ==========================================
+
+// 1. Cozy Barn Cottage with Chimney and Hay
+const BarnCottageSvg = () => (
+  <svg width="110" height="95" viewBox="0 0 110 95" className="drop-shadow-xl select-none pointer-events-none">
+    {/* Shadow */}
+    <ellipse cx="55" cy="85" rx="46" ry="10" fill="rgba(0,0,0,0.22)" />
+    {/* Chimney */}
+    <rect x="75" y="10" width="14" height="24" rx="2" fill="#991b1b" stroke="#7f1d1d" strokeWidth="2" />
+    <ellipse cx="82" cy="10" rx="7" ry="2.5" fill="#450a0a" />
+    {/* Smoke Puffs */}
+    <circle cx="84" cy="4" r="3.5" fill="rgba(255,255,255,0.7)" />
+    <circle cx="88" cy="-2" r="5" fill="rgba(255,255,255,0.5)" />
+    {/* Main Wall */}
+    <path d="M15 45 L55 20 L95 45 L95 82 L15 82 Z" fill="#b45309" stroke="#78350f" strokeWidth="3" />
+    {/* Wood Plank Lines */}
+    <line x1="28" y1="45" x2="28" y2="80" stroke="#92400e" strokeWidth="2" />
+    <line x1="42" y1="40" x2="42" y2="80" stroke="#92400e" strokeWidth="2" />
+    <line x1="68" y1="40" x2="68" y2="80" stroke="#92400e" strokeWidth="2" />
+    <line x1="82" y1="45" x2="82" y2="80" stroke="#92400e" strokeWidth="2" />
+    {/* Roof Overhang */}
+    <path d="M10 47 L55 16 L100 47 L95 53 L55 24 L15 53 Z" fill="#dc2626" stroke="#991b1b" strokeWidth="2" />
+    {/* Open Barn Door */}
+    <path d="M42 55 Q55 50 68 55 L68 82 L42 82 Z" fill="#451a03" stroke="#270e02" strokeWidth="2" />
+    {/* Spilling Hay Straw */}
+    <path d="M44 80 Q55 75 66 80 Q68 85 55 84 Q42 86 44 80 Z" fill="#fde047" stroke="#ca8a04" strokeWidth="1.5" />
+    {/* Round Window */}
+    <circle cx="55" cy="36" r="7" fill="#fef08a" stroke="#78350f" strokeWidth="2" />
+    <line x1="55" y1="29" x2="55" y2="43" stroke="#78350f" strokeWidth="1.5" />
+    <line x1="48" y1="36" x2="62" y2="36" stroke="#78350f" strokeWidth="1.5" />
+  </svg>
+);
+
+// 2. Cooking Hearth & Stew Cauldron
+const CookingHearthSvg = () => (
+  <svg width="85" height="75" viewBox="0 0 85 75" className="drop-shadow-lg select-none pointer-events-none">
+    {/* Stone Platform Base */}
+    <ellipse cx="42" cy="62" rx="36" ry="12" fill="#78716c" stroke="#57534e" strokeWidth="2" />
+    <ellipse cx="42" cy="58" rx="30" ry="9" fill="#a8a29e" />
+    {/* Fire logs & embers */}
+    <rect x="30" y="50" width="24" height="6" rx="2" fill="#451a03" />
+    <polygon points="34,53 42,42 50,53" fill="#ea580c" />
+    <polygon points="38,53 42,46 46,53" fill="#facc15" />
+    {/* Cast Iron Pot */}
+    <path d="M26 36 Q42 34 58 36 L54 50 Q42 54 30 50 Z" fill="#1c1917" stroke="#0c0a09" strokeWidth="2" />
+    {/* Pot Rim */}
+    <ellipse cx="42" cy="36" rx="17" ry="5" fill="#292524" stroke="#0c0a09" strokeWidth="2" />
+    {/* Bubbling Stew */}
+    <ellipse cx="42" cy="36" rx="14" ry="4" fill="#f97316" />
+    <circle cx="38" cy="36" r="1.5" fill="#fef08a" />
+    <circle cx="45" cy="35" r="2" fill="#fef08a" />
+    {/* Steam Cloud */}
+    <circle cx="42" cy="24" r="3.5" fill="rgba(255,255,255,0.6)" />
+    <circle cx="45" cy="18" r="4.5" fill="rgba(255,255,255,0.4)" />
+  </svg>
+);
+
+// 3. Wooden Bath Tub / Onsen Spa
+const BathTubSvg = () => (
+  <svg width="85" height="70" viewBox="0 0 85 70" className="drop-shadow-lg select-none pointer-events-none">
+    {/* Shadow */}
+    <ellipse cx="42" cy="58" rx="34" ry="10" fill="rgba(0,0,0,0.2)" />
+    {/* Wooden Barrel Body */}
+    <path d="M16 28 Q42 24 68 28 L64 54 Q42 60 20 54 Z" fill="#92400e" stroke="#78350f" strokeWidth="2.5" />
+    {/* Metal Bands */}
+    <path d="M17 38 Q42 34 67 38" stroke="#451a03" strokeWidth="2" fill="none" />
+    <path d="M19 48 Q42 44 65 48" stroke="#451a03" strokeWidth="2" fill="none" />
+    {/* Top Rim */}
+    <ellipse cx="42" cy="27" rx="27" ry="9" fill="#b45309" stroke="#78350f" strokeWidth="2.5" />
+    {/* Water */}
+    <ellipse cx="42" cy="28" rx="23" ry="7" fill="#38bdf8" />
+    {/* Bubbles */}
+    <circle cx="34" cy="27" r="2" fill="white" />
+    <circle cx="48" cy="26" r="2.5" fill="white" />
+    {/* Rubber Duck */}
+    <circle cx="42" cy="25" r="3" fill="#facc15" />
+    <polygon points="44,25 47,26 44,27" fill="#ea580c" />
+  </svg>
+);
+
+// 4. Classic Water Tap & Log Dispenser
+const WaterTapSvg = () => (
+  <svg width="70" height="75" viewBox="0 0 70 75" className="drop-shadow-lg select-none pointer-events-none">
+    {/* Shadow */}
+    <ellipse cx="35" cy="66" rx="26" ry="7" fill="rgba(0,0,0,0.18)" />
+    {/* Hollow Log Trough */}
+    <ellipse cx="35" cy="62" rx="24" ry="9" fill="#78350f" stroke="#451a03" strokeWidth="2" />
+    <ellipse cx="35" cy="61" rx="20" ry="7" fill="#0284c7" />
+    <ellipse cx="35" cy="60" rx="16" ry="5" fill="#38bdf8" />
+    {/* Wooden Upright Post */}
+    <rect x="30" y="18" width="10" height="42" rx="3" fill="#92400e" stroke="#78350f" strokeWidth="2" />
+    {/* Brass Faucet */}
+    <path d="M30 26 L18 26 L18 34" stroke="#ca8a04" strokeWidth="3.5" fill="none" strokeLinecap="round" />
+    <circle cx="30" cy="22" r="3" fill="#eab308" />
+    {/* Water Stream & Splash */}
+    <line x1="18" y1="34" x2="18" y2="56" stroke="#38bdf8" strokeWidth="2" strokeDasharray="3 2" />
+    <circle cx="18" cy="58" r="3" fill="#bae6fd" opacity="0.8" />
+  </svg>
+);
+
+// 5. Feeding Trough with Golden Feed
+const FeedTroughSvg = () => (
+  <svg width="90" height="45" viewBox="0 0 90 45" className="drop-shadow-lg select-none pointer-events-none">
+    {/* Shadow */}
+    <ellipse cx="45" cy="38" rx="38" ry="7" fill="rgba(0,0,0,0.2)" />
+    {/* Wooden Trough Box */}
+    <polygon points="12,18 78,18 84,34 6,34" fill="#92400e" stroke="#78350f" strokeWidth="2" />
+    <polygon points="12,18 78,18 74,10 16,10" fill="#b45309" stroke="#78350f" strokeWidth="2" />
+    {/* Feed contents */}
+    <ellipse cx="45" cy="17" rx="28" ry="5" fill="#facc15" />
+    <circle cx="32" cy="16" r="2" fill="#ea580c" />
+    <circle cx="56" cy="17" r="2.5" fill="#ea580c" />
+    <circle cx="45" cy="15" r="2" fill="#16a34a" />
+  </svg>
+);
+
+// 6. Lush 2.5D Country Fruit Tree (Piggy Town Vibe)
+const LushFruitTreeSvg = () => (
+  <svg width="86" height="106" viewBox="0 0 86 106" className="drop-shadow-xl select-none pointer-events-none">
+    {/* Soft Shadow */}
+    <ellipse cx="43" cy="98" rx="34" ry="7.5" fill="rgba(0,0,0,0.22)" />
+    {/* Trunk with bark details */}
+    <path d="M38 52 Q40 76 34 94 L52 94 Q46 76 48 52 Z" fill="#78350f" stroke="#451a03" strokeWidth="2.5" />
+    <path d="M41 66 Q43 80 39 90" stroke="#92400e" strokeWidth="2" fill="none" />
+    {/* Layer 1 back foliage */}
+    <ellipse cx="43" cy="46" rx="36" ry="30" fill="#15803d" />
+    {/* Layer 2 main foliage */}
+    <circle cx="30" cy="40" r="22" fill="#22c55e" />
+    <circle cx="56" cy="40" r="22" fill="#22c55e" />
+    <circle cx="43" cy="26" r="23" fill="#4ade80" />
+    {/* Highlights */}
+    <circle cx="39" cy="20" r="9" fill="#86efac" opacity="0.6" />
+    {/* Ripe Red Apples */}
+    <circle cx="28" cy="36" r="4.2" fill="#ef4444" stroke="#991b1b" strokeWidth="1" />
+    <circle cx="29" cy="34" r="1.2" fill="#fca5a5" />
+    <circle cx="56" cy="34" r="4.2" fill="#ef4444" stroke="#991b1b" strokeWidth="1" />
+    <circle cx="57" cy="32" r="1.2" fill="#fca5a5" />
+    <circle cx="43" cy="45" r="4.2" fill="#ef4444" stroke="#991b1b" strokeWidth="1" />
+    <circle cx="44" cy="43" r="1.2" fill="#fca5a5" />
+    <circle cx="44" cy="19" r="3.8" fill="#ef4444" stroke="#991b1b" strokeWidth="1" />
+  </svg>
+);
+
+// 7. Golden Hay Bale Stack
+const HayBaleSvg = () => (
+  <svg width="60" height="46" viewBox="0 0 60 46" className="drop-shadow-md select-none pointer-events-none">
+    <ellipse cx="30" cy="40" rx="26" ry="5.5" fill="rgba(0,0,0,0.18)" />
+    {/* Round Hay Bale */}
+    <rect x="6" y="14" width="46" height="24" rx="9" fill="#eab308" stroke="#a16207" strokeWidth="2" />
+    <ellipse cx="12" cy="26" rx="5.5" ry="11" fill="#fde047" stroke="#a16207" strokeWidth="1.5" />
+    {/* Hay strands */}
+    <line x1="24" y1="18" x2="46" y2="18" stroke="#ca8a04" strokeWidth="1.8" />
+    <line x1="20" y1="26" x2="48" y2="26" stroke="#ca8a04" strokeWidth="1.8" />
+    <line x1="22" y1="33" x2="46" y2="33" stroke="#ca8a04" strokeWidth="1.8" />
+  </svg>
+);
+
+// 8. Detailed 2.5D Chibi Pig Sprite Component (Plump 3D Gradient Body, Shiny Eyes, Accessories)
+const PigSprite = ({ breed, isSelected, direction, weight }) => {
+  const b = PIG_BREEDS[breed] || PIG_BREEDS.pink;
+  const sizeScale = Math.min(1.35, 0.88 + (weight / b.maxWeight) * 0.47);
+
+  return (
+    <div
+      style={{
+        transform: `scale(${sizeScale}) scaleX(${direction})`,
+        transition: 'transform 0.2s ease'
+      }}
+      className={`relative select-none ${isSelected ? 'filter drop-shadow-[0_0_8px_rgba(251,191,36,0.9)]' : ''}`}
+    >
+      <svg width="74" height="60" viewBox="0 0 74 60" className="drop-shadow-md">
+        <defs>
+          {/* Plump 3D Radial Body Gradient */}
+          <radialGradient id={`pig-body-${breed}`} cx="35%" cy="30%" r="70%">
+            <stop offset="0%" stopColor={b.secondaryColor} />
+            <stop offset="55%" stopColor={b.primaryColor} />
+            <stop offset="100%" stopColor={b.earColor} />
+          </radialGradient>
+          {/* Snout Radial Gradient */}
+          <radialGradient id={`pig-snout-${breed}`} cx="35%" cy="35%" r="65%">
+            <stop offset="0%" stopColor={b.secondaryColor} />
+            <stop offset="100%" stopColor={b.bellyColor} />
+          </radialGradient>
+        </defs>
+
+        {/* Soft Drop Shadow under feet */}
+        <ellipse cx="37" cy="52" rx="26" ry="6.5" fill="rgba(0,0,0,0.24)" />
+
+        {/* Curly Tail */}
+        <path
+          d="M62 32 Q70 26 66 21 Q62 16 67 12"
+          stroke={b.earColor}
+          strokeWidth="3.5"
+          fill="none"
+          strokeLinecap="round"
+        />
+
+        {/* 4 Stumpy Feet with Hooves */}
+        <rect x="18" y="44" width="8" height="9" rx="3.5" fill={b.earColor} />
+        <rect x="19" y="50" width="6" height="3" rx="1.5" fill="#701a75" opacity="0.6" />
+
+        <rect x="30" y="44" width="8" height="9" rx="3.5" fill={b.earColor} />
+        <rect x="31" y="50" width="6" height="3" rx="1.5" fill="#701a75" opacity="0.6" />
+
+        <rect x="44" y="44" width="8" height="9" rx="3.5" fill={b.earColor} />
+        <rect x="45" y="50" width="6" height="3" rx="1.5" fill="#701a75" opacity="0.6" />
+
+        <rect x="54" y="44" width="8" height="9" rx="3.5" fill={b.earColor} />
+        <rect x="55" y="50" width="6" height="3" rx="1.5" fill="#701a75" opacity="0.6" />
+
+        {/* Main Plump Body */}
+        <ellipse cx="38" cy="33" rx="27" ry="19" fill={`url(#pig-body-${breed})`} />
+
+        {/* Soft Rounded Belly Highlight */}
+        <ellipse cx="36" cy="36" rx="19" ry="13" fill={b.bellyColor} opacity="0.75" />
+
+        {/* Back Floppy Ear */}
+        <polygon points="30,17 35,4 42,14" fill={b.earColor} stroke="#831843" strokeWidth="0.8" />
+
+        {/* Round Head */}
+        <circle cx="21" cy="28" r="15" fill={`url(#pig-body-${breed})`} />
+
+        {/* Front Floppy Ear */}
+        <polygon points="14,19 10,5 23,12" fill={b.earColor} stroke="#831843" strokeWidth="0.8" />
+        <polygon points="14,17 12,8 19,13" fill={b.secondaryColor} opacity="0.8" />
+
+        {/* Plump Snout */}
+        <ellipse
+          cx="11"
+          cy="32"
+          rx="8"
+          ry="6"
+          fill={`url(#pig-snout-${breed})`}
+          stroke={b.earColor}
+          strokeWidth="1.8"
+        />
+        {/* Nostrils */}
+        <ellipse cx="9" cy="32" rx="1.6" ry="2.2" fill="#831843" />
+        <ellipse cx="13" cy="32" rx="1.6" ry="2.2" fill="#831843" />
+
+        {/* Big Expressive Eye with Catchlight */}
+        <circle cx="19" cy="23" r="3.2" fill="#0f172a" />
+        <circle cx="20.2" cy="22" r="1.1" fill="#ffffff" />
+        <circle cx="18" cy="24.2" r="0.6" fill="#ffffff" />
+
+        {/* Rosy Cheeks */}
+        <ellipse cx="14" cy="27" rx="3" ry="1.8" fill="#f43f5e" opacity="0.45" />
+
+        {/* ================= BREED SPECIFIC ACCESSORIES ================= */}
+        {/* Auditor Glasses */}
+        {b.accessory === 'glasses' && (
+          <g>
+            <circle cx="19" cy="23" r="5.2" fill="none" stroke="#0f172a" strokeWidth="2.2" />
+            <circle cx="10" cy="23" r="5.2" fill="none" stroke="#0f172a" strokeWidth="2.2" />
+            <line x1="15" y1="23" x2="14" y2="23" stroke="#0f172a" strokeWidth="2.2" />
+          </g>
+        )}
+
+        {/* Engineer Hardhat */}
+        {b.accessory === 'helmet' && (
+          <g>
+            <path d="M8 17 Q20 5 32 17 Z" fill="#eab308" stroke="#ca8a04" strokeWidth="2" />
+            <rect x="6" y="16" width="28" height="3.5" rx="1.8" fill="#facc15" stroke="#ca8a04" strokeWidth="1" />
+          </g>
+        )}
+
+        {/* Sakura Flower Hairpin */}
+        {b.accessory === 'sakura' && (
+          <g>
+            <circle cx="12" cy="18" r="3.2" fill="#fda4af" />
+            <circle cx="10" cy="16" r="2.8" fill="#fda4af" />
+            <circle cx="14" cy="16" r="2.8" fill="#fda4af" />
+            <circle cx="12" cy="17" r="1.2" fill="#fef08a" />
+          </g>
+        )}
+
+        {/* Shabu Hotpot on Head */}
+        {b.accessory === 'pot' && (
+          <g>
+            <path d="M10 18 Q20 11 30 18 Z" fill="#b45309" stroke="#78350f" strokeWidth="1.8" />
+            <ellipse cx="20" cy="14" rx="7" ry="2.5" fill="#ea580c" />
+            <line x1="24" y1="14" x2="28" y2="6" stroke="#fef08a" strokeWidth="1.8" />
+          </g>
+        )}
+
+        {/* Golden Royal Crown */}
+        {b.accessory === 'crown' && (
+          <g>
+            <polygon
+              points="10,15 13,7 18,12 23,5 28,12 33,7 36,15"
+              fill="#facc15"
+              stroke="#ca8a04"
+              strokeWidth="1.8"
+            />
+            <circle cx="23" cy="11" r="1.5" fill="#dc2626" />
+          </g>
+        )}
+
+        {/* Radiant Rainbow Aura */}
+        {b.accessory === 'aura' && (
+          <circle cx="21" cy="28" r="20" fill="none" stroke="#d8b4fe" strokeWidth="2.5" strokeDasharray="4 2" />
+        )}
+
+        {/* Knight Wings & Helmet */}
+        {b.accessory === 'wings' && (
+          <g>
+            <path
+              d="M42 20 Q50 6 58 18 Q50 25 42 20 Z"
+              fill="#ffffff"
+              stroke="#38bdf8"
+              strokeWidth="2"
+            />
+            <polygon points="12,15 17,9 22,15" fill="#facc15" />
+          </g>
+        )}
+      </svg>
+    </div>
+  );
+};
+
 export default function HappyHogView() {
   const [coins, setCoins] = useState(() => {
     const saved = localStorage.getItem('happy_hog_coins');
@@ -463,24 +773,24 @@ export default function HappyHogView() {
         id: 1,
         name: 'น้องสมพร',
         breed: 'pink',
-        weight: 32,
+        weight: 35,
         hunger: 40,
         cleanliness: 70,
         health: 100,
-        x: 32,
-        y: 45,
+        x: 36,
+        y: 48,
         direction: 1
       },
       {
         id: 2,
         name: 'ผู้ช่วยตรวจเอก',
         breed: 'auditor',
-        weight: 52,
+        weight: 56,
         hunger: 80,
         cleanliness: 35,
         health: 100,
-        x: 65,
-        y: 55,
+        x: 62,
+        y: 58,
         direction: -1
       }
     ];
@@ -503,19 +813,17 @@ export default function HappyHogView() {
 
   // Active Barn Theme
   const [activeThemeId, setActiveThemeId] = useState(() => {
-    return localStorage.getItem('happy_hog_active_theme') || 'cozy_wood';
+    return localStorage.getItem('happy_hog_active_theme') || 'pasture';
   });
 
-  // Unlocked Themes Set
   const [unlockedThemes, setUnlockedThemes] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('happy_hog_unlocked_themes') || '["cozy_wood", "pasture"]');
+      return JSON.parse(localStorage.getItem('happy_hog_unlocked_themes') || '["pasture", "cozy_wood"]');
     } catch {
-      return ['cozy_wood', 'pasture'];
+      return ['pasture', 'cozy_wood'];
     }
   });
 
-  // Unlocked Pig Breeds Set
   const [unlockedBreeds, setUnlockedBreeds] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem('happy_hog_unlocked_breeds') || '["pink"]');
@@ -524,7 +832,6 @@ export default function HappyHogView() {
     }
   });
 
-  // Farm Statistics for Unlocking
   const [stats, setStats] = useState(() => {
     try {
       return JSON.parse(
@@ -550,7 +857,7 @@ export default function HappyHogView() {
     }
   });
 
-  // Crop Inventory (Harvested produce to feed pigs for free!)
+  // Crop Inventory
   const [cropInventory, setCropInventory] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem('happy_hog_crop_inv') || '{"bran":3,"corn":2,"carrot":1,"pumpkin":0}');
@@ -626,37 +933,31 @@ export default function HappyHogView() {
     const toUnlock = [...unlockedBreeds];
     let changed = false;
 
-    // 1. Auditor: Any pig >= 60kg
     if (!toUnlock.includes('auditor') && pigs.some((p) => p.weight >= 60)) {
       toUnlock.push('auditor');
       changed = true;
       showToast('🎉 ปลดล็อกสายพันธุ์ใหม่: "หมูผู้ตรวจสอบ ปค.5" แล้ว!');
     }
-    // 2. Engineer: Coins >= 300
     if (!toUnlock.includes('engineer') && coins >= 300) {
       toUnlock.push('engineer');
       changed = true;
       showToast('🎉 ปลดล็อกสายพันธุ์ใหม่: "หมูช่างตรวจงาน Factor F" แล้ว!');
     }
-    // 3. Shabu: Feed count >= 12
     if (!toUnlock.includes('shabu') && stats.feedCount >= 12) {
       toUnlock.push('shabu');
       changed = true;
       showToast('🎉 ปลดล็อกสายพันธุ์ใหม่: "หมูชาบูกระทะทอง" แล้ว!');
     }
-    // 4. Golden: Sold count >= 3
     if (!toUnlock.includes('golden') && stats.soldCount >= 3) {
       toUnlock.push('golden');
       changed = true;
       showToast('🎉 ปลดล็อกสายพันธุ์ใหม่: "หมูพัสดุทองคำแท้" แล้ว!');
     }
-    // 5. Rainbow: Breed count >= 3
     if (!toUnlock.includes('rainbow') && stats.breedCount >= 3) {
       toUnlock.push('rainbow');
       changed = true;
       showToast('🎉 ปลดล็อกสายพันธุ์ในตำนาน: "หมูสายรุ้ง สตง. ผ่านฉลุย" แล้ว!');
     }
-    // 6. Knight: Login streak >= 7 or coins >= 1500
     if (!toUnlock.includes('knight') && (loginData.streak >= 7 || coins >= 1500)) {
       toUnlock.push('knight');
       changed = true;
@@ -675,8 +976,8 @@ export default function HappyHogView() {
       setPigs((prevPigs) =>
         prevPigs.map((p) => {
           if (Math.random() < 0.45) {
-            const nextX = Math.max(18, Math.min(82, p.x + (Math.random() * 24 - 12)));
-            const nextY = Math.max(25, Math.min(76, p.y + (Math.random() * 16 - 8)));
+            const nextX = Math.max(22, Math.min(78, p.x + (Math.random() * 22 - 11)));
+            const nextY = Math.max(30, Math.min(74, p.y + (Math.random() * 16 - 8)));
             return {
               ...p,
               x: nextX,
@@ -695,7 +996,7 @@ export default function HappyHogView() {
   }, [activeThemeId]);
 
   const selectedPig = pigs.find((p) => p.id === selectedPigId) || pigs[0];
-  const activeTheme = BARN_THEMES[activeThemeId] || BARN_THEMES.cozy_wood;
+  const activeTheme = BARN_THEMES[activeThemeId] || BARN_THEMES.pasture;
 
   // Determine what Need bubble a pig should show
   const getPigNeed = (pig) => {
@@ -714,7 +1015,6 @@ export default function HappyHogView() {
     setSelectedPigId(pig.id);
 
     if (need.type === 'feed') {
-      // Check if we have harvested crop feed first (free feed!)
       if (cropInventory.corn > 0) {
         setCropInventory((inv) => ({ ...inv, corn: inv.corn - 1 }));
         handleDirectFeed(pig, { name: 'ข้าวโพดสดจากแปลง', weightGain: 12, fullness: 50 });
@@ -724,7 +1024,6 @@ export default function HappyHogView() {
         handleDirectFeed(pig, { name: 'รำข้าวจากแปลง', weightGain: 5, fullness: 25 });
         showToast(`🌾 ให้น้องกินรำข้าวจากแปลงผักฟรี! (+5 kg)`);
       } else {
-        // Buy basic feed with coins
         handleFeed(FOODS[0]);
       }
     } else if (need.type === 'bath') {
@@ -735,11 +1034,10 @@ export default function HappyHogView() {
       setActiveTab('breed');
       showToast('💖 น้องอารมณ์ดี พร้อมเข้าห้องแล็บผสมพันธุ์แล้ว!');
     } else {
-      // Pet pig
       playSound('oink', isMuted);
       setHearts((h) => [...h, { id: Date.now(), x: pig.x, y: pig.y - 12 }]);
       setTimeout(() => setHearts((h) => h.slice(1)), 1200);
-      showToast(`💖 ลูบหัว ${pig.name} น้องส่งเสียงร้องอู๊ดๆ อย่างมีความสุข!`);
+      showToast(`💖 ลูบหัว ${pig.name} น้องร้องอู๊ดๆ อย่างมีความสุข!`);
     }
   };
 
@@ -765,7 +1063,6 @@ export default function HappyHogView() {
     setTimeout(() => setHearts((h) => h.slice(1)), 1200);
   };
 
-  // Actions
   const handleFeed = (food) => {
     if (!selectedPig) return;
     if (coins < food.cost) {
@@ -794,7 +1091,7 @@ export default function HappyHogView() {
     setBubbles(newBubbles);
     setTimeout(() => setBubbles([]), 1500);
 
-    showToast('🧼 อาบน้ำขัดสีฉวีวรรณ ตัวหอมฟุ้ง 100%!');
+    showToast('🧼 อาบน้ำในอ่างไม้หอมฉุย ตัวสะอาด 100%!');
   };
 
   const handleVaccine = () => {
@@ -908,7 +1205,6 @@ export default function HappyHogView() {
     setCoins((c) => c - 80);
     playSound('coin', isMuted);
 
-    // Roll for rare breeds
     const roll = Math.random();
     let resultBreed = 'pink';
     if (roll > 0.92) resultBreed = 'knight';
@@ -944,7 +1240,6 @@ export default function HappyHogView() {
     showToast(`✨ ลูกหมูเกิดแล้ว! พันธุ์: ${PIG_BREEDS[resultBreed].name}`);
   };
 
-  // Crop Farming: Plant Seed
   const handlePlantCrop = (plotId, seedKey) => {
     const meta = CROPS_META[seedKey];
     if (coins < meta.seedCost) {
@@ -965,7 +1260,6 @@ export default function HappyHogView() {
     showToast(`🌱 หว่านเมล็ด "${meta.name}" แล้ว! (รอ ${meta.duration} วินาที)`);
   };
 
-  // Crop Farming: Harvest
   const handleHarvestCrop = (plotId) => {
     const plot = crops.find((p) => p.id === plotId);
     if (!plot || !plot.seed) return;
@@ -973,13 +1267,11 @@ export default function HappyHogView() {
     const meta = CROPS_META[plot.seed];
     playSound('coin', isMuted);
 
-    // Add to inventory
     setCropInventory((inv) => ({
       ...inv,
       [meta.foodId]: (inv[meta.foodId] || 0) + meta.yieldCount
     }));
 
-    // Reset plot
     setCrops((prev) =>
       prev.map((p) => (p.id === plotId ? { id: plotId, seed: null, plantedAt: null, duration: 0 } : p))
     );
@@ -987,7 +1279,6 @@ export default function HappyHogView() {
     showToast(`🧺 เก็บเกี่ยว "${meta.name}" ได้ผลผลิต +${meta.yieldCount} ถุง เข้าคลังอาหารฟรี!`);
   };
 
-  // Neighbor Stealing System
   const handleAttemptSteal = (neighbor) => {
     if (energy < 15) {
       showToast('⚡ พลังงานไม่พอสำหรับปฏิบัติการย่องเบา (ต้องการ 15 พลังงาน)');
@@ -1000,14 +1291,12 @@ export default function HappyHogView() {
 
     setEnergy((e) => Math.max(0, e - 15));
 
-    // If neighbor locked fence
     if (neighbor.isLocked) {
       playSound('bark', isMuted);
       showToast(`🐶 สุนัขเฝ้าบ้านเห่ากรรโชก! รั้วล็อกแน่นหนา แอบเข้าไปไม่ได้ รีบหนีเร็วก่อนโดนจับ!`);
       return;
     }
 
-    // Unlocked: 80% Success Chance!
     const roll = Math.random();
     if (roll < 0.8) {
       playSound('steal', isMuted);
@@ -1038,7 +1327,6 @@ export default function HappyHogView() {
     }
   };
 
-  // Neighbor Helping (Friendship Food Help)
   const handleHelpNeighbor = (neighbor) => {
     if (energy < 10) {
       showToast('⚡ พลังงานไม่พอ (ต้องการ 10 พลังงาน)');
@@ -1050,7 +1338,6 @@ export default function HappyHogView() {
     showToast(`🤝 ช่วยดูแลและให้อาหารหมูฟาร์ม ${neighbor.name} ได้รับเหรียญมิตรภาพ +35 🪙!`);
   };
 
-  // Daily Login Claim
   const handleClaimDailyReward = () => {
     if (!canClaimToday) {
       showToast('✅ คุณได้รับของขวัญวันนี้ไปแล้ว พรุ่งนี้มารับใหม่นะครับ!');
@@ -1094,7 +1381,6 @@ export default function HappyHogView() {
     showToast(`🎁 ยินดีด้วย! รับรางวัลวันที่ ${currentClaimDay}: ${reward.title} (${reward.rewardDesc}) สำเร็จ!`);
   };
 
-  // Barn Theme Select
   const handleSelectTheme = (themeKey) => {
     const theme = BARN_THEMES[themeKey];
     if (unlockedThemes.includes(themeKey)) {
@@ -1119,7 +1405,7 @@ export default function HappyHogView() {
   };
 
   return (
-    <div className="p-2 sm:p-4 max-w-7xl mx-auto select-none font-sans">
+    <div className="p-1 sm:p-3 max-w-7xl mx-auto select-none font-sans">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-6 right-6 z-50 bg-[#2b180d]/95 text-amber-200 border-2 border-amber-500 shadow-2xl px-5 py-3 rounded-2xl flex items-center space-x-3 backdrop-blur-md animate-bounce">
@@ -1128,112 +1414,91 @@ export default function HappyHogView() {
         </div>
       )}
 
-      {/* Main Wood Plank Board Container - Piggy Town & Cardlings Aesthetic */}
-      <div className="relative w-full rounded-3xl p-4 sm:p-6 shadow-2xl overflow-hidden border-8 border-[#3b1d0a] bg-gradient-to-b from-[#8b5a2b] via-[#75441e] to-[#552c0f] flex flex-col justify-between space-y-4">
-        {/* Subtle wood plank vertical grain texture lines */}
+      {/* Main Wood Plank Board Container */}
+      <div className="relative w-full rounded-3xl p-3 sm:p-5 shadow-2xl overflow-hidden border-8 border-[#3b1d0a] bg-gradient-to-b from-[#8b5a2b] via-[#75441e] to-[#552c0f] flex flex-col justify-between space-y-3">
+        {/* Subtle wood plank lines */}
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.08)_1px,transparent_1px)] [background-size:64px_100%] pointer-events-none" />
-        <div className="absolute inset-0 bg-radial from-amber-400/10 via-transparent to-black/50 pointer-events-none" />
 
-        {/* TOP STATUS & HEADER BAR (Similar to Piggy Town Top Bar) */}
-        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-3">
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={() => setIsMuted(!isMuted)}
-              className="w-12 h-12 bg-gradient-to-b from-white via-slate-50 to-slate-200 hover:to-slate-300 rounded-2xl border-4 border-amber-500/80 shadow-[0_4px_0_#b45309] active:translate-y-1 active:shadow-none flex items-center justify-center transition-all cursor-pointer group"
-              title="เปิด-ปิดเสียง"
-            >
-              {isMuted ? (
-                <VolumeX className="w-5 h-5 text-slate-500" />
-              ) : (
-                <Volume2 className="w-5 h-5 text-amber-600" />
-              )}
-            </button>
-
+        {/* ================= TOP HUD: PIGGY TOWN SIGNATURE STATUS BAR ================= */}
+        <div className="relative z-10 flex flex-wrap items-center justify-between gap-2.5 bg-[#2b180d]/85 p-2.5 rounded-2xl border-2 border-amber-700/80 shadow-md">
+          {/* Avatar and Level Title */}
+          <div className="flex items-center space-x-2.5">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-b from-amber-400 to-amber-600 border-2 border-amber-300 flex items-center justify-center text-2xl shadow-inner">
+              🐷
+            </div>
             <div>
-              <div className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-wider text-amber-200 bg-amber-950/70 border border-amber-700/60 px-3 py-0.5 rounded-full w-fit">
-                <span>🐷 PIGGY TOWN • แฮปปี้ฟาร์มหมูผู้ตรวจ</span>
+              <div className="flex items-center space-x-1.5">
+                <span className="font-black text-amber-100 text-sm font-mono tracking-tight">PIGGY TOWN</span>
+                <span className="bg-amber-500 text-amber-950 font-black text-[9px] px-1.5 py-0.2 rounded-full uppercase">
+                  อปท.
+                </span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-black text-amber-100 font-mono mt-0.5 drop-shadow-md">
-                คนเลี้ยงหมูรีเทิร์น อปท.
-              </h1>
+              <p className="text-[10px] text-amber-300/80 font-bold">ฟาร์มหมูผู้ตรวจพันล้าน</p>
             </div>
           </div>
 
-          {/* Stats Bar (Energy, Coins, Free Food Inventory) */}
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Energy Bar (AP 100/100) */}
-            <div className="bg-gradient-to-b from-white to-[#fef9c3] border-3 border-amber-700/80 shadow-[0_4px_0_#78350f] rounded-2xl px-3 py-1.5 flex items-center space-x-1.5">
+          {/* Counters (Energy ⚡, Coins 🪙, Free Harvested Feeds 🌾) */}
+          <div className="flex items-center gap-2">
+            {/* Energy */}
+            <div className="bg-gradient-to-b from-white to-[#fef9c3] border-2 border-amber-700 rounded-xl px-2.5 py-1 flex items-center space-x-1 shadow-xs">
               <Zap className="w-4 h-4 text-amber-500 fill-amber-400" />
-              <span className="font-black text-slate-900 font-mono text-sm">{energy}/100</span>
+              <span className="font-black text-slate-900 font-mono text-xs">{energy}/100</span>
             </div>
 
-            {/* Coins Counter */}
-            <div className="bg-gradient-to-b from-white to-[#fef9c3] border-3 border-amber-700/80 shadow-[0_4px_0_#78350f] rounded-2xl px-3 py-1.5 flex items-center space-x-1.5">
+            {/* Coins */}
+            <div className="bg-gradient-to-b from-white to-[#fef9c3] border-2 border-amber-700 rounded-xl px-2.5 py-1 flex items-center space-x-1 shadow-xs">
               <Coins className="w-4 h-4 text-amber-800" />
-              <span className="font-black text-slate-900 font-mono text-sm">{coins.toLocaleString()}</span>
+              <span className="font-black text-slate-900 font-mono text-xs">{coins.toLocaleString()}</span>
             </div>
 
-            {/* Harvested Feed Counter */}
+            {/* Free Crops Inventory Indicator */}
             <div
               onClick={() => setActiveTab('crops')}
-              className="bg-amber-950/80 hover:bg-amber-900 border-2 border-amber-600 text-amber-200 rounded-2xl px-3 py-1.5 flex items-center space-x-2 text-xs font-bold cursor-pointer"
-              title="คลังผลผลิตพืชผักจากแปลง"
+              className="bg-amber-900/90 hover:bg-amber-800 border-2 border-amber-600 text-amber-200 rounded-xl px-2.5 py-1 flex items-center space-x-2 text-xs font-bold cursor-pointer transition-colors"
+              title="คลังผลผลิตพืชผักจากแปลง (คลิกเพื่อไปที่แปลงปลูก)"
             >
               <span>🌾 {cropInventory.bran || 0}</span>
               <span>🌽 {cropInventory.corn || 0}</span>
               <span>🥕 {cropInventory.carrot || 0}</span>
             </div>
 
-            {/* Daily Login Button */}
+            {/* Daily Gift Button */}
             <button
               onClick={() => setShowDailyLoginModal(true)}
-              className={`relative px-3 py-1.5 rounded-2xl font-black text-xs border-3 flex items-center space-x-1 shadow-[0_4px_0_#b45309] active:translate-y-1 active:shadow-none cursor-pointer ${
+              className={`relative px-2.5 py-1 rounded-xl font-black text-xs border-2 flex items-center space-x-1 shadow-xs cursor-pointer ${
                 canClaimToday
                   ? 'bg-gradient-to-b from-amber-300 to-yellow-500 text-amber-950 border-amber-500 animate-pulse'
-                  : 'bg-gradient-to-b from-white to-slate-200 text-slate-800 border-amber-500/80'
+                  : 'bg-white text-slate-800 border-amber-500'
               }`}
             >
               {canClaimToday && (
-                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-500 rounded-full border border-white animate-ping" />
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full border border-white animate-ping" />
               )}
-              <Gift className="w-3.5 h-3.5 text-amber-700" />
-              <span>ของขวัญ</span>
+              <Gift className="w-3.5 h-3.5 text-amber-800" />
+              <span className="hidden sm:inline">ของขวัญ</span>
             </button>
 
             {/* Visiting Neighbors Button */}
             <button
               onClick={() => setShowNeighborsModal(true)}
-              className="px-3 py-1.5 bg-gradient-to-b from-teal-400 to-emerald-600 hover:from-teal-500 hover:to-emerald-700 text-white rounded-2xl font-black text-xs border-3 border-teal-300 shadow-[0_4px_0_#065f46] active:translate-y-1 active:shadow-none flex items-center space-x-1 cursor-pointer"
+              className="px-2.5 py-1 bg-gradient-to-b from-teal-400 to-emerald-600 hover:from-teal-500 hover:to-emerald-700 text-white rounded-xl font-black text-xs border-2 border-teal-300 shadow-xs flex items-center space-x-1 cursor-pointer"
             >
               <Users className="w-3.5 h-3.5" />
-              <span>เยี่ยมเพื่อน อบต.</span>
+              <span>เยี่ยมเพื่อน</span>
             </button>
 
-            {/* Fence Lock Button */}
+            {/* Audio Toggle */}
             <button
-              onClick={() => {
-                setIsLocked(!isLocked);
-                playSound('feed', isMuted);
-                showToast(isLocked ? '🔓 ปลดล็อกรั้วคอกแล้ว ระวังเพื่อนแอบย่องมาอุ้ม!' : '🔒 ล็อกรั้วคอกแน่นหนาแล้ว ป้องกันการขโมย 100%');
-              }}
-              className={`px-3 py-1.5 rounded-2xl font-black text-xs border-3 flex items-center space-x-1 shadow-[0_4px_0_#065f46] active:translate-y-1 active:shadow-none cursor-pointer transition-all ${
-                isLocked || activeThemeId === 'cyber_space'
-                  ? 'bg-gradient-to-b from-emerald-400 to-teal-600 text-white border-emerald-500'
-                  : 'bg-gradient-to-b from-rose-400 to-red-600 text-white border-rose-500 shadow-[0_4px_0_#991b1b]'
-              }`}
+              onClick={() => setIsMuted(!isMuted)}
+              className="p-1.5 bg-amber-950 hover:bg-amber-900 border border-amber-600 rounded-xl text-amber-200 cursor-pointer"
             >
-              {isLocked || activeThemeId === 'cyber_space' ? (
-                <Lock className="w-3.5 h-3.5" />
-              ) : (
-                <Unlock className="w-3.5 h-3.5" />
-              )}
-              <span>{isLocked || activeThemeId === 'cyber_space' ? 'ล็อกคอกแล้ว' : 'ยังไม่ล็อก'}</span>
+              {isMuted ? <VolumeX className="w-4 h-4 text-slate-400" /> : <Volume2 className="w-4 h-4 text-amber-400" />}
             </button>
           </div>
         </div>
 
-        {/* NAVIGATION TABS */}
-        <div className="relative z-10 flex space-x-2 bg-amber-950/60 p-1.5 rounded-2xl border border-amber-800/80 w-fit">
+        {/* ================= NAVIGATION TABS ================= */}
+        <div className="relative z-10 flex space-x-2 bg-amber-950/60 p-1 rounded-2xl border border-amber-800/80 w-fit">
           <button
             onClick={() => setActiveTab('farm')}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center space-x-1.5 transition-all cursor-pointer ${
@@ -1242,7 +1507,7 @@ export default function HappyHogView() {
                 : 'text-amber-200 hover:text-white'
             }`}
           >
-            <span>🐷 หน้าฟาร์มหมู ({pigs.length}/8)</span>
+            <span>🐷 ฟาร์มหมูในตำนาน ({pigs.length}/8)</span>
           </button>
 
           <button
@@ -1282,279 +1547,243 @@ export default function HappyHogView() {
           </button>
         </div>
 
-        {/* ================= TAB 1: MAIN FARM PEN (PIGGY TOWN + CLASSIC HAPPY PIG) ================= */}
+        {/* ================= TAB 1: IMMERSIVE 2.5D ISOMETRIC FARM (PIGGY TOWN VIBES) ================= */}
         {activeTab === 'farm' && (
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-4">
-            {/* Main Pig Pen Canvas */}
-            <div className="lg:col-span-2 space-y-3">
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-4 gap-4">
+            {/* Main Interactive Farm Canvas (3 Columns) */}
+            <div className="lg:col-span-3 space-y-2">
               <div
-                className={`relative w-full h-[470px] rounded-3xl overflow-hidden border-4 ${activeTheme.fenceBorder} shadow-2xl ${activeTheme.bgClass} select-none`}
+                className={`relative w-full h-[520px] rounded-3xl overflow-hidden border-4 border-amber-900/80 shadow-2xl bg-gradient-to-b ${activeTheme.bgClass} select-none`}
               >
-                {/* Floor Texture Overlay */}
-                <div className={`absolute inset-0 ${activeTheme.floorPattern} pointer-events-none`} />
+                {/* 1. Lush Pastel Grass Fringe & Stepping Stone Path */}
+                <div className="absolute inset-0 pointer-events-none">
+                  {/* Decorative Daisy Flowers on Grass */}
+                  <div className="absolute top-6 left-1/3 text-lg opacity-80">🌼</div>
+                  <div className="absolute top-10 left-1/2 text-sm opacity-70">🌸</div>
+                  <div className="absolute bottom-8 right-1/4 text-base opacity-75">🌼</div>
+                  <div className="absolute bottom-14 left-16 text-sm opacity-70">🌸</div>
 
-                {/* 1. Classic Water Tap Station on Left (เหมือนในรูปเกมเก่าที่มีก๊อกน้ำและรางรองน้ำ) */}
+                  {/* Cobblestone Pavers Path */}
+                  <div className="absolute top-24 left-24 w-8 h-4 bg-stone-300/60 rounded-full border border-stone-400/50 rotate-12" />
+                  <div className="absolute top-32 left-20 w-9 h-5 bg-stone-300/60 rounded-full border border-stone-400/50 -rotate-6" />
+                  <div className="absolute top-40 left-18 w-7 h-4 bg-stone-300/60 rounded-full border border-stone-400/50 rotate-45" />
+
+                  {/* 2.5D Apple Tree on the grassy edge */}
+                  <div className="absolute -top-3 right-28 z-5 opacity-95">
+                    <LushFruitTreeSvg />
+                  </div>
+                  {/* Haystack near pasture corner */}
+                  <div className="absolute bottom-3 right-10 z-5 opacity-90">
+                    <HayBaleSvg />
+                  </div>
+                </div>
+
+                {/* 2. Main Sandy Animal Yard (Warm Organic Shape matching Piggy Town / Classic Pen) */}
                 <div
-                  onClick={handleDrinkWater}
-                  className="absolute bottom-16 left-4 z-20 flex flex-col items-center cursor-pointer group"
-                  title="ก๊อกน้ำดื่มธรรมชาติ (คลิกเพื่อให้น้องหมูได้ดื่มน้ำสดชื่น)"
+                  style={{ backgroundColor: activeTheme.penGround }}
+                  className="absolute inset-x-6 inset-y-8 rounded-[48px] border-4 border-[#8c593b] shadow-inner overflow-hidden"
                 >
-                  <div className="bg-amber-800/90 text-amber-200 border-2 border-amber-950 p-2 rounded-2xl shadow-lg flex items-center space-x-1 text-xs group-hover:scale-105 transition-transform">
-                    <span className="text-xl">🚰</span>
-                    <div className="text-[10px] font-black leading-tight">
-                      <div>ก๊อกน้ำธรรมชาติ</div>
-                      <span className="text-cyan-300 font-mono">แตะดื่มน้ำ</span>
-                    </div>
+                  {/* Subtle sawdust / straw texture */}
+                  <div className="absolute inset-0 bg-[radial-gradient(#b45309_1.5px,transparent_1.5px)] [background-size:24px_24px] opacity-20 pointer-events-none" />
+
+                  {/* Top Fence Posts */}
+                  <div className="absolute top-0 inset-x-0 h-4 border-b-2 border-[#8c593b]/60 flex justify-around">
+                    {Array.from({ length: 12 }).map((_, i) => (
+                      <div key={i} className="w-2 h-4 bg-[#8c593b] rounded-t-xs" />
+                    ))}
                   </div>
-                  <div className="w-12 h-6 bg-cyan-600/40 border-2 border-cyan-400 rounded-full mt-1 blur-[0.5px] animate-pulse" />
-                </div>
 
-                {/* 2. Cozy Farm Barn House on Top-Left (เหมือนในรูปทั้ง 2 เกม) */}
-                <div className="absolute top-12 left-4 z-10 bg-amber-950/70 border-2 border-amber-800 text-amber-100 p-2.5 rounded-2xl backdrop-blur-xs flex items-center space-x-2 text-xs shadow-md">
-                  <span className="text-2xl">🏠</span>
-                  <div>
-                    <div className="font-black text-amber-200 text-[11px]">โรงเรือนคอกฟาร์ม</div>
-                    <span className="text-[9px] text-emerald-300">ความจุ: {pigs.length}/8 ตัว</span>
-                  </div>
-                </div>
+                  {/* Interactive Props on the Pen Yard */}
 
-                {/* 3. Cooking Cauldron / Feed Mixer Station (เหมือนใน Piggy Town) */}
-                <div
-                  onClick={() => setActiveTab('crops')}
-                  className="absolute top-12 right-4 z-10 bg-amber-950/70 hover:bg-amber-900 border-2 border-amber-800 text-amber-100 p-2.5 rounded-2xl backdrop-blur-xs flex items-center space-x-2 text-xs shadow-md cursor-pointer transition-transform hover:scale-103"
-                  title="หม้อต้มอาหารและผสมวัตถุดิบ (คลิกเพื่อดูแปลงผัก)"
-                >
-                  <span className="text-2xl">🍲</span>
-                  <div>
-                    <div className="font-black text-amber-200 text-[11px]">หม้อต้มผสมอาหาร</div>
-                    <span className="text-[9px] text-amber-400">จากแปลงปลูกผัก 🌾</span>
-                  </div>
-                </div>
-
-                {/* Wooden Fence Header */}
-                <div className="absolute top-0 left-0 right-0 h-9 bg-black/40 backdrop-blur-xs border-b border-black/30 flex items-center justify-between px-4 z-20 text-xs">
-                  <span className="text-amber-200 font-mono font-bold flex items-center space-x-1.5 text-[11px]">
-                    <span>{activeTheme.icon}</span>
-                    <span>{activeTheme.fenceHeader}</span>
-                  </span>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => setShowThemeModal(true)}
-                      className="text-[10px] bg-white/20 hover:bg-white/30 text-white px-2 py-0.5 rounded-full font-bold cursor-pointer"
-                    >
-                      🎨 เปลี่ยนธีม
-                    </button>
-                    <button
-                      onClick={() => setShowPigDexModal(true)}
-                      className="text-[10px] bg-white/20 hover:bg-white/30 text-white px-2 py-0.5 rounded-full font-bold cursor-pointer"
-                    >
-                      📖 สมุดพันธุ์หมู
-                    </button>
-                  </div>
-                </div>
-
-                {/* Food Trough in bottom center */}
-                <div className="absolute bottom-5 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-amber-950/80 text-amber-100 rounded-2xl border-2 border-amber-800 shadow-md flex items-center space-x-2 text-xs">
-                  <span>🥣 รางอาหารกลาง</span>
-                  <span className="text-[10px] bg-emerald-600 text-white px-2 py-0.2 rounded-full font-bold">พร้อมกิน</span>
-                </div>
-
-                {/* Floating Hearts */}
-                {hearts.map((h) => (
+                  {/* Prop A: 2.5D Barn Cottage (Top-Left) */}
                   <div
-                    key={h.id}
-                    style={{ left: `${h.x}%`, top: `${h.y}%` }}
-                    className="absolute pointer-events-none text-3xl animate-bounce z-40 drop-shadow-md"
+                    onClick={() => showToast(`🏠 โรงเรือนคอกฟาร์ม: อบอุ่น แข็งแรง จุหมูได้ ${pigs.length}/8 ตัว`)}
+                    className="absolute -top-1 left-2 z-15 cursor-pointer hover:scale-103 transition-transform"
+                    title="โรงเรือนคอกหมู"
                   >
-                    💖
+                    <BarnCottageSvg />
                   </div>
-                ))}
 
-                {/* Floating Bubbles */}
-                {bubbles.map((b) => (
+                  {/* Prop B: Cooking Stew Hearth (Top-Right) */}
                   <div
-                    key={b.id}
-                    style={{ left: `${b.x}%`, top: `${b.y}%` }}
-                    className="absolute pointer-events-none text-2xl animate-ping z-40"
+                    onClick={() => setActiveTab('crops')}
+                    className="absolute top-2 right-4 z-15 cursor-pointer hover:scale-105 transition-transform"
+                    title="หม้อต้มผสมอาหาร (คลิกเพื่อไปที่แปลงปลูกผัก)"
                   >
-                    🫧
+                    <CookingHearthSvg />
                   </div>
-                ))}
 
-                {/* ================= ROAMING PIGS WITH SPEECH BUBBLES ================= */}
-                {pigs.map((pig) => {
-                  const breed = PIG_BREEDS[pig.breed] || PIG_BREEDS.pink;
-                  const isSelected = selectedPigId === pig.id;
-                  const sizeScale = Math.min(1.4, 0.85 + (pig.weight / breed.maxWeight) * 0.55);
-                  const need = getPigNeed(pig);
+                  {/* Prop C: Cedar Wood Soaking Tub / Onsen (Middle-Right) */}
+                  <div
+                    onClick={handleBath}
+                    className="absolute top-28 right-3 z-15 cursor-pointer hover:scale-105 transition-transform"
+                    title="อ่างอาบน้ำไม้หอม (คลิกเพื่ออาบน้ำขัดตัวให้น้อง)"
+                  >
+                    <BathTubSvg />
+                  </div>
 
-                  return (
+                  {/* Prop D: Classic Water Tap & Log Dispenser (Bottom-Left) */}
+                  <div
+                    onClick={handleDrinkWater}
+                    className="absolute bottom-6 left-3 z-15 cursor-pointer hover:scale-105 transition-transform"
+                    title="ก๊อกน้ำธรรมชาติ (คลิกเพื่อให้น้องดื่มน้ำ)"
+                  >
+                    <WaterTapSvg />
+                  </div>
+
+                  {/* Prop E: Feed Trough with Grain (Bottom-Center) */}
+                  <div
+                    onClick={() => handleFeed(FOODS[0])}
+                    className="absolute bottom-2 left-1/2 -translate-x-1/2 z-15 cursor-pointer hover:scale-105 transition-transform"
+                    title="รางอาหารกลาง (คลิกเพื่อให้อาหาร)"
+                  >
+                    <FeedTroughSvg />
+                  </div>
+
+                  {/* Floating Hearts & Bubbles */}
+                  {hearts.map((h) => (
                     <div
-                      key={pig.id}
-                      onClick={() => {
-                        setSelectedPigId(pig.id);
-                        playSound('oink', isMuted);
-                      }}
-                      style={{
-                        left: `${pig.x}%`,
-                        top: `${pig.y}%`,
-                        transform: `translate(-50%, -50%) scale(${sizeScale}) scaleX(${pig.direction})`,
-                        transition: 'left 2.4s ease-out, top 2.4s ease-out, transform 0.2s ease'
-                      }}
-                      className={`absolute cursor-pointer select-none group z-30 ${
-                        isSelected ? 'ring-4 ring-amber-300 ring-offset-2 ring-offset-black/40 rounded-full' : ''
-                      }`}
+                      key={h.id}
+                      style={{ left: `${h.x}%`, top: `${h.y}%` }}
+                      className="absolute pointer-events-none text-3xl animate-bounce z-40 drop-shadow-md"
                     >
-                      {/* 1. FLOATING SPEECH / NEED BUBBLE ABOVE PIG'S HEAD (เหมือนใน Piggy Town) */}
-                      <div
-                        onClick={(e) => handleBubbleClick(e, pig, need)}
-                        style={{ transform: `scaleX(${pig.direction})` }}
-                        className={`absolute -top-13 left-1/2 -translate-x-1/2 px-2 py-1 rounded-2xl shadow-xl flex items-center space-x-1 border-2 cursor-pointer transition-transform hover:scale-115 active:scale-95 animate-bounce z-40 ${
-                          need.type === 'feed'
-                            ? 'bg-amber-100 border-amber-500 text-amber-950'
-                            : need.type === 'bath'
-                            ? 'bg-blue-100 border-blue-500 text-blue-950'
-                            : need.type === 'heal'
-                            ? 'bg-rose-100 border-rose-500 text-rose-950'
-                            : need.type === 'love'
-                            ? 'bg-pink-100 border-pink-500 text-pink-950 ring-2 ring-pink-400'
-                            : 'bg-white border-slate-300 text-slate-800'
-                        }`}
-                        title={need.hint}
-                      >
-                        <span className="text-sm">{need.icon}</span>
-                        <span className="text-[9px] font-black whitespace-nowrap">{need.label}</span>
-                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-inherit border-r-2 border-b-2 border-inherit rotate-45" />
-                      </div>
-
-                      {/* Name Tag & Weight */}
-                      <div
-                        style={{ transform: `scaleX(${pig.direction})` }}
-                        className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#1c1109]/90 text-amber-200 text-[10px] font-bold px-2 py-0.2 rounded-md whitespace-nowrap shadow-md flex items-center space-x-1 pointer-events-none border border-amber-600/70"
-                      >
-                        <span>{pig.name}</span>
-                        <span className="text-amber-400 font-mono">({pig.weight}kg)</span>
-                      </div>
-
-                      {/* SVG Chibi Pig Sprite */}
-                      <svg width="68" height="54" viewBox="0 0 68 54" className="drop-shadow-lg">
-                        {/* Tail */}
-                        <path
-                          d="M60 28 Q66 22 62 18 Q58 14 62 10"
-                          stroke={breed.earColor}
-                          strokeWidth="3.5"
-                          fill="none"
-                          strokeLinecap="round"
-                        />
-                        {/* Feet */}
-                        <rect x="16" y="42" width="8" height="10" rx="3" fill={breed.earColor} />
-                        <rect x="28" y="42" width="8" height="10" rx="3" fill={breed.earColor} />
-                        <rect x="42" y="42" width="8" height="10" rx="3" fill={breed.earColor} />
-                        <rect x="52" y="42" width="8" height="10" rx="3" fill={breed.earColor} />
-
-                        {/* Main Body */}
-                        <ellipse cx="36" cy="30" rx="26" ry="18" fill={breed.color} />
-                        {/* Belly */}
-                        <ellipse cx="34" cy="33" rx="18" ry="12" fill={breed.bellyColor} />
-
-                        {/* Ears */}
-                        <polygon points="12,18 8,4 20,10" fill={breed.earColor} />
-                        <polygon points="26,16 30,2 36,12" fill={breed.earColor} />
-
-                        {/* Head */}
-                        <circle cx="18" cy="26" r="14" fill={breed.color} />
-
-                        {/* Snout */}
-                        <ellipse cx="10" cy="29" rx="7" ry="5" fill={breed.bellyColor} stroke={breed.earColor} strokeWidth="1.5" />
-                        <circle cx="8" cy="29" r="1.5" fill="#9d174d" />
-                        <circle cx="12" cy="29" r="1.5" fill="#9d174d" />
-
-                        {/* Eye */}
-                        <circle cx="17" cy="21" r="2.5" fill="#0f172a" />
-                        <circle cx="18" cy="20" r="0.8" fill="#ffffff" />
-
-                        {/* Accessories */}
-                        {breed.accessory === 'glasses' && (
-                          <g>
-                            <circle cx="17" cy="21" r="5" fill="none" stroke="#1e293b" strokeWidth="2" />
-                            <circle cx="9" cy="21" r="5" fill="none" stroke="#1e293b" strokeWidth="2" />
-                            <line x1="14" y1="21" x2="12" y2="21" stroke="#1e293b" strokeWidth="2" />
-                          </g>
-                        )}
-
-                        {breed.accessory === 'helmet' && (
-                          <g>
-                            <path d="M6 16 Q18 4 28 16 Z" fill="#eab308" stroke="#ca8a04" strokeWidth="1.5" />
-                            <rect x="4" y="15" width="26" height="3" rx="1.5" fill="#facc15" />
-                          </g>
-                        )}
-
-                        {breed.accessory === 'crown' && (
-                          <polygon points="8,14 11,6 15,11 19,4 23,11 27,6 30,14" fill="#facc15" stroke="#ca8a04" strokeWidth="1.5" />
-                        )}
-
-                        {breed.accessory === 'aura' && (
-                          <circle cx="18" cy="26" r="19" fill="none" stroke="#d8b4fe" strokeWidth="2.5" strokeDasharray="3 2" />
-                        )}
-
-                        {breed.accessory === 'sakura' && (
-                          <g>
-                            <circle cx="10" cy="18" r="3" fill="#fda4af" />
-                            <circle cx="24" cy="15" r="2.5" fill="#fda4af" />
-                          </g>
-                        )}
-
-                        {breed.accessory === 'pot' && (
-                          <g>
-                            <path d="M8 17 Q18 10 28 17 Z" fill="#b45309" stroke="#78350f" strokeWidth="1.5" />
-                            <circle cx="18" cy="12" r="3" fill="#f97316" />
-                          </g>
-                        )}
-
-                        {breed.accessory === 'wings' && (
-                          <g>
-                            <path d="M40 18 Q48 6 56 18 Q48 24 40 18 Z" fill="#ffffff" stroke="#38bdf8" strokeWidth="1.5" />
-                            <polygon points="10,14 14,8 18,14" fill="#facc15" />
-                          </g>
-                        )}
-                      </svg>
+                      💖
                     </div>
-                  );
-                })}
+                  ))}
+
+                  {bubbles.map((b) => (
+                    <div
+                      key={b.id}
+                      style={{ left: `${b.x}%`, top: `${b.y}%` }}
+                      className="absolute pointer-events-none text-2xl animate-ping z-40"
+                    >
+                      🫧
+                    </div>
+                  ))}
+
+                  {/* ================= ROAMING CHIBI PIGS WITH SPEECH BUBBLES ================= */}
+                  {pigs.map((pig) => {
+                    const isSelected = selectedPigId === pig.id;
+                    const need = getPigNeed(pig);
+
+                    return (
+                      <div
+                        key={pig.id}
+                        onClick={() => {
+                          setSelectedPigId(pig.id);
+                          playSound('oink', isMuted);
+                        }}
+                        style={{
+                          left: `${pig.x}%`,
+                          top: `${pig.y}%`,
+                          transform: 'translate(-50%, -50%)',
+                          transition: 'left 2.4s ease-out, top 2.4s ease-out'
+                        }}
+                        className="absolute cursor-pointer z-30 group"
+                      >
+                        {/* 1. Floating Speech Bubble (Piggy Town Style) */}
+                        <div
+                          onClick={(e) => handleBubbleClick(e, pig, need)}
+                          style={{ transform: `scaleX(${pig.direction})` }}
+                          className={`absolute -top-12 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full shadow-lg flex items-center space-x-1 border-2 cursor-pointer transition-transform hover:scale-115 active:scale-95 animate-bounce z-40 ${
+                            need.type === 'feed'
+                              ? 'bg-amber-100 border-amber-500 text-amber-950 ring-2 ring-amber-400'
+                              : need.type === 'bath'
+                              ? 'bg-blue-100 border-blue-500 text-blue-950 ring-2 ring-blue-400'
+                              : need.type === 'heal'
+                              ? 'bg-rose-100 border-rose-500 text-rose-950 ring-2 ring-rose-400'
+                              : need.type === 'love'
+                              ? 'bg-pink-100 border-pink-500 text-pink-950 ring-2 ring-pink-400'
+                              : 'bg-white border-slate-300 text-slate-800'
+                          }`}
+                          title={need.hint}
+                        >
+                          <span className="text-sm">{need.icon}</span>
+                          <span className="text-[9px] font-black whitespace-nowrap">{need.label}</span>
+                          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-inherit border-r-2 border-b-2 border-inherit rotate-45" />
+                        </div>
+
+                        {/* Name and Weight Tag */}
+                        <div
+                          style={{ transform: `scaleX(${pig.direction})` }}
+                          className="absolute -top-5 left-1/2 -translate-x-1/2 bg-[#2b180d]/90 text-amber-200 text-[9px] font-black px-1.5 py-0.2 rounded-md whitespace-nowrap shadow-md pointer-events-none border border-amber-600/70"
+                        >
+                          <span>{pig.name}</span>
+                          <span className="text-amber-400 ml-1 font-mono">({pig.weight}kg)</span>
+                        </div>
+
+                        {/* High-Fidelity 2.5D Illustrated Pig Sprite */}
+                        <PigSprite
+                          breed={pig.breed}
+                          isSelected={isSelected}
+                          direction={pig.direction}
+                          weight={pig.weight}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Top Corner Controls (Fence lock status and theme pill) */}
+                <div className="absolute top-2 left-6 z-20 flex items-center space-x-2">
+                  <button
+                    onClick={() => {
+                      setIsLocked(!isLocked);
+                      playSound('feed', isMuted);
+                      showToast(isLocked ? '🔓 ปลดล็อกรั้วแล้ว ระวังเพื่อนแอบย่องมาอุ้ม!' : '🔒 ล็อกรั้วคอกแน่นหนาแล้ว ป้องกันการขโมย 100%');
+                    }}
+                    className={`px-3 py-1 rounded-xl text-[10px] font-black flex items-center space-x-1 border-2 shadow-md cursor-pointer transition-all ${
+                      isLocked || activeThemeId === 'cyber_space'
+                        ? 'bg-emerald-600 text-white border-emerald-400'
+                        : 'bg-rose-600 text-white border-rose-400 animate-pulse'
+                    }`}
+                  >
+                    {isLocked || activeThemeId === 'cyber_space' ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
+                    <span>{isLocked || activeThemeId === 'cyber_space' ? 'รั้วล็อกแล้ว' : 'รั้วยังไม่ล็อก'}</span>
+                  </button>
+
+                  <button
+                    onClick={() => setShowThemeModal(true)}
+                    className="px-2.5 py-1 bg-white/80 hover:bg-white text-slate-800 rounded-xl text-[10px] font-black border border-slate-300 shadow-sm flex items-center space-x-1 cursor-pointer"
+                  >
+                    <Palette className="w-3 h-3 text-emerald-600" />
+                    <span>ธีม: {activeTheme.name}</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Status Footer */}
-              <div className="bg-[#2b180d]/80 rounded-2xl p-3 border border-amber-700/60 flex items-center justify-between text-xs text-amber-200">
+              {/* Status Hint */}
+              <div className="bg-[#2b180d]/80 rounded-2xl p-2.5 border border-amber-700/60 flex items-center justify-between text-xs text-amber-200">
                 <div className="flex items-center space-x-2">
-                  <span className="font-bold">📊 ข้อมูลคอก:</span>
-                  <span>จำนวนหมู: <b>{pigs.length}/8 ตัว</b></span>
+                  <span className="font-bold">🐷 คอกฟาร์ม:</span>
+                  <span>หมู {pigs.length}/8 ตัว</span>
                   <span>•</span>
-                  <span>น้ำหนักรวม: <b>{pigs.reduce((a, b) => a + b.weight, 0).toFixed(1)} kg</b></span>
+                  <span>น้ำหนักรวม {pigs.reduce((a, b) => a + b.weight, 0).toFixed(1)} kg</span>
                 </div>
                 <div className="text-amber-300 font-bold text-[11px] animate-pulse">
-                  💡 คลิกที่บอลลูนบนหัวหมูเพื่อตอบสนองความต้องการได้ทันที!
+                  💡 คลิกบอลลูนบนหัวหมู หรือแตะก๊อกน้ำ / อ่างอาบน้ำ / รางอาหาร ได้โดยตรง!
                 </div>
               </div>
             </div>
 
-            {/* Selected Pig Care Control Panel */}
+            {/* Selected Pig Care Control Panel (1 Column) */}
             <div className="space-y-3">
               {selectedPig ? (
-                <div className="bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] border-4 border-amber-700/80 rounded-3xl p-5 shadow-2xl space-y-3">
+                <div className="bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] border-4 border-amber-700/80 rounded-3xl p-4 shadow-2xl space-y-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border ${PIG_BREEDS[selectedPig.breed]?.badgeColor}`}>
+                      <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border ${PIG_BREEDS[selectedPig.breed]?.badgeColor}`}>
                         {PIG_BREEDS[selectedPig.breed]?.tag}
                       </span>
-                      <h3 className="text-lg font-black text-slate-900 mt-1 font-mono">
+                      <h3 className="text-base font-black text-slate-900 mt-1 font-mono truncate max-w-[150px]">
                         {selectedPig.name}
                       </h3>
                     </div>
                     <div className="text-right">
-                      <span className="text-2xl font-black text-pink-600 font-mono">
+                      <span className="text-xl font-black text-pink-600 font-mono">
                         {selectedPig.weight} <span className="text-xs text-slate-500 font-sans">kg</span>
                       </span>
-                      <p className="text-[10px] text-amber-900 font-bold">
+                      <p className="text-[9px] text-amber-900 font-bold">
                         สูงสุด {PIG_BREEDS[selectedPig.breed]?.maxWeight} kg
                       </p>
                     </div>
@@ -1563,11 +1792,11 @@ export default function HappyHogView() {
                   {/* Status Gauges */}
                   <div className="space-y-1.5 text-xs">
                     <div>
-                      <div className="flex justify-between font-bold text-slate-800 mb-0.5">
-                        <span>🥣 ความอิ่ม (Hunger)</span>
+                      <div className="flex justify-between font-bold text-slate-800 text-[11px] mb-0.5">
+                        <span>🥣 ความอิ่ม</span>
                         <span>{Math.round(selectedPig.hunger)}%</span>
                       </div>
-                      <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden border border-slate-300">
+                      <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden border border-slate-300">
                         <div
                           className="bg-amber-500 h-full transition-all duration-300"
                           style={{ width: `${selectedPig.hunger}%` }}
@@ -1576,11 +1805,11 @@ export default function HappyHogView() {
                     </div>
 
                     <div>
-                      <div className="flex justify-between font-bold text-slate-800 mb-0.5">
-                        <span>🧼 ความสะอาด (Cleanliness)</span>
+                      <div className="flex justify-between font-bold text-slate-800 text-[11px] mb-0.5">
+                        <span>🧼 ความสะอาด</span>
                         <span>{Math.round(selectedPig.cleanliness)}%</span>
                       </div>
-                      <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden border border-slate-300">
+                      <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden border border-slate-300">
                         <div
                           className="bg-blue-500 h-full transition-all duration-300"
                           style={{ width: `${selectedPig.cleanliness}%` }}
@@ -1589,11 +1818,11 @@ export default function HappyHogView() {
                     </div>
 
                     <div>
-                      <div className="flex justify-between font-bold text-slate-800 mb-0.5">
-                        <span>❤️ สุขภาพ (Health)</span>
+                      <div className="flex justify-between font-bold text-slate-800 text-[11px] mb-0.5">
+                        <span>❤️ สุขภาพ</span>
                         <span>{Math.round(selectedPig.health)}%</span>
                       </div>
-                      <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden border border-slate-300">
+                      <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden border border-slate-300">
                         <div
                           className="bg-rose-500 h-full transition-all duration-300"
                           style={{ width: `${selectedPig.health}%` }}
@@ -1603,17 +1832,14 @@ export default function HappyHogView() {
                   </div>
 
                   {/* Feeding Action Grid */}
-                  <div className="space-y-1.5 pt-2 border-t border-amber-300">
+                  <div className="space-y-1 pt-2 border-t border-amber-300">
                     <span className="text-xs font-black text-amber-950 flex items-center justify-between">
                       <span className="flex items-center space-x-1">
                         <Utensils className="w-3.5 h-3.5 text-amber-600" />
-                        <span>เลือกอาหารให้น้องกิน:</span>
-                      </span>
-                      <span className="text-[10px] text-amber-800 font-bold">
-                        (มีผลผลิตในคลัง {Object.values(cropInventory).reduce((a, b) => a + b, 0)} ถุง)
+                        <span>เลือกอาหารให้น้อง:</span>
                       </span>
                     </span>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-1.5">
                       {FOODS.map((food) => {
                         const inStock = cropInventory[food.id] || 0;
                         return (
@@ -1628,15 +1854,15 @@ export default function HappyHogView() {
                                 handleFeed(food);
                               }
                             }}
-                            className="p-2 rounded-xl border-2 border-amber-400 bg-white hover:bg-amber-50 text-left transition-all cursor-pointer shadow-xs active:scale-98"
+                            className="p-1.5 rounded-xl border-2 border-amber-400 bg-white hover:bg-amber-50 text-left transition-all cursor-pointer shadow-xs active:scale-98"
                           >
-                            <div className="flex items-center space-x-1.5">
-                              <span className="text-lg">{food.icon}</span>
+                            <div className="flex items-center space-x-1">
+                              <span className="text-base">{food.icon}</span>
                               <div className="truncate">
-                                <div className="text-[11px] font-black text-slate-900 truncate">{food.name}</div>
-                                <div className="text-[10px] text-amber-700 font-bold">
+                                <div className="text-[10px] font-black text-slate-900 truncate">{food.name}</div>
+                                <div className="text-[9px] text-amber-700 font-bold">
                                   {inStock > 0 ? (
-                                    <span className="text-emerald-700 font-black">มี {inStock} ถุง (ฟรี!)</span>
+                                    <span className="text-emerald-700 font-black">มี {inStock} (ฟรี!)</span>
                                   ) : (
                                     <span>{food.cost} ฿</span>
                                   )}
@@ -1650,20 +1876,20 @@ export default function HappyHogView() {
                   </div>
 
                   {/* Care Actions */}
-                  <div className="grid grid-cols-2 gap-2 pt-1">
+                  <div className="grid grid-cols-2 gap-1.5 pt-1">
                     <button
                       onClick={handleBath}
-                      className="py-2.5 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black text-xs flex items-center justify-center space-x-1.5 shadow-[0_3px_0_#1d4ed8] active:translate-y-0.5 active:shadow-none cursor-pointer"
+                      className="py-2 px-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black text-xs flex items-center justify-center space-x-1 shadow-[0_3px_0_#1d4ed8] active:translate-y-0.5 active:shadow-none cursor-pointer"
                     >
-                      <Bath className="w-4 h-4" />
-                      <span>อาบน้ำขัดตัว</span>
+                      <Bath className="w-3.5 h-3.5" />
+                      <span>อาบน้ำ</span>
                     </button>
 
                     <button
                       onClick={handleVaccine}
-                      className="py-2.5 px-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-black text-xs flex items-center justify-center space-x-1.5 shadow-[0_3px_0_#b91c1c] active:translate-y-0.5 active:shadow-none cursor-pointer"
+                      className="py-2 px-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-black text-xs flex items-center justify-center space-x-1 shadow-[0_3px_0_#b91c1c] active:translate-y-0.5 active:shadow-none cursor-pointer"
                     >
-                      <Syringe className="w-4 h-4" />
+                      <Syringe className="w-3.5 h-3.5" />
                       <span>ฉีดยา (20฿)</span>
                     </button>
                   </div>
@@ -1672,11 +1898,11 @@ export default function HappyHogView() {
                   <div className="pt-2 border-t border-amber-300">
                     <button
                       onClick={() => handleSellPig(selectedPig)}
-                      className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-black text-xs flex items-center justify-center space-x-2 shadow-[0_4px_0_#065f46] active:translate-y-1 active:shadow-none cursor-pointer"
+                      className="w-full py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-black text-xs flex items-center justify-center space-x-1 shadow-[0_3px_0_#065f46] active:translate-y-0.5 active:shadow-none cursor-pointer"
                     >
-                      <DollarSign className="w-4 h-4" />
+                      <DollarSign className="w-3.5 h-3.5" />
                       <span>
-                        ขายส่งโรงงาน (+{Math.round(selectedPig.weight * (PIG_BREEDS[selectedPig.breed]?.pricePerKg || 15) * (activeThemeId === 'golden_palace' ? 1.2 : 1.0)).toLocaleString()} เหรียญ)
+                        ขายหมู (+{Math.round(selectedPig.weight * (PIG_BREEDS[selectedPig.breed]?.pricePerKg || 15) * (activeThemeId === 'golden_palace' ? 1.2 : 1.0)).toLocaleString()} ฿)
                       </span>
                     </button>
                   </div>
@@ -1690,21 +1916,21 @@ export default function HappyHogView() {
           </div>
         )}
 
-        {/* ================= TAB 2: CROP FARMING PATCH (NEW FEATURE) ================= */}
+        {/* ================= TAB 2: CROP FARMING PATCH ================= */}
         {activeTab === 'crops' && (
-          <div className="relative z-10 bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] p-5 sm:p-7 rounded-3xl border-4 border-amber-700 shadow-2xl space-y-5">
+          <div className="relative z-10 bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] p-5 sm:p-7 rounded-3xl border-4 border-amber-700 shadow-2xl space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-300 pb-3">
               <div>
-                <h2 className="text-xl font-black text-amber-950 font-mono flex items-center space-x-2">
-                  <Sprout className="w-6 h-6 text-emerald-600" />
-                  <span>แปลงปลูกพืชและผลิตอาหารหมู (Farm Patch)</span>
+                <h2 className="text-lg font-black text-amber-950 font-mono flex items-center space-x-2">
+                  <Sprout className="w-5 h-5 text-emerald-600" />
+                  <span>แปลงปลูกพืชผักและผลิตอาหารหมู (Farm Patch)</span>
                 </h2>
                 <p className="text-xs text-amber-900 mt-0.5 font-medium">
-                  หว่านเมล็ดพืช รอเวลาเก็บเกี่ยวเพื่อนำมาทำเป็นอาหารหมูในคอกตัวเองฟรี โดยไม่ต้องซื้อ!
+                  ปลูกพืชผัก เก็บเกี่ยวมาทำอาหารเลี้ยงหมูได้ฟรีโดยไม่ต้องเสียเหรียญ!
                 </p>
               </div>
 
-              <div className="flex items-center space-x-2 bg-amber-200/80 px-3.5 py-1.5 rounded-2xl border border-amber-400 text-xs font-bold text-amber-950">
+              <div className="flex items-center space-x-2 bg-amber-200/80 px-3 py-1.5 rounded-2xl border border-amber-400 text-xs font-bold text-amber-950">
                 <span>คลังอาหารปัจจุบัน:</span>
                 <span>🌾 {cropInventory.bran || 0}</span>
                 <span>🌽 {cropInventory.corn || 0}</span>
@@ -1726,7 +1952,6 @@ export default function HappyHogView() {
                     key={plot.id}
                     className="bg-[#451a03] border-4 border-[#270e02] rounded-3xl p-4 shadow-xl flex flex-col justify-between items-center text-center min-h-[220px] relative overflow-hidden"
                   >
-                    {/* Soil Texture overlay */}
                     <div className="absolute inset-0 bg-[radial-gradient(#78350f_2px,transparent_2px)] [background-size:12px_12px] opacity-40 pointer-events-none" />
 
                     <div className="relative z-10 w-full flex justify-between items-center text-amber-200 text-xs font-bold">
@@ -1738,7 +1963,6 @@ export default function HappyHogView() {
                       )}
                     </div>
 
-                    {/* Crop Plant Visualization */}
                     <div className="relative z-10 my-3 flex flex-col items-center">
                       {plot.seed ? (
                         <>
@@ -1763,7 +1987,6 @@ export default function HappyHogView() {
                       )}
                     </div>
 
-                    {/* Plant / Harvest Action */}
                     <div className="relative z-10 w-full">
                       {plot.seed ? (
                         <button
@@ -1994,7 +2217,7 @@ export default function HappyHogView() {
         </div>
       )}
 
-      {/* ================= MODAL 2: NEIGHBOR FARMS & STEALING (NEW FEATURE) ================= */}
+      {/* ================= MODAL 2: NEIGHBOR FARMS & STEALING ================= */}
       {showNeighborsModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-gradient-to-b from-amber-50 to-orange-100 border-4 border-amber-700 rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-4 animate-in zoom-in-95">
@@ -2019,7 +2242,6 @@ export default function HappyHogView() {
               </button>
             </div>
 
-            {/* If looking at specific neighbor */}
             {visitingNeighbor ? (
               <div className="space-y-4 bg-white/80 p-5 rounded-2xl border-2 border-amber-300">
                 <div className="flex items-center justify-between">
@@ -2052,7 +2274,6 @@ export default function HappyHogView() {
                   </div>
                 </div>
 
-                {/* Neighbor Action Buttons */}
                 <div className="grid grid-cols-2 gap-3 pt-2">
                   <button
                     onClick={() => handleHelpNeighbor(visitingNeighbor)}
@@ -2081,7 +2302,6 @@ export default function HappyHogView() {
                 </button>
               </div>
             ) : (
-              /* Neighbor List */
               <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
                 {neighbors.map((n) => (
                   <div
@@ -2236,7 +2456,7 @@ export default function HappyHogView() {
                     }`}
                   >
                     <div
-                      style={{ backgroundColor: breed.color }}
+                      style={{ backgroundColor: breed.primaryColor }}
                       className="w-12 h-12 rounded-2xl border-2 border-black/20 flex items-center justify-center text-2xl shadow-inner shrink-0"
                     >
                       {isUnlocked ? '🐷' : '🔒'}
