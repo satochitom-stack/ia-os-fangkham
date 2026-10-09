@@ -26,7 +26,8 @@ import {
   Activity,
   CalendarDays,
   Globe,
-  Baby
+  Baby,
+  Coffee
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -142,10 +143,26 @@ export default function Sidebar({
         { id: 'forms', label: 'แบบฟอร์มมาตรฐาน', icon: FileSpreadsheet },
         { id: 'users', label: 'จัดการผู้ใช้งาน & กำหนดสิทธิ์', icon: Users, adminOnly: true }
       ]
+    },
+    {
+      pillarId: 'pillar-cozy',
+      pillarNumber: 'โซนผ่อนคลาย',
+      pillarTitle: 'ห้องพักผู้ตรวจ (Breakroom)',
+      badgeClass: 'bg-pink-50 text-pink-700 border-pink-200/80 dark:bg-pink-950/70 dark:text-pink-300 dark:border-pink-800/60',
+      activeClass: 'bg-gradient-to-r from-pink-600 via-rose-600 to-amber-600 text-white shadow-xs font-semibold',
+      hoverClass: 'hover:bg-pink-50/80 hover:text-pink-700 dark:hover:bg-slate-800/80 dark:hover:text-pink-300',
+      iconInactive: 'text-pink-500 dark:text-pink-400',
+      items: [
+        { id: 'happy-hog', label: 'ฟาร์มหมูผู้ตรวจ (Pixel Art)', icon: Sparkles },
+        { id: 'cozy-office-3d', label: 'จัดห้องทำงาน 3D Studio', icon: Coffee }
+      ]
     }
   ];
 
   const canAccessItem = (item) => {
+    // 0. โซนผ่อนคลาย (Breakroom Games): เปิดให้ทุกคนเข้าเล่นได้เพื่อคลายเครียด
+    if (item.id === 'happy-hog' || item.id === 'cozy-office-3d') return true;
+
     // 1. ผู้ดูแลระบบ (ADMIN): เข้าถึงได้ทุกเมนู
     if (isAdmin) return true;
 

@@ -24,6 +24,8 @@ import DepartmentWorkspaceView from './components/DepartmentWorkspaceView';
 import ExecutiveDashboardView from './components/ExecutiveDashboardView';
 import CentralCalendarView from './components/CentralCalendarView';
 import PublicOverviewView from './components/PublicOverviewView';
+import HappyHogView from './components/HappyHogView';
+import CozyOffice3DView from './components/CozyOffice3DView';
 import ErrorBoundary from './components/ErrorBoundary';
 import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
 import { getSession, loginAsGuest, logout as authLogout, switchSessionTo, autoRepairDataLinkages, getUsers, saveUsers, getDepartments, saveDepartments, getPendingUsers, pullPendingUsersFromCloud } from './utils/auth';
@@ -1458,6 +1460,14 @@ export default function App() {
                   reloadDataFromStorage();
                 }}
               />
+            )}
+
+            {currentTab === 'happy-hog' && (
+              <HappyHogView />
+            )}
+
+            {currentTab === 'cozy-office-3d' && (
+              <CozyOffice3DView />
             )}
             </ErrorBoundary>
           </div>
