@@ -153,15 +153,15 @@ export default function Sidebar({
       hoverClass: 'hover:bg-pink-50/80 hover:text-pink-700 dark:hover:bg-slate-800/80 dark:hover:text-pink-300',
       iconInactive: 'text-pink-500 dark:text-pink-400',
       items: [
-        { id: 'happy-hog', label: 'ฟาร์มหมูผู้ตรวจ (Pixel Art)', icon: Sparkles },
-        { id: 'cozy-office-3d', label: 'จัดห้องทำงาน 3D Studio', icon: Coffee }
+        { id: 'card-sort', label: 'จัดหมวดหมู่การ์ด (Card Sort)', icon: Sparkles },
+        { id: 'happy-hog', label: 'ฟาร์มหมูผู้ตรวจ (Pixel Art)', icon: Coffee }
       ]
     }
   ];
 
   const canAccessItem = (item) => {
     // 0. โซนผ่อนคลาย (Breakroom Games): เปิดให้ทุกคนเข้าเล่นได้เพื่อคลายเครียด
-    if (item.id === 'happy-hog' || item.id === 'cozy-office-3d') return true;
+    if (item.id === 'happy-hog' || item.id === 'card-sort' || item.id === 'cozy-office-3d') return true;
 
     // 1. ผู้ดูแลระบบ (ADMIN): เข้าถึงได้ทุกเมนู
     if (isAdmin) return true;

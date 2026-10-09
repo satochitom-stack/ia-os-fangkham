@@ -26,6 +26,7 @@ import CentralCalendarView from './components/CentralCalendarView';
 import PublicOverviewView from './components/PublicOverviewView';
 import HappyHogView from './components/HappyHogView';
 import CozyOffice3DView from './components/CozyOffice3DView';
+import CardSortPuzzleView from './components/CardSortPuzzleView';
 import ErrorBoundary from './components/ErrorBoundary';
 import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
 import { getSession, loginAsGuest, logout as authLogout, switchSessionTo, autoRepairDataLinkages, getUsers, saveUsers, getDepartments, saveDepartments, getPendingUsers, pullPendingUsersFromCloud } from './utils/auth';
@@ -1462,12 +1463,16 @@ export default function App() {
               />
             )}
 
+            {currentTab === 'card-sort' && (
+              <CardSortPuzzleView />
+            )}
+
             {currentTab === 'happy-hog' && (
               <HappyHogView />
             )}
 
             {currentTab === 'cozy-office-3d' && (
-              <CozyOffice3DView />
+              <CardSortPuzzleView />
             )}
             </ErrorBoundary>
           </div>
