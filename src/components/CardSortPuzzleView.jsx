@@ -19,7 +19,8 @@ import {
   Flame,
   Lock,
   Unlock,
-  Layers
+  Layers,
+  Award
 } from 'lucide-react';
 
 // Web Audio sound synthesizer for responsive tactile game effects
@@ -42,7 +43,6 @@ const playSound = (type, isMuted) => {
       osc.start(now);
       osc.stop(now + 0.1);
     } else if (type === 'place') {
-      // Wood tap sound
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(320, now);
       osc.frequency.exponentialRampToValueAtTime(160, now + 0.12);
@@ -51,7 +51,6 @@ const playSound = (type, isMuted) => {
       osc.start(now);
       osc.stop(now + 0.14);
     } else if (type === 'flip') {
-      // Card flip card deck sound
       osc.type = 'sine';
       osc.frequency.setValueAtTime(300, now);
       osc.frequency.exponentialRampToValueAtTime(550, now + 0.09);
@@ -60,7 +59,6 @@ const playSound = (type, isMuted) => {
       osc.start(now);
       osc.stop(now + 0.11);
     } else if (type === 'match') {
-      // Sparkling success chime
       [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
         const o = ctx.createOscillator();
         const g = ctx.createGain();
@@ -98,9 +96,25 @@ const playSound = (type, isMuted) => {
   }
 };
 
-// Rich Card Database matching Cardlings
+// Complete Card Database across all 5 Levels
 const ALL_CARDS = {
-  // Ocean
+  // Level 1: Pets, Fruits, Vehicles
+  dog: { id: 'dog', name: 'Puppy', icon: '🐶', category: 'pets', thai: 'น้องหมา' },
+  cat: { id: 'cat', name: 'Kitty', icon: '🐱', category: 'pets', thai: 'น้องแมว' },
+  bunny: { id: 'bunny', name: 'Bunny', icon: '🐰', category: 'pets', thai: 'กระต่าย' },
+  hamster: { id: 'hamster', name: 'Hamster', icon: '🐹', category: 'pets', thai: 'แฮมสเตอร์' },
+
+  apple: { id: 'apple', name: 'Apple', icon: '🍎', category: 'fruits', thai: 'แอปเปิ้ล' },
+  banana: { id: 'banana', name: 'Banana', icon: '🍌', category: 'fruits', thai: 'กล้วยหอม' },
+  strawberry: { id: 'strawberry', name: 'Strawberry', icon: '🍓', category: 'fruits', thai: 'สตรอว์เบอร์รี' },
+  grape: { id: 'grape', name: 'Grape', icon: '🍇', category: 'fruits', thai: 'องุ่น' },
+
+  car: { id: 'car', name: 'Car', icon: '🚗', category: 'vehicles', thai: 'รถเก๋ง' },
+  bus: { id: 'bus', name: 'Bus', icon: '🚌', category: 'vehicles', thai: 'รถบัส' },
+  airplane: { id: 'airplane', name: 'Airplane', icon: '✈️', category: 'vehicles', thai: 'เครื่องบิน' },
+  train: { id: 'train', name: 'Train', icon: '🚆', category: 'vehicles', thai: 'รถไฟ' },
+
+  // Level 2: Ocean, Jobs, Can Fly (Cardlings Official Screenshot)
   dolphin: { id: 'dolphin', name: 'Dolphin', icon: '🐬', category: 'ocean', thai: 'โลมา' },
   octopus: { id: 'octopus', name: 'Octopus', icon: '🐙', category: 'ocean', thai: 'หมึกยักษ์' },
   whale: { id: 'whale', name: 'Whale', icon: '🐳', category: 'ocean', thai: 'วาฬสีน้ำเงิน' },
@@ -108,7 +122,6 @@ const ALL_CARDS = {
   jellyfish: { id: 'jellyfish', name: 'Jellyfish', icon: '🪼', category: 'ocean', thai: 'แมงกะพรุน' },
   shark: { id: 'shark', name: 'Shark', icon: '🦈', category: 'ocean', thai: 'ฉลาม' },
 
-  // Jobs
   chef: { id: 'chef', name: 'Chef', icon: '👨‍🍳', category: 'jobs', thai: 'เชฟ' },
   firefighter: { id: 'firefighter', name: 'Firefighter', icon: '👩‍🚒', category: 'jobs', thai: 'นักดับเพลิง' },
   scientist: { id: 'scientist', name: 'Scientist', icon: '👩‍🔬', category: 'jobs', thai: 'นักวิทยาศาสตร์' },
@@ -116,40 +129,195 @@ const ALL_CARDS = {
   princess: { id: 'princess', name: 'Princess', icon: '👸', category: 'jobs', thai: 'เจ้าหญิง' },
   doctor: { id: 'doctor', name: 'Doctor', icon: '👩‍⚕️', category: 'jobs', thai: 'คุณหมอ' },
 
-  // Can fly
   phoenix: { id: 'phoenix', name: 'Phoenix', icon: '🦅', category: 'can_fly', thai: 'ฟีนิกซ์' },
   griffin: { id: 'griffin', name: 'Griffin', icon: '🦁', category: 'can_fly', thai: 'กริฟฟอน' },
   eagle: { id: 'eagle', name: 'Eagle', icon: '🦅', category: 'can_fly', thai: 'นกอินทรี' },
   flamingo: { id: 'flamingo', name: 'Flamingo', icon: '🦩', category: 'can_fly', thai: 'ฟลามิงโก' },
   hummingbird: { id: 'hummingbird', name: 'Hummingbird', icon: '🐦', category: 'can_fly', thai: 'ฮัมมิงเบิร์ด' },
-  glider: { id: 'glider', name: 'Glider', icon: '🛩️', category: 'can_fly', thai: 'เครื่องร่อน' }
+  glider: { id: 'glider', name: 'Glider', icon: '🛩️', category: 'can_fly', thai: 'เครื่องร่อน' },
+
+  // Level 3: Bakery, Fast Food, Drinks
+  cupcake: { id: 'cupcake', name: 'Cupcake', icon: '🧁', category: 'bakery', thai: 'คัพเค้ก' },
+  croissant: { id: 'croissant', name: 'Croissant', icon: '🥐', category: 'bakery', thai: 'ครัวซองต์' },
+  donut: { id: 'donut', name: 'Donut', icon: '🍩', category: 'bakery', thai: 'โดนัท' },
+  cookie: { id: 'cookie', name: 'Cookie', icon: '🍪', category: 'bakery', thai: 'คุกกี้' },
+  pancake: { id: 'pancake', name: 'Pancake', icon: '🥞', category: 'bakery', thai: 'แพนเค้ก' },
+  cake: { id: 'cake', name: 'Cake', icon: '🍰', category: 'bakery', thai: 'เค้กช็อกโกแลต' },
+
+  pizza: { id: 'pizza', name: 'Pizza', icon: '🍕', category: 'fastfood', thai: 'พิซซ่า' },
+  burger: { id: 'burger', name: 'Burger', icon: '🍔', category: 'fastfood', thai: 'เบอร์เกอร์' },
+  fries: { id: 'fries', name: 'Fries', icon: '🍟', category: 'fastfood', thai: 'เฟรนช์ฟรายส์' },
+  hotdog: { id: 'hotdog', name: 'Hotdog', icon: '🌭', category: 'fastfood', thai: 'ฮอทดอก' },
+  taco: { id: 'taco', name: 'Taco', icon: '🌮', category: 'fastfood', thai: 'ทาโก้' },
+  popcorn: { id: 'popcorn', name: 'Popcorn', icon: '🍿', category: 'fastfood', thai: 'ป๊อปคอร์น' },
+
+  boba: { id: 'boba', name: 'Boba Tea', icon: '🧋', category: 'drinks', thai: 'ชานมไข่มุก' },
+  coffee: { id: 'coffee', name: 'Coffee', icon: '☕', category: 'drinks', thai: 'กาแฟสด' },
+  juice: { id: 'juice', name: 'Juice', icon: '🧃', category: 'drinks', thai: 'น้ำผลไม้' },
+  soda: { id: 'soda', name: 'Soda', icon: '🥤', category: 'drinks', thai: 'น้ำอัดลม' },
+  milk: { id: 'milk', name: 'Milk', icon: '🥛', category: 'drinks', thai: 'นมสด' },
+  tea: { id: 'tea', name: 'Hot Tea', icon: '🍵', category: 'drinks', thai: 'ชาเขียว' },
+
+  // Level 4: Space, Magic, Dinosaurs
+  astronaut: { id: 'astronaut', name: 'Astronaut', icon: '👨‍🚀', category: 'space', thai: 'นักบินอวกาศ' },
+  rocket: { id: 'rocket', name: 'Rocket', icon: '🚀', category: 'space', thai: 'จรวด' },
+  ufo: { id: 'ufo', name: 'UFO', icon: '🛸', category: 'space', thai: 'จานบิน' },
+  alien: { id: 'alien', name: 'Alien', icon: '👽', category: 'space', thai: 'เอเลี่ยน' },
+  planet: { id: 'planet', name: 'Planet', icon: '🪐', category: 'space', thai: 'ดาวเสาร์' },
+  telescope: { id: 'telescope', name: 'Telescope', icon: '🔭', category: 'space', thai: 'กล้องดูดาว' },
+
+  wizard: { id: 'wizard', name: 'Wizard', icon: '🧙', category: 'magic', thai: 'พ่อมด' },
+  crystal: { id: 'crystal', name: 'Crystal', icon: '🔮', category: 'magic', thai: 'ลูกแก้วพยากรณ์' },
+  wand: { id: 'wand', name: 'Magic Wand', icon: '🪄', category: 'magic', thai: 'ไม้กายสิทธิ์' },
+  potion: { id: 'potion', name: 'Potion', icon: '🧪', category: 'magic', thai: 'น้ำยาเวทมนตร์' },
+  cauldron: { id: 'cauldron', name: 'Cauldron', icon: '🫕', category: 'magic', thai: 'หม้อต้มยา' },
+  scroll: { id: 'scroll', name: 'Spell Scroll', icon: '📜', category: 'magic', thai: 'คัมภีร์เวท' },
+
+  trex: { id: 'trex', name: 'T-Rex', icon: '🦖', category: 'dino', thai: 'ทีเร็กซ์' },
+  sauropod: { id: 'sauropod', name: 'Brontosaurus', icon: '🦕', category: 'dino', thai: 'คอยาว' },
+  pterodactyl: { id: 'pterodactyl', name: 'Pterodactyl', icon: '🦅', category: 'dino', thai: 'เทอโรซอร์' },
+  dino_egg: { id: 'dino_egg', name: 'Dino Egg', icon: '🥚', category: 'dino', thai: 'ไข่ไดโนเสาร์' },
+  volcano: { id: 'volcano', name: 'Volcano', icon: '🌋', category: 'dino', thai: 'ภูเขาไฟ' },
+  meteor: { id: 'meteor', name: 'Meteor', icon: '☄️', category: 'dino', thai: 'อุกกาบาต' },
+
+  // Level 5: ชีวิตผู้ตรวจ อปท. (Audit & Office Life Easter Egg)
+  doc_pk4: { id: 'doc_pk4', name: 'แบบ ปค.4', icon: '📁', category: 'audit_docs', thai: 'แบบ ปค.4' },
+  doc_pk5: { id: 'doc_pk5', name: 'แบบ ปค.5', icon: '📂', category: 'audit_docs', thai: 'แบบ ปค.5' },
+  audit_plan: { id: 'audit_plan', name: 'แผนตรวจสอบ', icon: '📋', category: 'audit_docs', thai: 'แผนประจำปี' },
+  disbursement: { id: 'disbursement', name: 'ฎีกาเบิกจ่าย', icon: '📜', category: 'audit_docs', thai: 'ฎีกา' },
+  audit_stamp: { id: 'audit_stamp', name: 'ตรายาง สตง.', icon: '🔏', category: 'audit_docs', thai: 'ตรายางตรวจผ่าน' },
+  receipt: { id: 'receipt', name: 'ใบเสร็จรับเงิน', icon: '🧾', category: 'audit_docs', thai: 'ใบเสร็จ' },
+
+  coffee_black: { id: 'coffee_black', name: 'อเมริกาโน่เย็น', icon: '☕', category: 'office_fuel', thai: 'กาแฟเข้ม' },
+  boba_milk: { id: 'boba_milk', name: 'ชานม 100% หวาน', icon: '🧋', category: 'office_fuel', thai: 'ชานมดับเครียด' },
+  yadom: { id: 'yadom', name: 'ยาดมตราโป๊ยเซียน', icon: '🌿', category: 'office_fuel', thai: 'ยาดมแก้เวียน' },
+  glasses: { id: 'glasses', name: 'แว่นสายตากรองแสง', icon: '👓', category: 'office_fuel', thai: 'แว่นทำงาน' },
+  mama_cup: { id: 'mama_cup', name: 'มาม่าคัพรอบดึก', icon: '🍜', category: 'office_fuel', thai: 'บะหมี่รอบดึก' },
+  toast: { id: 'toast', name: 'ขนมปังปิ้งเนย', icon: '🍞', category: 'office_fuel', thai: 'ขนมปัง' },
+
+  hard_hat: { id: 'hard_hat', name: 'หมวกนิรภัยช่าง', icon: '⛑️', category: 'engineer_tools', thai: 'หมวกช่าง' },
+  tape_measure: { id: 'tape_measure', name: 'ตลับเมตรเลเซอร์', icon: '📏', category: 'engineer_tools', thai: 'ตลับเมตร' },
+  inspect_car: { id: 'inspect_car', name: 'รถตรวจงาน อปท.', icon: '🚙', category: 'engineer_tools', thai: 'รถราชการ' },
+  factor_f: { id: 'factor_f', name: 'ตาราง Factor F', icon: '🗂️', category: 'engineer_tools', thai: 'ราคากลาง' },
+  calculator: { id: 'calculator', name: 'เครื่องคิดเลข', icon: '🔢', category: 'engineer_tools', thai: 'เครื่องคิดเลข' },
+  desktop_pc: { id: 'desktop_pc', name: 'คอมตรวจ e-LAAS', icon: '💻', category: 'engineer_tools', thai: 'ระบบคอม' }
 };
 
-const CATEGORIES_DATA = {
-  ocean: { id: 'ocean', name: 'Ocean', max: 6, icon: '🌊', color: 'text-sky-600', thai: 'สัตว์ใต้ทะเล' },
-  jobs: { id: 'jobs', name: 'Jobs', max: 6, icon: '💼', color: 'text-amber-600', thai: 'อาชีพต่างๆ' },
-  can_fly: { id: 'can_fly', name: 'Can fly', max: 6, icon: '🪽', color: 'text-emerald-600', thai: 'สิ่งที่บินได้' }
+// 5 Complete Progressive Level Configurations
+const LEVEL_CONFIGS = {
+  1: {
+    levelNumber: 1,
+    title: 'LEVEL 1: สัตว์เลี้ยง ผลไม้ และยานพาหนะ (เริ่มต้น)',
+    moves: 40,
+    rewardCoins: 100,
+    categories: [
+      { id: 'pets', name: 'Pets', max: 4, icon: '🐶', thai: 'สัตว์เลี้ยงแสนรัก' },
+      { id: 'fruits', name: 'Fruits', max: 4, icon: '🍎', thai: 'ผลไม้สดชื่น' },
+      { id: 'vehicles', name: 'Vehicles', max: 4, icon: '🚗', thai: 'ยานพาหนะ' }
+    ],
+    stacks: [
+      [{ top: 'dog', hidden: [] }, { top: 'apple', hidden: [] }, { top: 'car', hidden: [] }, { top: null, hidden: [] }],
+      [{ top: 'cat', hidden: [] }, { top: 'banana', hidden: [] }, { top: 'bus', hidden: [] }, { top: null, hidden: [] }],
+      [{ top: 'bunny', hidden: [] }, { top: 'strawberry', hidden: [] }, { top: 'airplane', hidden: [] }, { top: null, hidden: [] }],
+      [{ top: 'hamster', hidden: [] }, { top: 'grape', hidden: [] }, { top: 'train', hidden: [] }, { top: null, hidden: [] }]
+    ]
+  },
+  2: {
+    levelNumber: 2,
+    title: 'LEVEL 2: Ocean, Jobs & Can Fly (Cardlings Official)',
+    moves: 50,
+    rewardCoins: 150,
+    categories: [
+      { id: 'ocean', name: 'Ocean', max: 6, icon: '🌊', thai: 'สัตว์ใต้ทะเล' },
+      { id: 'jobs', name: 'Jobs', max: 6, icon: '💼', thai: 'อาชีพต่างๆ' },
+      { id: 'can_fly', name: 'Can fly', max: 6, icon: '🪽', thai: 'สิ่งที่บินได้' }
+    ],
+    stacks: [
+      [{ top: 'phoenix', hidden: [] }, { top: 'firefighter', hidden: ['shark'] }, { top: 'dolphin', hidden: [] }, { top: 'octopus', hidden: [] }],
+      [{ top: 'chef', hidden: [] }, { top: 'griffin', hidden: ['doctor'] }, { top: 'eagle', hidden: [] }, { top: 'whale', hidden: [] }],
+      [{ top: 'flamingo', hidden: [] }, { top: 'farmer', hidden: [] }, { top: 'princess', hidden: [] }, { top: 'glider', hidden: [] }],
+      [{ top: 'scientist', hidden: [] }, { top: 'jellyfish', hidden: [] }, { top: 'hummingbird', hidden: [] }, { top: 'clownfish', hidden: [] }]
+    ]
+  },
+  3: {
+    levelNumber: 3,
+    title: 'LEVEL 3: เบเกอรี่ อาหารจานด่วน และเครื่องดื่ม',
+    moves: 55,
+    rewardCoins: 200,
+    categories: [
+      { id: 'bakery', name: 'Bakery', max: 6, icon: '🧁', thai: 'เบเกอรี่แสนหวาน' },
+      { id: 'fastfood', name: 'Fast Food', max: 6, icon: '🍕', thai: 'อาหารจานด่วน' },
+      { id: 'drinks', name: 'Drinks', max: 6, icon: '🧋', thai: 'เครื่องดื่มดับร้อน' }
+    ],
+    stacks: [
+      [{ top: 'cupcake', hidden: ['cake'] }, { top: 'pizza', hidden: [] }, { top: 'boba', hidden: [] }, { top: 'croissant', hidden: [] }],
+      [{ top: 'burger', hidden: [] }, { top: 'coffee', hidden: ['tea'] }, { top: 'donut', hidden: [] }, { top: 'fries', hidden: [] }],
+      [{ top: 'juice', hidden: [] }, { top: 'cookie', hidden: [] }, { top: 'hotdog', hidden: ['popcorn'] }, { top: 'soda', hidden: [] }],
+      [{ top: 'pancake', hidden: [] }, { top: 'taco', hidden: [] }, { top: 'milk', hidden: [] }, { top: null, hidden: [] }]
+    ]
+  },
+  4: {
+    levelNumber: 4,
+    title: 'LEVEL 4: อวกาศ เวทมนตร์ และไดโนเสาร์',
+    moves: 55,
+    rewardCoins: 250,
+    categories: [
+      { id: 'space', name: 'Space', max: 6, icon: '🚀', thai: 'อวกาศอันไกลโพ้น' },
+      { id: 'magic', name: 'Magic', max: 6, icon: '🪄', thai: 'มนตร์วิเศษ' },
+      { id: 'dino', name: 'Dino', max: 6, icon: '🦖', thai: 'โลกล้านปี' }
+    ],
+    stacks: [
+      [{ top: 'astronaut', hidden: ['telescope'] }, { top: 'wizard', hidden: [] }, { top: 'trex', hidden: [] }, { top: 'rocket', hidden: [] }],
+      [{ top: 'crystal', hidden: [] }, { top: 'sauropod', hidden: ['meteor'] }, { top: 'ufo', hidden: [] }, { top: 'wand', hidden: [] }],
+      [{ top: 'pterodactyl', hidden: [] }, { top: 'alien', hidden: ['planet'] }, { top: 'potion', hidden: [] }, { top: 'dino_egg', hidden: [] }],
+      [{ top: 'cauldron', hidden: [] }, { top: 'volcano', hidden: [] }, { top: 'scroll', hidden: [] }, { top: null, hidden: [] }]
+    ]
+  },
+  5: {
+    levelNumber: 5,
+    title: 'LEVEL 5: ชีวิตผู้ตรวจสอบ อปท. (รอบชิงชนะเลิศ)',
+    moves: 60,
+    rewardCoins: 300,
+    categories: [
+      { id: 'audit_docs', name: 'Audit Docs', max: 6, icon: '📂', thai: 'เอกสารรายงานตรวจ' },
+      { id: 'office_fuel', name: 'Office Fuel', max: 6, icon: '☕', thai: 'ของยังชีพห้องตรวจ' },
+      { id: 'engineer_tools', name: 'Engineering', max: 6, icon: '⛑️', thai: 'งานช่าง & พัสดุ' }
+    ],
+    stacks: [
+      [{ top: 'doc_pk4', hidden: ['receipt'] }, { top: 'coffee_black', hidden: [] }, { top: 'hard_hat', hidden: [] }, { top: 'doc_pk5', hidden: [] }],
+      [{ top: 'boba_milk', hidden: ['toast'] }, { top: 'tape_measure', hidden: [] }, { top: 'audit_plan', hidden: [] }, { top: 'yadom', hidden: [] }],
+      [{ top: 'inspect_car', hidden: ['desktop_pc'] }, { top: 'disbursement', hidden: [] }, { top: 'glasses', hidden: [] }, { top: 'factor_f', hidden: [] }],
+      [{ top: 'audit_stamp', hidden: [] }, { top: 'mama_cup', hidden: [] }, { top: 'calculator', hidden: [] }, { top: null, hidden: [] }]
+    ]
+  }
 };
 
 export default function CardSortPuzzleView() {
+  // Start from Level 1 by default
   const [level, setLevel] = useState(() => {
-    return parseInt(localStorage.getItem('card_sort_level') || '2', 10);
+    const saved = localStorage.getItem('card_sort_level');
+    return saved !== null ? parseInt(saved, 10) : 1;
   });
-  const [movesLeft, setMovesLeft] = useState(50);
+
+  const currentConfig = LEVEL_CONFIGS[level] || LEVEL_CONFIGS[1];
+
+  const [movesLeft, setMovesLeft] = useState(currentConfig.moves);
   const [coins, setCoins] = useState(() => {
-    return parseInt(localStorage.getItem('card_sort_coins') || '935', 10);
+    return parseInt(localStorage.getItem('card_sort_coins') || '250', 10);
   });
+
   const [hintCount, setHintCount] = useState(3);
   const [undoCount, setUndoCount] = useState(3);
   const [isMuted, setIsMuted] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
+  const [showLevelSelect, setShowLevelSelect] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState(null);
-  const [selectedFrom, setSelectedFrom] = useState(null); // { type: 'grid'|'bench', colIdx, rowIdx, benchIdx }
+  const [selectedFrom, setSelectedFrom] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
   const [history, setHistory] = useState([]);
   const [isWon, setIsWon] = useState(false);
 
-  // Bench (ม้านั่งพักการ์ด) on the right (6 slots)
+  // Bench slots on the right
   const [benchSlots, setBenchSlots] = useState([
     { id: 0, card: null, locked: false },
     { id: 1, card: null, locked: false },
@@ -159,49 +327,44 @@ export default function CardSortPuzzleView() {
     { id: 5, card: null, locked: true, unlockCost: 250 }
   ]);
 
-  // Three Active Categories
-  const [completedCategories, setCompletedCategories] = useState({
-    ocean: [],
-    jobs: [],
-    can_fly: []
+  // Dynamic completed categories based on current level
+  const [completedCategories, setCompletedCategories] = useState(() => {
+    const initial = {};
+    currentConfig.categories.forEach((cat) => {
+      initial[cat.id] = [];
+    });
+    return initial;
   });
 
-  // Stacks in the grid (Each cell can have 1 top card + hidden cards underneath!)
-  // Columns: 0, 1 (left) and 2, 3 (right of category column)
-  const [gridStacks, setGridStacks] = useState(() => initGridStacks());
+  // Stacks in the grid
+  const [gridStacks, setGridStacks] = useState(() => JSON.parse(JSON.stringify(currentConfig.stacks)));
 
-  function initGridStacks() {
-    return [
-      // Col 0
-      [
-        { top: 'phoenix', hidden: [] },
-        { top: 'firefighter', hidden: ['shark'] },
-        { top: 'dolphin', hidden: [] },
-        { top: 'octopus', hidden: [] }
-      ],
-      // Col 1
-      [
-        { top: 'chef', hidden: [] },
-        { top: 'griffin', hidden: ['doctor'] },
-        { top: 'eagle', hidden: [] },
-        { top: 'whale', hidden: [] }
-      ],
-      // Col 2
-      [
-        { top: 'flamingo', hidden: [] },
-        { top: 'farmer', hidden: [] },
-        { top: 'princess', hidden: [] },
-        { top: 'glider', hidden: [] }
-      ],
-      // Col 3
-      [
-        { top: 'scientist', hidden: [] },
-        { top: 'jellyfish', hidden: [] },
-        { top: 'hummingbird', hidden: [] },
-        { top: 'clownfish', hidden: [] }
-      ]
-    ];
-  }
+  // Whenever level changes, reset board cleanly
+  const loadLevel = (targetLevel) => {
+    const conf = LEVEL_CONFIGS[targetLevel] || LEVEL_CONFIGS[1];
+    setLevel(targetLevel);
+    setMovesLeft(conf.moves);
+    setGridStacks(JSON.parse(JSON.stringify(conf.stacks)));
+
+    const freshCats = {};
+    conf.categories.forEach((cat) => {
+      freshCats[cat.id] = [];
+    });
+    setCompletedCategories(freshCats);
+
+    setBenchSlots([
+      { id: 0, card: null, locked: false },
+      { id: 1, card: null, locked: false },
+      { id: 2, card: null, locked: false },
+      { id: 3, card: null, locked: false },
+      { id: 4, card: null, locked: true, unlockCost: 250 },
+      { id: 5, card: null, locked: true, unlockCost: 250 }
+    ]);
+    setSelectedCardId(null);
+    setSelectedFrom(null);
+    setHistory([]);
+    setIsWon(false);
+  };
 
   // Save progress
   useEffect(() => {
@@ -216,19 +379,16 @@ export default function CardSortPuzzleView() {
 
   // Check victory condition
   useEffect(() => {
-    const totalPlaced =
-      completedCategories.ocean.length +
-      completedCategories.jobs.length +
-      completedCategories.can_fly.length;
+    const totalRequired = currentConfig.categories.reduce((sum, c) => sum + c.max, 0);
+    const totalPlaced = Object.values(completedCategories).reduce((sum, arr) => sum + arr.length, 0);
 
-    // 6 in each category = 18 total cards
-    if (totalPlaced >= 18 && !isWon) {
+    if (totalPlaced >= totalRequired && !isWon) {
       setIsWon(true);
       playSound('win', isMuted);
-      setCoins((c) => c + 150);
-      showToast('🎉 VICTORY! คุณจับคู่การ์ดครบทุกหมวดหมู่ เคลียร์โต๊ะสำเร็จ!');
+      setCoins((c) => c + currentConfig.rewardCoins);
+      showToast(`🎉 ชนะเลิศ! คุณเคลียร์ LEVEL ${level} สำเร็จครบทุกหมวด (+${currentConfig.rewardCoins} เหรียญ)`);
     }
-  }, [completedCategories, isWon, isMuted]);
+  }, [completedCategories, isWon, currentConfig, level, isMuted]);
 
   // SMART CLICK / AUTO-SEND: คลิกซ้ายที่การ์ดเพื่อส่งไปยังหมวดหมู่ทันที
   const handleCardClick = (cardId, fromLocation) => {
@@ -243,14 +403,13 @@ export default function CardSortPuzzleView() {
     }
 
     const catId = cardData.category;
-    const cat = CATEGORIES_DATA[catId];
+    const targetCat = currentConfig.categories.find((c) => c.id === catId);
 
-    // Check if category has room
-    if (cat && completedCategories[catId].length < cat.max) {
-      // Auto-send card to its matching category!
+    // If matching category is active on board and has room: send immediately!
+    if (targetCat && (completedCategories[catId]?.length || 0) < targetCat.max) {
       sendCardToCategory(cardId, fromLocation, catId);
     } else {
-      // Category is either not on board or full: select the card so player can place on bench
+      // Toggle selection to place on bench
       if (selectedCardId === cardId) {
         setSelectedCardId(null);
         setSelectedFrom(null);
@@ -258,7 +417,7 @@ export default function CardSortPuzzleView() {
         setSelectedCardId(cardId);
         setSelectedFrom(fromLocation);
         playSound('select', isMuted);
-        showToast(`เลือก "${cardData.name}" (แตะม้านั่งสำรองเพื่อนำไปพัก)`);
+        showToast(`เลือก "${cardData.name}" (แตะม้านั่งสำรองทางขวาเพื่อพักการ์ด)`);
       }
     }
   };
@@ -275,7 +434,6 @@ export default function CardSortPuzzleView() {
           col.map((slot, rIdx) => {
             if (cIdx === from.colIdx && rIdx === from.rowIdx) {
               if (slot.hidden.length > 0) {
-                // Reveal the next hidden card!
                 playSound('flip', isMuted);
                 return {
                   top: slot.hidden[0],
@@ -298,13 +456,14 @@ export default function CardSortPuzzleView() {
     // Add to completed category
     setCompletedCategories((prev) => ({
       ...prev,
-      [catId]: [...prev[catId], cardId]
+      [catId]: [...(prev[catId] || []), cardId]
     }));
 
     setSelectedCardId(null);
     setSelectedFrom(null);
     playSound('match', isMuted);
-    showToast(`✨ ส่ง "${ALL_CARDS[cardId].name}" เข้าหมวด ${CATEGORIES_DATA[catId].name}!`);
+    const catName = currentConfig.categories.find((c) => c.id === catId)?.name || catId;
+    showToast(`✨ ส่ง "${ALL_CARDS[cardId].name}" เข้าหมวด ${catName}!`);
   };
 
   // Click on Bench slot
@@ -315,11 +474,11 @@ export default function CardSortPuzzleView() {
     if (slot.locked) {
       if (coins >= slot.unlockCost) {
         setCoins((c) => c - slot.unlockCost);
-        setBufferSlots((prev) =>
+        setBenchSlots((prev) =>
           prev.map((s, i) => (i === benchIdx ? { ...s, locked: false } : s))
         );
         playSound('match', isMuted);
-        showToast('🔓 ปลดล็อกม้านั่งพักการ์ดเรียบร้อยแล้ว!');
+        showToast('🔓 ปลดล็อกม้านั่งสำรองเรียบร้อยแล้ว!');
       } else {
         showToast(`❌ เหรียญไม่พอปลดล็อกม้านั่ง (ต้องการ ${slot.unlockCost} เหรียญ)`);
         playSound('error', isMuted);
@@ -327,13 +486,13 @@ export default function CardSortPuzzleView() {
       return;
     }
 
-    // If bench slot has a card
+    // If bench slot has a card: click to auto-send or select!
     if (slot.card) {
       handleCardClick(slot.card, { type: 'bench', benchIdx });
       return;
     }
 
-    // Empty bench slot: if a card is currently selected, place it here!
+    // Empty bench slot: place selected card here!
     if (selectedCardId && selectedFrom) {
       placeCardOnBench(selectedCardId, selectedFrom, benchIdx);
     }
@@ -453,8 +612,9 @@ export default function CardSortPuzzleView() {
     gridStacks.forEach((col, cIdx) => {
       col.forEach((slot, rIdx) => {
         if (slot.top && !foundCard) {
-          const catId = ALL_CARDS[slot.top].category;
-          if (completedCategories[catId].length < CATEGORIES_DATA[catId].max) {
+          const catId = ALL_CARDS[slot.top]?.category;
+          const targetCat = currentConfig.categories.find((c) => c.id === catId);
+          if (targetCat && (completedCategories[catId]?.length || 0) < targetCat.max) {
             foundCard = slot.top;
             foundLocation = { type: 'grid', colIdx: cIdx, rowIdx: rIdx };
           }
@@ -466,8 +626,9 @@ export default function CardSortPuzzleView() {
     if (!foundCard) {
       benchSlots.forEach((slot, bIdx) => {
         if (slot.card && !foundCard) {
-          const catId = ALL_CARDS[slot.card].category;
-          if (completedCategories[catId].length < CATEGORIES_DATA[catId].max) {
+          const catId = ALL_CARDS[slot.card]?.category;
+          const targetCat = currentConfig.categories.find((c) => c.id === catId);
+          if (targetCat && (completedCategories[catId]?.length || 0) < targetCat.max) {
             foundCard = slot.card;
             foundLocation = { type: 'bench', benchIdx: bIdx };
           }
@@ -480,7 +641,7 @@ export default function CardSortPuzzleView() {
       setSelectedFrom(foundLocation);
       setHintCount((h) => h - 1);
       playSound('match', isMuted);
-      showToast(`💡 คำใบ้: คลิกส่ง "${ALL_CARDS[foundCard].name}" เข้าหมวด ${CATEGORIES_DATA[ALL_CARDS[foundCard].category].name}!`);
+      showToast(`💡 คำใบ้: แตะส่ง "${ALL_CARDS[foundCard].name}" เข้าหมวด ${ALL_CARDS[foundCard].category}!`);
     } else {
       showToast('💡 ตอนนี้ยังไม่มีการ์ดที่เข้าหมวดหมู่ได้ ลองพักการ์ดบนม้านั่งเพื่อเปิดการ์ดด้านล่าง!');
     }
@@ -492,8 +653,9 @@ export default function CardSortPuzzleView() {
     gridStacks.forEach((col, cIdx) => {
       col.forEach((slot, rIdx) => {
         if (slot.top && !target) {
-          const catId = ALL_CARDS[slot.top].category;
-          if (completedCategories[catId].length < CATEGORIES_DATA[catId].max) {
+          const catId = ALL_CARDS[slot.top]?.category;
+          const targetCat = currentConfig.categories.find((c) => c.id === catId);
+          if (targetCat && (completedCategories[catId]?.length || 0) < targetCat.max) {
             target = { cardId: slot.top, from: { type: 'grid', colIdx: cIdx, rowIdx: rIdx }, catId };
           }
         }
@@ -509,32 +671,18 @@ export default function CardSortPuzzleView() {
     }
   };
 
-  // Restart Level
+  // Restart Current Level
   const handleRestart = () => {
-    setGridStacks(initGridStacks());
-    setBenchSlots([
-      { id: 0, card: null, locked: false },
-      { id: 1, card: null, locked: false },
-      { id: 2, card: null, locked: false },
-      { id: 3, card: null, locked: false },
-      { id: 4, card: null, locked: true, unlockCost: 250 },
-      { id: 5, card: null, locked: true, unlockCost: 250 }
-    ]);
-    setCompletedCategories({ ocean: [], jobs: [], can_fly: [] });
-    setMovesLeft(50);
-    setSelectedCardId(null);
-    setSelectedFrom(null);
-    setHistory([]);
-    setIsWon(false);
+    loadLevel(level);
     playSound('place', isMuted);
-    showToast('🔄 รีเซ็ตกระดานเรียบร้อยแล้ว');
+    showToast(`🔄 รีเซ็ต LEVEL ${level} เรียบร้อยแล้ว`);
   };
 
-  // Next Level
+  // Advance to Next Level
   const handleNextLevel = () => {
-    setLevel((l) => l + 1);
-    handleRestart();
-    showToast(`🚀 เข้าสู่ LEVEL ${level + 1}!`);
+    const nextLvl = level < 5 ? level + 1 : 1;
+    loadLevel(nextLvl);
+    showToast(`🚀 เข้าสู่ LEVEL ${nextLvl}!`);
   };
 
   return (
@@ -570,10 +718,15 @@ export default function CardSortPuzzleView() {
               )}
             </button>
 
-            {/* Level & Moves Counter Pill */}
-            <div className="relative flex flex-col items-center">
-              <div className="bg-[#115e59] text-white text-[11px] font-black uppercase tracking-wider px-3.5 py-0.5 rounded-full border border-teal-300/40 shadow-xs z-10 -mb-2">
-                LEVEL {level}
+            {/* Level & Moves Counter Pill (Clickable to Select Level) */}
+            <div
+              onClick={() => setShowLevelSelect(true)}
+              className="relative flex flex-col items-center cursor-pointer hover:scale-105 transition-transform"
+              title="คลิกเพื่อเลือกด่าน (Level Select)"
+            >
+              <div className="bg-[#115e59] text-white text-[11px] font-black uppercase tracking-wider px-3.5 py-0.5 rounded-full border border-teal-300/40 shadow-xs z-10 -mb-2 flex items-center space-x-1">
+                <span>LEVEL {level}</span>
+                <span className="text-[9px] text-teal-200">▾</span>
               </div>
               <div className="bg-gradient-to-b from-white to-[#fef9c3] border-4 border-amber-700/80 shadow-[0_6px_0_#78350f] rounded-2xl px-4 pt-3 pb-2 text-center min-w-[108px]">
                 <div className="text-2xl font-black text-slate-900 font-mono leading-none">
@@ -642,7 +795,6 @@ export default function CardSortPuzzleView() {
                         isSelected ? 'ring-4 ring-amber-400 scale-105 shadow-xl -translate-y-2' : ''
                       }`}
                     >
-                      {/* Stack depth indicator if hidden cards exist */}
                       {slot.hidden.length > 0 && (
                         <div className="absolute top-1 right-1.5 w-4 h-4 bg-blue-600 text-white rounded-full text-[9px] font-black flex items-center justify-center shadow-xs">
                           {slot.hidden.length}
@@ -697,74 +849,35 @@ export default function CardSortPuzzleView() {
 
               {/* Column 2: THE 3 ACTIVE CATEGORIES & PLUS EXPANDER */}
               <div className="flex flex-col gap-2.5">
-                {/* Category 1: Ocean */}
-                <div
-                  onClick={() => handleCategoryBoxClick('ocean')}
-                  className={`h-24 sm:h-28 rounded-2xl border-3 border-amber-400/90 bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] shadow-[0_5px_0_#b45309] hover:brightness-105 transition-all cursor-pointer flex flex-col items-center justify-center p-1.5 text-center ${
-                    selectedCardId && ALL_CARDS[selectedCardId]?.category === 'ocean'
-                      ? 'ring-4 ring-sky-400 animate-pulse'
-                      : ''
-                  }`}
-                >
-                  <div className="flex items-center space-x-1 text-[11px] font-black text-amber-900">
-                    <span>
-                      {completedCategories.ocean.length}/{CATEGORIES_DATA.ocean.max}
-                    </span>
-                    <Star className="w-3 h-3 fill-amber-500 text-amber-600" />
-                  </div>
-                  <div className="text-sm sm:text-base font-extrabold text-slate-900 mt-1">Ocean</div>
-                  <div className="text-[10px] text-sky-700 font-bold mt-0.5 truncate max-w-full">
-                    {completedCategories.ocean.length > 0
-                      ? completedCategories.ocean.map((c) => ALL_CARDS[c]?.icon).join('')
-                      : 'แตะเพื่อจัดเก็บ'}
-                  </div>
-                </div>
+                {currentConfig.categories.map((cat) => {
+                  const placedList = completedCategories[cat.id] || [];
+                  const isTargetMatch = selectedCardId && ALL_CARDS[selectedCardId]?.category === cat.id;
 
-                {/* Category 2: Jobs */}
-                <div
-                  onClick={() => handleCategoryBoxClick('jobs')}
-                  className={`h-24 sm:h-28 rounded-2xl border-3 border-amber-400/90 bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] shadow-[0_5px_0_#b45309] hover:brightness-105 transition-all cursor-pointer flex flex-col items-center justify-center p-1.5 text-center ${
-                    selectedCardId && ALL_CARDS[selectedCardId]?.category === 'jobs'
-                      ? 'ring-4 ring-amber-400 animate-pulse'
-                      : ''
-                  }`}
-                >
-                  <div className="flex items-center space-x-1 text-[11px] font-black text-amber-900">
-                    <span>
-                      {completedCategories.jobs.length}/{CATEGORIES_DATA.jobs.max}
-                    </span>
-                    <Star className="w-3 h-3 fill-amber-500 text-amber-600" />
-                  </div>
-                  <div className="text-sm sm:text-base font-extrabold text-slate-900 mt-1">Jobs</div>
-                  <div className="text-[10px] text-amber-800 font-bold mt-0.5 truncate max-w-full">
-                    {completedCategories.jobs.length > 0
-                      ? completedCategories.jobs.map((c) => ALL_CARDS[c]?.icon).join('')
-                      : 'แตะเพื่อจัดเก็บ'}
-                  </div>
-                </div>
-
-                {/* Category 3: Can fly */}
-                <div
-                  onClick={() => handleCategoryBoxClick('can_fly')}
-                  className={`h-24 sm:h-28 rounded-2xl border-3 border-amber-400/90 bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] shadow-[0_5px_0_#b45309] hover:brightness-105 transition-all cursor-pointer flex flex-col items-center justify-center p-1.5 text-center ${
-                    selectedCardId && ALL_CARDS[selectedCardId]?.category === 'can_fly'
-                      ? 'ring-4 ring-emerald-400 animate-pulse'
-                      : ''
-                  }`}
-                >
-                  <div className="flex items-center space-x-1 text-[11px] font-black text-amber-900">
-                    <span>
-                      {completedCategories.can_fly.length}/{CATEGORIES_DATA.can_fly.max}
-                    </span>
-                    <Star className="w-3 h-3 fill-amber-500 text-amber-600" />
-                  </div>
-                  <div className="text-sm sm:text-base font-extrabold text-slate-900 mt-1">Can fly</div>
-                  <div className="text-[10px] text-emerald-800 font-bold mt-0.5 truncate max-w-full">
-                    {completedCategories.can_fly.length > 0
-                      ? completedCategories.can_fly.map((c) => ALL_CARDS[c]?.icon).join('')
-                      : 'แตะเพื่อจัดเก็บ'}
-                  </div>
-                </div>
+                  return (
+                    <div
+                      key={cat.id}
+                      onClick={() => handleCategoryBoxClick(cat.id)}
+                      className={`h-24 sm:h-28 rounded-2xl border-3 border-amber-400/90 bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] shadow-[0_5px_0_#b45309] hover:brightness-105 transition-all cursor-pointer flex flex-col items-center justify-center p-1.5 text-center ${
+                        isTargetMatch ? 'ring-4 ring-amber-400 animate-pulse' : ''
+                      }`}
+                    >
+                      <div className="flex items-center space-x-1 text-[11px] font-black text-amber-900">
+                        <span>
+                          {placedList.length}/{cat.max}
+                        </span>
+                        <Star className="w-3 h-3 fill-amber-500 text-amber-600" />
+                      </div>
+                      <div className="text-sm sm:text-base font-extrabold text-slate-900 mt-1 truncate max-w-full">
+                        {cat.name}
+                      </div>
+                      <div className="text-[10px] text-amber-800 font-bold mt-0.5 truncate max-w-full">
+                        {placedList.length > 0
+                          ? placedList.map((c) => ALL_CARDS[c]?.icon).join('')
+                          : 'แตะเพื่อจัดเก็บ'}
+                      </div>
+                    </div>
+                  );
+                })}
 
                 {/* Slot 4: Extra Golden Category Expander */}
                 <div
@@ -962,21 +1075,103 @@ export default function CardSortPuzzleView() {
         {/* BOTTOM HELPER BAR */}
         <div className="relative z-10 mt-4 bg-amber-950/70 backdrop-blur-md rounded-2xl px-4 py-2.5 border border-amber-700/60 flex flex-wrap items-center justify-between text-xs text-amber-200">
           <div className="flex items-center space-x-2">
-            <span className="font-bold">🎯 กฎการเล่น:</span>
-            <span>
-              คลิกการ์ดเพื่อส่งเข้าหมวดหมู่ทันที | วางการ์ดบนม้านั่งเพื่อรอหมวดหมู่ว่าง | ระวัง: วางผิดหมวดจะเสีย 1 Move!
-            </span>
+            <span className="font-bold">🎯 {currentConfig.title}</span>
           </div>
-          <button
-            onClick={() => setShowHowToPlay(true)}
-            className="text-amber-300 hover:text-white underline font-bold cursor-pointer"
-          >
-            อ่านกติกาฉบับเต็ม
-          </button>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={() => setShowLevelSelect(true)}
+              className="text-amber-300 hover:text-white underline font-bold cursor-pointer"
+            >
+              เลือกด่าน (Level 1-5)
+            </button>
+            <span>•</span>
+            <button
+              onClick={() => setShowHowToPlay(true)}
+              className="text-amber-300 hover:text-white underline font-bold cursor-pointer"
+            >
+              กติกาการเล่น
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* HOW TO PLAY MODAL (ตรงตามคำอธิบาย Cardlings) */}
+      {/* LEVEL SELECT MODAL */}
+      {showLevelSelect && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-gradient-to-b from-amber-50 to-orange-100 border-4 border-amber-700 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 animate-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-amber-300/80 pb-3">
+              <div>
+                <h3 className="text-xl font-black text-amber-950 font-mono">
+                  เลือกระดับด่าน (Level Select)
+                </h3>
+                <p className="text-[11px] text-amber-800 font-bold">
+                  เลือกด่านที่ต้องการเล่น มีทั้งหมด 5 ระดับความท้าทาย
+                </p>
+              </div>
+              <button
+                onClick={() => setShowLevelSelect(false)}
+                className="p-1.5 rounded-full hover:bg-amber-200 text-amber-900 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-2.5 max-h-[60vh] overflow-y-auto pr-1">
+              {[1, 2, 3, 4, 5].map((lvlNum) => {
+                const conf = LEVEL_CONFIGS[lvlNum];
+                const isCurrent = level === lvlNum;
+
+                return (
+                  <div
+                    key={lvlNum}
+                    onClick={() => {
+                      loadLevel(lvlNum);
+                      setShowLevelSelect(false);
+                      showToast(`เข้าสู่ ${conf.title}`);
+                    }}
+                    className={`p-3.5 rounded-2xl border-2 flex items-center justify-between transition-all cursor-pointer ${
+                      isCurrent
+                        ? 'bg-amber-500 text-white border-amber-600 shadow-md scale-102'
+                        : 'bg-white hover:bg-amber-100/70 border-amber-200 text-amber-950'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <span className="font-black text-sm">LEVEL {lvlNum}</span>
+                        {isCurrent && (
+                          <span className="bg-white text-amber-800 text-[10px] font-black px-2 py-0.5 rounded-full">
+                            กำลังเล่น
+                          </span>
+                        )}
+                      </div>
+                      <p className={`text-xs mt-0.5 ${isCurrent ? 'text-amber-100' : 'text-slate-600'}`}>
+                        {conf.title.split(': ')[1]}
+                      </p>
+                      <div className={`text-[10px] mt-1 flex space-x-3 ${isCurrent ? 'text-amber-200' : 'text-slate-500'}`}>
+                        <span>Moves: {conf.moves}</span>
+                        <span>รางวัล: +{conf.rewardCoins} เหรียญ</span>
+                      </div>
+                    </div>
+
+                    <div className="text-2xl">
+                      {lvlNum === 1 ? '🐶' : lvlNum === 2 ? '🐬' : lvlNum === 3 ? '🧁' : lvlNum === 4 ? '🚀' : '📑'}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <button
+              onClick={() => setShowLevelSelect(false)}
+              className="w-full py-2.5 bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs rounded-xl cursor-pointer"
+            >
+              ปิดหน้าต่าง
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* HOW TO PLAY MODAL */}
       {showHowToPlay && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-gradient-to-b from-amber-50 to-orange-100 border-4 border-amber-700 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 animate-in zoom-in-95">
@@ -1034,7 +1229,7 @@ export default function CardSortPuzzleView() {
             <div>
               <h2 className="text-2xl font-black text-amber-950 font-mono">VICTORY!</h2>
               <p className="text-xs text-amber-800 mt-1 font-bold">
-                ยินดีด้วย! คุณเคลียร์โต๊ะสำเร็จครบทุกหมวดหมู่ (+150 เหรียญทอง)
+                ยินดีด้วย! คุณผ่าน LEVEL {level} สำเร็จครบทุกหมวด (+{currentConfig.rewardCoins} เหรียญทอง)
               </p>
             </div>
 
@@ -1047,7 +1242,7 @@ export default function CardSortPuzzleView() {
               onClick={handleNextLevel}
               className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-sm rounded-2xl shadow-[0_5px_0_#065f46] active:translate-y-1 active:shadow-none cursor-pointer flex items-center justify-center space-x-2"
             >
-              <span>ไปต่อด่านถัดไป (LEVEL {level + 1})</span>
+              <span>{level < 5 ? `ไปต่อด่านถัดไป (LEVEL ${level + 1})` : 'จบเกมแล้ว! วนกลับ LEVEL 1'}</span>
               <ChevronRight className="w-4 h-4 stroke-[3]" />
             </button>
           </div>
