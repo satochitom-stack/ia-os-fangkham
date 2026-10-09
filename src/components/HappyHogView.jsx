@@ -277,79 +277,97 @@ const PIG_BREEDS = {
   }
 };
 
-// 6 Barn Themes
+// 6 Barn Themes with 3D Isometric Scenery
 const BARN_THEMES = {
   pasture: {
     id: 'pasture',
     name: 'ทุ่งหญ้าธรรมชาติพาสเทล',
     tag: 'Piggy Town',
     icon: '🌿',
+    bgImage: '/pigs/farm_bg.jpg',
     bgClass: 'from-[#7dd3fc] via-[#bbf7d0] to-[#86efac]',
     penGround: '#f7e7c4',
     fenceBorder: '#8c593b',
     perk: 'หมูอารมณ์ดี วิ่งเล่นร่าเริง',
     cost: 0,
-    unlockedByDefault: true
+    unlockedByDefault: true,
+    atmosphere: 'butterflies',
+    bounds: { minX: 32, maxX: 66, minY: 36, maxY: 66 }
   },
   cozy_wood: {
     id: 'cozy_wood',
     name: 'คอกไม้ชนบทคลาสสิก',
     tag: 'คลาสสิก',
     icon: '🪵',
+    bgImage: '/pigs/theme_cozy_wood.jpg',
     bgClass: 'from-[#fed7aa] via-[#fde68a] to-[#d97706]',
     penGround: '#eedbb3',
     fenceBorder: '#78350f',
     perk: 'ธีมมาตรฐาน อบอุ่น สบายตา',
     cost: 0,
-    unlockedByDefault: true
+    unlockedByDefault: true,
+    atmosphere: 'leaves',
+    bounds: { minX: 30, maxX: 68, minY: 38, maxY: 68 }
   },
   onsen_mud: {
     id: 'onsen_mud',
     name: 'สปาออนเซ็นเพื่อสุขภาพ',
     tag: 'รีแลกซ์',
     icon: '♨️',
+    bgImage: '/pigs/theme_onsen_mud.jpg',
     bgClass: 'from-[#cbd5e1] via-[#94a3b8] to-[#64748b]',
     penGround: '#d6cbba',
     fenceBorder: '#475569',
     perk: 'ความสะอาดลดช้าลง 50%',
     cost: 400,
-    unlockDesc: 'อาบน้ำหมูสะสมครบ 8 ครั้ง หรือใช้ 400 เหรียญ'
+    unlockDesc: 'อาบน้ำหมูสะสมครบ 8 ครั้ง หรือใช้ 400 เหรียญ',
+    atmosphere: 'steam',
+    bounds: { minX: 32, maxX: 70, minY: 38, maxY: 70 }
   },
   lanna: {
     id: 'lanna',
     name: 'คอกไม้สักล้านนา อปท.',
     tag: 'วัฒนธรรม',
     icon: '🏮',
+    bgImage: '/pigs/theme_lanna.jpg',
     bgClass: 'from-[#fef08a] via-[#fde047] to-[#ca8a04]',
     penGround: '#fae3b4',
     fenceBorder: '#854d0e',
     perk: 'หมูเติบโตไวกว่าปกติ 20%',
     cost: 600,
-    unlockDesc: 'มีหมูน้ำหนัก 90 kg ขึ้นไป หรือใช้ 600 เหรียญ'
+    unlockDesc: 'มีหมูน้ำหนัก 90 kg ขึ้นไป หรือใช้ 600 เหรียญ',
+    atmosphere: 'lanterns',
+    bounds: { minX: 28, maxX: 68, minY: 36, maxY: 66 }
   },
   golden_palace: {
     id: 'golden_palace',
     name: 'คฤหาสน์หมูทองคำเศรษฐี',
     tag: 'ลักชัวรี่',
     icon: '👑',
+    bgImage: '/pigs/theme_golden_palace.jpg',
     bgClass: 'from-[#fef08a] via-[#fbbf24] to-[#d97706]',
     penGround: '#fff3c4',
     fenceBorder: '#b45309',
     perk: 'โบนัสราคาขายหมู +20%',
     cost: 1200,
-    unlockDesc: 'ครอบครองหมูทองคำ หรือใช้ 1,200 เหรียญ'
+    unlockDesc: 'ครอบครองหมูทองคำ หรือใช้ 1,200 เหรียญ',
+    atmosphere: 'sparkles',
+    bounds: { minX: 26, maxX: 70, minY: 36, maxY: 66 }
   },
   cyber_space: {
     id: 'cyber_space',
     name: 'สถานีอวกาศหมูไซเบอร์',
     tag: 'ไซไฟ',
     icon: '🚀',
+    bgImage: null,
     bgClass: 'from-[#0f172a] via-[#1e1b4b] to-[#312e81]',
     penGround: '#1e293b',
     fenceBorder: '#06b6d4',
     perk: 'ป้องกันการถูกขโมยหมู 100% เสมอ',
     cost: 2000,
-    unlockDesc: 'ผสมพันธุ์สำเร็จ 3 ครั้ง หรือใช้ 2,000 เหรียญ'
+    unlockDesc: 'ผสมพันธุ์สำเร็จ 3 ครั้ง หรือใช้ 2,000 เหรียญ',
+    atmosphere: 'cyber',
+    bounds: { minX: 26, maxX: 74, minY: 34, maxY: 68 }
   }
 };
 
@@ -769,6 +787,7 @@ export default function HappyHogView() {
 
   // Lucky Piggy Wheel
   const [showWheelModal, setShowWheelModal] = useState(false);
+  const [celebrationReward, setCelebrationReward] = useState(null);
   const [wheelSpinsToday, setWheelSpinsToday] = useState(() => {
     const saved = localStorage.getItem('happy_hog_wheel_spins');
     return saved !== null ? parseInt(saved, 10) : 3;
@@ -946,12 +965,9 @@ export default function HappyHogView() {
       setPigs((prevPigs) =>
         prevPigs.map((p) => {
           if (Math.random() < 0.45) {
-            const minX = activeThemeId === 'pasture' ? 32 : 22;
-            const maxX = activeThemeId === 'pasture' ? 66 : 78;
-            const minY = activeThemeId === 'pasture' ? 36 : 30;
-            const maxY = activeThemeId === 'pasture' ? 66 : 74;
-            const nextX = Math.max(minX, Math.min(maxX, p.x + (Math.random() * 18 - 9)));
-            const nextY = Math.max(minY, Math.min(maxY, p.y + (Math.random() * 14 - 7)));
+            const currentBounds = BARN_THEMES[activeThemeId]?.bounds || { minX: 30, maxX: 68, minY: 36, maxY: 66 };
+            const nextX = Math.max(currentBounds.minX, Math.min(currentBounds.maxX, p.x + (Math.random() * 16 - 8)));
+            const nextY = Math.max(currentBounds.minY, Math.min(currentBounds.maxY, p.y + (Math.random() * 14 - 7)));
             return {
               ...p,
               x: nextX,
@@ -1293,7 +1309,18 @@ export default function HappyHogView() {
     }
     setQuests((prev) => prev.map((q) => (q.id === quest.id ? { ...q, claimed: true } : q)));
     playSound('fanfare', isMuted);
-    showToast(`🎉 รับรางวัลเควส "${quest.title}" สำเร็จ!`);
+    setCelebrationReward({
+      title: '📋 ภารกิจประจำวันสำเร็จ!',
+      subtitle: quest.title,
+      icon: quest.icon,
+      badge: 'DAILY QUEST COMPLETED',
+      rewardText: [
+        quest.rewardCoins ? `+${quest.rewardCoins} 🪙` : null,
+        quest.rewardEnergy ? `+${quest.rewardEnergy} ⚡` : null,
+        quest.rewardCrops ? `+2 🌾` : null
+      ].filter(Boolean).join('  '),
+      color: '#f59e0b'
+    });
   };
 
   const handleFulfillBounty = (bounty) => {
@@ -1318,18 +1345,106 @@ export default function HappyHogView() {
     setBounties((prev) => prev.filter((b) => b.id !== bounty.id));
     advanceQuest('sell', 1);
     playSound('fanfare', isMuted);
-    showToast(`📜 ส่งมอบ ${chosenPig.name} ให้ ${bounty.dept} สำเร็จ! ได้รับค่าตอบแทนพิเศษ +${bounty.rewardCoins.toLocaleString()} 🪙`);
+    setCelebrationReward({
+      title: '📜 ส่งมอบหมูโครงการ อปท. สำเร็จ!',
+      subtitle: `ส่งมอบ ${chosenPig.name} ให้ ${bounty.dept} (${bounty.title})`,
+      icon: '🚚',
+      badge: bounty.dept,
+      rewardText: `+${bounty.rewardCoins.toLocaleString()} เหรียญทองคำ 🪙`,
+      color: '#10b981'
+    });
   };
 
   const WHEEL_PRIZES = [
-    { label: 'เหรียญ +150', icon: '💰', color: '#f59e0b', coins: 150 },
-    { label: 'ข้าวโพด 3 ถุง', icon: '🌽', color: '#10b981', crops: { corn: 3 } },
-    { label: 'พลังงาน +30', icon: '⚡', color: '#3b82f6', energy: 30 },
-    { label: 'เหรียญ +300', icon: '🪙', color: '#ec4899', coins: 300 },
-    { label: 'แครอททอง 2 ถุง', icon: '🥕', color: '#f97316', crops: { carrot: 2 } },
-    { label: 'เหรียญ +500', icon: '💎', color: '#8b5cf6', coins: 500 },
-    { label: 'ฟักทองยักษ์ 1 ลูก', icon: '🎃', color: '#eab308', crops: { pumpkin: 1 } },
-    { label: 'แจ็กพอต 1,000฿', icon: '👑', color: '#ef4444', coins: 1000 }
+    {
+      id: 0,
+      name: 'เหรียญทองขวัญถุง',
+      shortLabel: '+150 ฿',
+      icon: '💰',
+      rewardDesc: '+150 เหรียญทอง',
+      color: '#f59e0b',
+      sliceGrad: ['#f59e0b', '#d97706'],
+      textColor: '#ffffff',
+      coins: 150
+    },
+    {
+      id: 1,
+      name: 'ข้าวโพดหวานสด',
+      shortLabel: 'ข้าวโพด x3',
+      icon: '🌽',
+      rewardDesc: 'ข้าวโพดสด 3 ถุง',
+      color: '#10b981',
+      sliceGrad: ['#10b981', '#059669'],
+      textColor: '#ffffff',
+      crops: { corn: 3 }
+    },
+    {
+      id: 2,
+      name: 'น้ำยาพลังงานสดชื่น',
+      shortLabel: '+30 ⚡',
+      icon: '⚡',
+      rewardDesc: '+30 พลังงาน',
+      color: '#0284c7',
+      sliceGrad: ['#0284c7', '#0369a1'],
+      textColor: '#ffffff',
+      energy: 30
+    },
+    {
+      id: 3,
+      name: 'ถุงทองคำเพิ่มพูน',
+      shortLabel: '+300 ฿',
+      icon: '🪙',
+      rewardDesc: '+300 เหรียญทอง',
+      color: '#ec4899',
+      sliceGrad: ['#ec4899', '#db2777'],
+      textColor: '#ffffff',
+      coins: 300
+    },
+    {
+      id: 4,
+      name: 'แครอททองคำชั้นดี',
+      shortLabel: 'แครอท x2',
+      icon: '🥕',
+      rewardDesc: 'แครอททองคำ 2 ถุง',
+      color: '#ea580c',
+      sliceGrad: ['#ea580c', '#c2410c'],
+      textColor: '#ffffff',
+      crops: { carrot: 2 }
+    },
+    {
+      id: 5,
+      name: 'เพชรคลังหลวง อปท.',
+      shortLabel: '+500 ฿',
+      icon: '💎',
+      rewardDesc: '+500 เหรียญทอง',
+      color: '#8b5cf6',
+      sliceGrad: ['#8b5cf6', '#7c3aed'],
+      textColor: '#ffffff',
+      coins: 500
+    },
+    {
+      id: 6,
+      name: 'ฟักทองยักษ์โภชนาการ',
+      shortLabel: 'ฟักทอง x1',
+      icon: '🎃',
+      rewardDesc: 'ฟักทองยักษ์ 1 ลูก',
+      color: '#14b8a6',
+      sliceGrad: ['#14b8a6', '#0d9488'],
+      textColor: '#ffffff',
+      crops: { pumpkin: 1 }
+    },
+    {
+      id: 7,
+      name: 'แจ็กพอตเศรษฐีพันล้าน',
+      shortLabel: '1,000฿ 👑',
+      icon: '👑',
+      rewardDesc: 'แจ็กพอต 1,000 เหรียญทองคำ!',
+      color: '#e11d48',
+      sliceGrad: ['#e11d48', '#be123c'],
+      textColor: '#fef08a',
+      coins: 1000,
+      isJackpot: true
+    }
   ];
 
   const handleSpinWheel = () => {
@@ -1348,11 +1463,11 @@ export default function HappyHogView() {
     setIsSpinning(true);
     playSound('feed', isMuted);
     const prizeIndex = Math.floor(Math.random() * WHEEL_PRIZES.length);
-    const numSlices = WHEEL_PRIZES.length;
-    const sliceAngle = 360 / numSlices;
-    const extraTurns = 5 * 360;
-    const stopAngle = 360 - (prizeIndex * sliceAngle + sliceAngle / 2);
-    const finalRot = wheelRotation + extraTurns + (stopAngle - (wheelRotation % 360));
+    const sliceAngle = 45; // 360 / 8
+    const extraTurns = 6 * 360;
+    // Align center of prizeIndex slice with 12 o'clock pointer (-90 deg)
+    const targetAngle = 360 - (prizeIndex * sliceAngle + 22.5);
+    const finalRot = wheelRotation + extraTurns + (targetAngle - (wheelRotation % 360));
     setWheelRotation(finalRot);
 
     setTimeout(() => {
@@ -1370,7 +1485,15 @@ export default function HappyHogView() {
         });
       }
       playSound('fanfare', isMuted);
-      showToast(`🎉 ยินดีด้วย! วงล้อหมูพารวยมอบ: ${won.label} ${won.icon}`);
+      // Trigger Big Reward Celebration Modal!
+      setCelebrationReward({
+        title: won.isJackpot ? '👑 มหาแจ็กพอต 1,000฿ แตก!' : '🎉 ยินดีด้วย! คุณได้รับรางวัล',
+        subtitle: `วงล้อหมูพารวยหยุดที่ช่อง "${won.name}"`,
+        icon: won.icon,
+        badge: won.isJackpot ? 'MEGA JACKPOT' : 'LUCKY PIGGY WHEEL',
+        rewardText: won.rewardDesc,
+        color: won.color
+      });
     }, 3600);
   };
 
@@ -1474,6 +1597,14 @@ export default function HappyHogView() {
     });
 
     playSound('fanfare', isMuted);
+    setCelebrationReward({
+      title: '🎁 รางวัลล็อกอิน 7 วัน!',
+      subtitle: `ล็อกอินต่อเนื่องวันที่ ${currentClaimDay}: ${reward.title}`,
+      icon: reward.icon,
+      badge: `DAY ${currentClaimDay} REWARD`,
+      rewardText: reward.rewardDesc,
+      color: '#ec4899'
+    });
     showToast(`🎁 ยินดีด้วย! รับรางวัลวันที่ ${currentClaimDay}: ${reward.title} (${reward.rewardDesc}) สำเร็จ!`);
   };
 
@@ -1679,86 +1810,172 @@ export default function HappyHogView() {
             <div className="lg:col-span-3 space-y-2">
               <div
                 className={`relative w-full h-[540px] rounded-3xl overflow-hidden border-4 border-amber-900/80 shadow-2xl select-none ${
-                  activeThemeId === 'pasture' ? '' : `bg-gradient-to-b ${activeTheme.bgClass}`
+                  activeTheme.bgImage ? '' : `bg-gradient-to-b ${activeTheme.bgClass}`
                 }`}
                 style={
-                  activeThemeId === 'pasture'
+                  activeTheme.bgImage
                     ? {
-                        backgroundImage: `url(/pigs/farm_bg.jpg)`,
+                        backgroundImage: `url(${activeTheme.bgImage})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center 40%'
                       }
                     : {}
                 }
               >
-                {/* When Theme is Pasture: Show High-Res 2.5D Country Scenery & Hotspots */}
-                {activeThemeId === 'pasture' ? (
-                  <>
-                    {/* Hotspot A: Barn Cottage (Top-Left) */}
+                {/* Cyber Space High-Tech Holographic Grid (When activeTheme is cyber_space) */}
+                {activeThemeId === 'cyber_space' && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(99,102,241,0.3),transparent_60%)]" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(6,182,212,0.25),transparent_50%)]" />
+                    {/* Stars */}
+                    {['⭐', '✨', '🌟', '💫', '⭐', '✨'].map((star, i) => (
+                      <span
+                        key={i}
+                        className="absolute text-cyan-300 animate-pulse"
+                        style={{
+                          left: `${15 + i * 14}%`,
+                          top: `${10 + (i % 3) * 12}%`,
+                          animationDuration: `${1.5 + i * 0.3}s`
+                        }}
+                      >
+                        {star}
+                      </span>
+                    ))}
+                    {/* 3D Perspective Holographic Cyber Grid */}
                     <div
-                      onClick={() => showToast(`🏠 โรงเรือนคอกฟาร์ม: อบอุ่น แข็งแรง จุหมูได้ ${pigs.length}/8 ตัว`)}
-                      className="absolute top-12 left-10 w-44 h-36 rounded-2xl cursor-pointer hover:bg-white/10 transition-colors z-15"
-                      title="โรงเรือนคอกหมู (แตะเพื่อดูข้อมูล)"
-                    />
-
-                    {/* Hotspot B: Stone Water Well (Top-Right) */}
-                    <div
-                      onClick={handleDrinkWater}
-                      className="absolute top-12 right-28 w-28 h-28 rounded-2xl cursor-pointer hover:bg-white/10 transition-colors z-15"
-                      title="บ่อน้ำธรรมชาติ (แตะเพื่อให้น้องดื่มน้ำ)"
-                    />
-
-                    {/* Hotspot C: Fruit Orchard (Bottom-Right) */}
-                    <div
-                      onClick={() => setActiveTab('crops')}
-                      className="absolute bottom-6 right-8 w-44 h-36 rounded-2xl cursor-pointer hover:bg-white/10 transition-colors z-15"
-                      title="สวนผลไม้ & แปลงเกษตร (แตะเพื่อไปที่แปลงปลูกผัก)"
-                    />
-
-                    {/* Interactive Bath Tub near Well */}
-                    <div
-                      onClick={handleBath}
-                      className="absolute top-44 right-20 z-15 cursor-pointer hover:scale-105 transition-transform"
-                      title="อ่างอาบน้ำไม้หอม (คลิกเพื่ออาบน้ำขัดตัวให้น้อง)"
+                      style={{ perspective: '420px', perspectiveOrigin: '50% 30%' }}
+                      className="absolute inset-0 flex items-end"
                     >
-                      <BathTubSvg />
+                      <div
+                        style={{
+                          transform: 'rotateX(55deg)',
+                          backgroundImage:
+                            'linear-gradient(rgba(6,182,212,0.45) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(6,182,212,0.45) 1.5px, transparent 1.5px)',
+                          backgroundSize: '44px 44px'
+                        }}
+                        className="w-full h-[70%] border-t-2 border-cyan-400 shadow-[0_0_35px_rgba(6,182,212,0.6)]"
+                      />
                     </div>
-
-                    {/* Interactive Feed Trough in Yard */}
-                    <div
-                      onClick={() => handleFeed(FOODS[0])}
-                      className="absolute bottom-6 left-1/2 -translate-x-1/2 z-15 cursor-pointer hover:scale-105 transition-transform"
-                      title="รางอาหารกลาง (คลิกเพื่อให้อาหาร)"
-                    >
-                      <FeedTroughSvg />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {/* Alternative Theme Pen Yard */}
-                    <div
-                      style={{ backgroundColor: activeTheme.penGround }}
-                      className="absolute inset-x-6 inset-y-8 rounded-[48px] border-4 border-[#8c593b] shadow-inner overflow-hidden"
-                    >
-                      <div className="absolute inset-0 bg-[radial-gradient(#b45309_1.5px,transparent_1.5px)] [background-size:24px_24px] opacity-20 pointer-events-none" />
-                      <div className="absolute -top-1 left-2 z-15 cursor-pointer" onClick={() => showToast('🏠 โรงเรือนคอกหมู')}>
-                        <BarnCottageSvg />
-                      </div>
-                      <div className="absolute top-2 right-4 z-15 cursor-pointer" onClick={() => setActiveTab('crops')}>
-                        <CookingHearthSvg />
-                      </div>
-                      <div className="absolute top-28 right-3 z-15 cursor-pointer" onClick={handleBath}>
-                        <BathTubSvg />
-                      </div>
-                      <div className="absolute bottom-6 left-3 z-15 cursor-pointer" onClick={handleDrinkWater}>
-                        <WaterTapSvg />
-                      </div>
-                      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-15 cursor-pointer" onClick={() => handleFeed(FOODS[0])}>
-                        <FeedTroughSvg />
-                      </div>
-                    </div>
-                  </>
+                  </div>
                 )}
+
+                {/* Atmospheric Ambient Particles */}
+                {activeTheme.atmosphere === 'leaves' && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    {['🍂', '🍁', '🍂', '🍁'].map((leaf, i) => (
+                      <span
+                        key={i}
+                        className="absolute text-xl animate-bounce opacity-80"
+                        style={{
+                          left: `${20 + i * 22}%`,
+                          top: `${18 + (i % 2) * 20}%`,
+                          animationDuration: `${2.2 + i * 0.5}s`
+                        }}
+                      >
+                        {leaf}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {activeTheme.atmosphere === 'steam' && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    {['♨️', '🌸', '♨️', '🌸'].map((st, i) => (
+                      <span
+                        key={i}
+                        className="absolute text-xl animate-pulse opacity-85"
+                        style={{
+                          left: `${18 + i * 24}%`,
+                          top: `${20 + (i % 2) * 15}%`,
+                          animationDuration: `${1.8 + i * 0.4}s`
+                        }}
+                      >
+                        {st}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {activeTheme.atmosphere === 'lanterns' && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    {['🏮', '✨', '🏮', '✨'].map((lt, i) => (
+                      <span
+                        key={i}
+                        className="absolute text-lg animate-pulse opacity-90"
+                        style={{
+                          left: `${15 + i * 25}%`,
+                          top: `${14 + (i % 2) * 12}%`,
+                          animationDuration: `${2.0 + i * 0.5}s`
+                        }}
+                      >
+                        {lt}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {activeTheme.atmosphere === 'sparkles' && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    {['✨', '⭐', '💎', '✨', '⭐'].map((sp, i) => (
+                      <span
+                        key={i}
+                        className="absolute text-lg animate-pulse opacity-90 drop-shadow-md"
+                        style={{
+                          left: `${12 + i * 20}%`,
+                          top: `${16 + (i % 3) * 16}%`,
+                          animationDuration: `${1.4 + i * 0.3}s`
+                        }}
+                      >
+                        {sp}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Hotspot 1: Barn Cottage (Top-Left) */}
+                <div
+                  onClick={() => showToast(`🏠 ${activeTheme.name}: คอกฟาร์มอบอุ่น จุหมูได้ ${pigs.length}/8 ตัว`)}
+                  className="absolute top-10 left-8 w-44 h-36 rounded-2xl cursor-pointer hover:bg-white/10 transition-colors z-15"
+                  title="โรงเรือนคอกหมู (แตะเพื่อดูข้อมูล)"
+                />
+
+                {/* Hotspot 2: Water Well / Stream (Top-Right) */}
+                <div
+                  onClick={handleDrinkWater}
+                  className="absolute top-10 right-24 w-32 h-32 rounded-2xl cursor-pointer hover:bg-white/10 transition-colors z-15"
+                  title="บ่อน้ำ / สปาธรรมชาติ (แตะเพื่อให้น้องดื่มน้ำสดชื่น)"
+                />
+
+                {/* Hotspot 3: Fruit Orchard & Garden (Bottom-Right) */}
+                <div
+                  onClick={() => setActiveTab('crops')}
+                  className="absolute bottom-4 right-6 w-44 h-36 rounded-2xl cursor-pointer hover:bg-white/10 transition-colors z-15"
+                  title="สวนผลไม้ & แปลงเกษตร (แตะเพื่อไปที่แปลงปลูกผัก)"
+                />
+
+                {/* Interactive Bath Station Button Widget */}
+                <div
+                  onClick={handleBath}
+                  className="absolute top-36 right-12 z-20 cursor-pointer hover:scale-110 active:scale-95 transition-transform"
+                  title="อ่างอาบน้ำขัดตัว (แตะเพื่ออาบน้ำขัดผิว)"
+                >
+                  <div className="px-3 py-1.5 bg-[#2b180d]/90 hover:bg-[#2b180d] text-amber-200 border-2 border-amber-400 rounded-2xl shadow-xl flex items-center space-x-1.5 backdrop-blur-xs">
+                    <span className="text-lg">🧼</span>
+                    <span className="text-xs font-black">อาบน้ำ</span>
+                  </div>
+                </div>
+
+                {/* Interactive Feed Station Button Widget */}
+                <div
+                  onClick={() => handleFeed(FOODS[0])}
+                  className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 cursor-pointer hover:scale-110 active:scale-95 transition-transform"
+                  title="รางอาหารกลาง (แตะเพื่อให้อาหาร)"
+                >
+                  <div className="px-4 py-2 bg-[#2b180d]/90 hover:bg-[#2b180d] text-amber-200 border-2 border-amber-400 rounded-2xl shadow-xl flex items-center space-x-2 backdrop-blur-xs">
+                    <span className="text-xl">🥣</span>
+                    <span className="text-xs font-black">รางอาหารกลาง</span>
+                  </div>
+                </div>
 
                 {/* Floating Hearts & Bubbles */}
                 {hearts.map((h) => (
@@ -2754,7 +2971,17 @@ export default function HappyHogView() {
                     }`}
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="text-3xl">{theme.icon}</div>
+                      {theme.bgImage ? (
+                        <img
+                          src={theme.bgImage}
+                          alt={theme.name}
+                          className="w-16 h-12 rounded-xl object-cover border-2 border-amber-300 shadow-sm shrink-0"
+                        />
+                      ) : (
+                        <div className="w-16 h-12 rounded-xl bg-slate-900 border-2 border-cyan-400 flex items-center justify-center text-2xl shadow-sm shrink-0">
+                          {theme.icon}
+                        </div>
+                      )}
                       <div>
                         <div className="flex items-center space-x-2">
                           <span className="font-black text-sm">{theme.name}</span>
@@ -2865,15 +3092,19 @@ export default function HappyHogView() {
         </div>
       )}
 
-      {/* ================= MODAL 5: LUCKY PIGGY WHEEL (วงล้อหมูพารวย) ================= */}
+      {/* ================= MODAL 5: LUXURY CARNIVAL LUCKY WHEEL (วงล้อหมูพารวย) ================= */}
       {showWheelModal && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-gradient-to-b from-[#2b180d] via-[#451a03] to-[#2b180d] border-4 border-amber-500 rounded-3xl p-6 sm:p-7 max-w-sm w-full shadow-2xl space-y-4 text-center animate-in zoom-in-95 relative overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-gradient-to-b from-[#2b180d] via-[#451a03] to-[#200e05] border-4 border-amber-400 rounded-3xl p-5 sm:p-6 max-w-md w-full shadow-2xl space-y-3.5 text-center animate-in zoom-in-95 relative overflow-hidden">
+            {/* Header */}
             <div className="flex items-center justify-between border-b border-amber-700/80 pb-2.5">
               <div className="text-left">
                 <h3 className="text-lg font-black text-amber-300 font-mono flex items-center space-x-1.5">
-                  <span>🎡</span>
+                  <span className="text-xl">🎡</span>
                   <span>วงล้อหมูพารวย</span>
+                  <span className="bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase ml-1">
+                    LUCKY WHEEL
+                  </span>
                 </h3>
                 <p className="text-[11px] text-amber-200/90">
                   สิทธิ์หมุนฟรี: <b className="text-yellow-400 font-mono text-xs">{wheelSpinsToday}</b> รอบ (รอบต่อไป 50 🪙)
@@ -2888,22 +3119,55 @@ export default function HappyHogView() {
               </button>
             </div>
 
-            {/* Rotating SVG Wheel Container */}
-            <div className="relative w-64 h-64 mx-auto my-2 flex items-center justify-center select-none">
-              {/* Pointer Arrow at Top (pointing down at top-center) */}
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-30 drop-shadow-xl pointer-events-none">
-                <div className="w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[22px] border-t-rose-500" />
+            {/* Rotating Wheel Viewport with Golden Frame and 16 LED Bulbs */}
+            <div className="relative w-72 h-72 sm:w-80 sm:h-80 mx-auto my-1 flex items-center justify-center select-none">
+              {/* Outer Golden Glow */}
+              <div className="absolute inset-0 rounded-full bg-amber-500/20 blur-xl pointer-events-none" />
+
+              {/* 3D Ticker Arrow Pointer at Top (12 o'clock) */}
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-30 drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] pointer-events-none">
+                <div
+                  className={`w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-t-[26px] border-t-rose-600 transition-transform ${
+                    isSpinning ? 'animate-bounce' : ''
+                  }`}
+                  style={{ filter: 'drop-shadow(0 2px 2px rgba(251,191,36,0.8))' }}
+                />
               </div>
 
-              {/* Spinning SVG Circle */}
+              {/* Wheel Outer Rim with 16 Golden LED Bulb Studs */}
+              <div className="absolute inset-0 rounded-full border-8 border-gradient-to-b from-yellow-300 via-amber-500 to-amber-700 shadow-[inset_0_4px_12px_rgba(0,0,0,0.5),0_8px_20px_rgba(0,0,0,0.6)] pointer-events-none z-20 flex items-center justify-center">
+                {Array.from({ length: 16 }).map((_, i) => {
+                  const ang = (i * 360) / 16 * (Math.PI / 180);
+                  const cx = 50 + 46 * Math.cos(ang);
+                  const cy = 50 + 46 * Math.sin(ang);
+                  return (
+                    <div
+                      key={i}
+                      style={{ left: `${cx}%`, top: `${cy}%` }}
+                      className="absolute w-2.5 h-2.5 rounded-full bg-yellow-200 border border-amber-800 -translate-x-1/2 -translate-y-1/2 shadow-[0_0_6px_rgba(254,240,138,0.9)] animate-pulse"
+                    />
+                  );
+                })}
+              </div>
+
+              {/* Rotating Wheel Canvas */}
               <div
                 style={{
                   transform: `rotate(${wheelRotation}deg)`,
                   transition: isSpinning ? 'transform 3.6s cubic-bezier(0.12, 0.8, 0.2, 1)' : 'none'
                 }}
-                className="w-60 h-60 rounded-full border-4 border-amber-400 shadow-2xl overflow-hidden relative"
+                className="w-68 h-68 sm:w-76 sm:h-76 rounded-full overflow-hidden relative shadow-inner"
               >
-                <svg viewBox="0 0 200 200" className="w-full h-full">
+                <svg viewBox="0 0 300 300" className="w-full h-full">
+                  <defs>
+                    <radialGradient id="hubGrad" cx="40%" cy="35%" r="65%">
+                      <stop offset="0%" stopColor="#fef08a" />
+                      <stop offset="45%" stopColor="#f59e0b" />
+                      <stop offset="100%" stopColor="#78350f" />
+                    </radialGradient>
+                  </defs>
+
+                  {/* 8 Slices */}
                   {WHEEL_PRIZES.map((prize, idx) => {
                     const count = WHEEL_PRIZES.length;
                     const angle = 360 / count;
@@ -2911,46 +3175,93 @@ export default function HappyHogView() {
                     const endAngle = (idx + 1) * angle - 90;
                     const startRad = (startAngle * Math.PI) / 180;
                     const endRad = (endAngle * Math.PI) / 180;
-                    const x1 = 100 + 100 * Math.cos(startRad);
-                    const y1 = 100 + 100 * Math.sin(startRad);
-                    const x2 = 100 + 100 * Math.cos(endRad);
-                    const y2 = 100 + 100 * Math.sin(endRad);
-                    const midRad = (((startAngle + endAngle) / 2) * Math.PI) / 180;
-                    const textX = 100 + 64 * Math.cos(midRad);
-                    const textY = 100 + 64 * Math.sin(midRad);
+                    const r = 148;
+                    const x1 = 150 + r * Math.cos(startRad);
+                    const y1 = 150 + r * Math.sin(startRad);
+                    const x2 = 150 + r * Math.cos(endRad);
+                    const y2 = 150 + r * Math.sin(endRad);
+                    const midAngle = (startAngle + endAngle) / 2;
 
                     return (
-                      <g key={idx}>
+                      <g key={prize.id}>
+                        {/* Slice background */}
                         <path
-                          d={`M100,100 L${x1},${y1} A100,100 0 0,1 ${x2},${y2} Z`}
+                          d={`M150,150 L${x1},${y1} A${r},${r} 0 0,1 ${x2},${y2} Z`}
                           fill={prize.color}
                           stroke="#2b180d"
-                          strokeWidth="1.5"
+                          strokeWidth="2"
                         />
-                        <text
-                          x={textX}
-                          y={textY}
-                          fill="#ffffff"
-                          fontSize="13"
-                          fontWeight="bold"
-                          textAnchor="middle"
-                          dominantBaseline="central"
-                          transform={`rotate(${(startAngle + endAngle) / 2 + 90}, ${textX}, ${textY})`}
-                        >
-                          {prize.icon}
-                        </text>
+                        {/* Golden spoke line */}
+                        <line x1="150" y1="150" x2={x1} y2={y1} stroke="#fde047" strokeWidth="2.2" opacity="0.8" />
+                        {/* Golden rim peg */}
+                        <circle cx={x1} cy={y1} r="3.5" fill="#fef08a" stroke="#78350f" strokeWidth="1" />
+
+                        {/* Slice Content (Oriented radially towards center) */}
+                        <g transform={`rotate(${midAngle + 90}, 150, 150)`}>
+                          {/* Large Icon */}
+                          <text
+                            x="150"
+                            y="44"
+                            fontSize="24"
+                            textAnchor="middle"
+                            dominantBaseline="central"
+                            className="select-none"
+                            style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))' }}
+                          >
+                            {prize.icon}
+                          </text>
+
+                          {/* Bold, Clear, Crisp Prize Label */}
+                          <text
+                            x="150"
+                            y="75"
+                            fontSize="11.5"
+                            fontWeight="900"
+                            fill={prize.textColor}
+                            textAnchor="middle"
+                            dominantBaseline="central"
+                            stroke="#1a0802"
+                            strokeWidth="2.5"
+                            paintOrder="stroke fill"
+                            className="font-mono tracking-tight select-none"
+                          >
+                            {prize.shortLabel}
+                          </text>
+                        </g>
                       </g>
                     );
                   })}
                 </svg>
               </div>
 
-              {/* Center Hub Button */}
+              {/* 3D Center Hub Spin Button */}
               <div
                 onClick={handleSpinWheel}
-                className="absolute w-14 h-14 rounded-full bg-gradient-to-b from-amber-300 to-amber-600 border-2 border-white shadow-xl flex items-center justify-center text-xl z-20 cursor-pointer active:scale-95 hover:scale-105 transition-transform"
+                className="absolute w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-gradient-to-b from-yellow-300 via-amber-400 to-amber-600 border-4 border-white shadow-[0_4px_12px_rgba(0,0,0,0.5)] flex flex-col items-center justify-center z-25 cursor-pointer active:scale-95 hover:scale-105 transition-transform"
+                title="กดเพื่อหมุนวงล้อ!"
               >
-                🐷
+                <span className="text-xl leading-none">🐷</span>
+                <span className="text-[10px] font-black text-amber-950 font-mono tracking-tight uppercase mt-0.5">
+                  SPIN!
+                </span>
+              </div>
+            </div>
+
+            {/* Prize Summary Legend Grid */}
+            <div className="bg-amber-950/70 p-2.5 rounded-2xl border border-amber-700/80">
+              <span className="text-[10px] text-amber-300 font-bold block mb-1.5 text-left">
+                🎁 รางวัลทั้งหมดในวงล้อ:
+              </span>
+              <div className="grid grid-cols-4 gap-1.5 text-[10px] font-bold">
+                {WHEEL_PRIZES.map((p) => (
+                  <div
+                    key={p.id}
+                    className="bg-black/30 border border-amber-600/50 rounded-xl p-1 flex items-center justify-center space-x-1 text-amber-100"
+                  >
+                    <span>{p.icon}</span>
+                    <span className="text-[9px] font-mono">{p.shortLabel}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -2959,7 +3270,7 @@ export default function HappyHogView() {
               <button
                 onClick={handleSpinWheel}
                 disabled={isSpinning || (wheelSpinsToday <= 0 && coins < 50)}
-                className={`w-full py-3 rounded-2xl font-black text-sm flex items-center justify-center space-x-2 transition-all cursor-pointer ${
+                className={`w-full py-3.5 rounded-2xl font-black text-sm flex items-center justify-center space-x-2 transition-all cursor-pointer ${
                   isSpinning
                     ? 'bg-amber-800 text-amber-200 cursor-wait'
                     : wheelSpinsToday > 0
@@ -2972,13 +3283,93 @@ export default function HappyHogView() {
                 <span>🎡</span>
                 <span>
                   {isSpinning
-                    ? 'กำลังหมุนลุ้นโชค...'
+                    ? 'กำลังหมุนลุ้นรางวัล...'
                     : wheelSpinsToday > 0
                     ? `หมุนวงล้อทันที (ฟรี ${wheelSpinsToday} รอบ)`
                     : coins >= 50
                     ? 'หมุนเพิ่ม (ใช้ 50 🪙)'
                     : 'เหรียญไม่พอหมุน (ต้องการ 50 🪙)'}
                 </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= REWARD CELEBRATION MODAL (HIGH-IMPACT VISUAL POPUP) ================= */}
+      {celebrationReward && (
+        <div className="fixed inset-0 z-70 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+          {/* Animated Sunburst Golden Rays in Background */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden opacity-30">
+            <div
+              className="w-[900px] h-[900px] rounded-full bg-[repeating-conic-gradient(from_0deg,#f59e0b_0deg_15deg,transparent_15deg_30deg)] animate-spin"
+              style={{ animationDuration: '20s' }}
+            />
+          </div>
+
+          {/* Floating Confetti / Sparkle Particles */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {['✨', '⭐', '🎉', '🪙', '🌟', '🎊', '✨', '⭐'].map((emoji, i) => (
+              <div
+                key={i}
+                className="absolute text-3xl animate-bounce"
+                style={{
+                  left: `${10 + i * 11}%`,
+                  top: `${14 + (i % 3) * 18}%`,
+                  animationDuration: `${1.4 + (i % 3) * 0.4}s`
+                }}
+              >
+                {emoji}
+              </div>
+            ))}
+          </div>
+
+          {/* Celebration Card */}
+          <div className="relative z-10 bg-gradient-to-b from-[#2b180d] via-[#451a03] to-[#200e05] border-4 border-yellow-400 rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-[0_0_50px_rgba(251,191,36,0.65)] text-center space-y-4 animate-in zoom-in-90 duration-300">
+            {/* Top Badge */}
+            <div className="inline-block bg-gradient-to-r from-amber-500 to-yellow-400 text-amber-950 font-black text-[10px] px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
+              {celebrationReward.badge || 'REWARD UNLOCKED'}
+            </div>
+
+            {/* Glowing Icon in Pulsing Golden Ring */}
+            <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full bg-yellow-400/25 animate-ping" />
+              <div className="w-22 h-22 rounded-full bg-gradient-to-b from-yellow-300 to-amber-600 border-4 border-yellow-200 shadow-2xl flex items-center justify-center text-5xl">
+                {celebrationReward.icon}
+              </div>
+            </div>
+
+            {/* Titles */}
+            <div className="space-y-1">
+              <h3 className="text-xl font-black text-amber-300 font-mono tracking-tight drop-shadow-md">
+                {celebrationReward.title}
+              </h3>
+              <p className="text-xs text-amber-100/90 font-medium">
+                {celebrationReward.subtitle}
+              </p>
+            </div>
+
+            {/* Reward Highlight Box */}
+            <div className="bg-amber-950/80 border-2 border-yellow-500/80 rounded-2xl p-4 shadow-inner">
+              <span className="text-[10px] text-amber-300/80 uppercase tracking-wider font-bold block mb-1">
+                ของรางวัลที่ได้รับ
+              </span>
+              <div className="text-xl font-black text-yellow-300 font-mono flex items-center justify-center space-x-2">
+                <span>{celebrationReward.rewardText}</span>
+              </div>
+              <p className="text-[10px] text-emerald-300 font-bold mt-1">
+                ✓ บันทึกเข้าคลังและบัญชีฟาร์มเรียบร้อยแล้ว
+              </p>
+            </div>
+
+            {/* Claim / Dismiss Button */}
+            <div className="pt-2">
+              <button
+                onClick={() => setCelebrationReward(null)}
+                className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-2xl font-black text-sm border-2 border-emerald-300 shadow-[0_5px_0_#065f46] active:translate-y-1 active:shadow-none cursor-pointer flex items-center justify-center space-x-2 animate-pulse"
+              >
+                <Sparkles className="w-4 h-4 text-yellow-300" />
+                <span>รับรางวัลเข้าคลัง 🎁</span>
               </button>
             </div>
           </div>
