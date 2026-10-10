@@ -2542,12 +2542,7 @@ export default function HappyHogView() {
     }
     // 3. Dirty
     if (pig.cleanliness < 50) return { type: 'bath', icon: '🧼', label: 'ตัวมอมแมม', hint: 'แตะเพื่ออาบน้ำขัดตัว' };
-    // 4. Ready to breed (Mature, well-fed, clean, not in cooldown)
-    const isResting = pig.breedCooldownUntil && pig.breedCooldownUntil > currentTime;
-    if (pig.weight >= 60 && pig.hunger >= 80 && pig.cleanliness >= 80 && !isResting) {
-      return { type: 'love', icon: '💖', label: 'พร้อมผสมพันธุ์', hint: 'แตะเพื่อไปห้องแล็บวิจัย' };
-    }
-    // Content & happy pigs: NO permanent bouncing bubble!
+    // Content & happy pigs: peaceful and clean (no cluttering bouncing bubbles!)
     return null;
   };
 
@@ -5556,10 +5551,10 @@ export default function HappyHogView() {
 
               <div className="flex items-center space-x-2 shrink-0">
                 <div className="hidden sm:flex items-center space-x-1 px-2.5 py-1 bg-amber-950/80 border border-amber-600 text-amber-300 rounded-xl text-xs font-mono font-bold">
-                  <span>🪙 {coins.toLocaleString()}</span>
+                  <span>🪙 {(coins || 0).toLocaleString()}</span>
                 </div>
                 <div className="hidden sm:flex items-center space-x-1 px-2.5 py-1 bg-purple-950/90 border border-purple-500 text-purple-200 rounded-xl text-xs font-mono font-bold">
-                  <span>💎 {diamonds.toLocaleString()}</span>
+                  <span>💎 {(diamonds || 0).toLocaleString()}</span>
                 </div>
                 <button
                   onClick={() => setInGameModal(null)}
@@ -5673,17 +5668,17 @@ export default function HappyHogView() {
                               <div className="pt-1.5 border-t border-amber-200">
                                 {breed.isDiamondBreed ? (
                                   <button
-                                    onClick={() => handleBuyPig(breed.id)}
+                                    onClick={() => handleBuyPigletDiamond(breed.id, breed.diamondCost)}
                                     className="w-full py-1.5 rounded-xl font-black text-xs bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-xs cursor-pointer active:scale-95 transition-all flex items-center justify-center space-x-1"
                                   >
                                     <span>อัญเชิญ ({breed.diamondCost} 💎)</span>
                                   </button>
                                 ) : isUnlocked ? (
                                   <button
-                                    onClick={() => handleBuyPig(breed.id)}
+                                    onClick={() => handleBuyPiglet(breed.id, breed.buyCost || 100)}
                                     className="w-full py-1.5 rounded-xl font-black text-xs bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-amber-950 shadow-xs cursor-pointer active:scale-95 transition-all flex items-center justify-center space-x-1"
                                   >
-                                    <span>ซื้อ {breed.cost.toLocaleString()} 🪙</span>
+                                    <span>ซื้อ {((breed.buyCost || 100)).toLocaleString()} 🪙</span>
                                   </button>
                                 ) : (
                                   <button
