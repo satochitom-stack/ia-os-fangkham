@@ -487,10 +487,10 @@ const BARN_THEMES = {
     name: 'วิมานสวรรค์ลอยฟ้า',
     tag: 'วิมานเทพ 💎',
     icon: '☁️',
-    bgImage: null,
+    bgImage: '/pigs/theme_sky_sanctuary.jpg',
     bgClass: 'from-[#38bdf8] via-[#bae6fd] to-[#e0f2fe]',
-    penGround: '#f1f5f9',
-    fenceBorder: '#0284c7',
+    penGround: '#ffffffd8',
+    fenceBorder: '#38bdf8',
     perk: 'หมูทุกตัวโตไวกว่าปกติ +50% (ละอองสวรรค์ประทานพร)',
     diamondCost: 40,
     isDiamondTheme: true,
@@ -503,10 +503,10 @@ const BARN_THEMES = {
     name: 'อาณาจักรคริสตัลใต้สมุทร',
     tag: 'สมุทรคริสตัล 💎',
     icon: '🌊',
-    bgImage: null,
+    bgImage: '/pigs/theme_atlantis.jpg',
     bgClass: 'from-[#0369a1] via-[#0284c7] to-[#38bdf8]',
-    penGround: '#e0f2fe',
-    fenceBorder: '#0ea5e9',
+    penGround: '#0369a1b0',
+    fenceBorder: '#38bdf8',
     perk: 'หมูสะอาด 100% ตลอดเวลา (ไม่ต้องอาบน้ำตลอดกาล)',
     diamondCost: 60,
     isDiamondTheme: true,
@@ -519,10 +519,10 @@ const BARN_THEMES = {
     name: 'ปราสาทน้ำแข็งนีออนคริสตัล',
     tag: 'น้ำแข็งนีออน 💎',
     icon: '❄️',
-    bgImage: null,
+    bgImage: '/pigs/theme_neon_ice.jpg',
     bgClass: 'from-[#1e1b4b] via-[#3b82f6] to-[#a5f3fc]',
-    penGround: '#e2e8f0',
-    fenceBorder: '#38bdf8',
+    penGround: '#0c4a6ecc',
+    fenceBorder: '#06b6d4',
     perk: 'ความหิวลดช้าลง 75% และแปลงผักโตเร็วขึ้น x2',
     diamondCost: 80,
     isDiamondTheme: true,
@@ -535,9 +535,9 @@ const BARN_THEMES = {
     name: 'หุบเขาเพชรลาวาอสูร',
     tag: 'ลาวาอสูร 💎',
     icon: '🌋',
-    bgImage: null,
+    bgImage: '/pigs/theme_lava_caldera.jpg',
     bgClass: 'from-[#450a0a] via-[#7f1d1d] to-[#b91c1c]',
-    penGround: '#44403c',
+    penGround: '#292524d8',
     fenceBorder: '#ea580c',
     perk: 'หมูทุกตัวขายได้ราคา +50% และป้องกันขโมย 100%',
     diamondCost: 100,
@@ -551,10 +551,10 @@ const BARN_THEMES = {
     name: 'สถานีอวกาศสเปซเอ็กซ์จักรวาล',
     tag: 'มหาอวกาศ 💎',
     icon: '🪐',
-    bgImage: null,
+    bgImage: '/pigs/theme_galaxy_colony.jpg',
     bgClass: 'from-[#090d16] via-[#1e1035] to-[#3b0764]',
-    penGround: '#18181b',
-    fenceBorder: '#a855f7',
+    penGround: '#0f172ab0',
+    fenceBorder: '#818cf8',
     perk: 'หมุนวงล้อฟรี +3 ครั้งต่อวัน และโบนัสรายได้ฟาร์มทั้งหมด +60%',
     diamondCost: 140,
     isDiamondTheme: true,
@@ -805,20 +805,20 @@ const PigSprite = ({ breed, isSelected, direction, weight }) => {
   const spriteSrc = `/pigs/${breed}.png`;
   const dirScale = direction === -1 || direction === 'left' ? -1 : 1;
 
-  // Custom filter and celestial styling for diamond mythic breeds
+  // Custom glowing celestial aura styling for diamond mythic breeds
   let filterCss = '';
   if (breed === 'jade_dragon') {
-    filterCss = 'drop-shadow(0 0 10px rgba(16,185,129,0.9))';
+    filterCss = 'drop-shadow(0 0 12px rgba(16,185,129,0.9))';
   } else if (breed === 'phoenix') {
-    filterCss = 'hue-rotate(330deg) saturate(200%) drop-shadow(0 0 12px rgba(249,115,22,0.95))';
+    filterCss = 'drop-shadow(0 0 14px rgba(249,115,22,0.9))';
   } else if (breed === 'galaxy') {
-    filterCss = 'hue-rotate(190deg) saturate(220%) drop-shadow(0 0 14px rgba(129,140,248,0.95))';
+    filterCss = 'drop-shadow(0 0 14px rgba(99,102,241,0.9))';
   } else if (breed === 'cyber_satoshi') {
-    filterCss = 'hue-rotate(85deg) contrast(120%) drop-shadow(0 0 12px rgba(6,182,212,0.95))';
+    filterCss = 'drop-shadow(0 0 12px rgba(6,182,212,0.9))';
   } else if (breed === 'inferno_titan') {
-    filterCss = 'hue-rotate(350deg) saturate(240%) contrast(115%) drop-shadow(0 0 14px rgba(239,68,68,0.95))';
+    filterCss = 'drop-shadow(0 0 14px rgba(239,68,68,0.9))';
   } else if (breed === 'diamond_angel') {
-    filterCss = 'brightness(112%) saturate(140%) drop-shadow(0 0 16px rgba(192,132,252,0.95))';
+    filterCss = 'drop-shadow(0 0 16px rgba(192,132,252,0.9))';
   }
 
   return (
@@ -917,8 +917,21 @@ export default function HappyHogView() {
   });
 
   const [diamonds, setDiamonds] = useState(() => {
+    const compensated = localStorage.getItem('happy_hog_wheel_500_compensated');
     const saved = localStorage.getItem('happy_hog_diamonds');
-    return saved !== null ? parseInt(saved, 10) : 50; // Starter 50 diamonds!
+    let currentVal = saved !== null ? parseInt(saved, 10) : 50;
+    if (compensated !== 'true') {
+      currentVal = (currentVal || 0) + 500;
+      localStorage.setItem('happy_hog_diamonds', currentVal.toString());
+      localStorage.setItem('happy_hog_wheel_500_compensated', 'true');
+    }
+    return currentVal;
+  });
+
+  const [showAuditModal, setShowAuditModal] = useState(false);
+  const [lastAuditTime, setLastAuditTime] = useState(() => {
+    const saved = localStorage.getItem('happy_hog_last_audit_time');
+    return saved !== null ? parseInt(saved, 10) : 0;
   });
 
   const [energy, setEnergy] = useState(() => {
@@ -1146,11 +1159,12 @@ export default function HappyHogView() {
       secondTick += 1;
       setCurrentTime(Date.now());
 
-      // If farm has galaxy pig, energy is locked at 100 max! Otherwise regens +1
-      setEnergy((e) => {
-        const hasGalaxy = pigs.some((p) => p.breed === 'galaxy');
-        return hasGalaxy ? 100 : Math.min(100, e + 1);
-      });
+      // Energy regen: +1 every 45 seconds naturally (or fast +1 every 5 seconds if farm has galaxy pig)
+      const hasGalaxy = pigs.some((p) => p.breed === 'galaxy');
+      const regenFreq = hasGalaxy ? 5 : 45;
+      if (secondTick % regenFreq === 0) {
+        setEnergy((e) => Math.min(100, e + 1));
+      }
 
       // Phoenix pig passive: grants +150 ฿ every 60 seconds
       if (secondTick % 60 === 0) {
@@ -1223,7 +1237,8 @@ export default function HappyHogView() {
     localStorage.setItem('happy_hog_farm_level', farmLevel.toString());
     localStorage.setItem('happy_hog_farm_exp', farmExp.toString());
     localStorage.setItem('happy_hog_barn_tier', barnCapacityTier.toString());
-  }, [coins, diamonds, energy, pigs, isLocked, activeThemeId, unlockedThemes, unlockedBreeds, stats, crops, cropInventory, loginData, neighbors, quests, wheelSpinsToday, farmLevel, farmExp, barnCapacityTier]);
+    localStorage.setItem('happy_hog_last_audit_time', lastAuditTime.toString());
+  }, [coins, diamonds, energy, pigs, isLocked, activeThemeId, unlockedThemes, unlockedBreeds, stats, crops, cropInventory, loginData, neighbors, quests, wheelSpinsToday, farmLevel, farmExp, barnCapacityTier, lastAuditTime]);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -1231,6 +1246,15 @@ export default function HappyHogView() {
       setToastMessage('');
     }, 2800);
   };
+
+  // Mount notification for 500 diamond compensation
+  useEffect(() => {
+    const compensatedNotified = sessionStorage.getItem('happy_hog_500_comp_notified');
+    if (!compensatedNotified) {
+      sessionStorage.setItem('happy_hog_500_comp_notified', 'true');
+      showToast('💎 ชดเชยเพชรวงล้อนำโชค 500 💎 เข้ากระเป๋าเรียบร้อยแล้ว!');
+    }
+  }, []);
 
   // Farm Experience & Level Up System
   const addExp = (amount) => {
@@ -1468,6 +1492,11 @@ export default function HappyHogView() {
   };
 
   const handleDirectFeed = (targetPig, food) => {
+    if (energy < 2) {
+      showToast('⚡ พลังงานไม่เพียงพอ! (ต้องการ 2 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
+      return;
+    }
+    setEnergy((e) => Math.max(0, e - 2));
     playSound('feed', isMuted);
     setPigs((prev) =>
       prev.map((p) => {
@@ -1497,14 +1526,23 @@ export default function HappyHogView() {
       showToast('❌ เหรียญไม่พอซื้ออาหาร!');
       return;
     }
+    if (energy < 2) {
+      showToast('⚡ พลังงานไม่เพียงพอ! (ต้องการ 2 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
+      return;
+    }
 
     setCoins((c) => c - food.cost);
     handleDirectFeed(selectedPig, food);
-    showToast(`🍽️ ซื้อ ${food.name} ให้น้องกิน (+${food.weightGain} kg)`);
+    showToast(`🍽️ ซื้อ ${food.name} ให้น้องกิน (+${food.weightGain} kg, -2 ⚡)`);
   };
 
   const handleBath = () => {
     if (!selectedPig) return;
+    if (energy < 3) {
+      showToast('⚡ พลังงานไม่เพียงพอ! (ต้องการ 3 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
+      return;
+    }
+    setEnergy((e) => Math.max(0, e - 3));
     playSound('bubble', isMuted);
     setPigs((prev) =>
       prev.map((p) => (p.id === selectedPig.id ? { ...p, cleanliness: 100 } : p))
@@ -1521,7 +1559,7 @@ export default function HappyHogView() {
     setBubbles(newBubbles);
     setTimeout(() => setBubbles([]), 1500);
 
-    showToast('🧼 อาบน้ำในอ่างไม้หอมฉุย ตัวสะอาด 100%! (+10 EXP)');
+    showToast('🧼 อาบน้ำในอ่างไม้หอมฉุย ตัวสะอาด 100%! (+10 EXP, -3 ⚡)');
   };
 
   const handleVaccine = () => {
@@ -1530,17 +1568,27 @@ export default function HappyHogView() {
       showToast('❌ เหรียญไม่พอค่ายา (ต้องการ 20 เหรียญ)');
       return;
     }
+    if (energy < 5) {
+      showToast('⚡ พลังงานไม่เพียงพอ! (ต้องการ 5 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
+      return;
+    }
+    setEnergy((e) => Math.max(0, e - 5));
     setCoins((c) => c - 20);
     playSound('heal', isMuted);
     setPigs((prev) =>
       prev.map((p) => (p.id === selectedPig.id ? { ...p, health: 100 } : p))
     );
     addExp(15);
-    showToast('💉 ฉีดยาป้องกันโรคเรียบร้อย สุขภาพแข็งแรง 100%! (+15 EXP)');
+    showToast('💉 ฉีดยาป้องกันโรคเรียบร้อย สุขภาพแข็งแรง 100%! (+15 EXP, -5 ⚡)');
   };
 
   const handleDrinkWater = () => {
     if (!selectedPig) return;
+    if (energy < 1) {
+      showToast('⚡ พลังงานไม่เพียงพอ! (ต้องการ 1 ⚡)');
+      return;
+    }
+    setEnergy((e) => Math.max(0, e - 1));
     playSound('bubble', isMuted);
     setPigs((prev) =>
       prev.map((p) => (p.id === selectedPig.id ? { ...p, health: Math.min(100, p.health + 20) } : p))
@@ -1548,7 +1596,7 @@ export default function HappyHogView() {
     addExp(5);
     setHearts((h) => [...h, { id: Date.now(), x: selectedPig.x, y: selectedPig.y - 12 }]);
     setTimeout(() => setHearts((h) => h.slice(1)), 1200);
-    showToast(`🚰 น้องดื่มน้ำจากก๊อกน้ำธรรมชาติ สดชื่นกระปรี้กระเปร่า! (+5 EXP)`);
+    showToast(`🚰 น้องดื่มน้ำจากก๊อกน้ำธรรมชาติ สดชื่นกระปรี้กระเปร่า! (+5 EXP, -1 ⚡)`);
   };
 
   const handleSellPig = (pig) => {
@@ -1709,6 +1757,11 @@ export default function HappyHogView() {
       return;
     }
 
+    if (energy < 15) {
+      showToast('⚡ พลังงานไม่เพียงพอ! เข้าห้องแล็บผสมพันธุ์ต้องการ 15 ⚡');
+      return;
+    }
+    setEnergy((e) => Math.max(0, e - 15));
     setCoins((c) => c - 80);
     playSound('coin', isMuted);
 
@@ -1799,7 +1852,12 @@ export default function HappyHogView() {
       showToast(`❌ เหรียญไม่พอซื้อเมล็ดพันธุ์ (ต้องการ ${meta.seedCost} เหรียญ)`);
       return;
     }
+    if (energy < 2) {
+      showToast('⚡ พลังงานไม่พอปลูกพืช! (ต้องการ 2 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
+      return;
+    }
 
+    setEnergy((e) => Math.max(0, e - 2));
     setCoins((c) => c - meta.seedCost);
     playSound('plant', isMuted);
 
@@ -1810,13 +1868,18 @@ export default function HappyHogView() {
           : plot
       )
     );
-    showToast(`🌱 หว่านเมล็ด "${meta.name}" แล้ว! (รอ ${meta.duration} วินาที)`);
+    showToast(`🌱 หว่านเมล็ด "${meta.name}" แล้ว! (รอ ${meta.duration} วินาที, -2 ⚡)`);
   };
 
   const handleHarvestCrop = (plotId) => {
     const plot = crops.find((p) => p.id === plotId);
     if (!plot || !plot.seed) return;
+    if (energy < 2) {
+      showToast('⚡ พลังงานไม่พอเก็บเกี่ยว! (ต้องการ 2 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
+      return;
+    }
 
+    setEnergy((e) => Math.max(0, e - 2));
     const meta = CROPS_META[plot.seed];
     playSound('coin', isMuted);
 
@@ -1831,17 +1894,23 @@ export default function HappyHogView() {
 
     advanceQuest('crop', 1);
     addExp(15);
-    showToast(`🧺 เก็บเกี่ยว "${meta.name}" ได้ผลผลิต +${meta.yieldCount} ถุง & +15 EXP!`);
+    showToast(`🧺 เก็บเกี่ยว "${meta.name}" ได้ผลผลิต +${meta.yieldCount} ถุง & +15 EXP! (-2 ⚡)`);
   };
 
   const handleCollectYardDrop = (e, drop) => {
     e.stopPropagation();
+    if (energy < 2) {
+      showToast('⚡ พลังงานไม่พอเก็บกวาด! (ต้องการ 2 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
+      return;
+    }
+
+    setEnergy((e) => Math.max(0, e - 2));
     setYardDrops((prev) => prev.filter((d) => d.id !== drop.id));
     setCoins((c) => c + drop.reward);
     advanceQuest('clean', 1);
     addExp(8);
     playSound('coin', isMuted);
-    showToast(`✨ เก็บ ${drop.label} ในลานฟาร์ม! ได้รับ +${drop.reward} 🪙 & +8 EXP`);
+    showToast(`✨ เก็บ ${drop.label} สะอาดเอี่ยม! ได้รับ +${drop.reward} 🪙 & +8 EXP (-2 ⚡)`);
   };
 
   const handleClaimQuest = (quest) => {
@@ -1966,14 +2035,14 @@ export default function HappyHogView() {
     },
     {
       id: 5,
-      name: 'เพชรคลังหลวง อปท.',
-      shortLabel: '+10 💎',
+      name: 'มหาแจ็กพอตเพชรแท้ อปท.',
+      shortLabel: '+500 💎',
       icon: '💎',
-      rewardDesc: '+10 เพชรแท้ 💎',
+      rewardDesc: '🎉 มหาแจ็กพอต 500 เพชรแท้ 💎!',
       color: '#8b5cf6',
       sliceGrad: ['#8b5cf6', '#7c3aed'],
       textColor: '#ffffff',
-      diamonds: 10
+      diamonds: 500
     },
     {
       id: 6,
@@ -2251,15 +2320,15 @@ export default function HappyHogView() {
               <span className="font-black text-slate-900 font-mono text-xs">{coins.toLocaleString()}</span>
             </div>
 
-            {/* Diamonds 💎 */}
+            {/* Diamonds 💎 - Styled identically to Pig Price Button */}
             <div
               onClick={() => setShowDiamondShopModal(true)}
-              className="bg-gradient-to-b from-[#f5f3ff] to-[#ede9fe] border-2 border-purple-500 hover:border-purple-400 rounded-xl px-2.5 py-1 flex items-center space-x-1 shadow-xs cursor-pointer transition-all hover:scale-105 active:scale-95 group"
+              className="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-700 hover:to-indigo-800 text-white border-2 border-purple-300 shadow-[0_0_12px_rgba(168,85,247,0.6)] rounded-xl px-2.5 py-1 flex items-center space-x-1.5 shadow-xs cursor-pointer transition-all hover:scale-105 active:scale-95 group"
               title="คลังเพชรแท้ (คลิกเพื่อเปิดร้านค้าเพชร / เติมเงิน / แลกเหรียญ)"
             >
-              <Gem className="w-4 h-4 text-purple-600 fill-purple-400 group-hover:rotate-12 transition-transform" />
-              <span className="font-black text-purple-950 font-mono text-xs">{diamonds.toLocaleString()}</span>
-              <span className="bg-purple-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold group-hover:bg-purple-700 ml-0.5 shadow-xs">
+              <span className="text-sm filter drop-shadow-[0_0_4px_rgba(168,85,247,0.9)] group-hover:scale-110 transition-transform">💎</span>
+              <span className="font-black text-white font-mono text-xs">{diamonds.toLocaleString()}</span>
+              <span className="bg-amber-400 text-purple-950 font-black rounded-md px-1.5 py-0.2 text-[10px] shadow-xs group-hover:bg-yellow-300 ml-0.5">
                 +
               </span>
             </div>
@@ -2311,7 +2380,20 @@ export default function HappyHogView() {
               className="px-2.5 py-1 bg-gradient-to-b from-teal-400 to-emerald-600 hover:from-teal-500 hover:to-emerald-700 text-white rounded-xl font-black text-xs border-2 border-teal-300 shadow-xs flex items-center space-x-1 cursor-pointer"
             >
               <Users className="w-3.5 h-3.5" />
-              <span>เยี่ยมเพื่อน</span>
+              <span className="hidden sm:inline">เยี่ยมเพื่อน</span>
+            </button>
+
+            {/* Daily Farm Audit Inspection Button */}
+            <button
+              onClick={() => setShowAuditModal(true)}
+              className="px-2.5 py-1 bg-gradient-to-b from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white rounded-xl font-black text-xs border-2 border-blue-400 shadow-xs flex items-center space-x-1 cursor-pointer transition-transform hover:scale-105"
+              title="ระบบตรวจการฟาร์ม อปท. (รับรางวัลฟื้นฟูพลังงาน + เงินสนับสนุน + เพชร)"
+            >
+              <span>📋</span>
+              <span className="hidden sm:inline">ตรวจการ อปท.</span>
+              {Date.now() - lastAuditTime >= 1000 * 60 * 60 * 2 && (
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping ml-0.5" />
+              )}
             </button>
 
             {/* Screen Size Mode Toggle (Theater / Full Window) */}
@@ -4578,6 +4660,137 @@ export default function HappyHogView() {
                 })}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* ================= FARM AUDIT INSPECTION MODAL (ระบบตรวจการฟาร์ม อปท.) ================= */}
+      {showAuditModal && (
+        <div className="fixed inset-0 z-60 bg-black/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+          <div className="relative bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#0f172a] border-4 border-blue-400 rounded-3xl p-5 sm:p-7 max-w-md w-full shadow-[0_0_50px_rgba(59,130,246,0.5)] space-y-4 text-white">
+            <button
+              onClick={() => setShowAuditModal(false)}
+              className="absolute top-4 right-4 p-1.5 bg-white/10 hover:bg-white/20 rounded-full text-blue-200 cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Header */}
+            <div className="text-center space-y-1">
+              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400 text-blue-300 text-xs font-black">
+                <ShieldCheck className="w-4 h-4 text-blue-400" />
+                <span>หน่วยตรวจสอบภายใน อปท.</span>
+              </div>
+              <h3 className="text-xl font-black text-blue-100 font-mono tracking-tight pt-1">
+                ระบบตรวจการฟาร์มปศุสัตว์
+              </h3>
+              <p className="text-xs text-slate-300">
+                ประเมินมาตรฐานฟาร์ม ปค.5 & เบิกงบประมาณสนับสนุนพลังงาน
+              </p>
+            </div>
+
+            {/* Inspection Checklist */}
+            <div className="space-y-2 bg-slate-900/80 p-3.5 rounded-2xl border border-slate-700 text-xs">
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-800/80 border border-slate-700">
+                <div className="flex items-center space-x-2">
+                  <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <div>
+                    <div className="font-bold text-slate-200">ระบบควบคุมสุขอนามัยหมู</div>
+                    <div className="text-[10px] text-slate-400">
+                      หมูปกติสุข {pigs.filter((p) => p.health >= 60).length}/{pigs.length} ตัว
+                    </div>
+                  </div>
+                </div>
+                <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-black">
+                  ผ่านเกณฑ์
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-800/80 border border-slate-700">
+                <div className="flex items-center space-x-2">
+                  <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <div>
+                    <div className="font-bold text-slate-200">สต็อกพืชอาหารสัตว์สำรอง</div>
+                    <div className="text-[10px] text-slate-400">
+                      มีผลผลิตในคลัง {cropInventory.bran + cropInventory.corn + cropInventory.carrot + cropInventory.pumpkin} ถุง
+                    </div>
+                  </div>
+                </div>
+                <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-black">
+                  ผ่านเกณฑ์
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-800/80 border border-slate-700">
+                <div className="flex items-center space-x-2">
+                  <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <div>
+                    <div className="font-bold text-slate-200">สภาพแวดล้อมและธีมคอก</div>
+                    <div className="text-[10px] text-slate-400">ธีม: {activeTheme.name}</div>
+                  </div>
+                </div>
+                <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-black">
+                  ผ่านเกณฑ์
+                </span>
+              </div>
+            </div>
+
+            {/* Inspection Cooldown & Reward Action */}
+            {(() => {
+              const cooldownMs = 1000 * 60 * 60 * 2; // 2 hours
+              const timePassed = Date.now() - lastAuditTime;
+              const isReady = timePassed >= cooldownMs;
+              const remainingSec = Math.max(0, Math.ceil((cooldownMs - timePassed) / 1000));
+              const remMin = Math.floor(remainingSec / 60);
+              const remSec = remainingSec % 60;
+
+              return (
+                <div className="space-y-3 pt-1">
+                  <div className="bg-gradient-to-r from-blue-950/60 to-indigo-950/60 border border-blue-500/40 rounded-2xl p-3 text-center space-y-1">
+                    <span className="text-[10px] text-blue-300 uppercase font-black tracking-wider">
+                      เงินอุดหนุน & พลังงานเมื่อตรวจผ่าน
+                    </span>
+                    <div className="flex items-center justify-center space-x-3 text-sm font-black font-mono">
+                      <span className="text-amber-400">⚡ ฟื้นฟู 100</span>
+                      <span className="text-yellow-400">+350 🪙</span>
+                      <span className="text-purple-300">+15 💎</span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      if (!isReady) {
+                        showToast(`⏳ รอบตรวจการถัดไปในอีก ${remMin} นาที ${remSec} วินาที`);
+                        return;
+                      }
+                      setLastAuditTime(Date.now());
+                      setEnergy(100);
+                      setCoins((c) => c + 350);
+                      setDiamonds((d) => d + 15);
+                      addExp(60);
+                      playSound('fanfare', isMuted);
+                      setShowAuditModal(false);
+                      setCelebrationReward({
+                        title: '📋 ตรวจรับรองฟาร์ม อปท. ผ่านฉลุย!',
+                        subtitle: 'ผลการตรวจสอบมาตรฐานสุขาภิบาลฟาร์มเป็นไปตามระเบียบ',
+                        badge: 'AUDIT PASSED',
+                        rewardText: '⚡ พลังงานเต็ม 100 | +350 🪙 | +15 💎',
+                        icon: '📋',
+                        color: '#2563eb'
+                      });
+                    }}
+                    disabled={!isReady}
+                    className={`w-full py-3 rounded-2xl font-black text-sm flex items-center justify-center space-x-2 transition-all cursor-pointer ${
+                      isReady
+                        ? 'bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-600 hover:from-blue-400 hover:to-indigo-500 text-white shadow-[0_4px_0_#1e3a8a] active:translate-y-1 active:shadow-none'
+                        : 'bg-slate-700 text-slate-400 cursor-not-allowed border border-slate-600'
+                    }`}
+                  >
+                    <span>{isReady ? '✍️ ลงนามตรวจรับรอง & เบิกงบรางวัลฟาร์ม' : `⏳ ตรวจสอบครั้งถัดไปใน ${remMin}:${remSec < 10 ? '0' : ''}${remSec} น.`}</span>
+                  </button>
+                </div>
+              );
+            })()}
           </div>
         </div>
       )}

@@ -1,0 +1,128 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Prismatic Diamond Crystal Aura -->
+    <radialGradient id="crystalAura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#c084fc" stop-opacity="0.45"/>
+      <stop offset="50%" stop-color="#38bdf8" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Translucent Diamond Body -->
+    <radialGradient id="diamondBody" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="35%" stop-color="#e0f2fe"/>
+      <stop offset="70%" stop-color="#c4b5fd"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </radialGradient>
+
+    <!-- Crystalline Wings Gradient -->
+    <linearGradient id="crystalWing" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="30%" stop-color="#bae6fd"/>
+      <stop offset="70%" stop-color="#f5d0fe"/>
+      <stop offset="100%" stop-color="#c084fc"/>
+    </linearGradient>
+
+    <!-- Diamond Tiara Halo -->
+    <linearGradient id="diamondHalo" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="50%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#c084fc"/>
+    </linearGradient>
+
+    <!-- Crystal Snout -->
+    <radialGradient id="crystalSnout" cx="35%" cy="25%" r="70%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="60%" stop-color="#fbcfe8"/>
+      <stop offset="100%" stop-color="#e879f9"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <ellipse cx="256" cy="455" rx="140" ry="30" fill="rgba(192, 132, 252, 0.35)"/>
+
+  <!-- Radiant Diamond Aura -->
+  <circle cx="256" cy="270" r="220" fill="url(#crystalAura)"/>
+
+  <!-- Four Crystalline Diamond Wings (Spreading Wide) -->
+  <g>
+    <!-- Left Top Large Wing -->
+    <polygon points="170,260 40,160 30,220 90,260 160,285" fill="url(#crystalWing)" opacity="0.95"/>
+    <polygon points="170,260 70,240 60,280 120,310 160,300" fill="url(#crystalWing)" opacity="0.85"/>
+
+    <!-- Right Top Large Wing -->
+    <polygon points="342,260 472,160 482,220 422,260 352,285" fill="url(#crystalWing)" opacity="0.95"/>
+    <polygon points="342,260 442,240 452,280 392,310 352,300" fill="url(#crystalWing)" opacity="0.85"/>
+  </g>
+
+  <!-- Left Ear with Crystal Tip -->
+  <path d="M 160 210 Q 110 145 145 115 Q 185 145 190 200 Z" fill="url(#diamondBody)"/>
+  <polygon points="145,115 160,140 135,160" fill="#ffffff" opacity="0.9"/>
+
+  <!-- Right Ear with Crystal Tip -->
+  <path d="M 352 210 Q 402 145 367 115 Q 327 145 322 200 Z" fill="url(#diamondBody)"/>
+  <polygon points="367,115 352,140 377,160" fill="#ffffff" opacity="0.9"/>
+
+  <!-- Floating Multifaceted Diamond Halo -->
+  <g>
+    <ellipse cx="256" cy="110" rx="65" ry="18" fill="none" stroke="url(#diamondHalo)" stroke-width="7"/>
+    <ellipse cx="256" cy="110" rx="60" ry="15" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <!-- Giant Sparkling Solitaire Diamond on Halo -->
+    <polygon points="256,80 270,95 256,115 242,95" fill="#ffffff"/>
+    <polygon points="256,80 270,95 256,98 242,95" fill="#bae6fd"/>
+  </g>
+
+  <!-- Main Crystalline Sphere Body -->
+  <circle cx="256" cy="300" r="140" fill="url(#diamondBody)"/>
+
+  <!-- Geometric Crystal Facet Reflections on Body -->
+  <g fill="#ffffff" opacity="0.35">
+    <polygon points="200,200 240,190 230,230 190,220"/>
+    <polygon points="312,200 272,190 282,230 322,220"/>
+    <polygon points="256,175 280,210 256,230 232,210"/>
+  </g>
+
+  <!-- Iridescent Pastel Belly -->
+  <ellipse cx="256" cy="345" rx="95" ry="78" fill="#fdf4ff" opacity="0.85"/>
+
+  <!-- Amethyst Jewel Chibi Eyes with Diamond Glints -->
+  <g>
+    <!-- Left Eye -->
+    <ellipse cx="205" cy="270" rx="20" ry="26" fill="#3b0764"/>
+    <ellipse cx="205" cy="276" rx="16" ry="18" fill="#a855f7"/>
+    <circle cx="198" cy="260" r="8" fill="#ffffff"/>
+    <circle cx="212" cy="282" r="4" fill="#38bdf8"/>
+    <!-- Left Blush -->
+    <ellipse cx="170" cy="308" rx="18" ry="10" fill="#f472b6" opacity="0.5"/>
+
+    <!-- Right Eye -->
+    <ellipse cx="307" cy="270" rx="20" ry="26" fill="#3b0764"/>
+    <ellipse cx="307" cy="276" rx="16" ry="18" fill="#a855f7"/>
+    <circle cx="300" cy="260" r="8" fill="#ffffff"/>
+    <circle cx="314" cy="282" r="4" fill="#38bdf8"/>
+    <!-- Right Blush -->
+    <ellipse cx="342" cy="308" rx="18" ry="10" fill="#f472b6" opacity="0.5"/>
+  </g>
+
+  <!-- Crystalline Pink Snout -->
+  <g>
+    <ellipse cx="256" cy="310" rx="42" ry="30" fill="url(#crystalSnout)"/>
+    <ellipse cx="242" cy="312" rx="7" ry="10" fill="#9333ea"/>
+    <ellipse cx="270" cy="312" rx="7" ry="10" fill="#9333ea"/>
+    <ellipse cx="246" cy="296" rx="14" ry="6" fill="#ffffff" opacity="0.95"/>
+  </g>
+
+  <!-- Sparkling Diamond Star Glints Around Angel -->
+  <g fill="#ffffff">
+    <!-- Top Left Sparkle -->
+    <polygon points="120,180 124,192 136,196 124,200 120,212 116,200 104,196 116,192"/>
+    <!-- Top Right Sparkle -->
+    <polygon points="392,180 396,192 408,196 396,200 392,212 388,200 376,196 388,192"/>
+    <!-- Bottom Center Sparkle -->
+    <polygon points="256,410 259,418 267,421 259,424 256,432 253,424 245,421 253,418"/>
+  </g>
+
+  <!-- Pearlescent Hooves -->
+  <ellipse cx="210" cy="415" rx="22" ry="16" fill="url(#crystalSnout)"/>
+  <ellipse cx="302" cy="415" rx="22" ry="16" fill="url(#crystalSnout)"/>
+</svg>
