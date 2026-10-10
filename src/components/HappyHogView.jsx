@@ -1397,21 +1397,11 @@ const DecorItemSprite = ({ decor, isNight }) => {
 
   if (id === 'stone_well') {
     return (
-      <svg width="65" height="75" viewBox="0 0 65 75" className="drop-shadow-lg select-none pointer-events-none">
-        <ellipse cx="32" cy="68" rx="28" ry="6" fill="rgba(0,0,0,0.22)" />
-        {/* Stone Basin Base */}
-        <ellipse cx="32" cy="56" rx="24" ry="10" fill="#78716c" stroke="#44403c" strokeWidth="2" />
-        <ellipse cx="32" cy="54" rx="18" ry="7" fill="#0284c7" />
-        {/* Wooden Support Beams */}
-        <rect x="14" y="28" width="4" height="28" fill="#78350f" stroke="#451a03" strokeWidth="1.5" />
-        <rect x="46" y="28" width="4" height="28" fill="#78350f" stroke="#451a03" strokeWidth="1.5" />
-        {/* Shingle Roof */}
-        <polygon points="8,32 32,10 56,32" fill="#b45309" stroke="#78350f" strokeWidth="2" />
-        <polygon points="12,30 32,14 52,30" fill="#d97706" />
-        {/* Hanging Bucket */}
-        <line x1="32" y1="20" x2="32" y2="42" stroke="#451a03" strokeWidth="1.5" />
-        <rect x="29" y="42" width="6" height="7" rx="1" fill="#78350f" stroke="#451a03" strokeWidth="1" />
-      </svg>
+      <img
+        src="./pigs/decor_stone_well.png"
+        alt="Stone Well"
+        className="w-18 h-20 object-contain drop-shadow-xl select-none pointer-events-none hover:scale-105 transition-transform"
+      />
     );
   }
 
@@ -1645,152 +1635,30 @@ const DecorItemSprite = ({ decor, isNight }) => {
 
 
 // ==============================================================
-// 2.5D ISOMETRIC OPEN PEN GROUND (Tilemap.exe Night Camp EP.3)
-// Clean, open, unobstructed pen floors with outer perimeter fences
+// 2.5D ISOMETRIC THEME BACKGROUNDS
+// High-fidelity 2.5D graphic illustrations for each farm pen theme
 // ==============================================================
+const THEME_BACKGROUND_IMAGES = {
+  pasture: './pigs/theme_pasture.jpg',
+  cozy_wood: './pigs/theme_cozy_wood.jpg',
+  onsen_mud: './pigs/theme_onsen_mud.jpg',
+  lanna: './pigs/theme_lanna.jpg',
+  golden_palace: './pigs/theme_golden_palace.jpg',
+  cyber_space: './pigs/theme_smart_farm.jpg',
+  smart_farm: './pigs/theme_smart_farm.jpg',
+};
+
 const CleanIsometricPenGround = ({ themeId }) => {
-  if (themeId === 'golden_palace') {
-    return (
-      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
-        {/* Sunny Royal Azure Sky with Gentle Clouds */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#38bdf8] via-[#bae6fd] to-[#fef08a]" />
-        <div className="absolute top-4 left-1/4 w-36 h-12 bg-white/40 rounded-full blur-md" />
-        <div className="absolute top-10 right-1/4 w-48 h-14 bg-white/50 rounded-full blur-md" />
-        {/* Distant Rolling Royal Estate Greenery on Horizon */}
-        <div className="absolute top-[20%] left-0 right-0 h-20 bg-gradient-to-b from-[#15803d]/40 to-[#22c55e]/70 rounded-[100%_100%_0_0] blur-[2px]" />
+  const bgSrc = THEME_BACKGROUND_IMAGES[themeId] || './pigs/theme_pasture.jpg';
 
-        {/* 2.5D Isometric Grand Courtyard (Polished Golden-Cream Marble Tiles) */}
-        <div className="absolute inset-x-[6%] top-[24%] bottom-[5%] rounded-[48px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.35)] border-4 border-[#ca8a04]">
-          {/* Base Polished Marble Floor */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#fffbeb] via-[#fef9c3] to-[#fef08a]" />
-          
-          {/* Subtle Isometric Tile Grid Pattern */}
-          <div
-            className="absolute inset-0 opacity-40"
-            style={{
-              backgroundImage: `linear-gradient(rgba(202,138,4,0.35) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(202,138,4,0.35) 1.5px, transparent 1.5px)`,
-              backgroundSize: '42px 42px'
-            }}
-          />
-
-          {/* Royal Decorative Inner Border Trim */}
-          <div className="absolute inset-4 rounded-[36px] border-2 border-dashed border-[#ca8a04]/50 pointer-events-none" />
-
-          {/* Wrought Gold Perimeter Fence Posts (Outer Boundary Only) */}
-          <div className="absolute top-2 left-6 right-6 flex justify-between">
-            {[...Array(9)].map((_, i) => (
-              <div key={i} className="flex flex-col items-center">
-                <div className="w-2.5 h-2.5 rounded-full bg-yellow-300 border border-amber-600 shadow-sm" />
-                <div className="w-1.5 h-6 bg-gradient-to-b from-amber-500 to-amber-700" />
-              </div>
-            ))}
-          </div>
-
-          <div className="absolute bottom-2 left-6 right-6 flex justify-between">
-            {[...Array(9)].map((_, i) => (
-              <div key={i} className="flex flex-col items-center">
-                <div className="w-2.5 h-2.5 rounded-full bg-yellow-300 border border-amber-600 shadow-sm" />
-                <div className="w-1.5 h-5 bg-gradient-to-b from-amber-500 to-amber-700" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (themeId === 'cozy_wood') {
-    return (
-      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#fed7aa] via-[#fde68a] to-[#d97706]" />
-        <div className="absolute top-[20%] left-0 right-0 h-20 bg-gradient-to-b from-[#92400e]/30 to-[#b45309]/50 rounded-[100%_100%_0_0] blur-[2px]" />
-        <div className="absolute inset-x-[6%] top-[24%] bottom-[5%] rounded-[48px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.35)] border-4 border-[#78350f]">
-          <div className="absolute inset-0 bg-[#eedbb3]" />
-          <div
-            className="absolute inset-0 opacity-30"
-            style={{
-              backgroundImage: `linear-gradient(rgba(120,53,15,0.4) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(120,53,15,0.4) 1.5px, transparent 1.5px)`,
-              backgroundSize: '48px 48px'
-            }}
-          />
-          <div className="absolute inset-4 rounded-[36px] border-2 border-dashed border-[#78350f]/40" />
-        </div>
-      </div>
-    );
-  }
-
-  if (themeId === 'onsen_mud') {
-    return (
-      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#cbd5e1] via-[#94a3b8] to-[#64748b]" />
-        <div className="absolute inset-x-[6%] top-[24%] bottom-[5%] rounded-[48px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.35)] border-4 border-[#475569]">
-          <div className="absolute inset-0 bg-[#d6cbba]" />
-          <div
-            className="absolute inset-0 opacity-25"
-            style={{
-              backgroundImage: `radial-gradient(#475569 2px, transparent 2px)`,
-              backgroundSize: '24px 24px'
-            }}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  if (themeId === 'lanna') {
-    return (
-      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#fef08a] via-[#fde047] to-[#ca8a04]" />
-        <div className="absolute inset-x-[6%] top-[24%] bottom-[5%] rounded-[48px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.35)] border-4 border-[#854d0e]">
-          <div className="absolute inset-0 bg-[#fae3b4]" />
-          <div
-            className="absolute inset-0 opacity-35"
-            style={{
-              backgroundImage: `linear-gradient(rgba(133,77,14,0.3) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(133,77,14,0.3) 1.5px, transparent 1.5px)`,
-              backgroundSize: '44px 44px'
-            }}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  if (themeId === 'cyber_space') {
-    return (
-      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a] via-[#1e1b4b] to-[#312e81]" />
-        <div className="absolute inset-x-[6%] top-[24%] bottom-[5%] rounded-[48px] overflow-hidden shadow-[0_20px_50px_rgba(6,182,212,0.35)] border-4 border-[#06b6d4]">
-          <div className="absolute inset-0 bg-[#0f172a]" />
-          <div
-            className="absolute inset-0 opacity-45"
-            style={{
-              backgroundImage: `linear-gradient(rgba(6,182,212,0.45) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(6,182,212,0.45) 1.5px, transparent 1.5px)`,
-              backgroundSize: '40px 40px'
-            }}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  // Default: Pasture (Clean Open Meadow Green)
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#7dd3fc] via-[#bbf7d0] to-[#86efac]" />
-      <div className="absolute top-6 left-1/4 w-36 h-10 bg-white/40 rounded-full blur-md" />
-      <div className="absolute top-12 right-1/4 w-44 h-12 bg-white/50 rounded-full blur-md" />
-      <div className="absolute top-[20%] left-0 right-0 h-20 bg-gradient-to-b from-[#166534]/40 to-[#15803d]/60 rounded-[100%_100%_0_0] blur-[2px]" />
-      <div className="absolute inset-x-[6%] top-[24%] bottom-[5%] rounded-[48px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.35)] border-4 border-[#8c593b]">
-        <div className="absolute inset-0 bg-[#bbf7d0]" />
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage: `radial-gradient(#15803d 2px, transparent 2px)`,
-            backgroundSize: '24px 24px'
-          }}
-        />
-        <div className="absolute inset-4 rounded-[36px] border-2 border-dashed border-[#8c593b]/40" />
-      </div>
+    <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
+      <img
+        src={bgSrc}
+        alt={`Theme ${themeId}`}
+        className="w-full h-full object-cover select-none pointer-events-none transition-opacity duration-300"
+        draggable={false}
+      />
     </div>
   );
 };
@@ -1801,7 +1669,7 @@ const PigSprite = ({ breed, isSelected, direction, weight, isMoving, isResting, 
   // Compact, cute chibi scale matching the reference game (ranges from 0.72 for baby to 1.04 for full grown)
   const weightRatio = Math.min(1, Math.max(0, weight / b.maxWeight));
   const sizeScale = 0.58 + weightRatio * 0.28;
-  const spriteSrc = `/pigs/${breed}.png`;
+  const spriteSrc = `./pigs/${breed}.png`;
   const dirScale = direction === -1 || direction === 'left' ? -1 : 1;
 
   // Custom glowing celestial aura styling for diamond mythic breeds
@@ -3792,39 +3660,22 @@ export default function HappyHogView() {
                 {/* 2.5D Isometric Open Pen Ground (Tilemap.exe EP.3) */}
                 <CleanIsometricPenGround themeId={activeThemeId} />
                 {/* Cyber Space High-Tech Holographic Grid (When activeTheme is cyber_space) */}
+                {/* Cyber Space High-Tech Ambient Glow (When activeTheme is cyber_space) */}
                 {activeThemeId === 'cyber_space' && (
                   <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(99,102,241,0.3),transparent_60%)]" />
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(6,182,212,0.25),transparent_50%)]" />
-                    {/* Stars */}
-                    {['⭐', '✨', '🌟', '💫', '⭐', '✨'].map((star, i) => (
+                    {['⚡', '✨', '💎', '💫'].map((p, i) => (
                       <span
                         key={i}
-                        className="absolute text-cyan-300 animate-pulse"
+                        className="absolute text-cyan-300 animate-pulse text-xs opacity-75"
                         style={{
-                          left: `${15 + i * 14}%`,
-                          top: `${10 + (i % 3) * 12}%`,
-                          animationDuration: `${1.5 + i * 0.3}s`
+                          left: `${20 + i * 22}%`,
+                          top: `${25 + (i % 2) * 35}%`,
+                          animationDuration: `${1.8 + i * 0.4}s`
                         }}
                       >
-                        {star}
+                        {p}
                       </span>
                     ))}
-                    {/* 3D Perspective Holographic Cyber Grid */}
-                    <div
-                      style={{ perspective: '420px', perspectiveOrigin: '50% 30%' }}
-                      className="absolute inset-0 flex items-end"
-                    >
-                      <div
-                        style={{
-                          transform: 'rotateX(55deg)',
-                          backgroundImage:
-                            'linear-gradient(rgba(6,182,212,0.45) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(6,182,212,0.45) 1.5px, transparent 1.5px)',
-                          backgroundSize: '44px 44px'
-                        }}
-                        className="w-full h-[70%] border-t-2 border-cyan-400 shadow-[0_0_35px_rgba(6,182,212,0.6)]"
-                      />
-                    </div>
                   </div>
                 )}
 
@@ -4282,7 +4133,7 @@ export default function HappyHogView() {
                   {/* Selected Pig Avatar Card */}
                   <div className="flex flex-col items-center justify-center p-2.5 bg-gradient-to-b from-amber-100/90 to-orange-100/90 rounded-2xl border-2 border-amber-300 shadow-inner">
                     <img
-                      src={`/pigs/${selectedPig.breed}.png`}
+                      src={`./pigs/${selectedPig.breed}.png`}
                       alt={selectedPig.name}
                       className="w-24 h-24 object-contain drop-shadow-xl animate-bounce"
                       style={{ animationDuration: '3.2s' }}
@@ -4956,7 +4807,7 @@ export default function HappyHogView() {
 
                       {p1 && (
                         <div className="flex items-center space-x-3 p-2 bg-blue-50/60 rounded-xl border border-blue-200">
-                          <img src={`/pigs/${p1.breed}.png`} alt={p1.name} className="w-12 h-12 object-contain" />
+                          <img src={`./pigs/${p1.breed}.png`} alt={p1.name} className="w-12 h-12 object-contain" />
                           <div>
                             <div className="font-black text-slate-800 text-xs">{p1.name}</div>
                             <div className="text-[10px] text-slate-500 font-bold">{PIG_BREEDS[p1.breed]?.name} • {p1.weight} kg</div>
@@ -4999,7 +4850,7 @@ export default function HappyHogView() {
 
                       {p2 && (
                         <div className="flex items-center space-x-3 p-2 bg-pink-50/60 rounded-xl border border-pink-200">
-                          <img src={`/pigs/${p2.breed}.png`} alt={p2.name} className="w-12 h-12 object-contain" />
+                          <img src={`./pigs/${p2.breed}.png`} alt={p2.name} className="w-12 h-12 object-contain" />
                           <div>
                             <div className="font-black text-slate-800 text-xs">{p2.name}</div>
                             <div className="text-[10px] text-slate-500 font-bold">{PIG_BREEDS[p2.breed]?.name} • {p2.weight} kg</div>
@@ -5435,7 +5286,7 @@ export default function HappyHogView() {
                     {visitingNeighbor.pigs.map((np) => (
                       <div key={np.id} className="bg-white p-2 rounded-xl border border-amber-200 flex items-center space-x-2.5 shadow-xs">
                         <img
-                          src={`/pigs/${np.breed || 'pink'}.png`}
+                          src={`./pigs/${np.breed || 'pink'}.png`}
                           alt={np.name}
                           className="w-12 h-12 object-contain drop-shadow-sm shrink-0"
                         />
@@ -5654,7 +5505,7 @@ export default function HappyHogView() {
                               <div className="flex items-center space-x-2.5 my-1">
                                 <div className="w-12 h-12 flex items-center justify-center shrink-0">
                                   <img
-                                    src={`/pigs/${breed.id}.png`}
+                                    src={`./pigs/${breed.id}.png`}
                                     alt={breed.name}
                                     className="w-11 h-11 object-contain drop-shadow-sm"
                                   />
@@ -6047,7 +5898,7 @@ export default function HappyHogView() {
                       </select>
                       {parent1 && (
                         <div className="flex items-center space-x-2.5 p-2 bg-purple-100/60 rounded-xl">
-                          <img src={`/pigs/${parent1.breed}.png`} alt={parent1.name} className="w-10 h-10 object-contain" />
+                          <img src={`./pigs/${parent1.breed}.png`} alt={parent1.name} className="w-10 h-10 object-contain" />
                           <div className="text-xs">
                             <div className="font-black text-purple-950">{parent1.name}</div>
                             <div className="text-[10px] text-purple-800">สายพันธุ์: {PIG_BREEDS[parent1.breed]?.name}</div>
@@ -6075,7 +5926,7 @@ export default function HappyHogView() {
                       </select>
                       {parent2 && (
                         <div className="flex items-center space-x-2.5 p-2 bg-pink-100/60 rounded-xl">
-                          <img src={`/pigs/${parent2.breed}.png`} alt={parent2.name} className="w-10 h-10 object-contain" />
+                          <img src={`./pigs/${parent2.breed}.png`} alt={parent2.name} className="w-10 h-10 object-contain" />
                           <div className="text-xs">
                             <div className="font-black text-pink-950">{parent2.name}</div>
                             <div className="text-[10px] text-pink-800">สายพันธุ์: {PIG_BREEDS[parent2.breed]?.name}</div>
