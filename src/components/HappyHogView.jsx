@@ -404,7 +404,7 @@ const BARN_THEMES = {
     cost: 0,
     unlockedByDefault: true,
     atmosphere: 'butterflies',
-    bounds: { minX: 18, maxX: 74, minY: 28, maxY: 78 }
+    bounds: { minX: 22, maxX: 74, minY: 36, maxY: 74 }
   },
   cozy_wood: {
     id: 'cozy_wood',
@@ -419,7 +419,7 @@ const BARN_THEMES = {
     cost: 0,
     unlockedByDefault: true,
     atmosphere: 'leaves',
-    bounds: { minX: 20, maxX: 76, minY: 32, maxY: 78 }
+    bounds: { minX: 28, maxX: 72, minY: 42, maxY: 72 }
   },
   onsen_mud: {
     id: 'onsen_mud',
@@ -434,7 +434,7 @@ const BARN_THEMES = {
     cost: 400,
     unlockDesc: 'อาบน้ำหมูสะสมครบ 8 ครั้ง หรือใช้ 400 เหรียญ',
     atmosphere: 'steam',
-    bounds: { minX: 18, maxX: 74, minY: 30, maxY: 78 }
+    bounds: { minX: 26, maxX: 72, minY: 40, maxY: 72 }
   },
   lanna: {
     id: 'lanna',
@@ -449,7 +449,7 @@ const BARN_THEMES = {
     cost: 800,
     unlockDesc: 'มีหมูน้ำหนัก 90 kg ขึ้นไป หรือใช้ 800 เหรียญ',
     atmosphere: 'lanterns',
-    bounds: { minX: 20, maxX: 78, minY: 32, maxY: 80 }
+    bounds: { minX: 26, maxX: 72, minY: 40, maxY: 73 }
   },
   golden_palace: {
     id: 'golden_palace',
@@ -464,7 +464,7 @@ const BARN_THEMES = {
     cost: 1500,
     unlockDesc: 'ครอบครองหมูทองคำ หรือใช้ 1,500 เหรียญ',
     atmosphere: 'sparkles',
-    bounds: { minX: 28, maxX: 68, minY: 30, maxY: 74 }
+    bounds: { minX: 35, maxX: 63, minY: 42, maxY: 65 }
   },
   cyber_space: {
     id: 'cyber_space',
@@ -479,8 +479,21 @@ const BARN_THEMES = {
     cost: 2200,
     unlockDesc: 'ผสมพันธุ์สำเร็จ 3 ครั้ง หรือใช้ 2,200 เหรียญ',
     atmosphere: 'cyber',
-    bounds: { minX: 24, maxX: 72, minY: 38, maxY: 82 }
+    bounds: { minX: 28, maxX: 72, minY: 44, maxY: 74 }
   }
+};
+
+// Helper function to generate clean coordinates strictly inside the active barn theme's pen boundaries
+const getRandomCoordInBarn = (themeId) => {
+  const bounds = BARN_THEMES[themeId]?.bounds || { minX: 25, maxX: 72, minY: 40, maxY: 72 };
+  const minX = bounds.minX + 2;
+  const maxX = bounds.maxX - 2;
+  const minY = bounds.minY + 2;
+  const maxY = bounds.maxY - 2;
+  return {
+    x: Math.round(minX + Math.random() * (maxX - minX)),
+    y: Math.round(minY + Math.random() * (maxY - minY))
+  };
 };
 
 const FOODS = [
@@ -718,26 +731,28 @@ const HayBaleSvg = () => (
 );
 
 // 8. High-Fidelity 3D Chibi Pig Sprite Component (Piggy Town & Happy Hog Style)
-const PigSprite = ({ breed, isSelected, direction, weight }) => {
+const PigSprite = ({ breed, isSelected, direction, weight, isMoving, isResting, isTapped }) => {
   const b = PIG_BREEDS[breed] || PIG_BREEDS.pink;
-  const sizeScale = Math.min(1.4, 0.95 + (weight / b.maxWeight) * 0.4);
+  // Compact, cute chibi scale matching the reference game (ranges from 0.72 for baby to 1.04 for full grown)
+  const weightRatio = Math.min(1, Math.max(0, weight / b.maxWeight));
+  const sizeScale = 0.72 + weightRatio * 0.32;
   const spriteSrc = `/pigs/${breed}.png`;
   const dirScale = direction === -1 || direction === 'left' ? -1 : 1;
 
   // Custom glowing celestial aura styling for diamond mythic breeds
   let filterCss = '';
   if (breed === 'jade_dragon') {
-    filterCss = 'drop-shadow(0 4px 10px rgba(16,185,129,0.5)) drop-shadow(0 0 16px rgba(52,211,153,0.7))';
+    filterCss = 'drop-shadow(0 3px 8px rgba(16,185,129,0.5)) drop-shadow(0 0 12px rgba(52,211,153,0.7))';
   } else if (breed === 'phoenix') {
-    filterCss = 'drop-shadow(0 4px 12px rgba(249,115,22,0.6)) drop-shadow(0 0 18px rgba(251,146,60,0.75))';
+    filterCss = 'drop-shadow(0 3px 9px rgba(249,115,22,0.6)) drop-shadow(0 0 14px rgba(251,146,60,0.75))';
   } else if (breed === 'galaxy') {
-    filterCss = 'drop-shadow(0 4px 12px rgba(124,58,237,0.6)) drop-shadow(0 0 18px rgba(167,139,250,0.75))';
+    filterCss = 'drop-shadow(0 3px 9px rgba(124,58,237,0.6)) drop-shadow(0 0 14px rgba(167,139,250,0.75))';
   } else if (breed === 'cyber_satoshi') {
-    filterCss = 'drop-shadow(0 4px 10px rgba(6,182,212,0.6)) drop-shadow(0 0 16px rgba(34,211,238,0.75))';
+    filterCss = 'drop-shadow(0 3px 8px rgba(6,182,212,0.6)) drop-shadow(0 0 12px rgba(34,211,238,0.75))';
   } else if (breed === 'inferno_titan') {
-    filterCss = 'drop-shadow(0 4px 12px rgba(239,68,68,0.6)) drop-shadow(0 0 18px rgba(248,113,113,0.75))';
+    filterCss = 'drop-shadow(0 3px 9px rgba(239,68,68,0.6)) drop-shadow(0 0 14px rgba(248,113,113,0.75))';
   } else if (breed === 'diamond_angel') {
-    filterCss = 'drop-shadow(0 4px 14px rgba(192,132,252,0.7)) drop-shadow(0 0 20px rgba(233,213,255,0.85))';
+    filterCss = 'drop-shadow(0 3px 10px rgba(192,132,252,0.7)) drop-shadow(0 0 15px rgba(233,213,255,0.85))';
   }
 
   return (
@@ -747,13 +762,13 @@ const PigSprite = ({ breed, isSelected, direction, weight }) => {
         transition: 'transform 0.25s ease'
       }}
       className={`relative select-none flex flex-col items-center justify-center pointer-events-auto cursor-pointer ${
-        isSelected ? 'filter drop-shadow-[0_0_12px_rgba(251,191,36,0.95)]' : ''
+        isSelected ? 'filter drop-shadow-[0_0_8px_rgba(251,191,36,0.95)]' : ''
       }`}
     >
       {/* Luminous Mythic Ground Aura for Diamond Breeds */}
       {b.isDiamondBreed && (
         <div
-          className="absolute -bottom-2 w-24 h-7 rounded-full blur-[8px] pointer-events-none animate-pulse"
+          className="absolute -bottom-1.5 w-16 h-4.5 rounded-full blur-[6px] pointer-events-none animate-pulse"
           style={{
             background: breed === 'jade_dragon'
               ? 'radial-gradient(ellipse at center, rgba(16,185,129,0.75) 0%, rgba(5,150,105,0.2) 60%, transparent 100%)'
@@ -774,32 +789,44 @@ const PigSprite = ({ breed, isSelected, direction, weight }) => {
       {/* Floating Diamond Sparkle for Diamond Breeds */}
       {b.isDiamondBreed && (
         <div
-          className="absolute -top-3.5 flex items-center justify-center pointer-events-none animate-bounce"
+          className="absolute -top-2.5 flex items-center justify-center pointer-events-none animate-bounce"
           style={{ animationDuration: '2s' }}
         >
-          <span className="text-xs filter drop-shadow-[0_0_6px_rgba(168,85,247,0.9)]">💎</span>
+          <span className="text-[10px] filter drop-shadow-[0_0_4px_rgba(168,85,247,0.9)]">💎</span>
         </div>
       )}
 
       {/* Soft Ground Contact Shadow */}
       <div
-        className={`w-16 h-3.5 rounded-full blur-[2px] absolute -bottom-1 pointer-events-none ${
-          b.isDiamondBreed ? 'bg-purple-900/40 shadow-[0_0_12px_rgba(168,85,247,0.6)]' : 'bg-black/30'
+        className={`w-11 h-2.5 rounded-full blur-[2px] absolute -bottom-0.5 pointer-events-none ${
+          b.isDiamondBreed ? 'bg-purple-900/40 shadow-[0_0_8px_rgba(168,85,247,0.6)]' : 'bg-black/30'
         }`}
       />
 
-      {/* 3D Chibi Illustrated Pig Sprite (Only sprite flips horizontally) */}
-      <img
-        src={spriteSrc}
-        alt={b.name}
-        style={{
-          transform: `scaleX(${dirScale})`,
-          filter: filterCss || undefined,
-          transition: 'transform 0.2s ease'
-        }}
-        className="w-20 h-20 sm:w-22 sm:h-22 object-contain drop-shadow-md transition-transform duration-200 hover:scale-110 active:scale-95 pointer-events-none select-none"
-        draggable={false}
-      />
+      {/* Animated Body Container (Joy Jump, Sleeping Snooze, Moving Waddle, or Idle Breathing) */}
+      <div
+        className={`transition-transform duration-200 ${
+          isTapped
+            ? 'animate-pig-joy'
+            : isResting
+            ? 'animate-pig-sleep'
+            : isMoving
+            ? 'animate-pig-waddle'
+            : 'animate-pig-breathe'
+        }`}
+      >
+        <img
+          src={spriteSrc}
+          alt={b.name}
+          style={{
+            transform: `scaleX(${dirScale})`,
+            filter: filterCss || undefined,
+            transition: 'transform 0.18s ease'
+          }}
+          className="w-13 h-13 sm:w-14 sm:h-14 object-contain drop-shadow-md pointer-events-none select-none hover:scale-110 active:scale-95 transition-transform"
+          draggable={false}
+        />
+      </div>
     </div>
   );
 };
@@ -891,8 +918,8 @@ export default function HappyHogView() {
         hunger: 40,
         cleanliness: 70,
         health: 100,
-        x: 36,
-        y: 48,
+        x: 44,
+        y: 50,
         direction: 1
       },
       {
@@ -903,14 +930,15 @@ export default function HappyHogView() {
         hunger: 80,
         cleanliness: 35,
         health: 100,
-        x: 62,
-        y: 58,
+        x: 54,
+        y: 54,
         direction: -1
       }
     ];
   });
 
   const [selectedPigId, setSelectedPigId] = useState(1);
+  const [tappedPigId, setTappedPigId] = useState(null);
   const [isLocked, setIsLocked] = useState(() => {
     return localStorage.getItem('happy_hog_fence_locked') === 'true';
   });
@@ -1142,17 +1170,18 @@ export default function HappyHogView() {
           { type: 'coin', icon: '⭐', label: 'เหรียญทองนำโชค', reward: 60 }
         ];
         const selected = types[Math.floor(Math.random() * types.length)];
+        const coord = getRandomCoordInBarn(activeThemeId);
         const newDrop = {
           id: Date.now(),
           ...selected,
-          x: Math.round(16 + Math.random() * 68),
-          y: Math.round(26 + Math.random() * 54)
+          x: coord.x,
+          y: coord.y
         };
         return [...prev, newDrop];
       });
     }, 75000);
     return () => clearInterval(dropTimer);
-  }, []);
+  }, [activeThemeId]);
 
   const todayStr = new Date().toISOString().slice(0, 10);
   const canClaimToday = loginData.lastClaimDate !== todayStr;
@@ -1186,6 +1215,14 @@ export default function HappyHogView() {
     setTimeout(() => {
       setToastMessage('');
     }, 2800);
+  };
+
+  // Helper to trigger joyful bounce animation when interacted with
+  const triggerPigJoy = (pigId) => {
+    setTappedPigId(pigId);
+    setTimeout(() => {
+      setTappedPigId((curr) => (curr === pigId ? null : curr));
+    }, 750);
   };
 
   // Mount notification for 500 diamond compensation
@@ -1310,9 +1347,10 @@ export default function HappyHogView() {
           // Individual metabolism modifier based on pig id so they don't decay in lockstep
           const rateModifier = 0.85 + ((p.id % 5) * 0.07);
 
-          if (Math.random() < 0.65) {
-            const currentBounds = BARN_THEMES[activeThemeId]?.bounds || { minX: 8, maxX: 88, minY: 22, maxY: 84 };
+          const currentBounds = BARN_THEMES[activeThemeId]?.bounds || { minX: 25, maxX: 75, minY: 35, maxY: 75 };
+          const isOutside = p.x < currentBounds.minX || p.x > currentBounds.maxX || p.y < currentBounds.minY || p.y > currentBounds.maxY;
 
+          if (Math.random() < 0.65 || isOutside) {
             // Crowd repulsion: steer away gently if another pig is close to disperse across the wide pen
             let repelX = 0;
             let repelY = 0;
@@ -1321,19 +1359,23 @@ export default function HappyHogView() {
                 const dx = p.x - other.x;
                 const dy = p.y - other.y;
                 const distSq = dx * dx + dy * dy;
-                if (distSq < 169 && distSq > 0.01) {
+                if (distSq < 100 && distSq > 0.01) {
                   const dist = Math.sqrt(distSq);
-                  repelX += (dx / dist) * 7;
-                  repelY += (dy / dist) * 5;
+                  repelX += (dx / dist) * 5;
+                  repelY += (dy / dist) * 3.5;
                 }
               }
             });
 
-            const stepX = (Math.random() * 22 - 11) + repelX;
-            const stepY = (Math.random() * 16 - 8) + repelY;
+            // Moderate stroll step size so pigs don't jump wildly across scenery
+            const targetCenterX = (currentBounds.minX + currentBounds.maxX) / 2;
+            const targetCenterY = (currentBounds.minY + currentBounds.maxY) / 2;
+            const stepX = isOutside ? (targetCenterX - p.x) * 0.45 : (Math.random() * 10 - 5) + repelX;
+            const stepY = isOutside ? (targetCenterY - p.y) * 0.45 : (Math.random() * 8 - 4) + repelY;
 
             const nextX = Math.max(currentBounds.minX, Math.min(currentBounds.maxX, p.x + stepX));
             const nextY = Math.max(currentBounds.minY, Math.min(currentBounds.maxY, p.y + stepY));
+            const hasMoved = Math.abs(nextX - p.x) > 0.3 || Math.abs(nextY - p.y) > 0.3;
 
             // 1. Hunger decreases gently (~0.05% per wander step for relaxed casual pacing)
             // If diamond_angel, hunger never drops (always full)!
@@ -1378,14 +1420,18 @@ export default function HappyHogView() {
               ...p,
               x: nextX,
               y: nextY,
-              direction: nextX >= p.x ? 1 : -1,
+              direction: nextX !== p.x ? (nextX >= p.x ? 1 : -1) : p.direction,
+              isMoving: hasMoved,
               hunger: Math.round(nextHunger * 10) / 10,
               cleanliness: Math.round(nextCleanliness * 10) / 10,
               health: Math.round(nextHealth * 10) / 10,
               weight: Math.round((p.weight + weightDelta) * 10) / 10
             };
           }
-          return p;
+          return {
+            ...p,
+            isMoving: false
+          };
         })
       );
     }, 2400);
@@ -1472,6 +1518,7 @@ export default function HappyHogView() {
     }
     setEnergy((e) => Math.max(0, e - 1));
     playSound('feed', isMuted);
+    triggerPigJoy(targetPig.id);
     setPigs((prev) =>
       prev.map((p) => {
         if (p.id === targetPig.id) {
@@ -1518,6 +1565,7 @@ export default function HappyHogView() {
     }
     setEnergy((e) => Math.max(0, e - 1));
     playSound('bubble', isMuted);
+    triggerPigJoy(selectedPig.id);
     setPigs((prev) =>
       prev.map((p) => (p.id === selectedPig.id ? { ...p, cleanliness: 100 } : p))
     );
@@ -1549,6 +1597,7 @@ export default function HappyHogView() {
     setEnergy((e) => Math.max(0, e - 2));
     setCoins((c) => c - 20);
     playSound('heal', isMuted);
+    triggerPigJoy(selectedPig.id);
     setPigs((prev) =>
       prev.map((p) => (p.id === selectedPig.id ? { ...p, health: 100 } : p))
     );
@@ -1564,6 +1613,7 @@ export default function HappyHogView() {
     }
     setEnergy((e) => Math.max(0, e - 1));
     playSound('bubble', isMuted);
+    triggerPigJoy(selectedPig.id);
     setPigs((prev) =>
       prev.map((p) => (p.id === selectedPig.id ? { ...p, health: Math.min(100, p.health + 20) } : p))
     );
@@ -1620,6 +1670,7 @@ export default function HappyHogView() {
 
     const names = ['น้องนำโชค', 'น้องมั่งมี', 'น้องเงินล้าน', 'น้องเบิกจ่าย', 'น้องไร้ใบเตือน', 'น้องทองแท้'];
     const randomName = names[Math.floor(Math.random() * names.length)];
+    const coord = getRandomCoordInBarn(activeThemeId);
 
     const newPig = {
       id: Date.now(),
@@ -1629,8 +1680,8 @@ export default function HappyHogView() {
       hunger: 90,
       cleanliness: 100,
       health: 100,
-      x: Math.round(15 + Math.random() * 70),
-      y: Math.round(28 + Math.random() * 52),
+      x: coord.x,
+      y: coord.y,
       direction: 1
     };
 
@@ -1657,6 +1708,7 @@ export default function HappyHogView() {
 
     const names = ['มังกรหยกประทานพร', 'วิหคเพลิงนำโชค', 'เทวาจักรวาลเรืองแสง', 'ซาโตชิตัวตึง', 'ราชาอสูรไททัน', 'เทพธิดาจันทราเพชร'];
     const randomName = names[Math.floor(Math.random() * names.length)];
+    const coord = getRandomCoordInBarn(activeThemeId);
 
     const newPig = {
       id: Date.now(),
@@ -1666,8 +1718,8 @@ export default function HappyHogView() {
       hunger: 100,
       cleanliness: 100,
       health: 100,
-      x: Math.round(15 + Math.random() * 70),
-      y: Math.round(28 + Math.random() * 52),
+      x: coord.x,
+      y: coord.y,
       direction: 1
     };
 
@@ -1760,6 +1812,7 @@ export default function HappyHogView() {
       else if (roll > 0.1) resultBreed = 'auditor';
     }
 
+    const coord = getRandomCoordInBarn(activeThemeId);
     const babyId = Date.now();
     const baby = {
       id: babyId,
@@ -1769,8 +1822,8 @@ export default function HappyHogView() {
       hunger: 100,
       cleanliness: 100,
       health: 100,
-      x: Math.round(20 + Math.random() * 60),
-      y: Math.round(30 + Math.random() * 45),
+      x: coord.x,
+      y: coord.y,
       direction: 1,
       breedCooldownUntil: now + 180000 // baby rests 3 min
     };
@@ -2114,6 +2167,7 @@ export default function HappyHogView() {
     if (roll < 0.8) {
       playSound('steal', isMuted);
       const targetPig = neighbor.pigs[Math.floor(Math.random() * neighbor.pigs.length)];
+      const coord = getRandomCoordInBarn(activeThemeId);
       const stolenBaby = {
         id: Date.now(),
         name: `หมูอุ้มจาก${neighbor.name}`,
@@ -2122,8 +2176,8 @@ export default function HappyHogView() {
         hunger: 80,
         cleanliness: 90,
         health: 100,
-        x: 45,
-        y: 50,
+        x: coord.x,
+        y: coord.y,
         direction: 1
       };
 
@@ -2168,6 +2222,7 @@ export default function HappyHogView() {
       setUnlockedThemes((t) => [...t, reward.unlockTheme]);
     }
     if (reward.grantPig && pigs.length < 8) {
+      const coord = getRandomCoordInBarn(activeThemeId);
       const bonusPig = {
         id: Date.now(),
         name: `หมูทองคำรางวัลล็อกอิน`,
@@ -2176,8 +2231,8 @@ export default function HappyHogView() {
         hunger: 100,
         cleanliness: 100,
         health: 100,
-        x: 50,
-        y: 50,
+        x: coord.x,
+        y: coord.y,
         direction: 1
       };
       setPigs((p) => [...p, bonusPig]);
@@ -2205,8 +2260,21 @@ export default function HappyHogView() {
 
   const handleSelectTheme = (themeKey) => {
     const theme = BARN_THEMES[themeKey];
+    const targetBounds = theme?.bounds || { minX: 25, maxX: 72, minY: 40, maxY: 72 };
+
+    const clampPigsToTheme = () => {
+      setPigs((prev) =>
+        prev.map((p) => {
+          const clampedX = Math.max(targetBounds.minX + 2, Math.min(targetBounds.maxX - 2, p.x));
+          const clampedY = Math.max(targetBounds.minY + 2, Math.min(targetBounds.maxY - 2, p.y));
+          return { ...p, x: Math.round(clampedX), y: Math.round(clampedY) };
+        })
+      );
+    };
+
     if (unlockedThemes.includes(themeKey)) {
       setActiveThemeId(themeKey);
+      clampPigsToTheme();
       playSound('feed', isMuted);
       showToast(`🎨 เปลี่ยนธีมคอกเป็น: "${theme.name}" เรียบร้อยแล้ว!`);
       setShowThemeModal(false);
@@ -2230,6 +2298,7 @@ export default function HappyHogView() {
 
     setUnlockedThemes((prev) => [...prev, themeKey]);
     setActiveThemeId(themeKey);
+    clampPigsToTheme();
     playSound('fanfare', isMuted);
     showToast(`🎉 ปลดล็อกและเปิดใช้งานธีม: "${theme.name}" สำเร็จ!`);
     setShowThemeModal(false);
@@ -2724,6 +2793,7 @@ export default function HappyHogView() {
                       key={pig.id}
                       onClick={() => {
                         setSelectedPigId(pig.id);
+                        triggerPigJoy(pig.id);
                         playSound('oink', isMuted);
                       }}
                       style={{
@@ -2735,43 +2805,46 @@ export default function HappyHogView() {
                       }}
                       className="absolute cursor-pointer group"
                     >
-                      {/* 1. Floating Need Bubble - Circular Ring with Icon (Inspired by Reference Game Image 4) */}
+                      {/* 1. Floating Need Bubble - Scaled to Cute Chibi Size */}
                       {need && (
                         <div
                           onClick={(e) => handleBubbleClick(e, pig, need)}
-                          className="absolute -top-15 left-1/2 -translate-x-1/2 flex flex-col items-center cursor-pointer z-40 transition-transform hover:scale-125 active:scale-95 animate-bounce pointer-events-auto group/bubble select-none"
+                          className="absolute -top-11 sm:-top-12 left-1/2 -translate-x-1/2 flex flex-col items-center cursor-pointer z-40 transition-transform hover:scale-125 active:scale-95 animate-bounce pointer-events-auto group/bubble select-none"
                           title={need.hint}
                         >
-                          <div className={`w-11 h-11 rounded-full bg-white/95 backdrop-blur-md border-2 border-white shadow-[0_4px_16px_rgba(0,0,0,0.25)] flex items-center justify-center text-2xl transition-all ${
+                          <div className={`w-8.5 h-8.5 sm:w-9 sm:h-9 rounded-full bg-white/95 backdrop-blur-md border-2 border-white shadow-[0_4px_16px_rgba(0,0,0,0.25)] flex items-center justify-center text-lg transition-all ${
                             need.type === 'heal'
-                              ? 'ring-3 ring-rose-400 shadow-[0_4px_14px_rgba(244,63,94,0.4)]'
+                              ? 'ring-2 sm:ring-3 ring-rose-400 shadow-[0_4px_14px_rgba(244,63,94,0.4)]'
                               : need.type === 'love'
-                              ? 'ring-3 ring-pink-400 shadow-[0_4px_14px_rgba(236,72,153,0.4)]'
-                              : 'ring-3 ring-emerald-400 shadow-[0_4px_14px_rgba(16,185,129,0.4)]'
+                              ? 'ring-2 sm:ring-3 ring-pink-400 shadow-[0_4px_14px_rgba(236,72,153,0.4)]'
+                              : 'ring-2 sm:ring-3 ring-emerald-400 shadow-[0_4px_14px_rgba(16,185,129,0.4)]'
                           }`}>
                             <span className="filter drop-shadow-xs">{need.icon}</span>
                           </div>
-                          <div className={`w-2.5 h-2.5 bg-white border-r-2 border-b-2 rotate-45 -mt-1.5 shadow-xs ${
+                          <div className={`w-2 h-2 bg-white border-r-2 border-b-2 rotate-45 -mt-1 shadow-xs ${
                             need.type === 'heal' ? 'border-rose-300' : need.type === 'love' ? 'border-pink-300' : 'border-emerald-300'
                           }`} />
                         </div>
                       )}
 
-                      {/* 2. High-Fidelity 3D Chibi Illustrated Pig Sprite */}
+                      {/* 2. High-Fidelity 3D Chibi Illustrated Pig Sprite with Living Animations */}
                       <PigSprite
                         breed={pig.breed}
                         isSelected={isSelected}
                         direction={pig.direction}
                         weight={pig.weight}
+                        isMoving={pig.isMoving}
+                        isResting={isResting}
+                        isTapped={tappedPigId === pig.id}
                       />
 
-                      {/* 3. Clean Selection Marker & Subtle Resting Indicator (No Text Tags to keep visuals relaxed and spacious) */}
+                      {/* 3. Clean Selection Marker & Subtle Resting Indicator */}
                       {isSelected && (
-                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-16 h-4.5 rounded-full border-2 border-amber-400/90 bg-amber-400/25 shadow-[0_0_12px_rgba(251,191,36,0.7)] animate-pulse pointer-events-none -z-10" />
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-3.5 rounded-full border-2 border-amber-400/90 bg-amber-400/25 shadow-[0_0_12px_rgba(251,191,36,0.7)] animate-pulse pointer-events-none -z-10" />
                       )}
                       {isResting && (
                         <div
-                          className="absolute -top-7 right-0 text-sm animate-pulse pointer-events-none drop-shadow-md select-none"
+                          className="absolute -top-5 right-0 text-xs sm:text-sm animate-pulse pointer-events-none drop-shadow-md select-none"
                           title="กำลังพักฟื้นหลังคลอด"
                         >
                           💤

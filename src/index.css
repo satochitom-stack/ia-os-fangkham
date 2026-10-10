@@ -254,3 +254,65 @@ html.dark body {
 .shadow-orbital {
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
+
+/* Piggy Town - Pig Movement & Body Organic Animations */
+@keyframes pigWaddle {
+  0%, 100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  25% {
+    transform: rotate(-6deg) translateY(-3px);
+  }
+  75% {
+    transform: rotate(6deg) translateY(-2px);
+  }
+}
+
+@keyframes pigBreathe {
+  0%, 100% {
+    transform: scale(1, 1) translateY(0);
+  }
+  50% {
+    transform: scale(1.04, 0.95) translateY(1px);
+  }
+}
+
+@keyframes pigSleep {
+  0%, 100% {
+    transform: scale(1, 0.93) translateY(2px);
+  }
+  50% {
+    transform: scale(1.03, 1.01) translateY(0);
+  }
+}
+
+@keyframes pigJoy {
+  0%, 100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-12px) scale(1.15) rotate(-8deg);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.05) rotate(6deg);
+  }
+  75% {
+    transform: translateY(-8px) scale(1.1) rotate(-4deg);
+  }
+}
+
+.animate-pig-waddle {
+  animation: pigWaddle 0.55s ease-in-out infinite;
+}
+
+.animate-pig-breathe {
+  animation: pigBreathe 2.2s ease-in-out infinite;
+}
+
+.animate-pig-sleep {
+  animation: pigSleep 2.8s ease-in-out infinite;
+}
+
+.animate-pig-joy {
+  animation: pigJoy 0.75s ease-in-out;
+}
