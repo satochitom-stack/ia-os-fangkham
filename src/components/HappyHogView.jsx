@@ -657,7 +657,7 @@ const BARN_THEMES = {
     name: 'ทุ่งหญ้าธรรมชาติพาสเทล',
     tag: 'Piggy Town',
     icon: '🌿',
-    bgImage: '/pigs/farm_bg.jpg',
+    
     bgClass: 'from-[#7dd3fc] via-[#bbf7d0] to-[#86efac]',
     penGround: '#f7e7c4',
     fenceBorder: '#8c593b',
@@ -665,14 +665,14 @@ const BARN_THEMES = {
     cost: 0,
     unlockedByDefault: true,
     atmosphere: 'butterflies',
-    bounds: { minX: 22, maxX: 74, minY: 36, maxY: 74 }
+    bounds: { minX: 18, maxX: 82, minY: 32, maxY: 76 }
   },
   cozy_wood: {
     id: 'cozy_wood',
     name: 'คอกไม้ชนบทฤดูใบไม้ร่วง',
     tag: 'อบอุ่น',
     icon: '🪵',
-    bgImage: '/pigs/theme_cozy_wood.jpg',
+    
     bgClass: 'from-[#fed7aa] via-[#fde68a] to-[#d97706]',
     penGround: '#eedbb3',
     fenceBorder: '#78350f',
@@ -680,14 +680,14 @@ const BARN_THEMES = {
     cost: 0,
     unlockedByDefault: true,
     atmosphere: 'leaves',
-    bounds: { minX: 28, maxX: 72, minY: 42, maxY: 72 }
+    bounds: { minX: 18, maxX: 82, minY: 32, maxY: 76 }
   },
   onsen_mud: {
     id: 'onsen_mud',
     name: 'สปาออนเซ็นเพื่อสุขภาพ',
     tag: 'รีแลกซ์',
     icon: '♨️',
-    bgImage: '/pigs/theme_onsen_mud.jpg',
+    
     bgClass: 'from-[#cbd5e1] via-[#94a3b8] to-[#64748b]',
     penGround: '#d6cbba',
     fenceBorder: '#475569',
@@ -695,14 +695,14 @@ const BARN_THEMES = {
     cost: 400,
     unlockDesc: 'อาบน้ำหมูสะสมครบ 8 ครั้ง หรือใช้ 400 เหรียญ',
     atmosphere: 'steam',
-    bounds: { minX: 26, maxX: 72, minY: 40, maxY: 72 }
+    bounds: { minX: 18, maxX: 82, minY: 32, maxY: 76 }
   },
   lanna: {
     id: 'lanna',
     name: 'คุ้มเรือนไม้สักล้านนา อปท.',
     tag: 'วัฒนธรรม',
     icon: '🏮',
-    bgImage: '/pigs/theme_lanna.jpg',
+    
     bgClass: 'from-[#fef08a] via-[#fde047] to-[#ca8a04]',
     penGround: '#fae3b4',
     fenceBorder: '#854d0e',
@@ -710,14 +710,13 @@ const BARN_THEMES = {
     cost: 800,
     unlockDesc: 'มีหมูน้ำหนัก 90 kg ขึ้นไป หรือใช้ 800 เหรียญ',
     atmosphere: 'lanterns',
-    bounds: { minX: 26, maxX: 72, minY: 40, maxY: 73 }
+    bounds: { minX: 18, maxX: 82, minY: 32, maxY: 76 }
   },
   golden_palace: {
     id: 'golden_palace',
     name: 'คฤหาสน์หมูทองคำเศรษฐี',
     tag: 'ลักชัวรี่',
     icon: '👑',
-    bgImage: '/pigs/theme_golden_palace.jpg',
     bgClass: 'from-[#fef08a] via-[#fbbf24] to-[#d97706]',
     penGround: '#fff3c4',
     fenceBorder: '#b45309',
@@ -725,14 +724,14 @@ const BARN_THEMES = {
     cost: 1500,
     unlockDesc: 'ครอบครองหมูทองคำ หรือใช้ 1,500 เหรียญ',
     atmosphere: 'sparkles',
-    bounds: { minX: 35, maxX: 63, minY: 42, maxY: 65 }
+    bounds: { minX: 18, maxX: 82, minY: 32, maxY: 76 }
   },
   cyber_space: {
     id: 'cyber_space',
     name: 'ฟาร์มไฮเทคสมาร์ทอีโค่',
     tag: 'สมาร์ทฟาร์ม',
     icon: '⚡',
-    bgImage: '/pigs/theme_smart_farm.jpg',
+    
     bgClass: 'from-[#0f172a] via-[#1e1b4b] to-[#312e81]',
     penGround: '#e2e8f0',
     fenceBorder: '#06b6d4',
@@ -740,7 +739,7 @@ const BARN_THEMES = {
     cost: 2200,
     unlockDesc: 'ผสมพันธุ์สำเร็จ 3 ครั้ง หรือใช้ 2,200 เหรียญ',
     atmosphere: 'cyber',
-    bounds: { minX: 28, maxX: 72, minY: 44, maxY: 74 }
+    bounds: { minX: 18, maxX: 82, minY: 32, maxY: 76 }
   }
 };
 
@@ -1130,11 +1129,678 @@ const PigElementalEffect = ({ breed }) => {
 };
 
 // 9. High-Fidelity 3D Chibi Pig Sprite Component (Piggy Town & Happy Hog Style)
+
+// ==============================================================
+// MODULAR BARN DECORATIONS (Tilemap.exe EP.3 Modular Asset Kit)
+// ==============================================================
+export const BARN_DECORS = {
+  golden_palace_building: {
+    id: 'golden_palace_building',
+    name: 'ปราสาทคฤหาสน์ทองคำหลวง',
+    category: 'building',
+    icon: '🏛️',
+    cost: 500,
+    perk: 'คฤหาสน์ทองคำหลวง เพิ่มราคาขายหมูในฟาร์ม +25%',
+    defaultPos: { x: 50, y: 28 },
+    layer: 'back',
+    scale: 1.35,
+    tag: 'ปราสาท'
+  },
+  golden_fountain: {
+    id: 'golden_fountain',
+    name: 'น้ำพุทองคำเศรษฐี',
+    category: 'water',
+    icon: '⛲',
+    cost: 350,
+    perk: 'น้ำพุพุ่งสวยงาม เสริมโชคลาภในการหมุนวงล้อหมู',
+    defaultPos: { x: 80, y: 50 },
+    layer: 'mid',
+    scale: 1.15,
+    tag: 'น้ำพุ'
+  },
+  stone_well: {
+    id: 'stone_well',
+    name: 'บ่อน้ำศิลาโบราณ',
+    category: 'building',
+    icon: '🪣',
+    cost: 180,
+    perk: 'บ่อน้ำดื่มสะอาด หมูสดชื่น คลายกระหายน้ำ',
+    defaultPos: { x: 20, y: 68 },
+    layer: 'mid',
+    scale: 1.05,
+    tag: 'บ่อน้ำ'
+  },
+  rose_hedge: {
+    id: 'rose_hedge',
+    name: 'แนวพุ่มกุหลาบพระราชวัง',
+    category: 'flora',
+    icon: '🌹',
+    cost: 150,
+    perk: 'กลิ่นกุหลาบหอมฟุ้ง หมูมีความสุขสดชื่น +15%',
+    defaultPos: { x: 78, y: 70 },
+    layer: 'mid',
+    scale: 1.0,
+    tag: 'ดอกไม้'
+  },
+  veggie_patch: {
+    id: 'veggie_patch',
+    name: 'แปลงผักสวนครัวจำลอง',
+    category: 'flora',
+    icon: '🥕',
+    cost: 160,
+    perk: 'ผักสวนครัวสดใหม่ เพิ่มความอิ่มหมู +10%',
+    defaultPos: { x: 22, y: 50 },
+    layer: 'mid',
+    scale: 1.05,
+    tag: 'แปลงผัก'
+  },
+  pine_tree: {
+    id: 'pine_tree',
+    name: 'ต้นสนการ์ตูนป่าเห็ด',
+    category: 'tree',
+    icon: '🌲',
+    cost: 150,
+    perk: 'เพิ่มร่มเงา หมูลดความเครียด +10%',
+    defaultPos: { x: 18, y: 38 },
+    layer: 'back',
+    scale: 1.1,
+    tag: 'ต้นไม้'
+  },
+  ancient_oak: {
+    id: 'ancient_oak',
+    name: 'ต้นโอ๊คยักษ์โบราณ',
+    category: 'tree',
+    icon: '🌳',
+    cost: 280,
+    perk: 'ใบไม้พริ้วไหว หมูหลับสบาย ฟื้นฟูไวขึ้น +15%',
+    defaultPos: { x: 82, y: 36 },
+    layer: 'back',
+    scale: 1.25,
+    tag: 'ต้นไม้'
+  },
+  sakura_tree: {
+    id: 'sakura_tree',
+    name: 'ต้นซากุระสปาพาสเทล',
+    category: 'tree',
+    icon: '🌸',
+    cost: 350,
+    perk: 'กลีบซากุระร่วง เพิ่มบรรยากาศผ่อนคลายและความสะอาด +15%',
+    defaultPos: { x: 16, y: 44 },
+    layer: 'back',
+    scale: 1.15,
+    tag: 'ต้นไม้'
+  },
+  golden_teak: {
+    id: 'golden_teak',
+    name: 'ไม้สักทองล้านนา',
+    category: 'tree',
+    icon: '🎋',
+    cost: 480,
+    perk: 'ไม้สักทองมงคล เพิ่มมูลค่าราคาขายหมูในฟาร์ม +5%',
+    defaultPos: { x: 84, y: 40 },
+    layer: 'back',
+    scale: 1.2,
+    tag: 'ต้นไม้'
+  },
+  cyber_pylon: {
+    id: 'cyber_pylon',
+    name: 'เสาไฮเทคปล่อยพลังงาน',
+    category: 'tree',
+    icon: '📡',
+    cost: 600,
+    perk: 'คลื่นพลังงาน ช่วยเร่งการฟื้นฟูพลังงานผู้เล่น +10%',
+    defaultPos: { x: 20, y: 38 },
+    layer: 'back',
+    scale: 1.05,
+    tag: 'ไฮเทค'
+  },
+  mushroom_cottage: {
+    id: 'mushroom_cottage',
+    name: 'บ้านเห็ดแฟนตาซีอบอุ่น',
+    category: 'building',
+    icon: '🍄',
+    cost: 320,
+    perk: 'มีไฟหน้าต่างตอนค่ำ เพิ่มความสุขหมู +12%',
+    defaultPos: { x: 26, y: 32 },
+    layer: 'back',
+    scale: 1.25,
+    tag: 'บ้านเห็ด'
+  },
+  straw_hut: {
+    id: 'straw_hut',
+    name: 'ซุ้มเพิงฟางบังแดด',
+    category: 'building',
+    icon: '🛖',
+    cost: 200,
+    perk: 'เพิงฟางกันแดด อุณหภูมิคอกสมดุล ป้องกันหมูป่วย',
+    defaultPos: { x: 74, y: 32 },
+    layer: 'back',
+    scale: 1.1,
+    tag: 'เพิงพัก'
+  },
+  lanna_pavilion: {
+    id: 'lanna_pavilion',
+    name: 'ศาลาทรงไทยล้านนา',
+    category: 'building',
+    icon: '🏛️',
+    cost: 520,
+    perk: 'ศาลาพักใจ หมูมีความสุขและโตไวขึ้น +10%',
+    defaultPos: { x: 72, y: 32 },
+    layer: 'back',
+    scale: 1.15,
+    tag: 'ศาลา'
+  },
+  vintage_lamp: {
+    id: 'vintage_lamp',
+    name: 'โคมไฟเสาไม้ข้างทาง',
+    category: 'light',
+    icon: '🏮',
+    cost: 140,
+    perk: 'ส่องแสงสว่างในเวลากลางคืน คอยส่องทางเดิน',
+    defaultPos: { x: 38, y: 74 },
+    layer: 'front',
+    scale: 1.0,
+    tag: 'โคมไฟ'
+  },
+  crystal_lantern: {
+    id: 'crystal_lantern',
+    name: 'โคมคริสตัลเรืองแสง',
+    category: 'light',
+    icon: '🔮',
+    cost: 300,
+    perk: 'ส่องแสงคริสตัล ดึงดูดของขวัญตกกระทบฟาร์ม',
+    defaultPos: { x: 62, y: 74 },
+    layer: 'front',
+    scale: 1.0,
+    tag: 'โคมไฟ'
+  },
+  glow_mushrooms: {
+    id: 'glow_mushrooms',
+    name: 'เห็ดเรืองแสงสามสี',
+    category: 'flora',
+    icon: '🪻',
+    cost: 120,
+    perk: 'เห็ดเรืองแสงสีนีออน สวยงามยามค่ำคืน',
+    defaultPos: { x: 22, y: 64 },
+    layer: 'mid',
+    scale: 0.9,
+    tag: 'ของเตี้ย'
+  },
+  flower_meadow: {
+    id: 'flower_meadow',
+    name: 'แปลงดอกไม้พาสเทล',
+    category: 'flora',
+    icon: '💐',
+    cost: 160,
+    perk: 'ผีเสื้อบินวนรอบแปลงดอกไม้ หมูอารมณ์ดี +15%',
+    defaultPos: { x: 74, y: 66 },
+    layer: 'mid',
+    scale: 0.95,
+    tag: 'ของเตี้ย'
+  },
+  ancient_stump: {
+    id: 'ancient_stump',
+    name: 'ตอไม้ขอนโบราณ',
+    category: 'flora',
+    icon: '🪵',
+    cost: 110,
+    perk: 'ที่เกาหลังของน้องหมู ช่วยลดความเครียด',
+    defaultPos: { x: 32, y: 68 },
+    layer: 'mid',
+    scale: 0.9,
+    tag: 'ตอไม้'
+  },
+  onsen_bath: {
+    id: 'onsen_bath',
+    name: 'บ่อน้ำแร่ออนเซ็นหินภูเขาไฟ',
+    category: 'water',
+    icon: '♨️',
+    cost: 420,
+    perk: 'มีไอควันอุ่นๆ หมูอาบน้ำแล้วผิวเนียนสวย',
+    defaultPos: { x: 76, y: 52 },
+    layer: 'mid',
+    scale: 1.15,
+    tag: 'บ่อน้ำแร่'
+  }
+};
+
+// Component to render modular decor items with isometric 3/4 styling & shadows
+const DecorItemSprite = ({ decor, isNight }) => {
+  const { id } = decor;
+
+  if (id === 'golden_palace_building') {
+    return (
+      <svg width="140" height="110" viewBox="0 0 140 110" className="drop-shadow-2xl select-none pointer-events-none">
+        <ellipse cx="70" cy="100" rx="65" ry="9" fill="rgba(0,0,0,0.25)" />
+        {/* Main Palace Body */}
+        <path d="M25 50 L70 20 L115 50 L115 98 L25 98 Z" fill="#fef08a" stroke="#ca8a04" strokeWidth="2.5" />
+        {/* Side Wings */}
+        <rect x="15" y="60" width="20" height="38" rx="2" fill="#fef9c3" stroke="#ca8a04" strokeWidth="2" />
+        <rect x="105" y="60" width="20" height="38" rx="2" fill="#fef9c3" stroke="#ca8a04" strokeWidth="2" />
+        {/* Golden Central Dome */}
+        <path d="M48 42 Q70 8 92 42 Z" fill="#eab308" stroke="#a16207" strokeWidth="2.5" />
+        <circle cx="70" cy="8" r="4.5" fill="#fde047" stroke="#854d0e" strokeWidth="1.5" />
+        <polygon points="70,1 68,6 72,6" fill="#facc15" />
+        {/* Grand Portico Columns */}
+        <rect x="42" y="64" width="6" height="34" fill="#ffffff" stroke="#ca8a04" strokeWidth="1.5" />
+        <rect x="58" y="64" width="6" height="34" fill="#ffffff" stroke="#ca8a04" strokeWidth="1.5" />
+        <rect x="76" y="64" width="6" height="34" fill="#ffffff" stroke="#ca8a04" strokeWidth="1.5" />
+        <rect x="92" y="64" width="6" height="34" fill="#ffffff" stroke="#ca8a04" strokeWidth="1.5" />
+        {/* Golden Arch Entrance */}
+        <path d="M64 74 Q70 66 76 74 L76 98 L64 98 Z" fill="#713f12" stroke="#451a03" strokeWidth="1.8" />
+        {/* Royal Crest Banner */}
+        <polygon points="62,50 78,50 70,62" fill="#dc2626" stroke="#991b1b" strokeWidth="1" />
+        <circle cx="70" cy="55" r="2.5" fill="#fde047" />
+      </svg>
+    );
+  }
+
+  if (id === 'stone_well') {
+    return (
+      <svg width="65" height="75" viewBox="0 0 65 75" className="drop-shadow-lg select-none pointer-events-none">
+        <ellipse cx="32" cy="68" rx="28" ry="6" fill="rgba(0,0,0,0.22)" />
+        {/* Stone Basin Base */}
+        <ellipse cx="32" cy="56" rx="24" ry="10" fill="#78716c" stroke="#44403c" strokeWidth="2" />
+        <ellipse cx="32" cy="54" rx="18" ry="7" fill="#0284c7" />
+        {/* Wooden Support Beams */}
+        <rect x="14" y="28" width="4" height="28" fill="#78350f" stroke="#451a03" strokeWidth="1.5" />
+        <rect x="46" y="28" width="4" height="28" fill="#78350f" stroke="#451a03" strokeWidth="1.5" />
+        {/* Shingle Roof */}
+        <polygon points="8,32 32,10 56,32" fill="#b45309" stroke="#78350f" strokeWidth="2" />
+        <polygon points="12,30 32,14 52,30" fill="#d97706" />
+        {/* Hanging Bucket */}
+        <line x1="32" y1="20" x2="32" y2="42" stroke="#451a03" strokeWidth="1.5" />
+        <rect x="29" y="42" width="6" height="7" rx="1" fill="#78350f" stroke="#451a03" strokeWidth="1" />
+      </svg>
+    );
+  }
+
+  if (id === 'rose_hedge') {
+    return (
+      <svg width="80" height="48" viewBox="0 0 80 48" className="drop-shadow-md select-none pointer-events-none">
+        <ellipse cx="40" cy="42" rx="36" ry="5.5" fill="rgba(0,0,0,0.18)" />
+        {/* Green Hedge Bush */}
+        <ellipse cx="40" cy="30" rx="34" ry="14" fill="#15803d" stroke="#14532d" strokeWidth="2" />
+        <circle cx="22" cy="24" r="14" fill="#16a34a" />
+        <circle cx="58" cy="24" r="14" fill="#16a34a" />
+        <circle cx="40" cy="20" r="15" fill="#22c55e" />
+        {/* Blooming Roses */}
+        <circle cx="20" cy="20" r="5.5" fill="#e11d48" stroke="#9f1239" strokeWidth="1.2" />
+        <circle cx="20" cy="20" r="2.5" fill="#fda4af" />
+        <circle cx="40" cy="15" r="6" fill="#f43f5e" stroke="#9f1239" strokeWidth="1.2" />
+        <circle cx="40" cy="15" r="2.5" fill="#ffe4e6" />
+        <circle cx="60" cy="20" r="5.5" fill="#e11d48" stroke="#9f1239" strokeWidth="1.2" />
+        <circle cx="60" cy="20" r="2.5" fill="#fda4af" />
+        <circle cx="30" cy="28" r="4.5" fill="#fb7185" />
+        <circle cx="50" cy="28" r="4.5" fill="#fb7185" />
+      </svg>
+    );
+  }
+
+  if (id === 'veggie_patch') {
+    return (
+      <svg width="75" height="46" viewBox="0 0 75 46" className="drop-shadow-md select-none pointer-events-none">
+        <ellipse cx="37" cy="40" rx="34" ry="5.5" fill="rgba(0,0,0,0.18)" />
+        {/* Soil Raised Bed */}
+        <ellipse cx="37" cy="32" rx="32" ry="11" fill="#78350f" stroke="#451a03" strokeWidth="2" />
+        <ellipse cx="37" cy="30" rx="28" ry="8" fill="#92400e" />
+        {/* Crops (Carrots and Lettuce) */}
+        <circle cx="20" cy="26" r="6.5" fill="#16a34a" />
+        <circle cx="20" cy="26" r="3.5" fill="#86efac" />
+        <polygon points="34,22 40,22 37,32" fill="#ea580c" />
+        <circle cx="37" cy="20" r="3" fill="#22c55e" />
+        <circle cx="54" cy="26" r="6.5" fill="#16a34a" />
+        <circle cx="54" cy="26" r="3.5" fill="#86efac" />
+      </svg>
+    );
+  }
+
+  if (id === 'golden_fountain') {
+    return (
+      <svg width="76" height="84" viewBox="0 0 76 84" className="drop-shadow-[0_0_12px_rgba(251,191,36,0.6)] select-none pointer-events-none">
+        <ellipse cx="38" cy="74" rx="32" ry="7" fill="rgba(0,0,0,0.25)" />
+        <ellipse cx="38" cy="66" rx="30" ry="9" fill="#ca8a04" stroke="#713f12" strokeWidth="2.5" />
+        <ellipse cx="38" cy="64" rx="26" ry="7" fill="#38bdf8" />
+        <rect x="34" y="38" width="8" height="26" fill="#eab308" stroke="#713f12" strokeWidth="2" />
+        <ellipse cx="38" cy="38" rx="17" ry="5.5" fill="#fde047" stroke="#713f12" strokeWidth="2" />
+        <circle cx="38" cy="22" r="8" fill="#facc15" stroke="#713f12" strokeWidth="2" />
+        <line x1="38" y1="14" x2="38" y2="4" stroke="#bae6fd" strokeWidth="2.5" strokeLinecap="round" className="animate-pulse" />
+      </svg>
+    );
+  }
+
+  if (id === 'pine_tree') {
+    return (
+      <svg width="76" height="92" viewBox="0 0 76 92" className="drop-shadow-lg select-none pointer-events-none">
+        <ellipse cx="38" cy="84" rx="30" ry="7" fill="rgba(0,0,0,0.24)" />
+        <path d="M34 56 L32 82 L44 82 L42 56 Z" fill="#78350f" stroke="#3d1b06" strokeWidth="2.5" />
+        <polygon points="12,62 38,36 64,62" fill="#1e3a2f" stroke="#0f1d17" strokeWidth="2.5" />
+        <polygon points="16,60 38,38 60,60" fill="#2d5a46" />
+        <polygon points="18,44 38,20 58,44" fill="#366b53" stroke="#0f1d17" strokeWidth="2.5" />
+        <polygon points="22,42 38,22 54,42" fill="#428164" />
+        <polygon points="26,26 38,8 50,26" fill="#4ea07c" stroke="#0f1d17" strokeWidth="2.5" />
+        <circle cx="38" cy="8" r="2.5" fill="#a7f3d0" />
+      </svg>
+    );
+  }
+
+  if (id === 'ancient_oak') {
+    return (
+      <svg width="88" height="102" viewBox="0 0 88 102" className="drop-shadow-xl select-none pointer-events-none">
+        <ellipse cx="44" cy="94" rx="36" ry="7.5" fill="rgba(0,0,0,0.22)" />
+        <path d="M38 50 Q42 74 34 90 L54 90 Q46 74 50 50 Z" fill="#6d3914" stroke="#361a07" strokeWidth="2.8" />
+        <ellipse cx="44" cy="44" rx="38" ry="30" fill="#166534" stroke="#052e16" strokeWidth="2.5" />
+        <circle cx="30" cy="38" r="22" fill="#15803d" />
+        <circle cx="58" cy="38" r="22" fill="#16a34a" />
+        <circle cx="44" cy="24" r="23" fill="#22c55e" />
+        <circle cx="40" cy="18" r="9" fill="#86efac" opacity="0.6" />
+      </svg>
+    );
+  }
+
+  if (id === 'sakura_tree') {
+    return (
+      <svg width="84" height="98" viewBox="0 0 84 98" className="drop-shadow-lg select-none pointer-events-none">
+        <ellipse cx="42" cy="90" rx="32" ry="7" fill="rgba(0,0,0,0.2)" />
+        <path d="M37 50 Q40 72 33 86 L51 86 Q44 72 47 50 Z" fill="#582e17" stroke="#2d1509" strokeWidth="2.5" />
+        <ellipse cx="42" cy="42" rx="36" ry="28" fill="#be185d" stroke="#500724" strokeWidth="2.5" />
+        <circle cx="28" cy="36" r="20" fill="#db2777" />
+        <circle cx="56" cy="36" r="20" fill="#ec4899" />
+        <circle cx="42" cy="22" r="22" fill="#f472b6" />
+        <circle cx="38" cy="16" r="8" fill="#fbcfe8" opacity="0.75" />
+      </svg>
+    );
+  }
+
+  if (id === 'golden_teak') {
+    return (
+      <svg width="84" height="100" viewBox="0 0 84 100" className="drop-shadow-lg select-none pointer-events-none">
+        <ellipse cx="42" cy="92" rx="32" ry="7" fill="rgba(0,0,0,0.22)" />
+        <path d="M38 50 Q41 74 34 88 L50 88 Q43 74 46 50 Z" fill="#78350f" stroke="#451a03" strokeWidth="2.5" />
+        <ellipse cx="42" cy="44" rx="34" ry="28" fill="#92400e" stroke="#451a03" strokeWidth="2.5" />
+        <circle cx="28" cy="38" r="20" fill="#b45309" />
+        <circle cx="56" cy="38" r="20" fill="#d97706" />
+        <circle cx="42" cy="24" r="22" fill="#f59e0b" />
+        <circle cx="38" cy="18" r="8" fill="#fde68a" opacity="0.7" />
+      </svg>
+    );
+  }
+
+  if (id === 'cyber_pylon') {
+    return (
+      <svg width="64" height="92" viewBox="0 0 64 92" className="drop-shadow-[0_0_12px_rgba(6,182,212,0.6)] select-none pointer-events-none">
+        <ellipse cx="32" cy="84" rx="24" ry="6" fill="rgba(6,182,212,0.3)" />
+        <path d="M24 28 L20 82 L44 82 L40 28 Z" fill="#0f172a" stroke="#06b6d4" strokeWidth="2.5" />
+        <circle cx="32" cy="22" r="13" fill="#0891b2" stroke="#22d3ee" strokeWidth="2.5" />
+        <circle cx="32" cy="22" r="6" fill="#67e8f9" className="animate-pulse" />
+      </svg>
+    );
+  }
+
+  if (id === 'mushroom_cottage') {
+    return (
+      <svg width="86" height="84" viewBox="0 0 86 84" className="drop-shadow-xl select-none pointer-events-none">
+        <ellipse cx="43" cy="76" rx="36" ry="7.5" fill="rgba(0,0,0,0.22)" />
+        <path d="M24 44 Q23 72 27 76 L59 76 Q63 72 62 44 Z" fill="#fef08a" stroke="#713f12" strokeWidth="2.8" />
+        <path d="M36 56 Q43 50 50 56 L50 76 L36 76 Z" fill="#78350f" stroke="#3d1b06" strokeWidth="2" />
+        <circle cx="32" cy="52" r="4.5" fill="#fef08a" stroke="#713f12" strokeWidth="1.8" className={isNight ? 'animate-pulse' : ''} />
+        <path d="M8 44 Q43 8 78 44 Q43 40 8 44 Z" fill="#dc2626" stroke="#450a0a" strokeWidth="3" />
+        <ellipse cx="26" cy="28" rx="5" ry="4" fill="#ffffff" />
+        <ellipse cx="48" cy="20" rx="6.5" ry="4.5" fill="#ffffff" />
+        <ellipse cx="66" cy="32" rx="4" ry="3" fill="#ffffff" />
+      </svg>
+    );
+  }
+
+  if (id === 'straw_hut') {
+    return (
+      <svg width="82" height="76" viewBox="0 0 82 76" className="drop-shadow-lg select-none pointer-events-none">
+        <ellipse cx="41" cy="70" rx="34" ry="6.5" fill="rgba(0,0,0,0.2)" />
+        <rect x="20" y="42" width="42" height="28" rx="2" fill="#78350f" stroke="#3d1b06" strokeWidth="2.5" />
+        <polygon points="6,46 41,12 76,46" fill="#eab308" stroke="#713f12" strokeWidth="2.5" />
+        <polygon points="12,44 41,16 70,44" fill="#fde047" />
+      </svg>
+    );
+  }
+
+  if (id === 'lanna_pavilion') {
+    return (
+      <svg width="82" height="84" viewBox="0 0 82 84" className="drop-shadow-xl select-none pointer-events-none">
+        <ellipse cx="41" cy="76" rx="34" ry="6.5" fill="rgba(0,0,0,0.22)" />
+        <rect x="20" y="42" width="6" height="34" fill="#78350f" stroke="#3d1b06" strokeWidth="1.5" />
+        <rect x="56" y="42" width="6" height="34" fill="#78350f" stroke="#3d1b06" strokeWidth="1.5" />
+        <polygon points="6,44 41,18 76,44" fill="#b45309" stroke="#3d1b06" strokeWidth="2.5" />
+        <polygon points="16,32 41,10 66,32" fill="#d97706" stroke="#3d1b06" strokeWidth="2" />
+      </svg>
+    );
+  }
+
+  if (id === 'vintage_lamp' || id === 'crystal_lantern') {
+    return (
+      <svg width="42" height="72" viewBox="0 0 42 72" className="drop-shadow-lg select-none pointer-events-none">
+        <ellipse cx="21" cy="66" rx="15" ry="4" fill="rgba(0,0,0,0.2)" />
+        <rect x="19" y="22" width="4" height="44" rx="1.5" fill="#451a03" stroke="#1c0b02" strokeWidth="1.5" />
+        <rect x="13" y="10" width="16" height="16" rx="3" fill="#1c1917" stroke="#000000" strokeWidth="1.8" />
+        <rect x="15" y="12" width="12" height="12" rx="2" fill={id === 'crystal_lantern' ? '#c084fc' : '#fbbf24'} className="animate-pulse" />
+        <circle cx="21" cy="18" r="14" fill={id === 'crystal_lantern' ? 'rgba(192,132,252,0.3)' : 'rgba(251,191,36,0.3)'} className="animate-pulse pointer-events-none" />
+      </svg>
+    );
+  }
+
+  if (id === 'glow_mushrooms') {
+    return (
+      <svg width="54" height="46" viewBox="0 0 54 46" className="drop-shadow-lg select-none pointer-events-none">
+        <ellipse cx="27" cy="40" rx="20" ry="4.5" fill="rgba(0,0,0,0.18)" />
+        <path d="M12 26 Q11 38 14 40 L20 40 Q19 38 18 26 Z" fill="#e0f2fe" stroke="#0369a1" strokeWidth="1.5" />
+        <path d="M6 26 Q15 12 24 26 Z" fill="#06b6d4" stroke="#083344" strokeWidth="2" className="animate-pulse" />
+        <path d="M28 18 Q27 36 31 40 L37 40 Q36 36 34 18 Z" fill="#f3e8ff" stroke="#6b21a8" strokeWidth="1.5" />
+        <path d="M22 18 Q33 2 44 18 Z" fill="#a855f7" stroke="#3b0764" strokeWidth="2" className="animate-pulse" />
+      </svg>
+    );
+  }
+
+  if (id === 'flower_meadow') {
+    return (
+      <svg width="60" height="40" viewBox="0 0 60 40" className="drop-shadow-md select-none pointer-events-none">
+        <ellipse cx="30" cy="34" rx="26" ry="5" fill="rgba(0,0,0,0.16)" />
+        <circle cx="16" cy="20" r="5" fill="#f43f5e" stroke="#881337" strokeWidth="1.5" />
+        <circle cx="16" cy="20" r="2" fill="#fef08a" />
+        <circle cx="30" cy="16" r="6" fill="#a855f7" stroke="#581c87" strokeWidth="1.5" />
+        <circle cx="30" cy="16" r="2.5" fill="#fef08a" />
+        <circle cx="44" cy="20" r="5" fill="#38bdf8" stroke="#0369a1" strokeWidth="1.5" />
+        <circle cx="44" cy="20" r="2" fill="#fef08a" />
+        <text x="34" y="10" fontSize="11" className="animate-bounce">🦋</text>
+      </svg>
+    );
+  }
+
+  if (id === 'ancient_stump') {
+    return (
+      <svg width="58" height="42" viewBox="0 0 58 42" className="drop-shadow-md select-none pointer-events-none">
+        <ellipse cx="29" cy="36" rx="24" ry="4.5" fill="rgba(0,0,0,0.2)" />
+        <path d="M10 22 L8 36 L48 36 L46 22 Z" fill="#78350f" stroke="#3d1b06" strokeWidth="2" />
+        <ellipse cx="29" cy="22" rx="19" ry="6.5" fill="#b45309" stroke="#3d1b06" strokeWidth="2" />
+        <path d="M14 26 Q20 22 26 28" stroke="#16a34a" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  if (id === 'onsen_bath') {
+    return (
+      <svg width="80" height="62" viewBox="0 0 80 62" className="drop-shadow-xl select-none pointer-events-none">
+        <ellipse cx="40" cy="52" rx="34" ry="7.5" fill="rgba(0,0,0,0.22)" />
+        <ellipse cx="40" cy="42" rx="36" ry="13" fill="#44403c" stroke="#1c1917" strokeWidth="2.5" />
+        <ellipse cx="40" cy="41" rx="28" ry="9" fill="#06b6d4" />
+        <ellipse cx="40" cy="41" rx="22" ry="6.5" fill="#22d3ee" opacity="0.8" />
+        <text x="34" y="26" fontSize="15" className="animate-pulse">♨️</text>
+      </svg>
+    );
+  }
+
+  return (
+    <div className="text-3xl select-none">{decor.icon || '🪴'}</div>
+  );
+};
+
+
+
+// ==============================================================
+// 2.5D ISOMETRIC OPEN PEN GROUND (Tilemap.exe Night Camp EP.3)
+// Clean, open, unobstructed pen floors with outer perimeter fences
+// ==============================================================
+const CleanIsometricPenGround = ({ themeId }) => {
+  if (themeId === 'golden_palace') {
+    return (
+      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
+        {/* Sunny Royal Azure Sky with Gentle Clouds */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#38bdf8] via-[#bae6fd] to-[#fef08a]" />
+        <div className="absolute top-4 left-1/4 w-36 h-12 bg-white/40 rounded-full blur-md" />
+        <div className="absolute top-10 right-1/4 w-48 h-14 bg-white/50 rounded-full blur-md" />
+        {/* Distant Rolling Royal Estate Greenery on Horizon */}
+        <div className="absolute top-[20%] left-0 right-0 h-20 bg-gradient-to-b from-[#15803d]/40 to-[#22c55e]/70 rounded-[100%_100%_0_0] blur-[2px]" />
+
+        {/* 2.5D Isometric Grand Courtyard (Polished Golden-Cream Marble Tiles) */}
+        <div className="absolute inset-x-[6%] top-[24%] bottom-[5%] rounded-[48px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.35)] border-4 border-[#ca8a04]">
+          {/* Base Polished Marble Floor */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#fffbeb] via-[#fef9c3] to-[#fef08a]" />
+          
+          {/* Subtle Isometric Tile Grid Pattern */}
+          <div
+            className="absolute inset-0 opacity-40"
+            style={{
+              backgroundImage: `linear-gradient(rgba(202,138,4,0.35) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(202,138,4,0.35) 1.5px, transparent 1.5px)`,
+              backgroundSize: '42px 42px'
+            }}
+          />
+
+          {/* Royal Decorative Inner Border Trim */}
+          <div className="absolute inset-4 rounded-[36px] border-2 border-dashed border-[#ca8a04]/50 pointer-events-none" />
+
+          {/* Wrought Gold Perimeter Fence Posts (Outer Boundary Only) */}
+          <div className="absolute top-2 left-6 right-6 flex justify-between">
+            {[...Array(9)].map((_, i) => (
+              <div key={i} className="flex flex-col items-center">
+                <div className="w-2.5 h-2.5 rounded-full bg-yellow-300 border border-amber-600 shadow-sm" />
+                <div className="w-1.5 h-6 bg-gradient-to-b from-amber-500 to-amber-700" />
+              </div>
+            ))}
+          </div>
+
+          <div className="absolute bottom-2 left-6 right-6 flex justify-between">
+            {[...Array(9)].map((_, i) => (
+              <div key={i} className="flex flex-col items-center">
+                <div className="w-2.5 h-2.5 rounded-full bg-yellow-300 border border-amber-600 shadow-sm" />
+                <div className="w-1.5 h-5 bg-gradient-to-b from-amber-500 to-amber-700" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (themeId === 'cozy_wood') {
+    return (
+      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#fed7aa] via-[#fde68a] to-[#d97706]" />
+        <div className="absolute top-[20%] left-0 right-0 h-20 bg-gradient-to-b from-[#92400e]/30 to-[#b45309]/50 rounded-[100%_100%_0_0] blur-[2px]" />
+        <div className="absolute inset-x-[6%] top-[24%] bottom-[5%] rounded-[48px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.35)] border-4 border-[#78350f]">
+          <div className="absolute inset-0 bg-[#eedbb3]" />
+          <div
+            className="absolute inset-0 opacity-30"
+            style={{
+              backgroundImage: `linear-gradient(rgba(120,53,15,0.4) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(120,53,15,0.4) 1.5px, transparent 1.5px)`,
+              backgroundSize: '48px 48px'
+            }}
+          />
+          <div className="absolute inset-4 rounded-[36px] border-2 border-dashed border-[#78350f]/40" />
+        </div>
+      </div>
+    );
+  }
+
+  if (themeId === 'onsen_mud') {
+    return (
+      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#cbd5e1] via-[#94a3b8] to-[#64748b]" />
+        <div className="absolute inset-x-[6%] top-[24%] bottom-[5%] rounded-[48px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.35)] border-4 border-[#475569]">
+          <div className="absolute inset-0 bg-[#d6cbba]" />
+          <div
+            className="absolute inset-0 opacity-25"
+            style={{
+              backgroundImage: `radial-gradient(#475569 2px, transparent 2px)`,
+              backgroundSize: '24px 24px'
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (themeId === 'lanna') {
+    return (
+      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#fef08a] via-[#fde047] to-[#ca8a04]" />
+        <div className="absolute inset-x-[6%] top-[24%] bottom-[5%] rounded-[48px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.35)] border-4 border-[#854d0e]">
+          <div className="absolute inset-0 bg-[#fae3b4]" />
+          <div
+            className="absolute inset-0 opacity-35"
+            style={{
+              backgroundImage: `linear-gradient(rgba(133,77,14,0.3) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(133,77,14,0.3) 1.5px, transparent 1.5px)`,
+              backgroundSize: '44px 44px'
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (themeId === 'cyber_space') {
+    return (
+      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a] via-[#1e1b4b] to-[#312e81]" />
+        <div className="absolute inset-x-[6%] top-[24%] bottom-[5%] rounded-[48px] overflow-hidden shadow-[0_20px_50px_rgba(6,182,212,0.35)] border-4 border-[#06b6d4]">
+          <div className="absolute inset-0 bg-[#0f172a]" />
+          <div
+            className="absolute inset-0 opacity-45"
+            style={{
+              backgroundImage: `linear-gradient(rgba(6,182,212,0.45) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(6,182,212,0.45) 1.5px, transparent 1.5px)`,
+              backgroundSize: '40px 40px'
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Default: Pasture (Clean Open Meadow Green)
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
+      <div className="absolute inset-0 bg-gradient-to-b from-[#7dd3fc] via-[#bbf7d0] to-[#86efac]" />
+      <div className="absolute top-6 left-1/4 w-36 h-10 bg-white/40 rounded-full blur-md" />
+      <div className="absolute top-12 right-1/4 w-44 h-12 bg-white/50 rounded-full blur-md" />
+      <div className="absolute top-[20%] left-0 right-0 h-20 bg-gradient-to-b from-[#166534]/40 to-[#15803d]/60 rounded-[100%_100%_0_0] blur-[2px]" />
+      <div className="absolute inset-x-[6%] top-[24%] bottom-[5%] rounded-[48px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.35)] border-4 border-[#8c593b]">
+        <div className="absolute inset-0 bg-[#bbf7d0]" />
+        <div
+          className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage: `radial-gradient(#15803d 2px, transparent 2px)`,
+            backgroundSize: '24px 24px'
+          }}
+        />
+        <div className="absolute inset-4 rounded-[36px] border-2 border-dashed border-[#8c593b]/40" />
+      </div>
+    </div>
+  );
+};
+
+
 const PigSprite = ({ breed, isSelected, direction, weight, isMoving, isResting, isTapped }) => {
   const b = PIG_BREEDS[breed] || PIG_BREEDS.pink;
   // Compact, cute chibi scale matching the reference game (ranges from 0.72 for baby to 1.04 for full grown)
   const weightRatio = Math.min(1, Math.max(0, weight / b.maxWeight));
-  const sizeScale = 0.72 + weightRatio * 0.32;
+  const sizeScale = 0.58 + weightRatio * 0.28;
   const spriteSrc = `/pigs/${breed}.png`;
   const dirScale = direction === -1 || direction === 'left' ? -1 : 1;
 
@@ -1267,6 +1933,26 @@ export default function HappyHogView() {
 
   // Barn Upgrade Modal
   const [showBarnUpgradeModal, setShowBarnUpgradeModal] = useState(false);
+
+  // Modular Barn Decor Kit (Tilemap.exe EP.3)
+  const [unlockedDecors, setUnlockedDecors] = useState(() => {
+    try {
+      const saved = localStorage.getItem('happy_hog_unlocked_decors');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return ['golden_palace_building', 'golden_fountain', 'stone_well', 'rose_hedge', 'pine_tree', 'mushroom_cottage', 'vintage_lamp', 'flower_meadow', 'straw_hut', 'ancient_stump'];
+  });
+  const [equippedDecors, setEquippedDecors] = useState(() => {
+    try {
+      const saved = localStorage.getItem('happy_hog_equipped_decors');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return [];
+  });
+  const [inGameModal, setInGameModal] = useState(null); // null | 'shop' | 'crops' | 'quests' | 'breed' | 'decor'
+  const [shopCategoryTab, setShopCategoryTab] = useState('pigs'); // 'pigs' | 'food' | 'decors'
+  const [decorCategoryFilter, setDecorCategoryFilter] = useState('all');
+
 
   // Breeding Parents Selection
   const [breedParent1Id, setBreedParent1Id] = useState(null);
@@ -1939,6 +2625,42 @@ export default function HappyHogView() {
     setTimeout(() => setHearts((h) => h.slice(1)), 1200);
   };
 
+  
+  // Collect all available pig drops at once
+  const handleCollectAllPigDrops = () => {
+    let totalCoinsEarned = 0;
+    let totalExpEarned = 0;
+    let totalDiamondsEarned = 0;
+    let collectedCount = 0;
+
+    const updatedPigs = pigs.map((p) => {
+      const dropCfg = PIG_DROP_CONFIG[p.breed] || PIG_DROP_CONFIG.pink;
+      const cycleMs = dropCfg.cycleSeconds * 1000;
+      const isReady = (currentTime - (p.lastDropTime || 0)) >= cycleMs;
+      if (isReady) {
+        collectedCount++;
+        totalCoinsEarned += dropCfg.coinReward || 50;
+        totalExpEarned += dropCfg.expReward || 15;
+        if (dropCfg.isMythic && Math.random() < (dropCfg.diamondChance || 0.3)) {
+          totalDiamondsEarned += dropCfg.diamondCount || 1;
+        }
+        return { ...p, lastDropTime: currentTime };
+      }
+      return p;
+    });
+
+    if (collectedCount > 0) {
+      setPigs(updatedPigs);
+      setCoins((c) => c + totalCoinsEarned);
+      setDiamonds((d) => d + totalDiamondsEarned);
+      setFarmExp((exp) => exp + totalExpEarned);
+      playSound('fanfare', isMuted);
+      showToast(`🎉 เก็บของขวัญจากหมู ${collectedCount} ตัวสำเร็จ! (+${totalCoinsEarned} 🪙${totalDiamondsEarned > 0 ? `, +${totalDiamondsEarned} 💎` : ''}, +${totalExpEarned} EXP)`);
+    } else {
+      showToast('⏳ ยังไม่มีของขวัญที่พร้อมเก็บในขณะนี้');
+    }
+  };
+
   const handleCollectPigDrop = (pig) => {
     const dropCfg = PIG_DROP_CONFIG[pig.breed] || PIG_DROP_CONFIG.pink;
     const now = Date.now();
@@ -1981,6 +2703,80 @@ export default function HappyHogView() {
     } else {
       showToast(`🎁 [${pig.name}] มอบของขวัญ: +${reward.coins} 🪙 (${reward.text}) ⭐ +${reward.exp} EXP!`);
     }
+  };
+
+  // Modular Barn Decor Kit Handlers (Tilemap.exe EP.3)
+  const handleToggleEquipDecor = (decorId) => {
+    setEquippedDecors((prev) => {
+      let next;
+      if (prev.includes(decorId)) {
+        next = prev.filter((id) => id !== decorId);
+        showToast('📦 ถอดของตกแต่งออกจากคอกแล้ว');
+      } else {
+        next = [...prev, decorId];
+        const decor = BARN_DECORS[decorId];
+        showToast(`✨ ติดตั้ง ${decor?.name || 'ของตกแต่ง'} ในคอกแล้ว!`);
+      }
+      try {
+        localStorage.setItem('happy_hog_equipped_decors', JSON.stringify(next));
+      } catch (e) {}
+      return next;
+    });
+  };
+
+  const handleUnequipAllDecors = () => {
+    setEquippedDecors([]);
+    try {
+      localStorage.setItem('happy_hog_equipped_decors', JSON.stringify([]));
+    } catch (e) {}
+    showToast('🧹 ถอดของตกแต่งทุกชิ้นออกแล้ว คอกโล่งสะอาด 100%!');
+  };
+
+  const handleAutoLayoutDecors = () => {
+    const recommended = ['golden_palace_building', 'golden_fountain', 'stone_well', 'rose_hedge', 'pine_tree'].filter((id) =>
+      unlockedDecors.includes(id)
+    );
+    setEquippedDecors(recommended);
+    try {
+      localStorage.setItem('happy_hog_equipped_decors', JSON.stringify(recommended));
+    } catch (e) {}
+    showToast('📐 จัดวางของตกแต่งรอบนอกตามหลักสถาปัตยกรรม (เว้นพื้นที่ตรงกลาง 40% ให้ลูกหมูวิ่งเล่น)!');
+  };
+
+  const handleBuyDecor = (decorId) => {
+    const decor = BARN_DECORS[decorId];
+    if (!decor) return;
+    if (unlockedDecors.includes(decorId)) {
+      showToast('ℹ️ คุณมีของตกแต่งชิ้นนี้อยู่แล้ว');
+      return;
+    }
+    if (coins < decor.cost) {
+      showToast(`❌ เหรียญไม่พอซื้อ ${decor.name}! (ต้องการ ${decor.cost.toLocaleString()} 🪙)`);
+      return;
+    }
+    setCoins((c) => {
+      const nextCoins = c - decor.cost;
+      try {
+        localStorage.setItem('happy_hog_coins', nextCoins.toString());
+      } catch (e) {}
+      return nextCoins;
+    });
+    setUnlockedDecors((prev) => {
+      const next = [...prev, decorId];
+      try {
+        localStorage.setItem('happy_hog_unlocked_decors', JSON.stringify(next));
+      } catch (e) {}
+      return next;
+    });
+    setEquippedDecors((prev) => {
+      const next = [...prev, decorId];
+      try {
+        localStorage.setItem('happy_hog_equipped_decors', JSON.stringify(next));
+      } catch (e) {}
+      return next;
+    });
+    playSound('fanfare', isMuted);
+    showToast(`🎉 ซื้อและติดตั้ง ${decor.name} สำเร็จ! (-${decor.cost} 🪙)`);
   };
 
   const handleFeed = (food) => {
@@ -2844,7 +3640,7 @@ export default function HappyHogView() {
 
             {/* Free Crops Inventory Indicator */}
             <div
-              onClick={() => setActiveTab('crops')}
+              onClick={() => { setInGameModal('crops'); playSound('bubble', isMuted); }}
               className="bg-amber-900/90 hover:bg-amber-800 border-2 border-amber-600 text-amber-200 rounded-xl px-2.5 py-1 flex items-center space-x-2 text-xs font-bold cursor-pointer transition-colors"
               title="คลังผลผลิตพืชผักจากแปลง (คลิกเพื่อไปที่แปลงปลูก)"
             >
@@ -2996,19 +3792,10 @@ export default function HappyHogView() {
             {/* Main Interactive Farm Canvas (3 Columns) */}
             <div className="lg:col-span-3 space-y-2">
               <div
-                className={`relative w-full ${isTheaterMode ? 'h-[calc(100vh-210px)] min-h-[580px]' : 'h-[540px]'} rounded-3xl overflow-hidden border-4 border-amber-900/80 shadow-2xl select-none transition-all ${
-                  activeTheme.bgImage ? '' : `bg-gradient-to-b ${activeTheme.bgClass}`
-                }`}
-                style={
-                  activeTheme.bgImage
-                    ? {
-                        backgroundImage: `url(${activeTheme.bgImage})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center 40%'
-                      }
-                    : {}
-                }
+                className={`relative w-full ${isTheaterMode ? 'h-[calc(100vh-210px)] min-h-[580px]' : 'h-[540px]'} rounded-3xl overflow-hidden border-4 border-amber-900/80 shadow-2xl select-none transition-all`}
               >
+                {/* 2.5D Isometric Open Pen Ground (Tilemap.exe EP.3) */}
+                <CleanIsometricPenGround themeId={activeThemeId} />
                 {/* Cyber Space High-Tech Holographic Grid (When activeTheme is cyber_space) */}
                 {activeThemeId === 'cyber_space' && (
                   <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -3103,7 +3890,7 @@ export default function HappyHogView() {
 
                 {activeTheme.atmosphere === 'sparkles' && (
                   <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    {['✨', '⭐', '💎', '✨', '⭐'].map((sp, i) => (
+                    {['✨', '⭐', '🌟', '✨', '⭐'].map((sp, i) => (
                       <span
                         key={i}
                         className="absolute text-lg animate-pulse opacity-90 drop-shadow-md"
@@ -3140,7 +3927,7 @@ export default function HappyHogView() {
 
                 {/* Hotspot 1: Barn Cottage (Top-Left) */}
                 <div
-                  onClick={() => showToast(`🏠 ${activeTheme.name}: คอกฟาร์มอบอุ่น จุหมูได้ ${pigs.length}/${maxPigs} ตัว`)}
+                  onClick={() => { setInGameModal('decor'); playSound('bubble', isMuted); }}
                   className="absolute top-10 left-8 w-44 h-36 rounded-2xl cursor-pointer hover:bg-white/10 transition-colors z-15"
                   title="โรงเรือนคอกหมู (แตะเพื่อดูข้อมูล)"
                 />
@@ -3222,6 +4009,34 @@ export default function HappyHogView() {
                   </div>
                 ))}
 
+                
+                {/* ================= EQUIPPED MODULAR BARN DECORS (Tilemap.exe EP.3 Kit) ================= */}
+                {equippedDecors.map((decId) => {
+                  const decor = BARN_DECORS[decId];
+                  if (!decor) return null;
+                  const pos = decor.defaultPos || { x: 50, y: 50 };
+                  const zVal = decor.layer === 'back' ? 12 : decor.layer === 'front' ? 40 : Math.floor(pos.y * 10);
+                  return (
+                    <div
+                      key={decor.id}
+                      style={{
+                        left: `${pos.x}%`,
+                        top: `${pos.y}%`,
+                        transform: `translate(-50%, -100%) scale(${decor.scale || 1})`,
+                        zIndex: zVal
+                      }}
+                      className="absolute pointer-events-auto cursor-pointer group transition-transform hover:scale-110 active:scale-95"
+                      onClick={() => showToast(`🪴 ${decor.name}: ${decor.perk}`)}
+                      title={`${decor.name} (${decor.perk}) - แตะเพื่อดูคุณสมบัติ`}
+                    >
+                      <DecorItemSprite decor={decor} isNight={activeThemeId === 'cyber_space'} />
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-7 left-1/2 -translate-x-1/2 bg-[#2b180d]/95 text-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-lg whitespace-nowrap border border-amber-500/60 pointer-events-none shadow-lg z-50">
+                        {decor.name}
+                      </div>
+                    </div>
+                  );
+                })}
+
                 {/* ================= ROAMING CHIBI PIGS WITH SPEECH BUBBLES ================= */}
                 {/* ================= ROAMING CHIBI PIGS WITH SPEECH BUBBLES ================= */}
                 {pigs.map((pig) => {
@@ -3278,26 +4093,17 @@ export default function HappyHogView() {
                         </div>
                       )}
 
-                      {/* 2. Harvestable Periodic Gift Drop Bubble */}
+                      {/* 2. Sleek Compact Gift Indicator (No Cluttering Balloons) */}
                       {isDropReady && (
                         <div
                           onClick={(e) => {
                             e.stopPropagation();
                             handleCollectPigDrop(pig);
                           }}
-                          className="absolute -top-11 sm:-top-12 -right-4 flex flex-col items-center cursor-pointer z-45 transition-transform hover:scale-130 active:scale-95 animate-bounce pointer-events-auto group/gift select-none"
+                          className="absolute -top-6 -right-1.5 w-6 h-6 rounded-full bg-white/95 backdrop-blur-sm border-2 border-amber-400 shadow-md flex items-center justify-center text-xs animate-bounce cursor-pointer z-45 hover:scale-125 active:scale-90 transition-transform select-none"
                           title={`แตะเพื่อเก็บของขวัญจาก ${pig.name} (${dropCfg.title})`}
                         >
-                          <div className={`w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-white/95 backdrop-blur-md border-2 shadow-[0_4px_16px_rgba(0,0,0,0.3)] flex items-center justify-center text-base transition-all ${
-                            dropCfg.isMythic
-                              ? 'border-purple-400 ring-2 ring-purple-400/80 shadow-[0_0_12px_rgba(168,85,247,0.7)] animate-pulse'
-                              : 'border-amber-400 ring-2 ring-amber-400/70 shadow-[0_0_10px_rgba(245,158,11,0.6)]'
-                          }`}>
-                            <span className="filter drop-shadow-xs">{dropCfg.icon}</span>
-                          </div>
-                          <div className="bg-[#2b180d] text-amber-200 text-[8px] font-black px-1 rounded-full whitespace-nowrap border border-amber-500/80 pointer-events-none -mt-1 shadow-sm">
-                            {dropCfg.isMythic ? 'ของขวัญเทพ' : 'เก็บของขวัญ'}
-                          </div>
+                          <span className="filter drop-shadow-xs">{dropCfg.isMythic ? '🔮' : '🎁'}</span>
                         </div>
                       )}
 
@@ -3372,6 +4178,79 @@ export default function HappyHogView() {
                   >
                     <Palette className="w-3 h-3 text-emerald-600" />
                     <span>ธีม: {activeTheme.name}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* ================= IN-GAME MAIN MENU ACTION DOCK (HUD QUICK ACCESS) ================= */}
+              <div className="bg-[#fffbeb] p-2 sm:p-2.5 rounded-2xl border-2 border-amber-700 shadow-md flex items-center justify-between gap-1.5 overflow-x-auto select-none">
+                <div className="flex items-center space-x-1.5 text-xs font-black text-amber-950 px-1 shrink-0">
+                  <span className="text-base animate-pulse">🎮</span>
+                  <span className="hidden sm:inline font-mono">เมนูฟาร์ม:</span>
+                </div>
+                <div className="flex items-center gap-1.5 flex-1 justify-end overflow-x-auto py-0.5">
+                  {pigs.some((p) => (currentTime - (p.lastDropTime || 0)) >= ((PIG_DROP_CONFIG[p.breed] || PIG_DROP_CONFIG.pink).cycleSeconds * 1000)) && (
+                    <button
+                      onClick={handleCollectAllPigDrops}
+                      className="flex items-center space-x-1 px-2.5 py-1.5 bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:brightness-110 text-white font-black text-xs rounded-xl shadow-md border border-yellow-300 active:scale-95 transition-all cursor-pointer shrink-0 animate-pulse"
+                      title="กดเก็บของขวัญจากหมูทุกตัวที่พร้อมในคลิกเดียว!"
+                    >
+                      <span>🎁</span>
+                      <span>เก็บของขวัญทั้งหมด</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={() => { setInGameModal('shop'); playSound('bubble', isMuted); }}
+                    className="flex items-center space-x-1 px-2.5 py-1.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-amber-950 font-black text-xs rounded-xl shadow-xs border border-amber-600 active:scale-95 transition-all cursor-pointer shrink-0"
+                    title="เปิดร้านค้าหมู อาหาร และของตกแต่ง"
+                  >
+                    <ShoppingBag className="w-3.5 h-3.5 text-amber-950" />
+                    <span>ร้านค้า</span>
+                  </button>
+
+                  <button
+                    onClick={() => { setInGameModal('crops'); playSound('bubble', isMuted); }}
+                    className="flex items-center space-x-1 px-2.5 py-1.5 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-black text-xs rounded-xl shadow-xs border border-emerald-700 active:scale-95 transition-all cursor-pointer shrink-0"
+                    title="เปิดแปลงปลูกผักและเก็บเกี่ยวอาหารฟรี"
+                  >
+                    <Sprout className="w-3.5 h-3.5 text-emerald-100" />
+                    <span>แปลงผัก</span>
+                  </button>
+
+                  <button
+                    onClick={() => { setInGameModal('quests'); playSound('bubble', isMuted); }}
+                    className="flex items-center space-x-1 px-2.5 py-1.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-black text-xs rounded-xl shadow-xs border border-indigo-700 active:scale-95 transition-all cursor-pointer shrink-0"
+                    title="เปิดรายการภารกิจประจำวัน"
+                  >
+                    <Award className="w-3.5 h-3.5 text-indigo-100" />
+                    <span>ภารกิจ</span>
+                  </button>
+
+                  <button
+                    onClick={() => { setInGameModal('breed'); playSound('bubble', isMuted); }}
+                    className="flex items-center space-x-1 px-2.5 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-black text-xs rounded-xl shadow-xs border border-purple-700 active:scale-95 transition-all cursor-pointer shrink-0"
+                    title="เปิดห้องแล็บผสมพันธุ์หมู"
+                  >
+                    <Dna className="w-3.5 h-3.5 text-purple-100" />
+                    <span>ผสมพันธุ์</span>
+                  </button>
+
+                  <button
+                    onClick={() => { setInGameModal('decor'); playSound('bubble', isMuted); }}
+                    className="flex items-center space-x-1 px-2.5 py-1.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-black text-xs rounded-xl shadow-xs border border-teal-700 active:scale-95 transition-all cursor-pointer shrink-0"
+                    title="จัดการของตกแต่งคอกหมูและสถาปัตยกรรม"
+                  >
+                    <Palette className="w-3.5 h-3.5 text-teal-100" />
+                    <span>ตกแต่งคอก</span>
+                  </button>
+
+                  <button
+                    onClick={() => { setShowWheelModal(true); playSound('bubble', isMuted); }}
+                    className="flex items-center space-x-1 px-2.5 py-1.5 bg-gradient-to-r from-rose-600 to-orange-500 hover:from-rose-500 hover:to-orange-400 text-white font-black text-xs rounded-xl shadow-xs border border-rose-700 active:scale-95 transition-all cursor-pointer shrink-0"
+                    title="หมุนวงล้อหมูนำโชค ลุ้นรับเพชรและของรางวัล"
+                  >
+                    <span>🎡</span>
+                    <span>วงล้อหมู</span>
                   </button>
                 </div>
               </div>
@@ -3754,6 +4633,144 @@ export default function HappyHogView() {
               </div>
             </div>
 
+            {/* Main Shop Mode Tabs */}
+            <div className="flex items-center space-x-2 bg-amber-900/80 p-1.5 rounded-2xl border border-amber-700">
+              <button
+                onClick={() => setShopCategoryTab('pigs')}
+                className={`flex-1 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center space-x-1.5 ${
+                  shopCategoryTab === 'pigs'
+                    ? 'bg-amber-400 text-amber-950 shadow-md font-black'
+                    : 'text-amber-200 hover:text-white'
+                }`}
+              >
+                <span>🐷 ตลาดลูกหมู</span>
+              </button>
+              <button
+                onClick={() => setShopCategoryTab('decors')}
+                className={`flex-1 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center space-x-1.5 ${
+                  shopCategoryTab === 'decors'
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md font-black'
+                    : 'text-emerald-200 hover:text-white'
+                }`}
+              >
+                <span>🪴 ของตกแต่งคอกหมู (ใช้เหรียญ)</span>
+              </button>
+            </div>
+
+            {shopCategoryTab === 'decors' ? (
+              <div className="space-y-4">
+                {/* Decor Category Filter Bar */}
+                <div className="flex flex-wrap items-center justify-between gap-2 bg-[#2b180d]/80 p-2.5 rounded-2xl border border-amber-700">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {[
+                      { id: 'all', label: 'ทั้งหมด (15 ชิ้น)' },
+                      { id: 'tree', label: '🌲 ต้นไม้' },
+                      { id: 'building', label: '🍄 สิ่งปลูกสร้าง' },
+                      { id: 'light', label: '🏮 โคมไฟ' },
+                      { id: 'flora', label: '🪻 พืชพรรณ' },
+                      { id: 'water', label: '♨️ บ่อน้ำ/น้ำพุ' }
+                    ].map((f) => (
+                      <button
+                        key={f.id}
+                        onClick={() => setDecorCategoryFilter(f.id)}
+                        className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                          decorCategoryFilter === f.id
+                            ? 'bg-amber-500 text-amber-950 font-black shadow-xs'
+                            : 'bg-black/30 text-amber-200 hover:text-white'
+                        }`}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={handleAutoLayoutDecors}
+                      className="px-3 py-1.5 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-white font-black text-xs rounded-xl shadow-xs cursor-pointer flex items-center space-x-1.5 active:scale-95"
+                      title="จัดวางของตกแต่งรอบคอกตามหลัก Tilemap.exe Night Camp EP.3 เพื่อเปิดพื้นที่กลางให้หมู"
+                    >
+                      <span>📐</span>
+                      <span>จัดวางอัตโนมัติ (Tilemap)</span>
+                    </button>
+                    <button
+                      onClick={handleUnequipAllDecors}
+                      className="px-3 py-1.5 bg-gradient-to-r from-rose-600 to-amber-700 hover:from-rose-500 text-white font-black text-xs rounded-xl shadow-xs cursor-pointer flex items-center space-x-1.5 active:scale-95"
+                      title="ถอดของตกแต่งทุกชิ้นออกเพื่อให้คอกหมูโล่ง 100%"
+                    >
+                      <span>🧹</span>
+                      <span>ถอดออกทั้งหมด (คอกโล่ง 100%)</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Decors Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5">
+                  {Object.values(BARN_DECORS)
+                    .filter((d) => decorCategoryFilter === 'all' || d.category === decorCategoryFilter)
+                    .map((item) => {
+                      const isUnlocked = unlockedDecors.includes(item.id);
+                      const isEquipped = equippedDecors.includes(item.id);
+
+                      return (
+                        <div
+                          key={item.id}
+                          className="bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] rounded-2xl border-2 border-amber-600 p-3 flex flex-col justify-between items-center text-center shadow-md space-y-2 hover:border-amber-500 transition-all"
+                        >
+                          <div className="w-full flex justify-between items-center text-[10px] text-amber-800 font-bold">
+                            <span className="bg-amber-200/90 px-2 py-0.5 rounded-full">{item.tag}</span>
+                            {isEquipped ? (
+                              <span className="bg-emerald-600 text-white px-2 py-0.5 rounded-full font-black animate-pulse">
+                                ติดตั้งอยู่
+                              </span>
+                            ) : isUnlocked ? (
+                              <span className="bg-slate-300 text-slate-700 px-2 py-0.5 rounded-full font-bold">
+                                ในคลัง
+                              </span>
+                            ) : null}
+                          </div>
+
+                          <div className="h-24 flex items-center justify-center my-1">
+                            <DecorItemSprite decor={item} isNight={false} />
+                          </div>
+
+                          <div className="space-y-0.5 w-full">
+                            <div className="font-black text-slate-900 text-xs truncate" title={item.name}>
+                              {item.name}
+                            </div>
+                            <div className="text-[10px] text-amber-900 line-clamp-2 h-7 font-medium" title={item.perk}>
+                              {item.perk}
+                            </div>
+                          </div>
+
+                          <div className="w-full pt-1.5 border-t border-amber-300/80">
+                            {isUnlocked ? (
+                              <button
+                                onClick={() => handleToggleEquipDecor(item.id)}
+                                className={`w-full py-1.5 rounded-xl font-black text-xs transition-all cursor-pointer ${
+                                  isEquipped
+                                    ? 'bg-rose-100 hover:bg-rose-200 text-rose-700 border border-rose-300'
+                                    : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs'
+                                }`}
+                              >
+                                {isEquipped ? '📦 ถอดเก็บเข้าคลัง' : '✨ ติดตั้งในคอก'}
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleBuyDecor(item.id)}
+                                className="w-full py-1.5 rounded-xl font-black text-xs bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-amber-950 border border-amber-600 shadow-xs active:scale-95 transition-all cursor-pointer flex items-center justify-center space-x-1"
+                              >
+                                <span>ซื้อ {item.cost.toLocaleString()} 🪙</span>
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+            ) : (
+              <>
             {/* Shop Category Tabs */}
             <div className="flex items-center space-x-2 bg-amber-950/70 p-1.5 rounded-2xl border border-amber-800/80">
               <button
@@ -3869,6 +4886,8 @@ export default function HappyHogView() {
                   );
                 })}
             </div>
+              </>
+            )}
           </div>
         )}
 
@@ -4496,6 +5515,714 @@ export default function HappyHogView() {
           </div>
         </div>
       )}
+
+            {/* ================= IN-GAME ACTION MODAL OVERLAY (HUD FULL SYSTEM INTEGRATION) ================= */}
+      {inGameModal && (
+        <div
+          onClick={() => setInGameModal(null)}
+          className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in-50 duration-200"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] border-4 border-amber-800 rounded-3xl p-4 sm:p-6 max-w-4xl w-full shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto select-none"
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b-2 border-amber-300 pb-3 gap-2">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-amber-400 border-2 border-amber-600 flex items-center justify-center text-2xl shadow-sm shrink-0">
+                  {inGameModal === 'shop' && '🏪'}
+                  {inGameModal === 'crops' && '🌱'}
+                  {inGameModal === 'quests' && '📜'}
+                  {inGameModal === 'breed' && '🧬'}
+                  {inGameModal === 'decor' && '🪴'}
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-black text-amber-950 font-mono leading-tight">
+                    {inGameModal === 'shop' && 'ร้านค้าฟาร์มหมู & ของตกแต่งคอก'}
+                    {inGameModal === 'crops' && 'แปลงปลูกพืชผักและคลังผลผลิต (Farm Patch)'}
+                    {inGameModal === 'quests' && 'ภารกิจประจำวัน (Daily Quests)'}
+                    {inGameModal === 'breed' && 'ห้องแล็บผสมพันธุ์หมู (Breeding Lab)'}
+                    {inGameModal === 'decor' && 'สถาปัตยกรรม & จัดการของตกแต่งคอกหมู'}
+                  </h3>
+                  <p className="text-[11px] text-amber-800 font-bold leading-none mt-0.5">
+                    {inGameModal === 'shop' && 'เลือกซื้อลูกหมู อาหาร ยาปฏิชีวนะ และของตกแต่งแยกชิ้นด้วยเหรียญ'}
+                    {inGameModal === 'crops' && 'ปลูกผัก เก็บเกี่ยวมาทำอาหารเลี้ยงหมูได้ฟรีโดยไม่ต้องเสียเหรียญ!'}
+                    {inGameModal === 'quests' && 'ทำภารกิจรายวันเพื่อรับเหรียญทองและค่าประสบการณ์ EXP ฟาร์ม'}
+                    {inGameModal === 'breed' && 'จับคู่พ่อพันธุ์แม่พันธุ์เพื่อค้นพบสายพันธุ์ใหม่และลุ้นรับสัตว์เทพ 1.5%!'}
+                    {inGameModal === 'decor' && 'จัดวางของประดับตามแนวทาง Tilemap.exe Night Camp EP.3 เพื่อเปิดพื้นที่กลาง'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2 shrink-0">
+                <div className="hidden sm:flex items-center space-x-1 px-2.5 py-1 bg-amber-950/80 border border-amber-600 text-amber-300 rounded-xl text-xs font-mono font-bold">
+                  <span>🪙 {coins.toLocaleString()}</span>
+                </div>
+                <div className="hidden sm:flex items-center space-x-1 px-2.5 py-1 bg-purple-950/90 border border-purple-500 text-purple-200 rounded-xl text-xs font-mono font-bold">
+                  <span>💎 {diamonds.toLocaleString()}</span>
+                </div>
+                <button
+                  onClick={() => setInGameModal(null)}
+                  className="p-1.5 rounded-xl hover:bg-amber-200 text-amber-900 border border-amber-400 bg-amber-100 cursor-pointer transition-transform hover:scale-105 active:scale-95"
+                  title="ปิดหน้าต่าง"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* MODAL CONTENT: 1. SHOP */}
+            {inGameModal === 'shop' && (
+              <div className="space-y-3">
+                {/* Mode Selector Tabs */}
+                <div className="flex items-center space-x-2 bg-amber-950/80 p-1.5 rounded-2xl border border-amber-800">
+                  <button
+                    onClick={() => setShopCategoryTab('pigs')}
+                    className={`flex-1 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                      shopCategoryTab === 'pigs'
+                        ? 'bg-amber-400 text-amber-950 shadow-sm'
+                        : 'text-amber-200 hover:text-white'
+                    }`}
+                  >
+                    🐷 ตลาดลูกหมู (14 พันธุ์)
+                  </button>
+                  <button
+                    onClick={() => setShopCategoryTab('food')}
+                    className={`flex-1 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                      shopCategoryTab === 'food'
+                        ? 'bg-amber-400 text-amber-950 shadow-sm'
+                        : 'text-amber-200 hover:text-white'
+                    }`}
+                  >
+                    🌾 อาหาร & ยาปฏิชีวนะ
+                  </button>
+                  <button
+                    onClick={() => setShopCategoryTab('decors')}
+                    className={`flex-1 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                      shopCategoryTab === 'decors'
+                        ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md'
+                        : 'text-emerald-200 hover:text-white'
+                    }`}
+                  >
+                    🪴 ของตกแต่งคอก (เหรียญ)
+                  </button>
+                </div>
+
+                {shopCategoryTab === 'pigs' && (
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2 bg-amber-200/80 p-1 rounded-xl text-xs font-bold text-amber-950">
+                      <button
+                        onClick={() => setShopFilter('all')}
+                        className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${shopFilter === 'all' ? 'bg-amber-600 text-white font-black' : 'text-amber-900'}`}
+                      >
+                        ทั้งหมด (14)
+                      </button>
+                      <button
+                        onClick={() => setShopFilter('coin')}
+                        className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${shopFilter === 'coin' ? 'bg-amber-600 text-white font-black' : 'text-amber-900'}`}
+                      >
+                        🪙 ทั่วไป (8 พันธุ์)
+                      </button>
+                      <button
+                        onClick={() => setShopFilter('diamond')}
+                        className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${shopFilter === 'diamond' ? 'bg-purple-600 text-white font-black' : 'text-purple-900'}`}
+                      >
+                        💎 สัตว์เทพ (6 พันธุ์)
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-[55vh] overflow-y-auto pr-1">
+                      {Object.values(PIG_BREEDS)
+                        .filter((b) => {
+                          if (shopFilter === 'coin') return !b.isDiamondBreed;
+                          if (shopFilter === 'diamond') return b.isDiamondBreed;
+                          return true;
+                        })
+                        .map((breed) => {
+                          const isUnlocked = unlockedBreeds.includes(breed.id) || breed.isDiamondBreed;
+                          return (
+                            <div
+                              key={breed.id}
+                              className={`rounded-2xl p-3 border-2 flex flex-col justify-between space-y-2 shadow-sm ${
+                                breed.isDiamondBreed
+                                  ? 'bg-gradient-to-b from-[#faf5ff] to-[#f3e8ff] border-purple-400'
+                                  : isUnlocked
+                                  ? 'bg-white border-amber-400'
+                                  : 'bg-slate-100 border-slate-300 opacity-80'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between text-[11px] font-bold">
+                                <span className="font-mono text-amber-800">{breed.rarity}</span>
+                                <span className="text-[10px] text-slate-500">โตสุด {breed.maxWeight} kg</span>
+                              </div>
+
+                              <div className="flex items-center space-x-2.5 my-1">
+                                <div className="w-12 h-12 flex items-center justify-center shrink-0">
+                                  <img
+                                    src={`/pigs/${breed.id}.png`}
+                                    alt={breed.name}
+                                    className="w-11 h-11 object-contain drop-shadow-sm"
+                                  />
+                                </div>
+                                <div className="truncate">
+                                  <div className="font-black text-slate-900 text-xs truncate">{breed.name}</div>
+                                  <div className="text-[10px] text-slate-600 line-clamp-2">{breed.description}</div>
+                                </div>
+                              </div>
+
+                              <div className="pt-1.5 border-t border-amber-200">
+                                {breed.isDiamondBreed ? (
+                                  <button
+                                    onClick={() => handleBuyPig(breed.id)}
+                                    className="w-full py-1.5 rounded-xl font-black text-xs bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-xs cursor-pointer active:scale-95 transition-all flex items-center justify-center space-x-1"
+                                  >
+                                    <span>อัญเชิญ ({breed.diamondCost} 💎)</span>
+                                  </button>
+                                ) : isUnlocked ? (
+                                  <button
+                                    onClick={() => handleBuyPig(breed.id)}
+                                    className="w-full py-1.5 rounded-xl font-black text-xs bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-amber-950 shadow-xs cursor-pointer active:scale-95 transition-all flex items-center justify-center space-x-1"
+                                  >
+                                    <span>ซื้อ {breed.cost.toLocaleString()} 🪙</span>
+                                  </button>
+                                ) : (
+                                  <button
+                                    disabled
+                                    className="w-full py-1.5 rounded-xl font-black text-xs bg-slate-200 text-slate-500 cursor-not-allowed text-center text-[10px]"
+                                  >
+                                    {breed.unlockDesc || 'ยังไม่ปลดล็อก'}
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
+
+                {shopCategoryTab === 'food' && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                    {FOODS.map((food) => (
+                      <div
+                        key={food.id}
+                        className="bg-white border-2 border-amber-400 rounded-2xl p-3 flex flex-col justify-between items-center text-center shadow-sm space-y-2"
+                      >
+                        <span className="text-4xl">{food.icon}</span>
+                        <div>
+                          <div className="font-black text-slate-900 text-xs">{food.name}</div>
+                          <div className="text-[10px] text-amber-800 font-bold mt-0.5">
+                            +{food.weightGain} kg | อิ่ม +{food.fullness}%
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            if (coins < food.cost) {
+                              showToast('❌ เหรียญไม่พอซื้ออาหาร!');
+                              return;
+                            }
+                            setCoins((c) => c - food.cost);
+                            setCropInventory((inv) => ({ ...inv, [food.id]: (inv[food.id] || 0) + 1 }));
+                            playSound('coin', isMuted);
+                            showToast(`🌾 ซื้อ "${food.name}" เพิ่มเข้าคลังอาหารสำเร็จ!`);
+                          }}
+                          className="w-full py-1.5 rounded-xl font-black text-xs bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 text-amber-950 border border-amber-600 shadow-xs cursor-pointer active:scale-95 transition-all"
+                        >
+                          ซื้อ {food.cost} 🪙 เข้าคลัง
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {shopCategoryTab === 'decors' && (
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2 bg-[#2b180d]/80 p-2 rounded-xl border border-amber-700 text-xs">
+                      <div className="flex flex-wrap gap-1">
+                        {[
+                          { id: 'all', label: 'ทั้งหมด' },
+                          { id: 'tree', label: '🌲 ต้นไม้' },
+                          { id: 'building', label: '🍄 อาคาร' },
+                          { id: 'light', label: '🏮 โคมไฟ' },
+                          { id: 'flora', label: '🪻 พืชพรรณ' },
+                          { id: 'water', label: '♨️ บ่อน้ำ' }
+                        ].map((f) => (
+                          <button
+                            key={f.id}
+                            onClick={() => setDecorCategoryFilter(f.id)}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                              decorCategoryFilter === f.id
+                                ? 'bg-amber-500 text-amber-950 font-black'
+                                : 'bg-black/30 text-amber-200 hover:text-white'
+                            }`}
+                          >
+                            {f.label}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="flex flex-wrap gap-1.5">
+                        <button
+                          onClick={handleAutoLayoutDecors}
+                          className="px-2.5 py-1 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 text-white font-black text-xs rounded-lg cursor-pointer flex items-center space-x-1"
+                        >
+                          <span>📐</span>
+                          <span>จัดวางอัตโนมัติ (Tilemap)</span>
+                        </button>
+                        <button
+                          onClick={handleUnequipAllDecors}
+                          className="px-2.5 py-1 bg-gradient-to-r from-rose-600 to-amber-700 hover:from-rose-500 text-white font-black text-xs rounded-lg cursor-pointer flex items-center space-x-1"
+                        >
+                          <span>🧹</span>
+                          <span>ถอดออกทั้งหมด (คอกโล่ง)</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 max-h-[55vh] overflow-y-auto pr-1">
+                      {Object.values(BARN_DECORS)
+                        .filter((d) => decorCategoryFilter === 'all' || d.category === decorCategoryFilter)
+                        .map((item) => {
+                          const isUnlocked = unlockedDecors.includes(item.id);
+                          const isEquipped = equippedDecors.includes(item.id);
+
+                          return (
+                            <div
+                              key={item.id}
+                              className="bg-white rounded-2xl border-2 border-amber-400 p-2.5 flex flex-col justify-between items-center text-center shadow-sm space-y-1.5"
+                            >
+                              <div className="w-full flex justify-between items-center text-[9px] text-amber-800 font-bold">
+                                <span className="bg-amber-100 px-1.5 py-0.5 rounded-full">{item.tag}</span>
+                                {isEquipped ? (
+                                  <span className="bg-emerald-600 text-white px-1.5 py-0.5 rounded-full font-black">
+                                    ติดตั้ง
+                                  </span>
+                                ) : isUnlocked ? (
+                                  <span className="bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded-full">
+                                    มีแล้ว
+                                  </span>
+                                ) : null}
+                              </div>
+
+                              <div className="h-20 flex items-center justify-center my-0.5">
+                                <DecorItemSprite decor={item} isNight={false} />
+                              </div>
+
+                              <div className="w-full space-y-0.5">
+                                <div className="font-black text-slate-900 text-xs truncate">{item.name}</div>
+                                <div className="text-[9px] text-amber-900 line-clamp-2 h-6">{item.perk}</div>
+                              </div>
+
+                              <div className="w-full pt-1 border-t border-amber-200">
+                                {isUnlocked ? (
+                                  <button
+                                    onClick={() => handleToggleEquipDecor(item.id)}
+                                    className={`w-full py-1 rounded-lg font-black text-[11px] cursor-pointer ${
+                                      isEquipped
+                                        ? 'bg-rose-100 text-rose-700 hover:bg-rose-200'
+                                        : 'bg-emerald-600 text-white hover:bg-emerald-500'
+                                    }`}
+                                  >
+                                    {isEquipped ? '📦 ถอดออก' : '✨ ติดตั้ง'}
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() => handleBuyDecor(item.id)}
+                                    className="w-full py-1 rounded-lg font-black text-[11px] bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 text-amber-950 border border-amber-600 cursor-pointer active:scale-95"
+                                  >
+                                    {item.cost} 🪙
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* MODAL CONTENT: 2. CROPS */}
+            {inGameModal === 'crops' && (
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2 bg-amber-200/80 p-2.5 rounded-2xl border border-amber-400 text-xs font-bold text-amber-950">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-base">🧺</span>
+                    <span>คลังผลผลิตที่เก็บเกี่ยวได้:</span>
+                  </div>
+                  <div className="flex items-center space-x-3 font-mono">
+                    <span className="bg-white/80 px-2 py-0.5 rounded-lg border border-amber-300">🌾 {cropInventory.bran || 0}</span>
+                    <span className="bg-white/80 px-2 py-0.5 rounded-lg border border-amber-300">🌽 {cropInventory.corn || 0}</span>
+                    <span className="bg-white/80 px-2 py-0.5 rounded-lg border border-amber-300">🥕 {cropInventory.carrot || 0}</span>
+                    <span className="bg-white/80 px-2 py-0.5 rounded-lg border border-amber-300">🎃 {cropInventory.pumpkin || 0}</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                  {crops.map((plot) => {
+                    const meta = plot.seed ? CROPS_META[plot.seed] : null;
+                    const elapsedSec = plot.plantedAt ? Math.floor((currentTime - plot.plantedAt) / 1000) : 0;
+                    const remainingSec = meta ? Math.max(0, meta.duration - elapsedSec) : 0;
+                    const isReady = meta && remainingSec === 0;
+
+                    return (
+                      <div
+                        key={plot.id}
+                        className="bg-[#451a03] border-4 border-[#270e02] rounded-3xl p-3.5 shadow-xl flex flex-col justify-between items-center text-center min-h-[230px] relative overflow-hidden"
+                      >
+                        <div className="w-full flex justify-between items-center text-amber-200 text-xs font-bold">
+                          <span>แปลงที่ #{plot.id + 1}</span>
+                          {meta && (
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-black ${
+                              isReady ? 'bg-emerald-500 text-white animate-pulse' : 'bg-amber-900 text-amber-200'
+                            }`}>
+                              {isReady ? '✨ พร้อมเก็บ!' : `⏳ เหลือ ${remainingSec}s`}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="my-2 flex flex-col items-center">
+                          {plot.seed ? (
+                            <>
+                              <span className={`text-5xl transition-transform ${isReady ? 'scale-115 animate-bounce' : 'scale-90'}`}>
+                                {isReady ? meta.icon : '🌱'}
+                              </span>
+                              <span className="font-black text-amber-100 text-sm mt-1.5">{meta.name}</span>
+                              {!isReady && (
+                                <div className="w-24 bg-amber-950 h-2 rounded-full overflow-hidden mt-1.5 border border-amber-800">
+                                  <div
+                                    className="bg-emerald-500 h-full transition-all duration-500"
+                                    style={{ width: `${Math.min(100, (elapsedSec / meta.duration) * 100)}%` }}
+                                  />
+                                </div>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              <span className="text-4xl opacity-40 text-amber-700">🕳️</span>
+                              <span className="text-xs text-amber-400 font-bold mt-2">แปลงดินว่างเปล่า</span>
+                            </>
+                          )}
+                        </div>
+
+                        <div className="w-full">
+                          {plot.seed ? (
+                            <button
+                              onClick={() => handleHarvestCrop(plot.id)}
+                              disabled={!isReady}
+                              className={`w-full py-2 rounded-xl font-black text-xs flex items-center justify-center space-x-1 transition-all cursor-pointer ${
+                                isReady
+                                  ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md hover:brightness-105 active:scale-95'
+                                  : 'bg-stone-800 text-stone-500 cursor-not-allowed'
+                              }`}
+                            >
+                              <span>✨</span>
+                              <span>{isReady ? `เก็บเกี่ยว (${meta.yieldCount} ถุง)` : 'กำลังเจริญเติบโต...'}</span>
+                            </button>
+                          ) : (
+                            <div className="grid grid-cols-2 gap-1 w-full">
+                              {Object.values(CROPS_META).map((c) => (
+                                <button
+                                  key={c.id}
+                                  onClick={() => handlePlantSeed(plot.id, c.id)}
+                                  className="p-1 rounded-xl bg-amber-900/90 hover:bg-amber-800 text-amber-100 border border-amber-700 text-[10px] font-bold flex items-center space-x-1 cursor-pointer transition-all active:scale-95"
+                                  title={`${c.name} (ใช้เวลา ${c.duration}s, ค่าเมล็ด ${c.seedCost} ฿)`}
+                                >
+                                  <span>{c.icon}</span>
+                                  <span className="truncate">{c.name.split('/')[0]} ({c.seedCost}฿)</span>
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* MODAL CONTENT: 3. QUESTS */}
+            {inGameModal === 'quests' && (
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto pr-1">
+                  {quests.map((q) => {
+                    const progressPct = Math.min(100, Math.round((q.progress / q.target) * 100));
+                    return (
+                      <div
+                        key={q.id}
+                        className={`p-3.5 rounded-2xl border-2 flex flex-col justify-between space-y-2.5 transition-all ${
+                          q.claimed
+                            ? 'bg-slate-100 border-slate-300 opacity-60'
+                            : q.progress >= q.target
+                            ? 'bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-500 shadow-md'
+                            : 'bg-white border-amber-300 shadow-xs'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-2xl">{q.icon}</span>
+                            <div>
+                              <div className="font-black text-slate-900 text-xs">{q.title}</div>
+                              <div className="text-[11px] text-slate-600">{q.description}</div>
+                            </div>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <div className="text-[11px] font-black text-amber-900 font-mono">+{q.rewardCoins} 🪙</div>
+                            <div className="text-[10px] font-bold text-emerald-700 font-mono">+{q.rewardExp} EXP</div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-[10px] font-bold text-slate-700">
+                            <span>ความคืบหน้า</span>
+                            <span>{q.progress}/{q.target}</span>
+                          </div>
+                          <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                            <div
+                              className="bg-emerald-500 h-full transition-all duration-300"
+                              style={{ width: `${progressPct}%` }}
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          {q.claimed ? (
+                            <div className="text-center text-xs font-bold text-slate-400 py-1">
+                              ✓ รับรางวัลแล้ว
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => handleClaimQuest(q.id)}
+                              disabled={q.progress < q.target}
+                              className={`w-full py-1.5 rounded-xl font-black text-xs transition-all cursor-pointer flex items-center justify-center space-x-1 ${
+                                q.progress >= q.target
+                                  ? 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 text-white shadow-sm active:scale-95 animate-pulse'
+                                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                              }`}
+                            >
+                              <span>🎁</span>
+                              <span>{q.progress >= q.target ? 'กดรับรางวัล!' : 'ยังทำไม่สำเร็จ'}</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* MODAL CONTENT: 4. BREEDING */}
+            {inGameModal === 'breed' && (() => {
+              const adultPigs = pigs.filter((p) => p.weight >= 50);
+              const parent1 = pigs.find((p) => p.id === breedParent1Id);
+              const parent2 = pigs.find((p) => p.id === breedParent2Id);
+
+              return (
+                <div className="space-y-4">
+                  <div className="bg-purple-950/80 p-3 rounded-2xl border border-purple-600 text-xs text-purple-200 flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-base">⚡</span>
+                      <span>ต้องการพลังงานฟาร์ม <b>30 ⚡</b> ต่อการผสม 1 ครั้ง (หมูต้องหนัก &gt;= 50 kg)</span>
+                    </div>
+                    <div className="font-mono font-bold text-yellow-300">
+                      พลังงานคงเหลือ: {energy}/{maxEnergy} ⚡
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Parent 1 */}
+                    <div className="bg-white border-2 border-purple-300 rounded-2xl p-3 space-y-2">
+                      <div className="font-black text-purple-950 text-xs flex items-center space-x-1.5">
+                        <span>♂️ พ่อพันธุ์ (Parent 1)</span>
+                      </div>
+                      <select
+                        value={breedParent1Id || ''}
+                        onChange={(e) => setBreedParent1Id(e.target.value)}
+                        className="w-full p-2 rounded-xl border border-purple-300 text-xs font-bold text-slate-800 bg-purple-50"
+                      >
+                        <option value="">-- เลือกพ่อพันธุ์ (หมูหนัก 50kg+) --</option>
+                        {adultPigs.map((p) => (
+                          <option key={p.id} value={p.id} disabled={p.id === breedParent2Id}>
+                            {p.name} ({PIG_BREEDS[p.breed]?.name} - {p.weight} kg)
+                          </option>
+                        ))}
+                      </select>
+                      {parent1 && (
+                        <div className="flex items-center space-x-2.5 p-2 bg-purple-100/60 rounded-xl">
+                          <img src={`/pigs/${parent1.breed}.png`} alt={parent1.name} className="w-10 h-10 object-contain" />
+                          <div className="text-xs">
+                            <div className="font-black text-purple-950">{parent1.name}</div>
+                            <div className="text-[10px] text-purple-800">สายพันธุ์: {PIG_BREEDS[parent1.breed]?.name}</div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Parent 2 */}
+                    <div className="bg-white border-2 border-pink-300 rounded-2xl p-3 space-y-2">
+                      <div className="font-black text-pink-950 text-xs flex items-center space-x-1.5">
+                        <span>♀️ แม่พันธุ์ (Parent 2)</span>
+                      </div>
+                      <select
+                        value={breedParent2Id || ''}
+                        onChange={(e) => setBreedParent2Id(e.target.value)}
+                        className="w-full p-2 rounded-xl border border-pink-300 text-xs font-bold text-slate-800 bg-pink-50"
+                      >
+                        <option value="">-- เลือกแม่พันธุ์ (หมูหนัก 50kg+) --</option>
+                        {adultPigs.map((p) => (
+                          <option key={p.id} value={p.id} disabled={p.id === breedParent1Id}>
+                            {p.name} ({PIG_BREEDS[p.breed]?.name} - {p.weight} kg)
+                          </option>
+                        ))}
+                      </select>
+                      {parent2 && (
+                        <div className="flex items-center space-x-2.5 p-2 bg-pink-100/60 rounded-xl">
+                          <img src={`/pigs/${parent2.breed}.png`} alt={parent2.name} className="w-10 h-10 object-contain" />
+                          <div className="text-xs">
+                            <div className="font-black text-pink-950">{parent2.name}</div>
+                            <div className="text-[10px] text-pink-800">สายพันธุ์: {PIG_BREEDS[parent2.breed]?.name}</div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Breed Trigger Button */}
+                  <button
+                    onClick={() => {
+                      handleBreedPigs();
+                      if (parent1 && parent2 && energy >= 30) {
+                        setInGameModal(null);
+                      }
+                    }}
+                    disabled={!parent1 || !parent2 || energy < 30 || pigs.length >= maxPigs}
+                    className={`w-full py-3 rounded-2xl font-black text-sm flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-md ${
+                      parent1 && parent2 && energy >= 30 && pigs.length < maxPigs
+                        ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 hover:brightness-105 text-white active:scale-98 animate-pulse'
+                        : 'bg-slate-300 text-slate-500 cursor-not-allowed shadow-none'
+                    }`}
+                  >
+                    <Dna className="w-5 h-5" />
+                    <span>
+                      {pigs.length >= maxPigs
+                        ? '❌ คอกเต็มแล้ว! กรุณาขยายคอกหรือขายหมูก่อน'
+                        : !parent1 || !parent2
+                        ? 'กรุณาเลือกพ่อพันธุ์และแม่พันธุ์'
+                        : energy < 30
+                        ? 'พลังงานไม่พอ (ต้องการ 30 ⚡)'
+                        : '🧬 เริ่มผสมพันธุ์เลย! (ใช้ 30 ⚡)'}
+                    </span>
+                  </button>
+                </div>
+              );
+            })()}
+
+            {/* MODAL CONTENT: 5. DECOR & ARCHITECTURE */}
+            {inGameModal === 'decor' && (
+              <div className="space-y-3.5">
+                {/* Tilemap.exe Design Principles Banner */}
+                <div className="bg-[#2b180d] p-3 rounded-2xl border-2 border-amber-600 text-amber-200 text-xs space-y-1">
+                  <div className="flex items-center space-x-2 font-black text-amber-300 text-sm">
+                    <span>📐</span>
+                    <span>สถาปัตยกรรมคอกหมู Tilemap.exe (Night Camp EP.3)</span>
+                  </div>
+                  <p className="text-[11px] text-amber-200/90 leading-relaxed font-medium">
+                    ระบบแยกของตกแต่ง 15 ชิ้นแบบโมดูลาร์: ต้นไม้ทรงสูงและบ้านเห็ดจัดวางที่ขอบหลังคอก (Back Layer), โคมไฟส่องสว่างจัดตามทางเดิน (Front Layer), และเว้นพื้นที่สี่เหลี่ยมตรงกลาง 40% ให้ลูกหมูทุกตัวได้เดินเล่นอย่างโล่งสบาย ไม่ติดขัด!
+                  </p>
+                </div>
+
+                {/* Architecture Action Buttons */}
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={handleAutoLayoutDecors}
+                      className="px-3 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 text-white font-black text-xs rounded-xl shadow-xs cursor-pointer active:scale-95 flex items-center space-x-1.5"
+                    >
+                      <span>📐</span>
+                      <span>จัดวางอัตโนมัติตามหลักสถาปัตยกรรม</span>
+                    </button>
+                    <button
+                      onClick={handleUnequipAllDecors}
+                      className="px-3 py-2 bg-gradient-to-r from-rose-600 to-amber-700 hover:from-rose-500 text-white font-black text-xs rounded-xl shadow-xs cursor-pointer active:scale-95 flex items-center space-x-1.5"
+                    >
+                      <span>🧹</span>
+                      <span>ถอดออกทั้งหมด (คอกโล่ง 100%)</span>
+                    </button>
+                    <button
+                      onClick={() => setShowThemeModal(true)}
+                      className="px-3 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 text-amber-950 font-black text-xs rounded-xl shadow-xs cursor-pointer active:scale-95 flex items-center space-x-1.5"
+                    >
+                      <Palette className="w-3.5 h-3.5" />
+                      <span>เปลี่ยนธีมฉากหลัง ({activeTheme.name})</span>
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setShopCategoryTab('decors');
+                      setInGameModal('shop');
+                    }}
+                    className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-xs cursor-pointer active:scale-95 flex items-center space-x-1.5"
+                  >
+                    <ShoppingBag className="w-3.5 h-3.5" />
+                    <span>ซื้อของตกแต่งเพิ่ม (ใช้เหรียญ)</span>
+                  </button>
+                </div>
+
+                {/* Owned Decors List with Equip/Unequip Toggle */}
+                <div className="space-y-2">
+                  <div className="text-xs font-black text-amber-950 flex items-center justify-between">
+                    <span>ของตกแต่งที่ครอบครอง ({unlockedDecors.length} ชิ้น):</span>
+                    <span className="text-emerald-700 font-bold">ติดตั้งในคอกอยู่: {equippedDecors.length} ชิ้น</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 max-h-[45vh] overflow-y-auto pr-1">
+                    {unlockedDecors.map((decId) => {
+                      const item = BARN_DECORS[decId];
+                      if (!item) return null;
+                      const isEquipped = equippedDecors.includes(decId);
+
+                      return (
+                        <div
+                          key={item.id}
+                          className={`p-2.5 rounded-2xl border-2 flex items-center justify-between gap-2.5 shadow-xs transition-all ${
+                            isEquipped ? 'bg-emerald-50/90 border-emerald-400' : 'bg-white border-amber-300'
+                          }`}
+                        >
+                          <div className="flex items-center space-x-2.5 truncate">
+                            <div className="w-11 h-11 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 border border-amber-300">
+                              <span className="text-2xl">{item.icon}</span>
+                            </div>
+                            <div className="truncate">
+                              <div className="font-black text-slate-900 text-xs truncate">{item.name}</div>
+                              <div className="text-[10px] text-amber-800 line-clamp-1">{item.perk}</div>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => handleToggleEquipDecor(item.id)}
+                            className={`px-2.5 py-1.5 rounded-xl font-black text-xs shrink-0 cursor-pointer transition-all active:scale-95 ${
+                              isEquipped
+                                ? 'bg-rose-100 hover:bg-rose-200 text-rose-700 border border-rose-300'
+                                : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs'
+                            }`}
+                          >
+                            {isEquipped ? 'ถอดออก' : 'ติดตั้ง'}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
 
       {/* ================= MODAL 3: BARN THEMES SELECTOR ================= */}
       {showThemeModal && (
