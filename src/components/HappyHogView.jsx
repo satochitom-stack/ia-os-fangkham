@@ -40,7 +40,10 @@ import {
   Smile,
   Plus,
   Home,
-  Gem
+  Gem,
+  Maximize2,
+  Minimize2,
+  ArrowUpCircle
 } from 'lucide-react';
 
 // Web Audio sound synthesizer for retro tactile sound effects
@@ -610,11 +613,12 @@ const PigSprite = ({ breed, isSelected, direction, weight }) => {
   const b = PIG_BREEDS[breed] || PIG_BREEDS.pink;
   const sizeScale = Math.min(1.4, 0.95 + (weight / b.maxWeight) * 0.4);
   const spriteSrc = `/pigs/${breed}.png`;
+  const dirScale = direction === -1 || direction === 'left' ? -1 : 1;
 
   return (
     <div
       style={{
-        transform: `scale(${sizeScale}) scaleX(${direction})`,
+        transform: `scale(${sizeScale})`,
         transition: 'transform 0.25s ease'
       }}
       className={`relative select-none flex flex-col items-center justify-center pointer-events-auto cursor-pointer ${
@@ -624,10 +628,14 @@ const PigSprite = ({ breed, isSelected, direction, weight }) => {
       {/* Soft Ground Contact Shadow */}
       <div className="w-16 h-3.5 bg-black/30 rounded-full blur-[2px] absolute -bottom-1 pointer-events-none" />
 
-      {/* 3D Chibi Illustrated Pig Sprite */}
+      {/* 3D Chibi Illustrated Pig Sprite (Only sprite flips horizontally) */}
       <img
         src={spriteSrc}
         alt={b.name}
+        style={{
+          transform: `scaleX(${dirScale})`,
+          transition: 'transform 0.2s ease'
+        }}
         className="w-20 h-20 sm:w-22 sm:h-22 object-contain drop-shadow-md transition-transform duration-200 hover:scale-110 active:scale-95 pointer-events-none select-none"
         draggable={false}
       />
@@ -635,7 +643,45 @@ const PigSprite = ({ breed, isSelected, direction, weight }) => {
   );
 };
 
+// Barn Capacity Upgrade Tiers with Level & Coin Requirements
+const BARN_CAPACITY_TIERS = [
+  { tier: 1, capacity: 6, reqLevel: 1, cost: 0, title: 'คอกไม้ฟาร์มเบื้องต้น' },
+  { tier: 2, capacity: 8, reqLevel: 2, cost: 1200, title: 'คอกไม้ขยายพื้นที่ ระดับ 2' },
+  { tier: 3, capacity: 10, reqLevel: 4, cost: 3000, title: 'โรงนาชุมชนกว้างขวาง ระดับ 3' },
+  { tier: 4, capacity: 12, reqLevel: 6, cost: 6500, title: 'คอกฟาร์มมาตรฐานสากล ระดับ 4' },
+  { tier: 5, capacity: 15, reqLevel: 8, cost: 14000, title: 'อาณาจักรปศุสัตว์ขนาดใหญ่ ระดับ 5' },
+  { tier: 6, capacity: 20, reqLevel: 10, cost: 28000, title: 'มหาฟาร์มหมูพันล้านในตำนาน ระดับ 6' }
+];
+
 export default function HappyHogView() {
+  // Farm Level & EXP
+  const [farmLevel, setFarmLevel] = useState(() => {
+    const saved = localStorage.getItem('happy_hog_farm_level');
+    return saved !== null ? parseInt(saved, 10) : 1;
+  });
+  const [farmExp, setFarmExp] = useState(() => {
+    const saved = localStorage.getItem('happy_hog_farm_exp');
+    return saved !== null ? parseInt(saved, 10) : 0;
+  });
+
+  // Barn Capacity Tier
+  const [barnCapacityTier, setBarnCapacityTier] = useState(() => {
+    const saved = localStorage.getItem('happy_hog_barn_tier');
+    return saved !== null ? parseInt(saved, 10) : 2; // Default to Tier 2 (capacity 8)
+  });
+  const maxPigs = BARN_CAPACITY_TIERS.find((t) => t.tier === barnCapacityTier)?.capacity || 8;
+  const expForNextLevel = farmLevel * 120;
+
+  // Screen Size Mode (Theater / Full-window mode)
+  const [isTheaterMode, setIsTheaterMode] = useState(false);
+
+  // Barn Upgrade Modal
+  const [showBarnUpgradeModal, setShowBarnUpgradeModal] = useState(false);
+
+  // Breeding Parents Selection
+  const [breedParent1Id, setBreedParent1Id] = useState(null);
+  const [breedParent2Id, setBreedParent2Id] = useState(null);
+
   const [coins, setCoins] = useState(() => {
     const saved = localStorage.getItem('happy_hog_coins');
     return saved !== null ? parseInt(saved, 10) : 250;
@@ -864,16 +910,16 @@ export default function HappyHogView() {
     return () => clearInterval(timer);
   }, []);
 
-  // Periodic Litter & Gold Drops Spawner in Farm Yard
+  // Periodic Litter & Gold Drops Spawner in Farm Yard (Relaxed 75s timer, max 3 items)
   useEffect(() => {
     const dropTimer = setInterval(() => {
       setYardDrops((prev) => {
-        if (prev.length >= 5) return prev;
+        if (prev.length >= 3) return prev;
         const types = [
-          { type: 'poop', icon: '💩', label: 'มูลหมูชีวภาพ', reward: 25 },
-          { type: 'weed', icon: '🌿', label: 'วัชพืชฟาร์ม', reward: 20 },
-          { type: 'bug', icon: '🐛', label: 'หนอนกินใบไม้', reward: 35 },
-          { type: 'coin', icon: '⭐', label: 'เหรียญทองนำโชค', reward: 50 }
+          { type: 'poop', icon: '💩', label: 'มูลหมูชีวภาพ', reward: 35 },
+          { type: 'weed', icon: '🌿', label: 'วัชพืชฟาร์ม', reward: 30 },
+          { type: 'bug', icon: '🐛', label: 'หนอนกินใบไม้', reward: 40 },
+          { type: 'coin', icon: '⭐', label: 'เหรียญทองนำโชค', reward: 60 }
         ];
         const selected = types[Math.floor(Math.random() * types.length)];
         const newDrop = {
@@ -884,7 +930,7 @@ export default function HappyHogView() {
         };
         return [...prev, newDrop];
       });
-    }, 12000);
+    }, 75000);
     return () => clearInterval(dropTimer);
   }, []);
 
@@ -908,13 +954,74 @@ export default function HappyHogView() {
     localStorage.setItem('happy_hog_neighbors', JSON.stringify(neighbors));
     localStorage.setItem('happy_hog_quests', JSON.stringify(quests));
     localStorage.setItem('happy_hog_wheel_spins', wheelSpinsToday.toString());
-  }, [coins, energy, pigs, isLocked, activeThemeId, unlockedThemes, unlockedBreeds, stats, crops, cropInventory, loginData, neighbors, quests, wheelSpinsToday]);
+    localStorage.setItem('happy_hog_farm_level', farmLevel.toString());
+    localStorage.setItem('happy_hog_farm_exp', farmExp.toString());
+    localStorage.setItem('happy_hog_barn_tier', barnCapacityTier.toString());
+  }, [coins, energy, pigs, isLocked, activeThemeId, unlockedThemes, unlockedBreeds, stats, crops, cropInventory, loginData, neighbors, quests, wheelSpinsToday, farmLevel, farmExp, barnCapacityTier]);
 
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => {
       setToastMessage('');
     }, 2800);
+  };
+
+  // Farm Experience & Level Up System
+  const addExp = (amount) => {
+    setFarmExp((prevExp) => {
+      let currentExp = prevExp + amount;
+      let currentLv = farmLevel;
+      const needed = currentLv * 120;
+      if (currentExp >= needed) {
+        currentExp -= needed;
+        const nextLv = currentLv + 1;
+        setFarmLevel(nextLv);
+        playSound('fanfare', isMuted);
+        const rewardBonus = nextLv * 250;
+        setCoins((c) => c + rewardBonus);
+        setEnergy(100);
+        setCelebrationReward({
+          title: `🎉 เลเวลอัป! ฟาร์มเลเวล ${nextLv}`,
+          badge: 'FARM LEVEL UP!',
+          subtitle: 'ฟาร์มของคุณเติบโตขึ้นไปอีกขั้น',
+          rewardText: `+${rewardBonus.toLocaleString()} ฿ & พลังงานเต็ม ⚡100`,
+          icon: '⭐',
+          color: 'from-amber-400 to-yellow-500'
+        });
+        showToast(`⭐ เลเวลอัปเป็น Lv.${nextLv}! ได้รับ +${rewardBonus} ฿`);
+      }
+      return currentExp;
+    });
+  };
+
+  // Keyboard shortcut for Theater Mode
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isTheaterMode) {
+        setIsTheaterMode(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isTheaterMode]);
+
+  // Screen Size Toggle (Theater / Full Window)
+  const toggleScreenMode = () => {
+    if (!isTheaterMode) {
+      setIsTheaterMode(true);
+      try {
+        if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        }
+      } catch (e) {}
+    } else {
+      setIsTheaterMode(false);
+      try {
+        if (document.exitFullscreen && document.fullscreenElement) {
+          document.exitFullscreen().catch(() => {});
+        }
+      } catch (e) {}
+    }
   };
 
   // Evaluate & Unlock Breeds automatically based on conditions
@@ -959,22 +1066,53 @@ export default function HappyHogView() {
     }
   }, [pigs, coins, stats, loginData, unlockedBreeds, isMuted]);
 
-  // Ambient wandering loop for pigs inside the pen
+  // Ambient wandering loop for pigs inside the pen with differentiated hunger, bath, health decays
   useEffect(() => {
     const interval = setInterval(() => {
       setPigs((prevPigs) =>
         prevPigs.map((p) => {
+          // Individual metabolism modifier based on pig id so they don't decay in lockstep
+          const rateModifier = 0.85 + ((p.id % 5) * 0.07);
+
           if (Math.random() < 0.45) {
             const currentBounds = BARN_THEMES[activeThemeId]?.bounds || { minX: 30, maxX: 68, minY: 36, maxY: 66 };
             const nextX = Math.max(currentBounds.minX, Math.min(currentBounds.maxX, p.x + (Math.random() * 16 - 8)));
             const nextY = Math.max(currentBounds.minY, Math.min(currentBounds.maxY, p.y + (Math.random() * 14 - 7)));
+
+            // 1. Hunger decreases steadily (~0.32% per wander step)
+            const hungerLoss = 0.32 * rateModifier;
+            const nextHunger = Math.max(0, p.hunger - hungerLoss);
+
+            // 2. Cleanliness decreases much slower (~0.08% per step, even slower in onsen)
+            // If pen has uncollected waste, cleanliness drops an extra 0.04%
+            const wastePenalty = yardDrops.length > 0 ? 0.04 : 0;
+            const cleanlinessLoss = (activeThemeId === 'onsen_mud' ? 0.04 : 0.08) * rateModifier + wastePenalty;
+            const nextCleanliness = Math.max(0, p.cleanliness - cleanlinessLoss);
+
+            // 3. Health only drops if the pig is starving or very dirty!
+            let healthLoss = 0;
+            if (nextHunger < 15) healthLoss += 0.25; // Starving
+            if (nextCleanliness < 15) healthLoss += 0.2; // Filthy
+            const nextHealth = Math.max(0, p.health - healthLoss);
+
+            // 4. Gradual weight growth when well-fed & clean
+            let weightDelta = 0;
+            if (nextHunger >= 60 && nextCleanliness >= 60 && p.health >= 80) {
+              const breedMax = PIG_BREEDS[p.breed]?.maxWeight || 100;
+              if (p.weight < breedMax) {
+                weightDelta = 0.05; // grows 50 grams
+              }
+            }
+
             return {
               ...p,
               x: nextX,
               y: nextY,
               direction: nextX >= p.x ? 1 : -1,
-              hunger: Math.max(0, p.hunger - 0.25),
-              cleanliness: Math.max(0, p.cleanliness - (activeThemeId === 'onsen_mud' ? 0.08 : 0.18))
+              hunger: Math.round(nextHunger * 10) / 10,
+              cleanliness: Math.round(nextCleanliness * 10) / 10,
+              health: Math.round(nextHealth * 10) / 10,
+              weight: Math.round((p.weight + weightDelta) * 10) / 10
             };
           }
           return p;
@@ -983,20 +1121,26 @@ export default function HappyHogView() {
     }, 2400);
 
     return () => clearInterval(interval);
-  }, [activeThemeId]);
+  }, [activeThemeId, yardDrops.length]);
 
   const selectedPig = pigs.find((p) => p.id === selectedPigId) || pigs[0];
   const activeTheme = BARN_THEMES[activeThemeId] || BARN_THEMES.pasture;
 
-  // Determine what Need bubble a pig should show
+  // Determine what Need bubble a pig should show (ONLY when an urgent need exists!)
   const getPigNeed = (pig) => {
-    if (pig.hunger < 45) return { type: 'feed', icon: '🥣', label: 'หิวข้าว', hint: 'แตะเพื่อให้อาหารทันที' };
-    if (pig.cleanliness < 45) return { type: 'bath', icon: '🧼', label: 'ตัวเหม็น', hint: 'แตะเพื่ออาบน้ำขัดตัว' };
+    // 1. Sick (Urgent!)
     if (pig.health < 60) return { type: 'heal', icon: '💉', label: 'ไม่สบาย', hint: 'แตะเพื่อฉีดยารักษา' };
-    if (pig.weight >= 60 && pig.hunger >= 80 && pig.cleanliness >= 80) {
+    // 2. Hungry
+    if (pig.hunger < 45) return { type: 'feed', icon: '🥣', label: 'หิวข้าว', hint: 'แตะเพื่อให้อาหารทันที' };
+    // 3. Dirty
+    if (pig.cleanliness < 45) return { type: 'bath', icon: '🧼', label: 'ตัวมอมแมม', hint: 'แตะเพื่ออาบน้ำขัดตัว' };
+    // 4. Ready to breed (Mature, well-fed, clean, not in cooldown)
+    const isResting = pig.breedCooldownUntil && pig.breedCooldownUntil > currentTime;
+    if (pig.weight >= 60 && pig.hunger >= 80 && pig.cleanliness >= 80 && !isResting) {
       return { type: 'love', icon: '💖', label: 'พร้อมผสมพันธุ์', hint: 'แตะเพื่อไปห้องแล็บวิจัย' };
     }
-    return { type: 'happy', icon: '✨', label: 'อารมณ์ดี', hint: 'แตะเพื่อลูบหัว' };
+    // Content & happy pigs: NO permanent bouncing bubble!
+    return null;
   };
 
   // Quick Action triggered directly from tapping a Pig's Speech Bubble!
@@ -1062,6 +1206,7 @@ export default function HappyHogView() {
     );
     setStats((s) => ({ ...s, feedCount: s.feedCount + 1 }));
     advanceQuest('feed', 1);
+    addExp(10);
     setHearts((h) => [...h, { id: Date.now(), x: targetPig.x, y: targetPig.y - 12 }]);
     setTimeout(() => setHearts((h) => h.slice(1)), 1200);
   };
@@ -1086,6 +1231,7 @@ export default function HappyHogView() {
     );
     setStats((s) => ({ ...s, bathCount: s.bathCount + 1 }));
     advanceQuest('bath', 1);
+    addExp(10);
 
     const newBubbles = Array.from({ length: 8 }).map((_, i) => ({
       id: Date.now() + i,
@@ -1095,7 +1241,7 @@ export default function HappyHogView() {
     setBubbles(newBubbles);
     setTimeout(() => setBubbles([]), 1500);
 
-    showToast('🧼 อาบน้ำในอ่างไม้หอมฉุย ตัวสะอาด 100%!');
+    showToast('🧼 อาบน้ำในอ่างไม้หอมฉุย ตัวสะอาด 100%! (+10 EXP)');
   };
 
   const handleVaccine = () => {
@@ -1109,7 +1255,8 @@ export default function HappyHogView() {
     setPigs((prev) =>
       prev.map((p) => (p.id === selectedPig.id ? { ...p, health: 100 } : p))
     );
-    showToast('💉 ฉีดยาป้องกันโรคเรียบร้อย สุขภาพแข็งแรง 100%!');
+    addExp(15);
+    showToast('💉 ฉีดยาป้องกันโรคเรียบร้อย สุขภาพแข็งแรง 100%! (+15 EXP)');
   };
 
   const handleDrinkWater = () => {
@@ -1118,9 +1265,10 @@ export default function HappyHogView() {
     setPigs((prev) =>
       prev.map((p) => (p.id === selectedPig.id ? { ...p, health: Math.min(100, p.health + 20) } : p))
     );
+    addExp(5);
     setHearts((h) => [...h, { id: Date.now(), x: selectedPig.x, y: selectedPig.y - 12 }]);
     setTimeout(() => setHearts((h) => h.slice(1)), 1200);
-    showToast(`🚰 น้องดื่มน้ำจากก๊อกน้ำธรรมชาติ สดชื่นกระปรี้กระเปร่า!`);
+    showToast(`🚰 น้องดื่มน้ำจากก๊อกน้ำธรรมชาติ สดชื่นกระปรี้กระเปร่า! (+5 EXP)`);
   };
 
   const handleSellPig = (pig) => {
@@ -1146,7 +1294,8 @@ export default function HappyHogView() {
 
     setStats((s) => ({ ...s, soldCount: s.soldCount + 1 }));
     advanceQuest('sell', 1);
-    showToast(`💰 ขาย ${pig.name} (${pig.weight} kg) ได้รับ ${earnings.toLocaleString()} เหรียญ!`);
+    addExp(30);
+    showToast(`💰 ขาย ${pig.name} (${pig.weight} kg) ได้รับ ${earnings.toLocaleString()} เหรียญ & +30 EXP!`);
   };
 
   const handleBuyPiglet = (breedKey, cost) => {
@@ -1154,8 +1303,9 @@ export default function HappyHogView() {
       showToast('❌ เหรียญไม่พอซื้อลูกหมูพันธุ์นี้!');
       return;
     }
-    if (pigs.length >= 8) {
-      showToast('⚠️ คอกหมูเต็มแล้ว! (รับได้สูงสุด 8 ตัว)');
+    if (pigs.length >= maxPigs) {
+      showToast(`⚠️ คอกหมูเต็มแล้ว! (รับได้สูงสุด ${maxPigs} ตัว) ขยายขนาดคอกหมูก่อนนะ!`);
+      setShowBarnUpgradeModal(true);
       return;
     }
     if (!unlockedBreeds.includes(breedKey)) {
@@ -1184,6 +1334,7 @@ export default function HappyHogView() {
 
     setPigs((prev) => [...prev, newPig]);
     setSelectedPigId(newPig.id);
+    addExp(20);
     showToast(`🎉 ยินดีด้วย! ได้ต้อนรับลูกหมูใหม่: ${PIG_BREEDS[breedKey].name}`);
   };
 
@@ -1192,8 +1343,9 @@ export default function HappyHogView() {
       showToast('⚠️ ต้องมีหมูอย่างน้อย 2 ตัวในการผสมพันธุ์!');
       return;
     }
-    if (pigs.length >= 8) {
-      showToast('⚠️ คอกหมูเต็มแล้ว! (รับได้สูงสุด 8 ตัว)');
+    if (pigs.length >= maxPigs) {
+      showToast(`⚠️ คอกหมูเต็มแล้ว! (รับได้สูงสุด ${maxPigs} ตัว) ขยายขนาดคอกหมูก่อนนะ!`);
+      setShowBarnUpgradeModal(true);
       return;
     }
     if (coins < 80) {
@@ -1204,6 +1356,27 @@ export default function HappyHogView() {
     const maturePigs = pigs.filter((p) => p.weight >= 60);
     if (maturePigs.length < 2) {
       showToast('⚠️ หมูต้องหนักอย่างน้อย 60 kg ขึ้นไป ถึงจะพร้อมผสมพันธุ์!');
+      return;
+    }
+
+    // Determine parent pigs
+    let p1 = maturePigs.find((p) => p.id === breedParent1Id) || maturePigs[0];
+    let p2 = maturePigs.find((p) => p.id === breedParent2Id && p.id !== p1.id) || maturePigs.find((p) => p.id !== p1.id) || maturePigs[1];
+
+    if (!p1 || !p2 || p1.id === p2.id) {
+      showToast('⚠️ กรุณาเลือกหมูพ่อพันธุ์และแม่พันธุ์ 2 ตัวที่ต่างกัน');
+      return;
+    }
+
+    const now = Date.now();
+    if (p1.breedCooldownUntil && p1.breedCooldownUntil > now) {
+      const waitSec = Math.ceil((p1.breedCooldownUntil - now) / 1000);
+      showToast(`⏳ พ่อพันธุ์ "${p1.name}" กำลังพักฟื้น: เหลืออีก ${waitSec} วินาที`);
+      return;
+    }
+    if (p2.breedCooldownUntil && p2.breedCooldownUntil > now) {
+      const waitSec = Math.ceil((p2.breedCooldownUntil - now) / 1000);
+      showToast(`⏳ แม่พันธุ์ "${p2.name}" กำลังพักฟื้น: เหลืออีก ${waitSec} วินาที`);
       return;
     }
 
@@ -1220,9 +1393,10 @@ export default function HappyHogView() {
     else if (roll > 0.2) resultBreed = 'engineer';
     else if (roll > 0.1) resultBreed = 'auditor';
 
+    const babyId = Date.now();
     const baby = {
-      id: Date.now(),
-      name: `ลูกหมูพันธุกรรมเทพ (${PIG_BREEDS[resultBreed].tag})`,
+      id: babyId,
+      name: `ลูกหมูพันธุกรรม (${PIG_BREEDS[resultBreed].tag})`,
       breed: resultBreed,
       weight: 15,
       hunger: 100,
@@ -1230,19 +1404,40 @@ export default function HappyHogView() {
       health: 100,
       x: 50,
       y: 50,
-      direction: 1
+      direction: 1,
+      breedCooldownUntil: now + 180000 // baby rests 3 min
     };
 
-    setPigs((prev) => [...prev, baby]);
+    // Parents rest for 2 minutes (120,000 ms)
+    const cooldownDuration = 120000;
+    setPigs((prev) =>
+      prev
+        .map((p) => {
+          if (p.id === p1.id || p.id === p2.id) {
+            return { ...p, breedCooldownUntil: now + cooldownDuration };
+          }
+          return p;
+        })
+        .concat(baby)
+    );
+
     setSelectedPigId(baby.id);
     setStats((s) => ({ ...s, breedCount: s.breedCount + 1 }));
+    addExp(50);
 
     if (!unlockedBreeds.includes(resultBreed)) {
       setUnlockedBreeds((prev) => [...prev, resultBreed]);
     }
 
     playSound('fanfare', isMuted);
-    showToast(`✨ ลูกหมูเกิดแล้ว! พันธุ์: ${PIG_BREEDS[resultBreed].name}`);
+    setCelebrationReward({
+      title: '🧬 ผสมพันธุ์ลูกหมูสำเร็จ!',
+      badge: 'NEW PIGLET BORN!',
+      subtitle: `สายเลือดจาก ${p1.name} & ${p2.name}`,
+      rewardText: `ได้รับ: ${PIG_BREEDS[resultBreed].name} & +50 EXP`,
+      icon: '🐷',
+      color: 'from-purple-500 to-indigo-600'
+    });
   };
 
   const handlePlantCrop = (plotId, seedKey) => {
@@ -1282,7 +1477,8 @@ export default function HappyHogView() {
     );
 
     advanceQuest('crop', 1);
-    showToast(`🧺 เก็บเกี่ยว "${meta.name}" ได้ผลผลิต +${meta.yieldCount} ถุง เข้าคลังอาหารฟรี!`);
+    addExp(15);
+    showToast(`🧺 เก็บเกี่ยว "${meta.name}" ได้ผลผลิต +${meta.yieldCount} ถุง & +15 EXP!`);
   };
 
   const handleCollectYardDrop = (e, drop) => {
@@ -1290,8 +1486,9 @@ export default function HappyHogView() {
     setYardDrops((prev) => prev.filter((d) => d.id !== drop.id));
     setCoins((c) => c + drop.reward);
     advanceQuest('clean', 1);
+    addExp(8);
     playSound('coin', isMuted);
-    showToast(`✨ เก็บ ${drop.label} ในลานฟาร์ม! ได้รับ +${drop.reward} 🪙`);
+    showToast(`✨ เก็บ ${drop.label} ในลานฟาร์ม! ได้รับ +${drop.reward} 🪙 & +8 EXP`);
   };
 
   const handleClaimQuest = (quest) => {
@@ -1308,6 +1505,7 @@ export default function HappyHogView() {
       });
     }
     setQuests((prev) => prev.map((q) => (q.id === quest.id ? { ...q, claimed: true } : q)));
+    addExp(40);
     playSound('fanfare', isMuted);
     setCelebrationReward({
       title: '📋 ภารกิจประจำวันสำเร็จ!',
@@ -1317,7 +1515,8 @@ export default function HappyHogView() {
       rewardText: [
         quest.rewardCoins ? `+${quest.rewardCoins} 🪙` : null,
         quest.rewardEnergy ? `+${quest.rewardEnergy} ⚡` : null,
-        quest.rewardCrops ? `+2 🌾` : null
+        quest.rewardCrops ? `+2 🌾` : null,
+        '+40 EXP ⭐'
       ].filter(Boolean).join('  '),
       color: '#f59e0b'
     });
@@ -1344,13 +1543,14 @@ export default function HappyHogView() {
     setCoins((c) => c + bounty.rewardCoins);
     setBounties((prev) => prev.filter((b) => b.id !== bounty.id));
     advanceQuest('sell', 1);
+    addExp(50);
     playSound('fanfare', isMuted);
     setCelebrationReward({
       title: '📜 ส่งมอบหมูโครงการ อปท. สำเร็จ!',
       subtitle: `ส่งมอบ ${chosenPig.name} ให้ ${bounty.dept} (${bounty.title})`,
       icon: '🚚',
       badge: bounty.dept,
-      rewardText: `+${bounty.rewardCoins.toLocaleString()} เหรียญทองคำ 🪙`,
+      rewardText: `+${bounty.rewardCoins.toLocaleString()} เหรียญ 🪙 & +50 EXP`,
       color: '#10b981'
     });
   };
@@ -1502,8 +1702,8 @@ export default function HappyHogView() {
       showToast('⚡ พลังงานไม่พอสำหรับปฏิบัติการย่องเบา (ต้องการ 15 พลังงาน)');
       return;
     }
-    if (pigs.length >= 8) {
-      showToast('⚠️ คอกหมูของเราเต็มแล้ว (จุได้สูงสุด 8 ตัว) ต้องขายก่อนนะ!');
+    if (pigs.length >= maxPigs) {
+      showToast(`⚠️ คอกหมูของเราเต็มแล้ว (จุได้สูงสุด ${maxPigs} ตัว) ขยายขนาดคอกหมูก่อนนะ!`);
       return;
     }
 
@@ -1632,7 +1832,9 @@ export default function HappyHogView() {
   };
 
   return (
-    <div className="p-1 sm:p-3 max-w-7xl mx-auto select-none font-sans">
+    <div className={`p-1 sm:p-3 max-w-7xl mx-auto select-none font-sans transition-all ${
+      isTheaterMode ? 'fixed inset-0 z-50 bg-[#1e0e06] p-2 sm:p-4 overflow-y-auto w-screen h-screen m-0 max-w-none' : ''
+    }`}>
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-6 right-6 z-50 bg-[#2b180d]/95 text-amber-200 border-2 border-amber-500 shadow-2xl px-5 py-3 rounded-2xl flex items-center space-x-3 backdrop-blur-md animate-bounce">
@@ -1648,19 +1850,27 @@ export default function HappyHogView() {
 
         {/* ================= TOP HUD: PIGGY TOWN SIGNATURE STATUS BAR ================= */}
         <div className="relative z-10 flex flex-wrap items-center justify-between gap-2.5 bg-[#2b180d]/85 p-2.5 rounded-2xl border-2 border-amber-700/80 shadow-md">
-          {/* Avatar and Level Title */}
+          {/* Avatar and Level Title with EXP Progress */}
           <div className="flex items-center space-x-2.5">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-b from-amber-400 to-amber-600 border-2 border-amber-300 flex items-center justify-center text-2xl shadow-inner">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-b from-amber-400 to-amber-600 border-2 border-amber-300 flex items-center justify-center text-2xl shadow-inner shrink-0">
               🐷
             </div>
             <div>
               <div className="flex items-center space-x-1.5">
                 <span className="font-black text-amber-100 text-sm font-mono tracking-tight">PIGGY TOWN</span>
                 <span className="bg-amber-500 text-amber-950 font-black text-[9px] px-1.5 py-0.2 rounded-full uppercase">
-                  อปท.
+                  Lv.{farmLevel}
                 </span>
               </div>
-              <p className="text-[10px] text-amber-300/80 font-bold">ฟาร์มหมูผู้ตรวจพันล้าน</p>
+              <div className="flex items-center space-x-1 mt-0.5" title={`EXP ฟาร์ม: ${farmExp}/${expForNextLevel}`}>
+                <div className="w-20 sm:w-24 h-1.5 bg-slate-950/80 rounded-full overflow-hidden border border-amber-500/40">
+                  <div
+                    className="h-full bg-gradient-to-r from-amber-400 to-yellow-300 transition-all duration-300"
+                    style={{ width: `${Math.min(100, (farmExp / expForNextLevel) * 100)}%` }}
+                  />
+                </div>
+                <span className="text-[9px] text-amber-300 font-mono font-bold">{Math.round((farmExp / expForNextLevel) * 100)}%</span>
+              </div>
             </div>
           </div>
 
@@ -1728,6 +1938,16 @@ export default function HappyHogView() {
               <span>เยี่ยมเพื่อน</span>
             </button>
 
+            {/* Screen Size Mode Toggle (Theater / Full Window) */}
+            <button
+              onClick={toggleScreenMode}
+              className="p-1.5 bg-amber-950 hover:bg-amber-900 border border-amber-600 rounded-xl text-amber-200 cursor-pointer flex items-center space-x-1"
+              title={isTheaterMode ? 'ย่อหน้าต่างกลับสู่ขนาดปกติ (Esc)' : 'ขยายหน้าต่างเต็มหน้าจอ (Theater Fullscreen)'}
+            >
+              {isTheaterMode ? <Minimize2 className="w-4 h-4 text-amber-400" /> : <Maximize2 className="w-4 h-4 text-amber-400" />}
+              <span className="text-[10px] font-bold hidden sm:inline">{isTheaterMode ? 'ย่อจอ' : 'เต็มจอ'}</span>
+            </button>
+
             {/* Audio Toggle */}
             <button
               onClick={() => setIsMuted(!isMuted)}
@@ -1748,7 +1968,7 @@ export default function HappyHogView() {
                 : 'text-amber-200 hover:text-white'
             }`}
           >
-            <span>🐷 ฟาร์มหมูในตำนาน ({pigs.length}/8)</span>
+            <span>🐷 ฟาร์มหมูในตำนาน ({pigs.length}/{maxPigs})</span>
           </button>
 
           <button
@@ -1809,7 +2029,7 @@ export default function HappyHogView() {
             {/* Main Interactive Farm Canvas (3 Columns) */}
             <div className="lg:col-span-3 space-y-2">
               <div
-                className={`relative w-full h-[540px] rounded-3xl overflow-hidden border-4 border-amber-900/80 shadow-2xl select-none ${
+                className={`relative w-full ${isTheaterMode ? 'h-[calc(100vh-210px)] min-h-[580px]' : 'h-[540px]'} rounded-3xl overflow-hidden border-4 border-amber-900/80 shadow-2xl select-none transition-all ${
                   activeTheme.bgImage ? '' : `bg-gradient-to-b ${activeTheme.bgClass}`
                 }`}
                 style={
@@ -2017,9 +2237,12 @@ export default function HappyHogView() {
                 ))}
 
                 {/* ================= ROAMING CHIBI PIGS WITH SPEECH BUBBLES ================= */}
+                {/* ================= ROAMING CHIBI PIGS WITH SPEECH BUBBLES ================= */}
                 {pigs.map((pig) => {
                   const isSelected = selectedPigId === pig.id;
                   const need = getPigNeed(pig);
+                  const isResting = pig.breedCooldownUntil && pig.breedCooldownUntil > currentTime;
+                  const zIndexVal = Math.floor(pig.y * 10) + (isSelected ? 500 : 0);
 
                   return (
                     <div
@@ -2032,22 +2255,24 @@ export default function HappyHogView() {
                         left: `${pig.x}%`,
                         top: `${pig.y}%`,
                         transform: 'translate(-50%, -50%)',
-                        transition: 'left 2.4s ease-out, top 2.4s ease-out'
+                        transition: 'left 2.4s ease-out, top 2.4s ease-out',
+                        zIndex: zIndexVal
                       }}
-                      className="absolute cursor-pointer z-30 group"
+                      className="absolute cursor-pointer group"
                     >
-                      {/* 1. Floating Glass Need Bubble (Piggy Town Style) */}
-                      <div
-                        onClick={(e) => handleBubbleClick(e, pig, need)}
-                        style={{ transform: `scaleX(${pig.direction})` }}
-                        className="absolute -top-14 left-1/2 -translate-x-1/2 flex flex-col items-center cursor-pointer z-40 transition-transform hover:scale-120 active:scale-95 animate-bounce"
-                        title={need.hint}
-                      >
-                        <div className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-md border-2 border-white/95 shadow-[0_4px_12px_rgba(0,0,0,0.22)] flex items-center justify-center text-xl ring-2 ring-amber-400">
-                          <span>{need.icon}</span>
+                      {/* 1. Floating Need Bubble - ONLY WHEN AN URGENT NEED EXISTS! */}
+                      {need && (
+                        <div
+                          onClick={(e) => handleBubbleClick(e, pig, need)}
+                          className="absolute -top-14 left-1/2 -translate-x-1/2 flex flex-col items-center cursor-pointer z-40 transition-transform hover:scale-120 active:scale-95 animate-bounce pointer-events-auto"
+                          title={need.hint}
+                        >
+                          <div className="w-10 h-10 rounded-full bg-white/95 backdrop-blur-md border-2 border-white shadow-[0_4px_12px_rgba(0,0,0,0.25)] flex items-center justify-center text-xl ring-2 ring-amber-400">
+                            <span>{need.icon}</span>
+                          </div>
+                          <div className="w-2.5 h-2.5 bg-white border-r-2 border-b-2 border-amber-300 rotate-45 -mt-1.5 shadow-xs" />
                         </div>
-                        <div className="w-2.5 h-2.5 bg-white border-r-2 border-b-2 border-amber-300 rotate-45 -mt-1.5 shadow-xs" />
-                      </div>
+                      )}
 
                       {/* 2. High-Fidelity 3D Chibi Illustrated Pig Sprite */}
                       <PigSprite
@@ -2057,14 +2282,20 @@ export default function HappyHogView() {
                         weight={pig.weight}
                       />
 
-                      {/* 3. Name, Weight, and Health Status Bar Underneath */}
+                      {/* 3. Name, Weight, and Health Status Bar Underneath (Upright Text, Never Mirrored!) */}
                       <div
-                        style={{ transform: `scaleX(${pig.direction})` }}
                         className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none whitespace-nowrap z-35"
                       >
-                        <div className="bg-[#2b180d]/90 text-amber-200 text-[10px] font-black px-2 py-0.5 rounded-full border border-amber-500/80 shadow-md flex items-center space-x-1">
-                          <span>{pig.name}</span>
-                          <span className="text-amber-400 font-mono">({pig.weight}kg)</span>
+                        <div className={`px-2 py-0.5 rounded-full border shadow-md flex items-center space-x-1 transition-all ${
+                          isSelected
+                            ? 'bg-[#2b180d] text-amber-200 text-[10px] font-black border-amber-400 ring-2 ring-amber-400/80 scale-105'
+                            : 'bg-[#2b180d]/85 text-amber-100/90 text-[9px] font-bold border-amber-700/70'
+                        }`}>
+                          <span>{pig.name.length > 12 && !isSelected ? `${pig.name.slice(0, 11)}…` : pig.name}</span>
+                          <span className="text-amber-400 font-mono text-[9px]">({pig.weight}kg)</span>
+                          {isResting && (
+                            <span className="text-amber-300 text-[8px]" title="กำลังพักฟื้นหลังคลอด">💤</span>
+                          )}
                         </div>
                         <div className="w-12 h-1.5 bg-slate-900/80 rounded-full overflow-hidden mt-0.5 border border-white/40 flex shadow-xs">
                           <div
@@ -2105,15 +2336,26 @@ export default function HappyHogView() {
                 </div>
               </div>
 
-              {/* Status Hint */}
-              <div className="bg-[#2b180d]/80 rounded-2xl p-2.5 border border-amber-700/60 flex items-center justify-between text-xs text-amber-200">
-                <div className="flex items-center space-x-2">
+              {/* Status Hint & Barn Upgrade Trigger */}
+              <div className="bg-[#2b180d]/85 rounded-2xl p-2.5 border border-amber-700/80 flex flex-wrap items-center justify-between gap-2 text-xs text-amber-200 shadow-md">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="font-bold">🐷 คอกฟาร์ม:</span>
-                  <span>หมู {pigs.length}/8 ตัว</span>
+                  <span className="font-mono bg-amber-950/80 px-2 py-0.5 rounded-lg border border-amber-600 text-amber-100 font-bold">
+                    หมู {pigs.length}/{maxPigs} ตัว
+                  </span>
+                  {barnCapacityTier < BARN_CAPACITY_TIERS.length && (
+                    <button
+                      onClick={() => setShowBarnUpgradeModal(true)}
+                      className="px-2.5 py-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl text-[11px] font-black border border-amber-300 shadow-xs flex items-center space-x-1 cursor-pointer transition-transform hover:scale-105 active:scale-95 animate-pulse"
+                    >
+                      <ArrowUpCircle className="w-3.5 h-3.5" />
+                      <span>ขยายคอกหมู (Tier {barnCapacityTier + 1})</span>
+                    </button>
+                  )}
                   <span>•</span>
                   <span>น้ำหนักรวม {pigs.reduce((a, b) => a + b.weight, 0).toFixed(1)} kg</span>
                 </div>
-                <div className="text-amber-300 font-bold text-[11px] animate-pulse">
+                <div className="text-amber-300 font-bold text-[11px]">
                   💡 คลิกบอลลูนบนหัวหมู หรือแตะก๊อกน้ำ / อ่างอาบน้ำ / รางอาหาร ได้โดยตรง!
                 </div>
               </div>
@@ -2462,45 +2704,195 @@ export default function HappyHogView() {
         )}
 
         {/* ================= TAB 4: BREEDING LAB ================= */}
-        {activeTab === 'breed' && (
-          <div className="relative z-10 bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] p-6 sm:p-8 rounded-3xl border-4 border-amber-700 max-w-2xl mx-auto space-y-5 text-center shadow-2xl">
-            <div className="w-16 h-16 bg-purple-100 text-purple-700 rounded-3xl flex items-center justify-center mx-auto text-3xl border-2 border-purple-300 shadow-md">
-              🧬
-            </div>
+        {activeTab === 'breed' && (() => {
+          const maturePigs = pigs.filter((p) => p.weight >= 60);
+          const p1 = maturePigs.find((p) => p.id === breedParent1Id) || maturePigs[0];
+          const p2 = maturePigs.find((p) => p.id === breedParent2Id && p.id !== p1?.id) || maturePigs.find((p) => p.id !== p1?.id) || maturePigs[1];
 
-            <div>
-              <h2 className="text-xl font-black text-slate-900 font-mono">
-                ห้องปฏิบัติการผสมพันธุ์วิจัยลูกหมู
-              </h2>
-              <p className="text-xs text-amber-900 mt-1 max-w-md mx-auto font-medium">
-                ผสมพันธุ์หมูที่โตเต็มวัย (หนักมากกว่า 60 kg) เพื่อลุ้นรับสายพันธุ์หายาก เช่น หมูทองคำ, หมูชาบู หรือหมูสายรุ้ง สตง. ในตำนาน!
-              </p>
-            </div>
+          const now = currentTime;
+          const p1Cooldown = p1?.breedCooldownUntil && p1.breedCooldownUntil > now ? Math.ceil((p1.breedCooldownUntil - now) / 1000) : 0;
+          const p2Cooldown = p2?.breedCooldownUntil && p2.breedCooldownUntil > now ? Math.ceil((p2.breedCooldownUntil - now) / 1000) : 0;
+          const isParentOnCooldown = p1Cooldown > 0 || p2Cooldown > 0;
+          const isCapacityFull = pigs.length >= maxPigs;
+          const hasEnoughCoins = coins >= 80;
+          const canBreed = maturePigs.length >= 2 && !isParentOnCooldown && !isCapacityFull && hasEnoughCoins;
 
-            <div className="bg-amber-100/80 p-4 rounded-2xl border border-amber-300 text-xs space-y-2 text-left text-amber-950 font-medium">
-              <div className="font-black text-amber-900 flex items-center space-x-1">
-                <Sparkles className="w-4 h-4 text-amber-600" />
-                <span>อัตราการเกิดของสายพันธุ์เมื่อผสมพันธุ์:</span>
+          return (
+            <div className="relative z-10 bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] p-6 sm:p-8 rounded-3xl border-4 border-amber-700 max-w-3xl mx-auto space-y-6 shadow-2xl">
+              <div className="text-center space-y-2">
+                <div className="w-16 h-16 bg-purple-100 text-purple-700 rounded-3xl flex items-center justify-center mx-auto text-3xl border-2 border-purple-300 shadow-md">
+                  🧬
+                </div>
+                <h2 className="text-xl sm:text-2xl font-black text-slate-900 font-mono">
+                  ห้องปฏิบัติการผสมพันธุ์วิจัยลูกหมู
+                </h2>
+                <p className="text-xs text-amber-900 max-w-md mx-auto font-medium">
+                  เลือกพ่อพันธุ์และแม่พันธุ์ที่โตเต็มวัย (หนัก 60 kg ขึ้นไป) เพื่อวิจัยลูกหมูสายพันธุ์พิเศษ! หลังคลอดพ่อแม่พันธุ์จะต้องพักฟื้น 2 นาที
+                </p>
+                <div className="inline-flex items-center space-x-2 bg-amber-950/80 text-amber-200 px-3 py-1 rounded-full text-xs font-mono border border-amber-600">
+                  <span>🏠 ความจุคอก:</span>
+                  <span className="font-bold text-amber-400">{pigs.length}/{maxPigs} ตัว</span>
+                  {isCapacityFull && <span className="text-rose-400 font-bold ml-1">(เต็มแล้ว!)</span>}
+                </div>
               </div>
-              <div className="grid grid-cols-2 gap-2 text-[11px]">
-                <div>• หมูองค์รักษ์พิทักษ์ อปท. (Mythic): 8%</div>
-                <div>• หมูสายรุ้ง สตง. (Legendary): 12%</div>
-                <div>• หมูพัสดุทองคำแท้ (Epic): 15%</div>
-                <div>• หมูชาบูกระทะทอง (Epic): 15%</div>
-                <div>• หมูซากุระชมพูหวาน (Epic): 15%</div>
-                <div>• หมูผู้ตรวจ & หมูช่าง: 20%</div>
-              </div>
-            </div>
 
-            <button
-              onClick={handleBreed}
-              className="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-2xl font-black text-sm shadow-[0_5px_0_#4c1d95] active:translate-y-1 active:shadow-none cursor-pointer flex items-center justify-center space-x-2 mx-auto"
-            >
-              <Dna className="w-4 h-4" />
-              <span>ผสมพันธุ์ลูกหมูทันที (ค่าบริการ 80 เหรียญ)</span>
-            </button>
-          </div>
-        )}
+              {maturePigs.length < 2 ? (
+                <div className="bg-amber-100/90 border-2 border-amber-400 p-6 rounded-2xl text-center space-y-3">
+                  <div className="text-3xl">⚠️</div>
+                  <h3 className="font-black text-amber-950 text-sm">ยังไม่มีหมูที่พร้อมผสมพันธุ์เพียงพอ</h3>
+                  <p className="text-xs text-amber-800 font-medium max-w-sm mx-auto">
+                    ต้องมีหมูที่โตเต็มวัย (น้ำหนัก 60 kg ขึ้นไป) อย่างน้อย 2 ตัวในฟาร์ม (ปัจจุบันมี {maturePigs.length} ตัว) กรุณากลับไปให้อาหารและดูแลน้องๆ ให้โตเต็มที่ก่อนนะครับ!
+                  </p>
+                  <button
+                    onClick={() => setActiveTab('farm')}
+                    className="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white font-black text-xs rounded-xl shadow-md cursor-pointer transition-all"
+                  >
+                    🐷 กลับไปดูแลน้องหมูในฟาร์ม
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Select Parents Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Sire (พ่อพันธุ์) */}
+                    <div className="bg-white/95 p-4 rounded-2xl border-2 border-blue-300 shadow-sm space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black text-blue-900 uppercase flex items-center space-x-1">
+                          <span>♂️ หมูพ่อพันธุ์ (Sire)</span>
+                        </span>
+                        {p1Cooldown > 0 ? (
+                          <span className="text-[10px] font-bold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full border border-rose-300 animate-pulse">
+                            ⏳ พักฟื้นอีก {p1Cooldown}s
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-300">
+                            ✓ พร้อมผสม
+                          </span>
+                        )}
+                      </div>
+
+                      {p1 && (
+                        <div className="flex items-center space-x-3 p-2 bg-blue-50/60 rounded-xl border border-blue-200">
+                          <img src={`/pigs/${p1.breed}.png`} alt={p1.name} className="w-12 h-12 object-contain" />
+                          <div>
+                            <div className="font-black text-slate-800 text-xs">{p1.name}</div>
+                            <div className="text-[10px] text-slate-500 font-bold">{PIG_BREEDS[p1.breed]?.name} • {p1.weight} kg</div>
+                          </div>
+                        </div>
+                      )}
+
+                      <div>
+                        <label className="text-[10px] font-bold text-slate-600 block mb-1">เลือกตัวอื่น:</label>
+                        <select
+                          value={p1?.id || ''}
+                          onChange={(e) => setBreedParent1Id(Number(e.target.value))}
+                          className="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2 font-bold text-slate-800 cursor-pointer"
+                        >
+                          {maturePigs.map((p) => (
+                            <option key={p.id} value={p.id} disabled={p.id === p2?.id}>
+                              {p.name} ({p.weight} kg) - {PIG_BREEDS[p.breed]?.name} {p.id === p2?.id ? '(เลือกเป็นแม่พันธุ์แล้ว)' : ''}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Dam (แม่พันธุ์) */}
+                    <div className="bg-white/95 p-4 rounded-2xl border-2 border-pink-300 shadow-sm space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black text-pink-900 uppercase flex items-center space-x-1">
+                          <span>♀️ หมูแม่พันธุ์ (Dam)</span>
+                        </span>
+                        {p2Cooldown > 0 ? (
+                          <span className="text-[10px] font-bold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full border border-rose-300 animate-pulse">
+                            ⏳ พักฟื้นอีก {p2Cooldown}s
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-300">
+                            ✓ พร้อมผสม
+                          </span>
+                        )}
+                      </div>
+
+                      {p2 && (
+                        <div className="flex items-center space-x-3 p-2 bg-pink-50/60 rounded-xl border border-pink-200">
+                          <img src={`/pigs/${p2.breed}.png`} alt={p2.name} className="w-12 h-12 object-contain" />
+                          <div>
+                            <div className="font-black text-slate-800 text-xs">{p2.name}</div>
+                            <div className="text-[10px] text-slate-500 font-bold">{PIG_BREEDS[p2.breed]?.name} • {p2.weight} kg</div>
+                          </div>
+                        </div>
+                      )}
+
+                      <div>
+                        <label className="text-[10px] font-bold text-slate-600 block mb-1">เลือกตัวอื่น:</label>
+                        <select
+                          value={p2?.id || ''}
+                          onChange={(e) => setBreedParent2Id(Number(e.target.value))}
+                          className="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2 font-bold text-slate-800 cursor-pointer"
+                        >
+                          {maturePigs.map((p) => (
+                            <option key={p.id} value={p.id} disabled={p.id === p1?.id}>
+                              {p.name} ({p.weight} kg) - {PIG_BREEDS[p.breed]?.name} {p.id === p1?.id ? '(เลือกเป็นพ่อพันธุ์แล้ว)' : ''}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Rarity Chances Info */}
+                  <div className="bg-amber-100/80 p-3.5 rounded-2xl border border-amber-300 text-xs space-y-2 text-left text-amber-950 font-medium">
+                    <div className="font-black text-amber-900 flex items-center space-x-1">
+                      <Sparkles className="w-4 h-4 text-amber-600" />
+                      <span>โอกาสได้รับสายพันธุ์พิเศษจากการผสมพันธุ์:</span>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]">
+                      <div>• หมูองค์รักษ์พิทักษ์ อปท. (Mythic): <b>8%</b></div>
+                      <div>• หมูสายรุ้ง สตง. (Legendary): <b>12%</b></div>
+                      <div>• หมูพัสดุทองคำแท้ (Epic): <b>15%</b></div>
+                      <div>• หมูชาบูกระทะทอง (Epic): <b>15%</b></div>
+                      <div>• หมูซากุระชมพูหวาน (Epic): <b>15%</b></div>
+                      <div>• หมูผู้ตรวจ & หมูช่าง: <b>20%</b></div>
+                    </div>
+                  </div>
+
+                  {/* Breed Button */}
+                  <div className="text-center pt-2">
+                    <button
+                      onClick={handleBreed}
+                      disabled={!canBreed}
+                      className={`px-8 py-3.5 rounded-2xl font-black text-sm flex items-center justify-center space-x-2 mx-auto shadow-md transition-all ${
+                        canBreed
+                          ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-[0_5px_0_#4c1d95] active:translate-y-1 active:shadow-none cursor-pointer'
+                          : 'bg-slate-300 text-slate-500 cursor-not-allowed shadow-none'
+                      }`}
+                    >
+                      <Dna className="w-4 h-4" />
+                      <span>
+                        {isCapacityFull
+                          ? `⚠️ คอกหมูเต็มแล้ว (${maxPigs}/${maxPigs} ตัว) ต้องขยายคอกก่อน`
+                          : isParentOnCooldown
+                          ? `⏳ มีหมูที่อยู่ระหว่างพักฟื้น (รออีก ${Math.max(p1Cooldown, p2Cooldown)} วินาที)`
+                          : !hasEnoughCoins
+                          ? `❌ เหรียญไม่พอ (ต้องการ 80 ฿ - ปัจจุบันมี ${coins} ฿)`
+                          : '🧬 ผสมพันธุ์ลูกหมูทันที (ค่าบริการ 80 ฿)'}
+                      </span>
+                    </button>
+                    {isCapacityFull && (
+                      <button
+                        onClick={() => setShowBarnUpgradeModal(true)}
+                        className="mt-2 text-xs text-amber-700 hover:text-amber-900 font-black underline cursor-pointer"
+                      >
+                        ⬆️ คลิกที่นี่เพื่อขยายขนาดคอกหมู
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* ================= TAB 5: QUESTS & DEPARTMENT BOUNTIES (EARN COINS & PRIZES) ================= */}
         {activeTab === 'quests' && (
@@ -3292,6 +3684,122 @@ export default function HappyHogView() {
                 </span>
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL: BARN CAPACITY UPGRADE ================= */}
+      {showBarnUpgradeModal && (
+        <div className="fixed inset-0 z-60 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="relative bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] border-4 border-amber-700 rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-4">
+            <button
+              onClick={() => setShowBarnUpgradeModal(false)}
+              className="absolute top-4 right-4 p-1.5 bg-amber-900/10 hover:bg-amber-900/20 rounded-full text-amber-900 cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="text-center space-y-1">
+              <div className="w-14 h-14 bg-amber-500 text-white rounded-2xl flex items-center justify-center mx-auto text-2xl shadow-md border-2 border-amber-300">
+                🏠
+              </div>
+              <h3 className="text-xl font-black text-amber-950 font-mono">ขยายขนาดคอกฟาร์มหมู</h3>
+              <p className="text-xs text-amber-800">
+                อัปเกรดเพื่อเพิ่มความจุคอก เลี้ยงหมูได้มากขึ้น และก้าวสู่สุดยอดฟาร์มพันล้าน
+              </p>
+            </div>
+
+            {/* Current vs Next Tier */}
+            {(() => {
+              const currentTier = BARN_CAPACITY_TIERS.find((t) => t.tier === barnCapacityTier) || BARN_CAPACITY_TIERS[0];
+              const nextTier = BARN_CAPACITY_TIERS.find((t) => t.tier === barnCapacityTier + 1);
+
+              if (!nextTier) {
+                return (
+                  <div className="bg-amber-100 border border-amber-400 p-4 rounded-2xl text-center space-y-2">
+                    <span className="text-3xl">👑</span>
+                    <h4 className="font-black text-amber-950 text-sm">คอกหมูระดับสูงสุดในตำนาน!</h4>
+                    <p className="text-xs text-amber-800 font-medium">
+                      คอกของคุณได้รับการอัปเกรดถึงระดับสูงสุดแล้ว รองรับหมูได้มากถึง {currentTier.capacity} ตัว
+                    </p>
+                  </div>
+                );
+              }
+
+              const isLevelMet = farmLevel >= nextTier.reqLevel;
+              const isCostMet = coins >= nextTier.cost;
+              const canUpgrade = isLevelMet && isCostMet;
+
+              return (
+                <div className="space-y-3">
+                  <div className="bg-white/90 p-4 rounded-2xl border-2 border-amber-300 shadow-inner flex items-center justify-between">
+                    <div className="text-center">
+                      <span className="text-[10px] font-bold text-slate-500 uppercase">ระดับปัจจุบัน</span>
+                      <div className="text-lg font-black text-slate-800 font-mono">จุได้ {currentTier.capacity} ตัว</div>
+                      <span className="text-[10px] text-amber-700 font-bold">{currentTier.title}</span>
+                    </div>
+                    <div className="text-amber-500 font-black text-2xl">➔</div>
+                    <div className="text-center">
+                      <span className="text-[10px] font-bold text-amber-600 uppercase">ระดับถัดไป</span>
+                      <div className="text-lg font-black text-emerald-600 font-mono">จุได้ {nextTier.capacity} ตัว</div>
+                      <span className="text-[10px] text-emerald-700 font-bold">+{nextTier.capacity - currentTier.capacity} ตัว</span>
+                    </div>
+                  </div>
+
+                  {/* Requirements */}
+                  <div className="bg-amber-50/80 p-3.5 rounded-2xl border border-amber-200 space-y-2 text-xs">
+                    <span className="font-black text-amber-900 block text-[11px]">เงื่อนไขในการอัปเกรด:</span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-700">⭐ ฟาร์มเลเวลที่ต้องการ:</span>
+                      <span className={`font-black font-mono ${isLevelMet ? 'text-emerald-600' : 'text-rose-600'}`}>
+                        {isLevelMet ? '✓' : '✗'} Lv.{nextTier.reqLevel} (ปัจจุบัน Lv.{farmLevel})
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-700">🪙 ค่าก่อสร้างขยายคอก:</span>
+                      <span className={`font-black font-mono ${isCostMet ? 'text-emerald-600' : 'text-rose-600'}`}>
+                        {isCostMet ? '✓' : '✗'} {nextTier.cost.toLocaleString()} ฿ (มี {coins.toLocaleString()} ฿)
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Action button */}
+                  <button
+                    onClick={() => {
+                      if (!canUpgrade) return;
+                      setCoins((c) => c - nextTier.cost);
+                      setBarnCapacityTier((t) => t + 1);
+                      addExp(80);
+                      playSound('fanfare', isMuted);
+                      setShowBarnUpgradeModal(false);
+                      setCelebrationReward({
+                        title: '🏠 ขยายคอกหมูสำเร็จ!',
+                        badge: 'BARN UPGRADED!',
+                        subtitle: `อัปเกรดเป็น ${nextTier.title}`,
+                        rewardText: `ความจุใหม่: ${nextTier.capacity} ตัว & +80 EXP`,
+                        icon: '🔨',
+                        color: 'from-amber-500 to-orange-600'
+                      });
+                    }}
+                    disabled={!canUpgrade}
+                    className={`w-full py-3 rounded-2xl font-black text-xs flex items-center justify-center space-x-2 shadow-md cursor-pointer transition-all ${
+                      canUpgrade
+                        ? 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-[0_4px_0_#065f46] active:translate-y-0.5 active:shadow-none'
+                        : 'bg-slate-300 text-slate-500 cursor-not-allowed shadow-none'
+                    }`}
+                  >
+                    <ArrowUpCircle className="w-4 h-4" />
+                    <span>
+                      {canUpgrade
+                        ? `ยืนยันอัปเกรดขยายคอก (${nextTier.cost.toLocaleString()} ฿)`
+                        : !isLevelMet
+                        ? `ต้องการฟาร์มเลเวล Lv.${nextTier.reqLevel}`
+                        : `เหรียญทองไม่เพียงพอ (${nextTier.cost.toLocaleString()} ฿)`}
+                    </span>
+                  </button>
+                </div>
+              );
+            })()}
           </div>
         </div>
       )}
