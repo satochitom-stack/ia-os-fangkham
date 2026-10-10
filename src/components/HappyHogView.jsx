@@ -389,6 +389,267 @@ const PIG_BREEDS = {
   }
 };
 
+// Pig Periodic Harvest Drop Configuration per Breed (Balanced Economy)
+const PIG_DROP_CONFIG = {
+  pink: {
+    cycleSeconds: 120, // 2 นาที
+    icon: '🌾',
+    title: 'ผลผลิตฟาร์มพื้นฐาน',
+    isMythic: false,
+    roll: () => ({
+      coins: Math.floor(20 + Math.random() * 15),
+      diamonds: 0,
+      exp: 5,
+      energy: 0,
+      text: 'รำข้าวหมัก & เหรียญขวัญถุง'
+    })
+  },
+  auditor: {
+    cycleSeconds: 140,
+    icon: '📜',
+    title: 'เอกสารผ่านการตรวจ ปค.5',
+    isMythic: false,
+    roll: () => ({
+      coins: Math.floor(35 + Math.random() * 25),
+      diamonds: 0,
+      exp: 10,
+      energy: 0,
+      text: 'รายงานตรวจสอบผ่านฉลุย'
+    })
+  },
+  engineer: {
+    cycleSeconds: 150,
+    icon: '🔧',
+    title: 'อุปกรณ์ตรวจงานช่าง',
+    isMythic: false,
+    roll: () => ({
+      coins: Math.floor(50 + Math.random() * 30),
+      diamonds: 0,
+      exp: 12,
+      energy: 0,
+      text: 'น็อตทองคำ Factor F'
+    })
+  },
+  sakura: {
+    cycleSeconds: 160,
+    icon: '🌸',
+    title: 'ดอกซากุระนำโชค',
+    isMythic: false,
+    roll: () => ({
+      coins: Math.floor(65 + Math.random() * 30),
+      diamonds: 0,
+      exp: 15,
+      energy: 1,
+      text: 'กลีบซากุระสดชื่น (+1 ⚡)'
+    })
+  },
+  shabu: {
+    cycleSeconds: 160,
+    icon: '🍲',
+    title: 'ซุปกระทะทองคำ',
+    isMythic: false,
+    roll: () => ({
+      coins: Math.floor(80 + Math.random() * 35),
+      diamonds: 0,
+      exp: 18,
+      energy: 1,
+      text: 'น้ำซุปชาบูเข้มข้น (+1 ⚡)'
+    })
+  },
+  golden: {
+    cycleSeconds: 180,
+    icon: '💰',
+    title: 'ถุงทองคำการคลัง',
+    isMythic: false,
+    roll: () => ({
+      coins: Math.floor(130 + Math.random() * 50),
+      diamonds: 0,
+      exp: 25,
+      energy: 0,
+      text: 'ถุงทองคำเบิกจ่ายหลวง'
+    })
+  },
+  rainbow: {
+    cycleSeconds: 200,
+    icon: '🌈',
+    title: 'ผลึกแก้วรุ้ง 7 สี',
+    isMythic: false,
+    roll: () => ({
+      coins: Math.floor(180 + Math.random() * 60),
+      diamonds: 0,
+      exp: 35,
+      energy: 1,
+      text: 'ผลึกสายรุ้ง สตง. (+1 ⚡)'
+    })
+  },
+  knight: {
+    cycleSeconds: 220,
+    icon: '🛡️',
+    title: 'ตราเกียรติยศอัศวิน',
+    isMythic: false,
+    roll: () => ({
+      coins: Math.floor(220 + Math.random() * 80),
+      diamonds: 0,
+      exp: 40,
+      energy: 2,
+      text: 'ตราพิทักษ์ อปท. (+2 ⚡)'
+    })
+  },
+  // 6 Diamond Mythic Breeds (โอกาสดรอปเพชรต่ำเพื่อรักษาเสถียรภาพระบบเงิน)
+  jade_dragon: {
+    cycleSeconds: 180, // 3 นาที
+    icon: '🟢',
+    title: 'พรสมบัติมังกรหยก',
+    isMythic: true,
+    roll: () => {
+      const isDiamond = Math.random() < 0.12;
+      if (isDiamond) {
+        return {
+          coins: 100,
+          diamonds: 1,
+          exp: 30,
+          energy: 1,
+          text: '💎 ผลึกเพชรหยกมังกร (+1 💎, +100 ฿)'
+        };
+      }
+      return {
+        coins: Math.floor(280 + Math.random() * 80),
+        diamonds: 0,
+        exp: 25,
+        energy: 1,
+        text: '🟢 หยกมังกรเรืองแสง (+1 ⚡)'
+      };
+    }
+  },
+  phoenix: {
+    cycleSeconds: 180, // 3 นาที
+    icon: '🔥',
+    title: 'ขนนกเพลิงสุริยัน',
+    isMythic: true,
+    roll: () => {
+      const isDiamond = Math.random() < 0.12;
+      if (isDiamond) {
+        return {
+          coins: 120,
+          diamonds: 1,
+          exp: 35,
+          energy: 2,
+          text: '💎 เพชรเปลวเพลิงสุริยัน (+1 💎, +120 ฿)'
+        };
+      }
+      return {
+        coins: Math.floor(320 + Math.random() * 90),
+        diamonds: 0,
+        exp: 30,
+        energy: 2,
+        text: '🔥 สะเก็ดไฟฟีนิกซ์อมตะ (+2 ⚡)'
+      };
+    }
+  },
+  galaxy: {
+    cycleSeconds: 210, // 3.5 นาที
+    icon: '🌌',
+    title: 'เศษละอองดาวคอสมิก',
+    isMythic: true,
+    roll: () => {
+      const roll = Math.random();
+      if (roll < 0.15) {
+        const diaCount = roll < 0.03 ? 2 : 1;
+        return {
+          coins: 150,
+          diamonds: diaCount,
+          exp: 60,
+          energy: 2,
+          text: `💎 เพชรดวงดาวเนบิวลา (+${diaCount} 💎, +150 ฿)`
+        };
+      }
+      return {
+        coins: Math.floor(380 + Math.random() * 100),
+        diamonds: 0,
+        exp: 50,
+        energy: 1,
+        text: '🌌 เศษผลึกดาวฤกษ์กาแล็กซี'
+      };
+    }
+  },
+  cyber_satoshi: {
+    cycleSeconds: 180, // 3 นาที
+    icon: '⚡',
+    title: 'บล็อกเชนขุดเพชร',
+    isMythic: true,
+    roll: () => {
+      const isDiamond = Math.random() < 0.15;
+      if (isDiamond) {
+        return {
+          coins: 140,
+          diamonds: 1,
+          exp: 40,
+          energy: 1,
+          text: '💎 บล็อกขุดสำเร็จ (+1 💎, +140 ฿)'
+        };
+      }
+      return {
+        coins: Math.floor(360 + Math.random() * 90),
+        diamonds: 0,
+        exp: 35,
+        energy: 1,
+        text: '⚡ ชิปข้อมูลไฮเทคระดับตำนาน'
+      };
+    }
+  },
+  inferno_titan: {
+    cycleSeconds: 210, // 3.5 นาที
+    icon: '🌋',
+    title: 'ผลึกแมกมาโบราณ',
+    isMythic: true,
+    roll: () => {
+      const isDiamond = Math.random() < 0.12;
+      if (isDiamond) {
+        return {
+          coins: 160,
+          diamonds: 1,
+          exp: 45,
+          energy: 2,
+          text: '💎 ผลึกเพชรภูเขาไฟ (+1 💎, +160 ฿)'
+        };
+      }
+      return {
+        coins: Math.floor(400 + Math.random() * 110),
+        diamonds: 0,
+        exp: 40,
+        energy: 2,
+        text: '🌋 ผลึกหินลาวาไททัน (+2 ⚡)'
+      };
+    }
+  },
+  diamond_angel: {
+    cycleSeconds: 240, // 4 นาที
+    icon: '🪽',
+    title: 'ขนนกเทพธิดาจันทรา',
+    isMythic: true,
+    roll: () => {
+      const roll = Math.random();
+      if (roll < 0.18) {
+        const diaCount = roll < 0.04 ? 2 : 1;
+        return {
+          coins: 200,
+          diamonds: diaCount,
+          exp: 80,
+          energy: 3,
+          text: `💎 เพชรจันทราสวรรค์ (+${diaCount} 💎, +200 ฿, +3 ⚡)`
+        };
+      }
+      return {
+        coins: Math.floor(450 + Math.random() * 150),
+        diamonds: 0,
+        exp: 60,
+        energy: 3,
+        text: '🪽 ขนนกแสงทิพย์บริสุทธิ์ (+3 ⚡)'
+      };
+    }
+  }
+};
+
 // 6 Beautiful Coin-Based Barn Themes (Zero pre-baked animals in background)
 const BARN_THEMES = {
   pasture: {
@@ -730,7 +991,145 @@ const HayBaleSvg = () => (
   </svg>
 );
 
-// 8. High-Fidelity 3D Chibi Pig Sprite Component (Piggy Town & Happy Hog Style)
+// 8. Custom Elemental Visual Effects for Mythic and Legendary Breeds
+const PigElementalEffect = ({ breed }) => {
+  if (breed === 'jade_dragon') {
+    return (
+      <div className="absolute inset-0 pointer-events-none -z-5 flex items-center justify-center">
+        {/* Dragon Jade Orb & Ethereal Wind particles */}
+        <div className="absolute -top-3 left-1 text-[11px] animate-elemental-float text-emerald-300 drop-shadow-[0_0_6px_rgba(52,211,153,0.9)]">
+          🟢
+        </div>
+        <div className="absolute -bottom-1 -right-2 text-[9px] animate-elemental-float [animation-delay:1.1s] text-emerald-200 drop-shadow-[0_0_6px_rgba(52,211,153,0.9)]">
+          ✨
+        </div>
+        <div className="absolute top-2 -left-3 text-[9px] animate-elemental-float [animation-delay:0.6s] text-teal-300 drop-shadow-[0_0_5px_rgba(20,184,166,0.9)]">
+          🍃
+        </div>
+      </div>
+    );
+  }
+  if (breed === 'phoenix') {
+    return (
+      <div className="absolute inset-0 pointer-events-none -z-5 flex items-center justify-center">
+        {/* Phoenix Solar Flame Rising Embers */}
+        <div className="absolute -top-3.5 right-1 text-[11px] animate-elemental-float text-amber-400 drop-shadow-[0_0_8px_rgba(251,146,60,0.9)]">
+          🔥
+        </div>
+        <div className="absolute -top-1 -left-2 text-[9px] animate-elemental-float [animation-delay:0.8s] text-orange-400 drop-shadow-[0_0_6px_rgba(249,115,22,0.9)]">
+          ✨
+        </div>
+        <div className="absolute bottom-1 right-3 text-[8px] animate-elemental-float [animation-delay:1.4s] text-yellow-300 drop-shadow-[0_0_5px_rgba(250,204,21,0.9)]">
+          ⚡
+        </div>
+      </div>
+    );
+  }
+  if (breed === 'galaxy') {
+    return (
+      <div className="absolute inset-0 pointer-events-none -z-5 flex items-center justify-center">
+        {/* Cosmic Orbiting Planetary Ring */}
+        <svg className="absolute w-20 h-12 -top-1 animate-elemental-spin-slow opacity-85" viewBox="0 0 80 48">
+          <ellipse cx="40" cy="24" rx="36" ry="9" fill="none" stroke="url(#galaxyGrad)" strokeWidth="1.8" strokeDasharray="4 2" />
+          <defs>
+            <linearGradient id="galaxyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#c084fc" stopOpacity="0.9" />
+              <stop offset="50%" stopColor="#818cf8" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#e879f9" stopOpacity="0.9" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div className="absolute -top-3 left-0 text-[10px] animate-elemental-float text-purple-300 drop-shadow-[0_0_6px_rgba(192,132,252,0.9)]">
+          🌌
+        </div>
+        <div className="absolute top-1 -right-3 text-[9px] animate-elemental-float [animation-delay:1s] text-indigo-200 drop-shadow-[0_0_6px_rgba(129,140,248,0.9)]">
+          ✦
+        </div>
+      </div>
+    );
+  }
+  if (breed === 'cyber_satoshi') {
+    return (
+      <div className="absolute inset-0 pointer-events-none -z-5 flex items-center justify-center">
+        {/* Cyber Neon Lightning & Matrix Bits */}
+        <div className="absolute -top-3 right-0 text-[11px] animate-elemental-electric text-cyan-300 drop-shadow-[0_0_8px_rgba(34,211,238,0.95)]">
+          ⚡
+        </div>
+        <div className="absolute top-2 -left-2 text-[8px] font-mono font-black text-cyan-400 animate-pulse drop-shadow-[0_0_4px_rgba(6,182,212,0.9)]">
+          01
+        </div>
+        <div className="absolute -bottom-1 right-2 text-[9px] animate-elemental-float [animation-delay:0.5s] text-sky-300 drop-shadow-[0_0_6px_rgba(56,189,248,0.9)]">
+          💠
+        </div>
+      </div>
+    );
+  }
+  if (breed === 'inferno_titan') {
+    return (
+      <div className="absolute inset-0 pointer-events-none -z-5 flex items-center justify-center">
+        {/* Volcanic Magma & Crimson Embers */}
+        <div className="absolute -top-3 left-0 text-[11px] animate-elemental-float text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.95)]">
+          🌋
+        </div>
+        <div className="absolute top-0 -right-2 text-[10px] animate-elemental-float [animation-delay:0.9s] text-orange-500 drop-shadow-[0_0_6px_rgba(249,115,22,0.9)]">
+          🔥
+        </div>
+        <div className="absolute -bottom-1 -left-2 text-[8px] animate-elemental-float [animation-delay:1.3s] text-red-400 drop-shadow-[0_0_5px_rgba(248,113,113,0.9)]">
+          💥
+        </div>
+      </div>
+    );
+  }
+  if (breed === 'diamond_angel') {
+    return (
+      <div className="absolute inset-0 pointer-events-none -z-5 flex items-center justify-center">
+        {/* Golden Angelic Halo Ring Floating Gracefully Above Head */}
+        <div className="absolute -top-4 flex items-center justify-center animate-elemental-halo">
+          <svg width="34" height="14" viewBox="0 0 34 14" className="drop-shadow-[0_0_8px_rgba(234,179,8,0.95)]">
+            <ellipse cx="17" cy="7" rx="14" ry="4.5" fill="none" stroke="#fde047" strokeWidth="2.2" />
+            <ellipse cx="17" cy="7" rx="14" ry="4.5" fill="none" stroke="#ffffff" strokeWidth="1" strokeDasharray="3 3" />
+          </svg>
+        </div>
+        <div className="absolute top-1 -right-2 text-[9px] animate-elemental-float text-purple-200 drop-shadow-[0_0_6px_rgba(233,213,255,0.9)]">
+          🪽
+        </div>
+        <div className="absolute bottom-0 -left-2 text-[9px] animate-elemental-float [animation-delay:0.8s] text-amber-200 drop-shadow-[0_0_6px_rgba(254,240,138,0.9)]">
+          ✨
+        </div>
+      </div>
+    );
+  }
+  if (breed === 'rainbow') {
+    return (
+      <div className="absolute inset-0 pointer-events-none -z-5 flex items-center justify-center">
+        <div className="absolute -top-2.5 right-0 text-[10px] animate-elemental-float text-purple-300 drop-shadow-[0_0_6px_rgba(192,132,252,0.9)]">
+          🌈
+        </div>
+      </div>
+    );
+  }
+  if (breed === 'golden') {
+    return (
+      <div className="absolute inset-0 pointer-events-none -z-5 flex items-center justify-center">
+        <div className="absolute -top-2.5 right-0 text-[9px] animate-elemental-float text-yellow-300 drop-shadow-[0_0_6px_rgba(250,204,21,0.9)]">
+          ✨
+        </div>
+      </div>
+    );
+  }
+  if (breed === 'knight') {
+    return (
+      <div className="absolute inset-0 pointer-events-none -z-5 flex items-center justify-center">
+        <div className="absolute -top-2.5 left-0 text-[10px] animate-elemental-float text-cyan-300 drop-shadow-[0_0_6px_rgba(34,211,238,0.9)]">
+          🛡️
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
+// 9. High-Fidelity 3D Chibi Pig Sprite Component (Piggy Town & Happy Hog Style)
 const PigSprite = ({ breed, isSelected, direction, weight, isMoving, isResting, isTapped }) => {
   const b = PIG_BREEDS[breed] || PIG_BREEDS.pink;
   // Compact, cute chibi scale matching the reference game (ranges from 0.72 for baby to 1.04 for full grown)
@@ -765,8 +1164,8 @@ const PigSprite = ({ breed, isSelected, direction, weight, isMoving, isResting, 
         isSelected ? 'filter drop-shadow-[0_0_8px_rgba(251,191,36,0.95)]' : ''
       }`}
     >
-      {/* Luminous Mythic Ground Aura for Diamond Breeds */}
-      {b.isDiamondBreed && (
+      {/* Luminous Mythic Ground Aura for Diamond & Legendary Breeds */}
+      {(b.isDiamondBreed || breed === 'rainbow' || breed === 'golden' || breed === 'knight') && (
         <div
           className="absolute -bottom-1.5 w-16 h-4.5 rounded-full blur-[6px] pointer-events-none animate-pulse"
           style={{
@@ -780,21 +1179,20 @@ const PigSprite = ({ breed, isSelected, direction, weight, isMoving, isResting, 
               ? 'radial-gradient(ellipse at center, rgba(6,182,212,0.75) 0%, rgba(14,165,233,0.2) 60%, transparent 100%)'
               : breed === 'inferno_titan'
               ? 'radial-gradient(ellipse at center, rgba(239,68,68,0.75) 0%, rgba(185,28,28,0.2) 60%, transparent 100%)'
-              : 'radial-gradient(ellipse at center, rgba(216,180,254,0.75) 0%, rgba(168,85,247,0.2) 60%, transparent 100%)',
+              : breed === 'diamond_angel'
+              ? 'radial-gradient(ellipse at center, rgba(216,180,254,0.75) 0%, rgba(168,85,247,0.2) 60%, transparent 100%)'
+              : breed === 'rainbow'
+              ? 'radial-gradient(ellipse at center, rgba(192,132,252,0.65) 0%, rgba(244,114,182,0.2) 60%, transparent 100%)'
+              : breed === 'golden'
+              ? 'radial-gradient(ellipse at center, rgba(251,191,36,0.7) 0%, rgba(217,119,6,0.2) 60%, transparent 100%)'
+              : 'radial-gradient(ellipse at center, rgba(56,189,248,0.65) 0%, rgba(2,132,199,0.2) 60%, transparent 100%)',
             animationDuration: '3s'
           }}
         />
       )}
 
-      {/* Floating Diamond Sparkle for Diamond Breeds */}
-      {b.isDiamondBreed && (
-        <div
-          className="absolute -top-2.5 flex items-center justify-center pointer-events-none animate-bounce"
-          style={{ animationDuration: '2s' }}
-        >
-          <span className="text-[10px] filter drop-shadow-[0_0_4px_rgba(168,85,247,0.9)]">💎</span>
-        </div>
-      )}
+      {/* Spectacular Elemental Particles & Auras according to the pig's element */}
+      <PigElementalEffect breed={breed} />
 
       {/* Soft Ground Contact Shadow */}
       <div
@@ -1539,6 +1937,50 @@ export default function HappyHogView() {
     addExp(10);
     setHearts((h) => [...h, { id: Date.now(), x: targetPig.x, y: targetPig.y - 12 }]);
     setTimeout(() => setHearts((h) => h.slice(1)), 1200);
+  };
+
+  const handleCollectPigDrop = (pig) => {
+    const dropCfg = PIG_DROP_CONFIG[pig.breed] || PIG_DROP_CONFIG.pink;
+    const now = Date.now();
+    const cycleMs = dropCfg.cycleSeconds * 1000;
+    const lastDrop = pig.lastDropTime || 0;
+
+    if (now - lastDrop < cycleMs) {
+      const waitSec = Math.ceil((cycleMs - (now - lastDrop)) / 1000);
+      showToast(`⏳ ${pig.name} ยังไม่พร้อมมอบของขวัญ (เหลืออีก ${waitSec} วินาที)`);
+      return;
+    }
+
+    const reward = dropCfg.roll();
+
+    if (reward.diamonds > 0) {
+      setDiamonds((d) => d + reward.diamonds);
+    }
+    if (reward.coins > 0) {
+      setCoins((c) => c + reward.coins);
+    }
+    if (reward.exp > 0) {
+      addExp(reward.exp);
+    }
+    if (reward.energy > 0) {
+      setEnergy((e) => Math.min(maxEnergy, e + reward.energy));
+    }
+
+    setPigs((prev) =>
+      prev.map((p) => (p.id === pig.id ? { ...p, lastDropTime: now } : p))
+    );
+
+    triggerPigJoy(pig.id);
+    playSound(reward.diamonds > 0 ? 'fanfare' : 'coin', isMuted);
+
+    setHearts((h) => [...h, { id: Date.now(), x: pig.x, y: pig.y - 12 }]);
+    setTimeout(() => setHearts((h) => h.slice(1)), 1200);
+
+    if (reward.diamonds > 0) {
+      showToast(`✨ [${pig.name}] มอบรางวัลใหญ่: ${reward.text} ⭐ +${reward.exp} EXP!`);
+    } else {
+      showToast(`🎁 [${pig.name}] มอบของขวัญ: +${reward.coins} 🪙 (${reward.text}) ⭐ +${reward.exp} EXP!`);
+    }
   };
 
   const handleFeed = (food) => {
@@ -2788,13 +3230,22 @@ export default function HappyHogView() {
                   const isResting = pig.breedCooldownUntil && pig.breedCooldownUntil > currentTime;
                   const zIndexVal = Math.floor(pig.y * 10) + (isSelected ? 500 : 0);
 
+                  const dropCfg = PIG_DROP_CONFIG[pig.breed] || PIG_DROP_CONFIG.pink;
+                  const cycleMs = dropCfg.cycleSeconds * 1000;
+                  const pigLastDrop = pig.lastDropTime || 0;
+                  const isDropReady = (currentTime - pigLastDrop) >= cycleMs;
+
                   return (
                     <div
                       key={pig.id}
                       onClick={() => {
                         setSelectedPigId(pig.id);
-                        triggerPigJoy(pig.id);
-                        playSound('oink', isMuted);
+                        if (isDropReady) {
+                          handleCollectPigDrop(pig);
+                        } else {
+                          triggerPigJoy(pig.id);
+                          playSound('oink', isMuted);
+                        }
                       }}
                       style={{
                         left: `${pig.x}%`,
@@ -2827,7 +3278,30 @@ export default function HappyHogView() {
                         </div>
                       )}
 
-                      {/* 2. High-Fidelity 3D Chibi Illustrated Pig Sprite with Living Animations */}
+                      {/* 2. Harvestable Periodic Gift Drop Bubble */}
+                      {isDropReady && (
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCollectPigDrop(pig);
+                          }}
+                          className="absolute -top-11 sm:-top-12 -right-4 flex flex-col items-center cursor-pointer z-45 transition-transform hover:scale-130 active:scale-95 animate-bounce pointer-events-auto group/gift select-none"
+                          title={`แตะเพื่อเก็บของขวัญจาก ${pig.name} (${dropCfg.title})`}
+                        >
+                          <div className={`w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-white/95 backdrop-blur-md border-2 shadow-[0_4px_16px_rgba(0,0,0,0.3)] flex items-center justify-center text-base transition-all ${
+                            dropCfg.isMythic
+                              ? 'border-purple-400 ring-2 ring-purple-400/80 shadow-[0_0_12px_rgba(168,85,247,0.7)] animate-pulse'
+                              : 'border-amber-400 ring-2 ring-amber-400/70 shadow-[0_0_10px_rgba(245,158,11,0.6)]'
+                          }`}>
+                            <span className="filter drop-shadow-xs">{dropCfg.icon}</span>
+                          </div>
+                          <div className="bg-[#2b180d] text-amber-200 text-[8px] font-black px-1 rounded-full whitespace-nowrap border border-amber-500/80 pointer-events-none -mt-1 shadow-sm">
+                            {dropCfg.isMythic ? 'ของขวัญเทพ' : 'เก็บของขวัญ'}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 3. High-Fidelity 3D Chibi Illustrated Pig Sprite with Living Animations & Elemental Aura */}
                       <PigSprite
                         breed={pig.breed}
                         isSelected={isSelected}
@@ -2838,7 +3312,7 @@ export default function HappyHogView() {
                         isTapped={tappedPigId === pig.id}
                       />
 
-                      {/* 3. Clean Selection Marker & Subtle Resting Indicator */}
+                      {/* 4. Clean Selection Marker & Subtle Resting Indicator */}
                       {isSelected && (
                         <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-3.5 rounded-full border-2 border-amber-400/90 bg-amber-400/25 shadow-[0_0_12px_rgba(251,191,36,0.7)] animate-pulse pointer-events-none -z-10" />
                       )}
@@ -2953,6 +3427,68 @@ export default function HappyHogView() {
                       </h3>
                     </div>
                   </div>
+
+                  {/* Periodic Gift Drop Card & Claim Button */}
+                  {(() => {
+                    const dropCfg = PIG_DROP_CONFIG[selectedPig.breed] || PIG_DROP_CONFIG.pink;
+                    const cycleMs = dropCfg.cycleSeconds * 1000;
+                    const lastDrop = selectedPig.lastDropTime || 0;
+                    const elapsed = currentTime - lastDrop;
+                    const isReady = elapsed >= cycleMs;
+                    const remainingSec = Math.max(0, Math.ceil((cycleMs - elapsed) / 1000));
+                    const progressPct = Math.min(100, Math.round((elapsed / cycleMs) * 100));
+
+                    return (
+                      <div className={`p-2.5 rounded-2xl border-2 transition-all ${
+                        isReady
+                          ? dropCfg.isMythic
+                            ? 'bg-gradient-to-r from-purple-100 to-indigo-100 border-purple-400 shadow-[0_0_12px_rgba(168,85,247,0.35)]'
+                            : 'bg-gradient-to-r from-amber-100 to-yellow-100 border-amber-400 shadow-md'
+                          : 'bg-white/80 border-amber-200 shadow-xs'
+                      }`}>
+                        <div className="flex items-center justify-between text-[11px] mb-1 font-bold">
+                          <span className="flex items-center space-x-1.5">
+                            <span className="text-base">{dropCfg.icon}</span>
+                            <span className="text-slate-900 font-black">{dropCfg.title}</span>
+                          </span>
+                          {isReady ? (
+                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${
+                              dropCfg.isMythic ? 'bg-purple-600 text-white border-purple-400 animate-pulse' : 'bg-emerald-600 text-white border-emerald-400 animate-bounce'
+                            }`}>
+                              พร้อมเก็บรับ!
+                            </span>
+                          ) : (
+                            <span className="text-slate-600 font-mono text-[10px] bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-200">
+                              อีก {Math.floor(remainingSec / 60)}:{(remainingSec % 60).toString().padStart(2, '0')}
+                            </span>
+                          )}
+                        </div>
+
+                        {isReady ? (
+                          <button
+                            onClick={() => handleCollectPigDrop(selectedPig)}
+                            className={`w-full py-1.5 px-3 rounded-xl font-black text-xs flex items-center justify-center space-x-1.5 shadow-md active:scale-95 transition-all text-white cursor-pointer ${
+                              dropCfg.isMythic
+                                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-purple-300'
+                                : 'bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-amber-950 shadow-amber-300'
+                            }`}
+                          >
+                            <span>🎁</span>
+                            <span>แตะเก็บรับรางวัล ({dropCfg.isMythic ? 'มีโอกาสได้เพชร 💎' : 'เหรียญ/EXP'})</span>
+                          </button>
+                        ) : (
+                          <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden border border-slate-300">
+                            <div
+                              className={`h-full transition-all duration-300 ${
+                                dropCfg.isMythic ? 'bg-purple-500' : 'bg-amber-500'
+                              }`}
+                              style={{ width: `${progressPct}%` }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
 
                   {/* Status Gauges */}
                   <div className="space-y-1.5 text-xs">
