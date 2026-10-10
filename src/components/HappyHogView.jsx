@@ -808,17 +808,17 @@ const PigSprite = ({ breed, isSelected, direction, weight }) => {
   // Custom glowing celestial aura styling for diamond mythic breeds
   let filterCss = '';
   if (breed === 'jade_dragon') {
-    filterCss = 'drop-shadow(0 0 12px rgba(16,185,129,0.9))';
+    filterCss = 'drop-shadow(0 4px 10px rgba(16,185,129,0.5)) drop-shadow(0 0 16px rgba(52,211,153,0.7))';
   } else if (breed === 'phoenix') {
-    filterCss = 'drop-shadow(0 0 14px rgba(249,115,22,0.9))';
+    filterCss = 'drop-shadow(0 4px 12px rgba(249,115,22,0.6)) drop-shadow(0 0 18px rgba(251,146,60,0.75))';
   } else if (breed === 'galaxy') {
-    filterCss = 'drop-shadow(0 0 14px rgba(99,102,241,0.9))';
+    filterCss = 'drop-shadow(0 4px 12px rgba(124,58,237,0.6)) drop-shadow(0 0 18px rgba(167,139,250,0.75))';
   } else if (breed === 'cyber_satoshi') {
-    filterCss = 'drop-shadow(0 0 12px rgba(6,182,212,0.9))';
+    filterCss = 'drop-shadow(0 4px 10px rgba(6,182,212,0.6)) drop-shadow(0 0 16px rgba(34,211,238,0.75))';
   } else if (breed === 'inferno_titan') {
-    filterCss = 'drop-shadow(0 0 14px rgba(239,68,68,0.9))';
+    filterCss = 'drop-shadow(0 4px 12px rgba(239,68,68,0.6)) drop-shadow(0 0 18px rgba(248,113,113,0.75))';
   } else if (breed === 'diamond_angel') {
-    filterCss = 'drop-shadow(0 0 16px rgba(192,132,252,0.9))';
+    filterCss = 'drop-shadow(0 4px 14px rgba(192,132,252,0.7)) drop-shadow(0 0 20px rgba(233,213,255,0.85))';
   }
 
   return (
@@ -831,11 +831,24 @@ const PigSprite = ({ breed, isSelected, direction, weight }) => {
         isSelected ? 'filter drop-shadow-[0_0_12px_rgba(251,191,36,0.95)]' : ''
       }`}
     >
-      {/* Celestial Aura Ring for Diamond Mythic Breeds */}
+      {/* Luminous Mythic Ground Aura for Diamond Breeds */}
       {b.isDiamondBreed && (
         <div
-          className="absolute -inset-2.5 rounded-full border-2 border-dashed border-purple-400/60 animate-spin pointer-events-none"
-          style={{ animationDuration: '8s' }}
+          className="absolute -bottom-2 w-24 h-7 rounded-full blur-[8px] pointer-events-none animate-pulse"
+          style={{
+            background: breed === 'jade_dragon'
+              ? 'radial-gradient(ellipse at center, rgba(16,185,129,0.75) 0%, rgba(5,150,105,0.2) 60%, transparent 100%)'
+              : breed === 'phoenix'
+              ? 'radial-gradient(ellipse at center, rgba(249,115,22,0.75) 0%, rgba(234,88,12,0.2) 60%, transparent 100%)'
+              : breed === 'galaxy'
+              ? 'radial-gradient(ellipse at center, rgba(139,92,246,0.75) 0%, rgba(99,102,241,0.2) 60%, transparent 100%)'
+              : breed === 'cyber_satoshi'
+              ? 'radial-gradient(ellipse at center, rgba(6,182,212,0.75) 0%, rgba(14,165,233,0.2) 60%, transparent 100%)'
+              : breed === 'inferno_titan'
+              ? 'radial-gradient(ellipse at center, rgba(239,68,68,0.75) 0%, rgba(185,28,28,0.2) 60%, transparent 100%)'
+              : 'radial-gradient(ellipse at center, rgba(216,180,254,0.75) 0%, rgba(168,85,247,0.2) 60%, transparent 100%)',
+            animationDuration: '3s'
+          }}
         />
       )}
 
@@ -2056,13 +2069,13 @@ export default function HappyHogView() {
     {
       id: 5,
       name: 'มหาแจ็กพอตเพชรแท้ อปท.',
-      shortLabel: '+500 💎',
+      shortLabel: '+50 💎',
       icon: '💎',
-      rewardDesc: '🎉 มหาแจ็กพอต 500 เพชรแท้ 💎!',
+      rewardDesc: '🎉 มหาแจ็กพอต 50 เพชรแท้ 💎!',
       color: '#8b5cf6',
       sliceGrad: ['#8b5cf6', '#7c3aed'],
       textColor: '#ffffff',
-      diamonds: 500
+      diamonds: 50
     },
     {
       id: 6,
