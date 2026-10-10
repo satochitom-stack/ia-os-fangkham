@@ -389,7 +389,7 @@ const PIG_BREEDS = {
   }
 };
 
-// 11 Barn Themes with 3D Isometric Scenery (6 Classic + 5 Diamond Exclusive)
+// 6 Beautiful Coin-Based Barn Themes (Zero pre-baked animals in background)
 const BARN_THEMES = {
   pasture: {
     id: 'pasture',
@@ -400,26 +400,26 @@ const BARN_THEMES = {
     bgClass: 'from-[#7dd3fc] via-[#bbf7d0] to-[#86efac]',
     penGround: '#f7e7c4',
     fenceBorder: '#8c593b',
-    perk: 'หมูอารมณ์ดี วิ่งเล่นร่าเริง',
+    perk: 'หมูอารมณ์ดี วิ่งเล่นร่าเริง สบายตา',
     cost: 0,
     unlockedByDefault: true,
     atmosphere: 'butterflies',
-    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 }
+    bounds: { minX: 18, maxX: 74, minY: 28, maxY: 78 }
   },
   cozy_wood: {
     id: 'cozy_wood',
-    name: 'คอกไม้ชนบทคลาสสิก',
-    tag: 'คลาสสิก',
+    name: 'คอกไม้ชนบทฤดูใบไม้ร่วง',
+    tag: 'อบอุ่น',
     icon: '🪵',
     bgImage: '/pigs/theme_cozy_wood.jpg',
     bgClass: 'from-[#fed7aa] via-[#fde68a] to-[#d97706]',
     penGround: '#eedbb3',
     fenceBorder: '#78350f',
-    perk: 'ธีมมาตรฐาน อบอุ่น สบายตา',
+    perk: 'คอกไม้ฟางทอง อัตราเกิดวัชพืชลดลง 30%',
     cost: 0,
     unlockedByDefault: true,
     atmosphere: 'leaves',
-    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 }
+    bounds: { minX: 20, maxX: 76, minY: 32, maxY: 78 }
   },
   onsen_mud: {
     id: 'onsen_mud',
@@ -430,26 +430,26 @@ const BARN_THEMES = {
     bgClass: 'from-[#cbd5e1] via-[#94a3b8] to-[#64748b]',
     penGround: '#d6cbba',
     fenceBorder: '#475569',
-    perk: 'ความสะอาดลดช้าลง 50%',
+    perk: 'ความสะอาดลดช้าลง 50% หมูผิวพรรณสดใส',
     cost: 400,
     unlockDesc: 'อาบน้ำหมูสะสมครบ 8 ครั้ง หรือใช้ 400 เหรียญ',
     atmosphere: 'steam',
-    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 }
+    bounds: { minX: 18, maxX: 74, minY: 30, maxY: 78 }
   },
   lanna: {
     id: 'lanna',
-    name: 'คอกไม้สักล้านนา อปท.',
+    name: 'คุ้มเรือนไม้สักล้านนา อปท.',
     tag: 'วัฒนธรรม',
     icon: '🏮',
     bgImage: '/pigs/theme_lanna.jpg',
     bgClass: 'from-[#fef08a] via-[#fde047] to-[#ca8a04]',
     penGround: '#fae3b4',
     fenceBorder: '#854d0e',
-    perk: 'หมูเติบโตไวกว่าปกติ 20%',
-    cost: 600,
-    unlockDesc: 'มีหมูน้ำหนัก 90 kg ขึ้นไป หรือใช้ 600 เหรียญ',
+    perk: 'หมูเติบโตไวกว่าปกติ +20% วัฒนธรรมทรงคุณค่า',
+    cost: 800,
+    unlockDesc: 'มีหมูน้ำหนัก 90 kg ขึ้นไป หรือใช้ 800 เหรียญ',
     atmosphere: 'lanterns',
-    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 }
+    bounds: { minX: 20, maxX: 78, minY: 32, maxY: 80 }
   },
   golden_palace: {
     id: 'golden_palace',
@@ -460,107 +460,26 @@ const BARN_THEMES = {
     bgClass: 'from-[#fef08a] via-[#fbbf24] to-[#d97706]',
     penGround: '#fff3c4',
     fenceBorder: '#b45309',
-    perk: 'โบนัสราคาขายหมู +20%',
-    cost: 1200,
-    unlockDesc: 'ครอบครองหมูทองคำ หรือใช้ 1,200 เหรียญ',
+    perk: 'โบนัสราคาขายหมู +25% หรูหราระดับมหาเศรษฐี',
+    cost: 1500,
+    unlockDesc: 'ครอบครองหมูทองคำ หรือใช้ 1,500 เหรียญ',
     atmosphere: 'sparkles',
-    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 }
+    bounds: { minX: 28, maxX: 68, minY: 30, maxY: 74 }
   },
   cyber_space: {
     id: 'cyber_space',
-    name: 'สถานีอวกาศหมูไซเบอร์',
-    tag: 'ไซไฟ',
-    icon: '🚀',
-    bgImage: null,
+    name: 'ฟาร์มไฮเทคสมาร์ทอีโค่',
+    tag: 'สมาร์ทฟาร์ม',
+    icon: '⚡',
+    bgImage: '/pigs/theme_smart_farm.jpg',
     bgClass: 'from-[#0f172a] via-[#1e1b4b] to-[#312e81]',
-    penGround: '#1e293b',
+    penGround: '#e2e8f0',
     fenceBorder: '#06b6d4',
-    perk: 'ป้องกันการถูกขโมยหมู 100% เสมอ',
-    cost: 2000,
-    unlockDesc: 'ผสมพันธุ์สำเร็จ 3 ครั้ง หรือใช้ 2,000 เหรียญ',
+    perk: 'ระบบรางอาหารอัตโนมัติ ความหิวลดช้าลง 40% และป้องกันขโมย 100%',
+    cost: 2200,
+    unlockDesc: 'ผสมพันธุ์สำเร็จ 3 ครั้ง หรือใช้ 2,200 เหรียญ',
     atmosphere: 'cyber',
-    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 }
-  },
-  // === 5 DIAMOND EXCLUSIVE THEMES (วิมานคอกหมูหรูหราใช้เพชรซื้อ) ===
-  sky_sanctuary: {
-    id: 'sky_sanctuary',
-    name: 'วิมานสวรรค์ลอยฟ้า',
-    tag: 'วิมานเทพ 💎',
-    icon: '☁️',
-    bgImage: '/pigs/theme_sky_sanctuary.jpg',
-    bgClass: 'from-[#38bdf8] via-[#bae6fd] to-[#e0f2fe]',
-    penGround: '#ffffffd8',
-    fenceBorder: '#38bdf8',
-    perk: 'หมูทุกตัวโตไวกว่าปกติ +50% (ละอองสวรรค์ประทานพร)',
-    diamondCost: 40,
-    isDiamondTheme: true,
-    atmosphere: 'celestial_clouds',
-    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 },
-    unlockDesc: 'ปลดล็อกด้วย 40 เพชร 💎'
-  },
-  atlantis: {
-    id: 'atlantis',
-    name: 'อาณาจักรคริสตัลใต้สมุทร',
-    tag: 'สมุทรคริสตัล 💎',
-    icon: '🌊',
-    bgImage: '/pigs/theme_atlantis.jpg',
-    bgClass: 'from-[#0369a1] via-[#0284c7] to-[#38bdf8]',
-    penGround: '#0369a1b0',
-    fenceBorder: '#38bdf8',
-    perk: 'หมูสะอาด 100% ตลอดเวลา (ไม่ต้องอาบน้ำตลอดกาล)',
-    diamondCost: 60,
-    isDiamondTheme: true,
-    atmosphere: 'bubbles',
-    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 },
-    unlockDesc: 'ปลดล็อกด้วย 60 เพชร 💎'
-  },
-  neon_ice: {
-    id: 'neon_ice',
-    name: 'ปราสาทน้ำแข็งนีออนคริสตัล',
-    tag: 'น้ำแข็งนีออน 💎',
-    icon: '❄️',
-    bgImage: '/pigs/theme_neon_ice.jpg',
-    bgClass: 'from-[#1e1b4b] via-[#3b82f6] to-[#a5f3fc]',
-    penGround: '#0c4a6ecc',
-    fenceBorder: '#06b6d4',
-    perk: 'ความหิวลดช้าลง 75% และแปลงผักโตเร็วขึ้น x2',
-    diamondCost: 80,
-    isDiamondTheme: true,
-    atmosphere: 'snow',
-    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 },
-    unlockDesc: 'ปลดล็อกด้วย 80 เพชร 💎'
-  },
-  lava_caldera: {
-    id: 'lava_caldera',
-    name: 'หุบเขาเพชรลาวาอสูร',
-    tag: 'ลาวาอสูร 💎',
-    icon: '🌋',
-    bgImage: '/pigs/theme_lava_caldera.jpg',
-    bgClass: 'from-[#450a0a] via-[#7f1d1d] to-[#b91c1c]',
-    penGround: '#292524d8',
-    fenceBorder: '#ea580c',
-    perk: 'หมูทุกตัวขายได้ราคา +50% และป้องกันขโมย 100%',
-    diamondCost: 100,
-    isDiamondTheme: true,
-    atmosphere: 'magma',
-    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 },
-    unlockDesc: 'ปลดล็อกด้วย 100 เพชร 💎'
-  },
-  galaxy_colony: {
-    id: 'galaxy_colony',
-    name: 'สถานีอวกาศสเปซเอ็กซ์จักรวาล',
-    tag: 'มหาอวกาศ 💎',
-    icon: '🪐',
-    bgImage: '/pigs/theme_galaxy_colony.jpg',
-    bgClass: 'from-[#090d16] via-[#1e1035] to-[#3b0764]',
-    penGround: '#0f172ab0',
-    fenceBorder: '#818cf8',
-    perk: 'หมุนวงล้อฟรี +3 ครั้งต่อวัน และโบนัสรายได้ฟาร์มทั้งหมด +60%',
-    diamondCost: 140,
-    isDiamondTheme: true,
-    atmosphere: 'galaxy_stars',
-    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 },
-    unlockDesc: 'ปลดล็อกด้วย 140 เพชร 💎'
+    bounds: { minX: 24, maxX: 72, minY: 38, maxY: 82 }
   }
 };
 
@@ -914,6 +833,10 @@ export default function HappyHogView() {
   const maxPigs = BARN_CAPACITY_TIERS.find((t) => t.tier === barnCapacityTier)?.capacity || 8;
   const expForNextLevel = farmLevel * 120;
 
+  // Energy Capacity scales with Farm Level (+10 max energy per farm level)
+  const maxEnergy = 100 + (farmLevel - 1) * 10;
+  const [energyCountdown, setEnergyCountdown] = useState(60);
+
   // Screen Size Mode (Theater / Full-window mode)
   const [isTheaterMode, setIsTheaterMode] = useState(false);
 
@@ -1165,19 +1088,24 @@ export default function HappyHogView() {
   const [hearts, setHearts] = useState([]);
   const [currentTime, setCurrentTime] = useState(Date.now());
 
-  // Timer loop for crop growth, energy regeneration, and Yard Litter spawning + Diamond / Breed passive bonuses
+  // Timer loop for crop growth, energy regeneration (1 min / 1 energy), and Yard Litter spawning + Diamond / Breed passive bonuses
   useEffect(() => {
     let secondTick = 0;
     const timer = setInterval(() => {
       secondTick += 1;
       setCurrentTime(Date.now());
 
-      // Energy regen: +1 every 45 seconds naturally (or fast +1 every 5 seconds if farm has galaxy pig)
+      // Energy regen: +1 every 60 seconds (1 minute / 1 energy) naturally, or fast +1 every 15s if farm has galaxy pig
       const hasGalaxy = pigs.some((p) => p.breed === 'galaxy');
-      const regenFreq = hasGalaxy ? 5 : 45;
-      if (secondTick % regenFreq === 0) {
-        setEnergy((e) => Math.min(100, e + 1));
-      }
+      const regenFreq = hasGalaxy ? 15 : 60;
+
+      setEnergyCountdown((prev) => {
+        if (prev <= 1) {
+          setEnergy((e) => Math.min(maxEnergy, e + 1));
+          return regenFreq;
+        }
+        return prev - 1;
+      });
 
       // Phoenix pig passive: grants +150 ฿ every 60 seconds
       if (secondTick % 60 === 0) {
@@ -1200,7 +1128,7 @@ export default function HappyHogView() {
       }
     }, 1000);
     return () => clearInterval(timer);
-  }, [pigs]);
+  }, [pigs, maxEnergy]);
 
   // Periodic Litter & Gold Drops Spawner in Farm Yard (Relaxed 75s timer, max 3 items)
   useEffect(() => {
@@ -1285,17 +1213,18 @@ export default function HappyHogView() {
         setFarmLevel(nextLv);
         playSound('fanfare', isMuted);
         const rewardBonus = nextLv * 250;
+        const nextMaxEnergy = 100 + (nextLv - 1) * 10;
         setCoins((c) => c + rewardBonus);
-        setEnergy(100);
+        setEnergy(nextMaxEnergy);
         setCelebrationReward({
           title: `🎉 เลเวลอัป! ฟาร์มเลเวล ${nextLv}`,
           badge: 'FARM LEVEL UP!',
-          subtitle: 'ฟาร์มของคุณเติบโตขึ้นไปอีกขั้น',
-          rewardText: `+${rewardBonus.toLocaleString()} ฿ & พลังงานเต็ม ⚡100`,
+          subtitle: 'ฟาร์มของคุณเติบโตขึ้นไปอีกขั้น ขีดจำกัดพลังงานเพิ่มขึ้น!',
+          rewardText: `+${rewardBonus.toLocaleString()} ฿ & พลังงานเต็ม ⚡${nextMaxEnergy}`,
           icon: '⭐',
           color: 'from-amber-400 to-yellow-500'
         });
-        showToast(`⭐ เลเวลอัปเป็น Lv.${nextLv}! ได้รับ +${rewardBonus} ฿`);
+        showToast(`⭐ เลเวลอัปเป็น Lv.${nextLv}! ได้รับ +${rewardBonus} ฿ & ขีดจำกัดพลังงาน ⚡${nextMaxEnergy}`);
       }
       return currentExp;
     });
@@ -1406,38 +1335,42 @@ export default function HappyHogView() {
             const nextX = Math.max(currentBounds.minX, Math.min(currentBounds.maxX, p.x + stepX));
             const nextY = Math.max(currentBounds.minY, Math.min(currentBounds.maxY, p.y + stepY));
 
-            // 1. Hunger decreases steadily (~0.32% per wander step)
+            // 1. Hunger decreases gently (~0.05% per wander step for relaxed casual pacing)
             // If diamond_angel, hunger never drops (always full)!
-            // If theme is neon_ice, hunger drops 75% slower!
-            let hungerLoss = 0.32 * rateModifier;
-            if (activeThemeId === 'neon_ice') hungerLoss *= 0.25;
+            // If theme is cyber_space, smart auto-feeder slows hunger by 40%!
+            let hungerLoss = 0.05 * rateModifier;
+            if (activeThemeId === 'cyber_space') hungerLoss *= 0.6;
             if (p.breed === 'diamond_angel') hungerLoss = 0;
             const nextHunger = Math.max(0, p.hunger - hungerLoss);
 
-            // 2. Cleanliness: If atlantis theme, cleanliness is locked at 100% (never dirty!)
-            const wastePenalty = yardDrops.length > 0 ? 0.04 : 0;
-            let cleanlinessLoss = (activeThemeId === 'onsen_mud' ? 0.04 : 0.08) * rateModifier + wastePenalty;
-            if (activeThemeId === 'atlantis') cleanlinessLoss = 0;
-            const nextCleanliness = activeThemeId === 'atlantis' ? 100 : Math.max(0, p.cleanliness - cleanlinessLoss);
+            // 2. Cleanliness decreases gently (~0.035% per wander step)
+            // onsen_mud theme cuts cleanliness loss in half!
+            const wastePenalty = yardDrops.length > 0 ? 0.015 : 0;
+            let cleanlinessLoss = (activeThemeId === 'onsen_mud' ? 0.018 : 0.035) * rateModifier + wastePenalty;
+            const nextCleanliness = Math.max(0, p.cleanliness - cleanlinessLoss);
 
-            // 3. Health: If phoenix, disease immune 100%! If jade_dragon, never drops below 50%!
-            let healthLoss = 0;
-            if (nextHunger < 15) healthLoss += 0.25; // Starving
-            if (nextCleanliness < 15) healthLoss += 0.2; // Filthy
-            if (p.breed === 'phoenix') healthLoss = 0;
-            let nextHealth = Math.max(0, p.health - healthLoss);
-            if (p.breed === 'phoenix') nextHealth = 100;
+            // 3. Health: Only decreases if severely starving (0%) or filthy (0%), and naturally recovers when cared for!
+            let healthDelta = 0;
+            if (nextHunger <= 0) healthDelta -= 0.04; // Severe starvation only
+            if (nextCleanliness <= 0) healthDelta -= 0.03; // Severe filth only
+            if (nextHunger >= 60 && nextCleanliness >= 60) {
+              // Natural health recovery when well-fed and clean!
+              healthDelta += 0.08;
+            }
+            if (p.breed === 'phoenix') healthDelta = 100; // Phoenix is immune
+            let nextHealth = p.breed === 'phoenix' ? 100 : Math.max(0, Math.min(100, p.health + healthDelta));
             if (p.breed === 'jade_dragon' && nextHealth < 50) nextHealth = 50;
 
             // 4. Gradual weight growth when well-fed & clean
-            // jade_dragon grows +100% faster (x2), sky_sanctuary grows +50% faster (x1.5)
+            // jade_dragon grows +100% faster (x2), lanna theme grows +20% faster (x1.2)
             let weightDelta = 0;
-            if (nextHunger >= 60 && nextCleanliness >= 60 && nextHealth >= 80) {
+            if (nextHunger >= 50 && nextCleanliness >= 50 && nextHealth >= 60) {
               const breedMax = PIG_BREEDS[p.breed]?.maxWeight || 100;
               if (p.weight < breedMax) {
                 weightDelta = 0.05; // base 50 grams
                 if (p.breed === 'jade_dragon') weightDelta *= 2.0;
-                if (activeThemeId === 'sky_sanctuary') weightDelta *= 1.5;
+                if (activeThemeId === 'lanna') weightDelta *= 1.2;
+                if (activeThemeId === 'golden_palace') weightDelta *= 1.15;
               }
             }
 
@@ -1467,10 +1400,18 @@ export default function HappyHogView() {
   const getPigNeed = (pig) => {
     // 1. Sick (Urgent!)
     if (pig.health < 60) return { type: 'heal', icon: '💉', label: 'ไม่สบาย', hint: 'แตะเพื่อฉีดยารักษา' };
-    // 2. Hungry
-    if (pig.hunger < 45) return { type: 'feed', icon: '🥣', label: 'หิวข้าว', hint: 'แตะเพื่อให้อาหารทันที' };
+    // 2. Hungry (Baby bottle for piglets < 35 kg, food bowl for adult pigs)
+    if (pig.hunger < 50) {
+      const isPiglet = pig.weight < 35;
+      return {
+        type: 'feed',
+        icon: isPiglet ? '🍼' : '🥣',
+        label: isPiglet ? 'หิวนม' : 'หิวข้าว',
+        hint: isPiglet ? 'แตะเพื่อป้อนนมลูกหมู' : 'แตะเพื่อให้อาหารทันที'
+      };
+    }
     // 3. Dirty
-    if (pig.cleanliness < 45) return { type: 'bath', icon: '🧼', label: 'ตัวมอมแมม', hint: 'แตะเพื่ออาบน้ำขัดตัว' };
+    if (pig.cleanliness < 50) return { type: 'bath', icon: '🧼', label: 'ตัวมอมแมม', hint: 'แตะเพื่ออาบน้ำขัดตัว' };
     // 4. Ready to breed (Mature, well-fed, clean, not in cooldown)
     const isResting = pig.breedCooldownUntil && pig.breedCooldownUntil > currentTime;
     if (pig.weight >= 60 && pig.hunger >= 80 && pig.cleanliness >= 80 && !isResting) {
@@ -1525,11 +1466,11 @@ export default function HappyHogView() {
   };
 
   const handleDirectFeed = (targetPig, food) => {
-    if (energy < 2) {
-      showToast('⚡ พลังงานไม่เพียงพอ! (ต้องการ 2 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
+    if (energy < 1) {
+      showToast('⚡ พลังงานไม่เพียงพอ! (ต้องการ 1 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
       return;
     }
-    setEnergy((e) => Math.max(0, e - 2));
+    setEnergy((e) => Math.max(0, e - 1));
     playSound('feed', isMuted);
     setPigs((prev) =>
       prev.map((p) => {
@@ -1559,23 +1500,23 @@ export default function HappyHogView() {
       showToast('❌ เหรียญไม่พอซื้ออาหาร!');
       return;
     }
-    if (energy < 2) {
-      showToast('⚡ พลังงานไม่เพียงพอ! (ต้องการ 2 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
+    if (energy < 1) {
+      showToast('⚡ พลังงานไม่เพียงพอ! (ต้องการ 1 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
       return;
     }
 
     setCoins((c) => c - food.cost);
     handleDirectFeed(selectedPig, food);
-    showToast(`🍽️ ซื้อ ${food.name} ให้น้องกิน (+${food.weightGain} kg, -2 ⚡)`);
+    showToast(`🍽️ ซื้อ ${food.name} ให้น้องกิน (+${food.weightGain} kg, -1 ⚡)`);
   };
 
   const handleBath = () => {
     if (!selectedPig) return;
-    if (energy < 3) {
-      showToast('⚡ พลังงานไม่เพียงพอ! (ต้องการ 3 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
+    if (energy < 1) {
+      showToast('⚡ พลังงานไม่เพียงพอ! (ต้องการ 1 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
       return;
     }
-    setEnergy((e) => Math.max(0, e - 3));
+    setEnergy((e) => Math.max(0, e - 1));
     playSound('bubble', isMuted);
     setPigs((prev) =>
       prev.map((p) => (p.id === selectedPig.id ? { ...p, cleanliness: 100 } : p))
@@ -1592,7 +1533,7 @@ export default function HappyHogView() {
     setBubbles(newBubbles);
     setTimeout(() => setBubbles([]), 1500);
 
-    showToast('🧼 อาบน้ำในอ่างไม้หอมฉุย ตัวสะอาด 100%! (+10 EXP, -3 ⚡)');
+    showToast('🧼 อาบน้ำในอ่างไม้หอมฉุย ตัวสะอาด 100%! (+10 EXP, -1 ⚡)');
   };
 
   const handleVaccine = () => {
@@ -1601,18 +1542,18 @@ export default function HappyHogView() {
       showToast('❌ เหรียญไม่พอค่ายา (ต้องการ 20 เหรียญ)');
       return;
     }
-    if (energy < 5) {
-      showToast('⚡ พลังงานไม่เพียงพอ! (ต้องการ 5 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
+    if (energy < 2) {
+      showToast('⚡ พลังงานไม่เพียงพอ! (ต้องการ 2 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
       return;
     }
-    setEnergy((e) => Math.max(0, e - 5));
+    setEnergy((e) => Math.max(0, e - 2));
     setCoins((c) => c - 20);
     playSound('heal', isMuted);
     setPigs((prev) =>
       prev.map((p) => (p.id === selectedPig.id ? { ...p, health: 100 } : p))
     );
     addExp(15);
-    showToast('💉 ฉีดยาป้องกันโรคเรียบร้อย สุขภาพแข็งแรง 100%! (+15 EXP, -5 ⚡)');
+    showToast('💉 ฉีดยาป้องกันโรคเรียบร้อย สุขภาพแข็งแรง 100%! (+15 EXP, -2 ⚡)');
   };
 
   const handleDrinkWater = () => {
@@ -1640,9 +1581,7 @@ export default function HappyHogView() {
 
     const breed = PIG_BREEDS[pig.breed] || PIG_BREEDS.pink;
     let priceMultiplier = 1.0;
-    if (activeThemeId === 'golden_palace') priceMultiplier = 1.2;
-    if (activeThemeId === 'lava_caldera') priceMultiplier = 1.5;
-    if (activeThemeId === 'galaxy_colony') priceMultiplier = 1.6;
+    if (activeThemeId === 'golden_palace') priceMultiplier = 1.25;
 
     const earnings = Math.round(pig.weight * breed.pricePerKg * priceMultiplier);
 
@@ -1790,11 +1729,11 @@ export default function HappyHogView() {
       return;
     }
 
-    if (energy < 15) {
-      showToast('⚡ พลังงานไม่เพียงพอ! เข้าห้องแล็บผสมพันธุ์ต้องการ 15 ⚡');
+    if (energy < 5) {
+      showToast('⚡ พลังงานไม่เพียงพอ! เข้าห้องแล็บผสมพันธุ์ต้องการ 5 ⚡');
       return;
     }
-    setEnergy((e) => Math.max(0, e - 15));
+    setEnergy((e) => Math.max(0, e - 5));
     setCoins((c) => c - 80);
     playSound('coin', isMuted);
 
@@ -1885,12 +1824,12 @@ export default function HappyHogView() {
       showToast(`❌ เหรียญไม่พอซื้อเมล็ดพันธุ์ (ต้องการ ${meta.seedCost} เหรียญ)`);
       return;
     }
-    if (energy < 2) {
-      showToast('⚡ พลังงานไม่พอปลูกพืช! (ต้องการ 2 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
+    if (energy < 1) {
+      showToast('⚡ พลังงานไม่พอปลูกพืช! (ต้องการ 1 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
       return;
     }
 
-    setEnergy((e) => Math.max(0, e - 2));
+    setEnergy((e) => Math.max(0, e - 1));
     setCoins((c) => c - meta.seedCost);
     playSound('plant', isMuted);
 
@@ -1901,18 +1840,18 @@ export default function HappyHogView() {
           : plot
       )
     );
-    showToast(`🌱 หว่านเมล็ด "${meta.name}" แล้ว! (รอ ${meta.duration} วินาที, -2 ⚡)`);
+    showToast(`🌱 หว่านเมล็ด "${meta.name}" แล้ว! (รอ ${meta.duration} วินาที, -1 ⚡)`);
   };
 
   const handleHarvestCrop = (plotId) => {
     const plot = crops.find((p) => p.id === plotId);
     if (!plot || !plot.seed) return;
-    if (energy < 2) {
-      showToast('⚡ พลังงานไม่พอเก็บเกี่ยว! (ต้องการ 2 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
+    if (energy < 1) {
+      showToast('⚡ พลังงานไม่พอเก็บเกี่ยว! (ต้องการ 1 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
       return;
     }
 
-    setEnergy((e) => Math.max(0, e - 2));
+    setEnergy((e) => Math.max(0, e - 1));
     const meta = CROPS_META[plot.seed];
     playSound('coin', isMuted);
 
@@ -1927,29 +1866,29 @@ export default function HappyHogView() {
 
     advanceQuest('crop', 1);
     addExp(15);
-    showToast(`🧺 เก็บเกี่ยว "${meta.name}" ได้ผลผลิต +${meta.yieldCount} ถุง & +15 EXP! (-2 ⚡)`);
+    showToast(`🧺 เก็บเกี่ยว "${meta.name}" ได้ผลผลิต +${meta.yieldCount} ถุง & +15 EXP! (-1 ⚡)`);
   };
 
   const handleCollectYardDrop = (e, drop) => {
     e.stopPropagation();
-    if (energy < 2) {
-      showToast('⚡ พลังงานไม่พอเก็บกวาด! (ต้องการ 2 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
+    if (energy < 1) {
+      showToast('⚡ พลังงานไม่พอเก็บกวาด! (ต้องการ 1 ⚡) รอฟื้นฟูหรือตรวจการฟาร์ม');
       return;
     }
 
-    setEnergy((e) => Math.max(0, e - 2));
+    setEnergy((e) => Math.max(0, e - 1));
     setYardDrops((prev) => prev.filter((d) => d.id !== drop.id));
     setCoins((c) => c + drop.reward);
     advanceQuest('clean', 1);
     addExp(8);
     playSound('coin', isMuted);
-    showToast(`✨ เก็บ ${drop.label} สะอาดเอี่ยม! ได้รับ +${drop.reward} 🪙 & +8 EXP (-2 ⚡)`);
+    showToast(`✨ เก็บ ${drop.label} สะอาดเอี่ยม! ได้รับ +${drop.reward} 🪙 & +8 EXP (-1 ⚡)`);
   };
 
   const handleClaimQuest = (quest) => {
     if (quest.current < quest.target || quest.claimed) return;
     if (quest.rewardCoins) setCoins((c) => c + quest.rewardCoins);
-    if (quest.rewardEnergy) setEnergy((e) => Math.min(100, e + quest.rewardEnergy));
+    if (quest.rewardEnergy) setEnergy((e) => Math.min(maxEnergy, e + quest.rewardEnergy));
     if (quest.rewardCrops) {
       setCropInventory((inv) => {
         const next = { ...inv };
@@ -2130,7 +2069,7 @@ export default function HappyHogView() {
       const won = WHEEL_PRIZES[prizeIndex];
       if (won.coins) setCoins((c) => c + won.coins);
       if (won.diamonds) setDiamonds((d) => d + won.diamonds);
-      if (won.energy) setEnergy((e) => Math.min(100, e + won.energy));
+      if (won.energy) setEnergy((e) => Math.min(maxEnergy, e + won.energy));
       if (won.crops) {
         setCropInventory((inv) => {
           const next = { ...inv };
@@ -2154,8 +2093,8 @@ export default function HappyHogView() {
   };
 
   const handleAttemptSteal = (neighbor) => {
-    if (energy < 15) {
-      showToast('⚡ พลังงานไม่พอสำหรับปฏิบัติการย่องเบา (ต้องการ 15 พลังงาน)');
+    if (energy < 5) {
+      showToast('⚡ พลังงานไม่พอสำหรับปฏิบัติการย่องเบา (ต้องการ 5 พลังงาน)');
       return;
     }
     if (pigs.length >= maxPigs) {
@@ -2163,7 +2102,7 @@ export default function HappyHogView() {
       return;
     }
 
-    setEnergy((e) => Math.max(0, e - 15));
+    setEnergy((e) => Math.max(0, e - 5));
 
     if (neighbor.isLocked) {
       playSound('bark', isMuted);
@@ -2202,11 +2141,11 @@ export default function HappyHogView() {
   };
 
   const handleHelpNeighbor = (neighbor) => {
-    if (energy < 10) {
-      showToast('⚡ พลังงานไม่พอ (ต้องการ 10 พลังงาน)');
+    if (energy < 3) {
+      showToast('⚡ พลังงานไม่พอ (ต้องการ 3 พลังงาน)');
       return;
     }
-    setEnergy((e) => Math.max(0, e - 10));
+    setEnergy((e) => Math.max(0, e - 3));
     setCoins((c) => c + 35);
     advanceQuest('visit', 1);
     playSound('coin', isMuted);
@@ -2315,22 +2254,25 @@ export default function HappyHogView() {
 
         {/* ================= TOP HUD: PIGGY TOWN SIGNATURE STATUS BAR ================= */}
         <div className="relative z-10 flex flex-wrap items-center justify-between gap-2.5 bg-[#2b180d]/85 p-2.5 rounded-2xl border-2 border-amber-700/80 shadow-md">
-          {/* Avatar and Level Title with EXP Progress */}
+          {/* Avatar and Level Title with EXP Progress (Inspired by Reference Game) */}
           <div className="flex items-center space-x-2.5">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-b from-amber-400 to-amber-600 border-2 border-amber-300 flex items-center justify-center text-2xl shadow-inner shrink-0">
-              🐷
+            <div className="relative">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-b from-amber-300 via-amber-400 to-amber-600 border-2 border-amber-200 flex items-center justify-center text-2xl shadow-inner shrink-0">
+                🐷
+              </div>
+              <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-amber-500 to-yellow-400 text-amber-950 font-black text-[9px] px-1.5 py-0.2 rounded-full border border-amber-200 shadow-md flex items-center space-x-0.5">
+                <span>Lv.{farmLevel}</span>
+                <span className="text-[8px]">⭐</span>
+              </div>
             </div>
             <div>
               <div className="flex items-center space-x-1.5">
-                <span className="font-black text-amber-100 text-sm font-mono tracking-tight">PIGGY TOWN</span>
-                <span className="bg-amber-500 text-amber-950 font-black text-[9px] px-1.5 py-0.2 rounded-full uppercase">
-                  Lv.{farmLevel}
-                </span>
+                <span className="font-black text-amber-100 text-sm font-mono tracking-tight drop-shadow-sm">PIGGY TOWN</span>
               </div>
-              <div className="flex items-center space-x-1 mt-0.5" title={`EXP ฟาร์ม: ${farmExp}/${expForNextLevel}`}>
-                <div className="w-20 sm:w-24 h-1.5 bg-slate-950/80 rounded-full overflow-hidden border border-amber-500/40">
+              <div className="flex items-center space-x-1.5 mt-0.5" title={`EXP ฟาร์ม: ${farmExp}/${expForNextLevel}`}>
+                <div className="w-20 sm:w-24 h-2 bg-slate-950/80 rounded-full overflow-hidden border border-amber-500/50 shadow-inner">
                   <div
-                    className="h-full bg-gradient-to-r from-amber-400 to-yellow-300 transition-all duration-300"
+                    className="h-full bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-300 transition-all duration-300 rounded-full"
                     style={{ width: `${Math.min(100, (farmExp / expForNextLevel) * 100)}%` }}
                   />
                 </div>
@@ -2339,29 +2281,52 @@ export default function HappyHogView() {
             </div>
           </div>
 
-          {/* Counters (Energy ⚡, Coins 🪙, Free Harvested Feeds 🌾) */}
+          {/* Counters (Energy ⚡, Coins 🪙, Diamonds 💎, Free Crops 🌾) */}
           <div className="flex items-center gap-2">
-            {/* Energy */}
-            <div className="bg-gradient-to-b from-white to-[#fef9c3] border-2 border-amber-700 rounded-xl px-2.5 py-1 flex items-center space-x-1 shadow-xs">
-              <Zap className="w-4 h-4 text-amber-500 fill-amber-400" />
-              <span className="font-black text-slate-900 font-mono text-xs">{energy}/100</span>
+            {/* Energy Pill ⚡ (1 min / 1 energy with countdown) */}
+            <div
+              onClick={() => setShowAuditModal(true)}
+              className="bg-gradient-to-b from-[#fefce8] to-[#fef08a] border-2 border-[#b45309] rounded-2xl px-2.5 py-1 flex items-center space-x-1.5 shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer group"
+              title={`พลังงานฟาร์ม: ${energy}/${maxEnergy} (ฟื้นฟู +1 ทุก 1 นาที ${energy < maxEnergy ? `เหลือ ${energyCountdown}s` : 'เต็ม'}) แตะเพื่อตรวจการ อปท.`}
+            >
+              <div className="w-5 h-5 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
+                <Zap className="w-3.5 h-3.5 text-amber-600 fill-amber-500 animate-pulse" />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-black text-slate-900 font-mono text-xs leading-none">
+                  {energy}/{maxEnergy}
+                </span>
+                <span className="text-[8px] text-amber-800 font-mono font-bold leading-none mt-0.5">
+                  {energy >= maxEnergy ? '⚡ เต็ม' : `⏳ +1 ใน ${energyCountdown}s`}
+                </span>
+              </div>
+              <span className="bg-amber-500 group-hover:bg-amber-400 text-amber-950 font-black rounded-lg w-4 h-4 flex items-center justify-center text-[10px] shadow-xs ml-0.5 shrink-0">
+                +
+              </span>
             </div>
 
-            {/* Coins */}
-            <div className="bg-gradient-to-b from-white to-[#fef9c3] border-2 border-amber-700 rounded-xl px-2.5 py-1 flex items-center space-x-1 shadow-xs">
-              <Coins className="w-4 h-4 text-amber-800" />
+            {/* Coins Pill 🪙 */}
+            <div
+              onClick={() => setActiveTab('shop')}
+              className="bg-gradient-to-b from-[#fefce8] to-[#fef08a] border-2 border-[#b45309] rounded-2xl px-2.5 py-1 flex items-center space-x-1.5 shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer group"
+              title="เหรียญทองฟาร์ม (แตะเพื่อเปิดร้านค้า)"
+            >
+              <span className="text-base filter drop-shadow">🪙</span>
               <span className="font-black text-slate-900 font-mono text-xs">{coins.toLocaleString()}</span>
+              <span className="bg-amber-500 group-hover:bg-amber-400 text-amber-950 font-black rounded-lg w-4 h-4 flex items-center justify-center text-[10px] shadow-xs ml-0.5 shrink-0">
+                +
+              </span>
             </div>
 
             {/* Diamonds 💎 - Styled identically to Pig Price Button */}
             <div
               onClick={() => setShowDiamondShopModal(true)}
-              className="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-700 hover:to-indigo-800 text-white border-2 border-purple-300 shadow-[0_0_12px_rgba(168,85,247,0.6)] rounded-xl px-2.5 py-1 flex items-center space-x-1.5 shadow-xs cursor-pointer transition-all hover:scale-105 active:scale-95 group"
+              className="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-700 hover:to-indigo-800 text-white border-2 border-purple-300 shadow-[0_0_12px_rgba(168,85,247,0.6)] rounded-2xl px-2.5 py-1 flex items-center space-x-1.5 shadow-xs cursor-pointer transition-all hover:scale-105 active:scale-95 group"
               title="คลังเพชรแท้ (คลิกเพื่อเปิดร้านค้าเพชร / เติมเงิน / แลกเหรียญ)"
             >
               <span className="text-sm filter drop-shadow-[0_0_4px_rgba(168,85,247,0.9)] group-hover:scale-110 transition-transform">💎</span>
               <span className="font-black text-white font-mono text-xs">{diamonds.toLocaleString()}</span>
-              <span className="bg-amber-400 text-purple-950 font-black rounded-md px-1.5 py-0.2 text-[10px] shadow-xs group-hover:bg-yellow-300 ml-0.5">
+              <span className="bg-amber-400 text-purple-950 font-black rounded-lg w-4 h-4 flex items-center justify-center text-[10px] shadow-xs group-hover:bg-yellow-300 ml-0.5 shrink-0">
                 +
               </span>
             </div>
@@ -2643,96 +2608,20 @@ export default function HappyHogView() {
                   </div>
                 )}
 
-                {/* Sky Sanctuary Celestial Clouds & Rainbow */}
-                {activeTheme.atmosphere === 'celestial_clouds' && (
+                {/* Pasture Meadow Fluttering Butterflies */}
+                {activeTheme.atmosphere === 'butterflies' && (
                   <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    {['☁️', '✨', '🌈', '☁️', '✨', '🕊️'].map((cloud, i) => (
+                    {['🦋', '✨', '🌸', '🦋', '✨'].map((bf, i) => (
                       <span
                         key={i}
-                        className="absolute text-2xl animate-pulse opacity-85"
+                        className="absolute text-xl animate-bounce opacity-85 drop-shadow-xs"
                         style={{
-                          left: `${10 + i * 16}%`,
-                          top: `${12 + (i % 2) * 14}%`,
-                          animationDuration: `${2.0 + i * 0.4}s`
-                        }}
-                      >
-                        {cloud}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* Atlantis Underwater Bubbles & Marine Flora */}
-                {activeTheme.atmosphere === 'bubbles' && (
-                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    {['🫧', '🌊', '🫧', '🐚', '🫧', '✨'].map((b, i) => (
-                      <span
-                        key={i}
-                        className="absolute text-xl animate-bounce opacity-85"
-                        style={{
-                          left: `${12 + i * 16}%`,
-                          top: `${14 + (i % 3) * 15}%`,
-                          animationDuration: `${1.8 + i * 0.3}s`
-                        }}
-                      >
-                        {b}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* Neon Ice Castle Falling Snow & Crystal Shards */}
-                {activeTheme.atmosphere === 'snow' && (
-                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    {['❄️', '💎', '❄️', '✨', '❄️', '💠'].map((sn, i) => (
-                      <span
-                        key={i}
-                        className="absolute text-xl animate-pulse opacity-90 drop-shadow-[0_0_8px_#38bdf8]"
-                        style={{
-                          left: `${12 + i * 16}%`,
-                          top: `${10 + (i % 3) * 16}%`,
-                          animationDuration: `${1.5 + i * 0.3}s`
-                        }}
-                      >
-                        {sn}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* Lava Caldera Fiery Embers & Magma Sparks */}
-                {activeTheme.atmosphere === 'magma' && (
-                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    {['🔥', '🌋', '💥', '🔥', '✨', '☄️'].map((mg, i) => (
-                      <span
-                        key={i}
-                        className="absolute text-xl animate-bounce opacity-85 drop-shadow-[0_0_8px_#ea580c]"
-                        style={{
-                          left: `${12 + i * 16}%`,
+                          left: `${14 + i * 18}%`,
                           top: `${16 + (i % 2) * 16}%`,
-                          animationDuration: `${1.6 + i * 0.4}s`
+                          animationDuration: `${2.2 + i * 0.4}s`
                         }}
                       >
-                        {mg}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* Galaxy Space Nebula & Orbiting Planets */}
-                {activeTheme.atmosphere === 'galaxy_stars' && (
-                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    {['🪐', '⭐', '🌌', '✨', '🛸', '💫'].map((gx, i) => (
-                      <span
-                        key={i}
-                        className="absolute text-2xl animate-pulse opacity-90 drop-shadow-[0_0_12px_#a855f7]"
-                        style={{
-                          left: `${10 + i * 17}%`,
-                          top: `${12 + (i % 3) * 14}%`,
-                          animationDuration: `${1.7 + i * 0.3}s`
-                        }}
-                      >
-                        {gx}
+                        {bf}
                       </span>
                     ))}
                   </div>
@@ -2740,7 +2629,7 @@ export default function HappyHogView() {
 
                 {/* Hotspot 1: Barn Cottage (Top-Left) */}
                 <div
-                  onClick={() => showToast(`🏠 ${activeTheme.name}: คอกฟาร์มอบอุ่น จุหมูได้ ${pigs.length}/8 ตัว`)}
+                  onClick={() => showToast(`🏠 ${activeTheme.name}: คอกฟาร์มอบอุ่น จุหมูได้ ${pigs.length}/${maxPigs} ตัว`)}
                   className="absolute top-10 left-8 w-44 h-36 rounded-2xl cursor-pointer hover:bg-white/10 transition-colors z-15"
                   title="โรงเรือนคอกหมู (แตะเพื่อดูข้อมูล)"
                 />
@@ -2846,17 +2735,25 @@ export default function HappyHogView() {
                       }}
                       className="absolute cursor-pointer group"
                     >
-                      {/* 1. Floating Need Bubble - ONLY WHEN AN URGENT NEED EXISTS! */}
+                      {/* 1. Floating Need Bubble - Circular Ring with Icon (Inspired by Reference Game Image 4) */}
                       {need && (
                         <div
                           onClick={(e) => handleBubbleClick(e, pig, need)}
-                          className="absolute -top-14 left-1/2 -translate-x-1/2 flex flex-col items-center cursor-pointer z-40 transition-transform hover:scale-120 active:scale-95 animate-bounce pointer-events-auto"
+                          className="absolute -top-15 left-1/2 -translate-x-1/2 flex flex-col items-center cursor-pointer z-40 transition-transform hover:scale-125 active:scale-95 animate-bounce pointer-events-auto group/bubble select-none"
                           title={need.hint}
                         >
-                          <div className="w-10 h-10 rounded-full bg-white/95 backdrop-blur-md border-2 border-white shadow-[0_4px_12px_rgba(0,0,0,0.25)] flex items-center justify-center text-xl ring-2 ring-amber-400">
-                            <span>{need.icon}</span>
+                          <div className={`w-11 h-11 rounded-full bg-white/95 backdrop-blur-md border-2 border-white shadow-[0_4px_16px_rgba(0,0,0,0.25)] flex items-center justify-center text-2xl transition-all ${
+                            need.type === 'heal'
+                              ? 'ring-3 ring-rose-400 shadow-[0_4px_14px_rgba(244,63,94,0.4)]'
+                              : need.type === 'love'
+                              ? 'ring-3 ring-pink-400 shadow-[0_4px_14px_rgba(236,72,153,0.4)]'
+                              : 'ring-3 ring-emerald-400 shadow-[0_4px_14px_rgba(16,185,129,0.4)]'
+                          }`}>
+                            <span className="filter drop-shadow-xs">{need.icon}</span>
                           </div>
-                          <div className="w-2.5 h-2.5 bg-white border-r-2 border-b-2 border-amber-300 rotate-45 -mt-1.5 shadow-xs" />
+                          <div className={`w-2.5 h-2.5 bg-white border-r-2 border-b-2 rotate-45 -mt-1.5 shadow-xs ${
+                            need.type === 'heal' ? 'border-rose-300' : need.type === 'love' ? 'border-pink-300' : 'border-emerald-300'
+                          }`} />
                         </div>
                       )}
 
@@ -2884,27 +2781,47 @@ export default function HappyHogView() {
                   );
                 })}
 
-                {/* Top Corner Controls (Fence lock status and theme pill) */}
-                <div className="absolute top-2 left-6 z-20 flex items-center space-x-2">
+                {/* Top Corner Controls (Pen Capacity Signpost + Fence Lock + Theme Pill) */}
+                <div className="absolute top-2.5 left-4 z-25 flex items-center space-x-2">
+                  {/* Wooden Pen Capacity Signpost (Inspired by Reference Game Image 4) */}
+                  <div
+                    onClick={() => setShowBarnUpgradeModal(true)}
+                    className="relative bg-gradient-to-b from-[#854d0e] via-[#713f12] to-[#542d0c] border-2 border-amber-300 px-3 py-1 rounded-xl shadow-xl flex items-center space-x-2 text-white cursor-pointer hover:scale-105 active:scale-95 transition-all group select-none"
+                    title={`ความจุคอกหมู: ${pigs.length}/${maxPigs} ตัว (แตะเพื่ออัปเกรดขยายคอก)`}
+                  >
+                    <span className="text-base filter drop-shadow">🐷</span>
+                    <div className="flex flex-col">
+                      <span className="text-[8px] text-amber-300 font-bold leading-none">ความจุคอก</span>
+                      <span className="font-mono font-black text-xs text-yellow-200 tracking-wide leading-tight">
+                        {pigs.length}/{maxPigs}
+                      </span>
+                    </div>
+                    <span className="bg-amber-400 group-hover:bg-yellow-300 text-amber-950 text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-black shadow-md ml-0.5">
+                      +
+                    </span>
+                  </div>
+
+                  {/* Fence Lock Status */}
                   <button
                     onClick={() => {
                       setIsLocked(!isLocked);
                       playSound('feed', isMuted);
                       showToast(isLocked ? '🔓 ปลดล็อกรั้วแล้ว ระวังเพื่อนแอบย่องมาอุ้ม!' : '🔒 ล็อกรั้วคอกแน่นหนาแล้ว ป้องกันการขโมย 100%');
                     }}
-                    className={`px-3 py-1 rounded-xl text-[10px] font-black flex items-center space-x-1 border-2 shadow-md cursor-pointer transition-all ${
+                    className={`px-2.5 py-1 rounded-xl text-[10px] font-black flex items-center space-x-1 border-2 shadow-md cursor-pointer transition-all ${
                       isLocked || activeThemeId === 'cyber_space'
                         ? 'bg-emerald-600 text-white border-emerald-400'
                         : 'bg-rose-600 text-white border-rose-400 animate-pulse'
                     }`}
                   >
                     {isLocked || activeThemeId === 'cyber_space' ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
-                    <span>{isLocked || activeThemeId === 'cyber_space' ? 'รั้วล็อกแล้ว' : 'รั้วยังไม่ล็อก'}</span>
+                    <span className="hidden sm:inline">{isLocked || activeThemeId === 'cyber_space' ? 'รั้วล็อกแล้ว' : 'รั้วยังไม่ล็อก'}</span>
                   </button>
 
+                  {/* Barn Theme Switcher */}
                   <button
                     onClick={() => setShowThemeModal(true)}
-                    className="px-2.5 py-1 bg-white/80 hover:bg-white text-slate-800 rounded-xl text-[10px] font-black border border-slate-300 shadow-sm flex items-center space-x-1 cursor-pointer"
+                    className="px-2.5 py-1 bg-white/90 hover:bg-white text-slate-800 rounded-xl text-[10px] font-black border border-slate-300 shadow-sm flex items-center space-x-1 cursor-pointer"
                   >
                     <Palette className="w-3 h-3 text-emerald-600" />
                     <span>ธีม: {activeTheme.name}</span>
@@ -3993,127 +3910,89 @@ export default function HappyHogView() {
               </button>
             </div>
 
-            {/* Wallet Balance & Filter */}
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center space-x-1.5 bg-amber-950/20 p-1 rounded-xl">
-                <button
-                  onClick={() => setThemeFilter('all')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                    themeFilter === 'all' ? 'bg-amber-600 text-white shadow-xs' : 'text-amber-900 hover:text-black'
-                  }`}
-                >
-                  ทั้งหมด (11)
-                </button>
-                <button
-                  onClick={() => setThemeFilter('coin')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                    themeFilter === 'coin' ? 'bg-amber-600 text-white shadow-xs' : 'text-amber-900 hover:text-black'
-                  }`}
-                >
-                  🪵 ธีมทั่วไป (6)
-                </button>
-                <button
-                  onClick={() => setThemeFilter('diamond')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                    themeFilter === 'diamond' ? 'bg-purple-600 text-white shadow-xs' : 'text-purple-800 hover:text-purple-950'
-                  }`}
-                >
-                  💎 วิมานเพชร (5)
-                </button>
-              </div>
-
+            {/* Header Status & Coin Balance */}
+            <div className="flex flex-wrap items-center justify-between gap-2 bg-amber-950/20 p-2.5 rounded-xl border border-amber-300/50">
+              <span className="text-xs font-black text-amber-950 flex items-center space-x-1.5">
+                <span>🏞️</span>
+                <span>ธีมคอกฟาร์มธรรมชาติ & สปา (6 สไตล์ภาพวาด ไร้สัตว์ในพื้นหลัง)</span>
+              </span>
               <div className="flex items-center space-x-2 text-xs font-mono font-bold">
-                <span className="text-amber-800">🪙 {coins.toLocaleString()} ฿</span>
-                <span className="text-purple-700">💎 {diamonds.toLocaleString()} 💎</span>
+                <span className="text-amber-900 bg-white/90 px-2.5 py-1 rounded-xl border border-amber-300 shadow-xs flex items-center space-x-1">
+                  <span>🪙</span>
+                  <span>{coins.toLocaleString()} ฿</span>
+                </span>
               </div>
             </div>
 
             <div className="space-y-2.5 max-h-[55vh] overflow-y-auto pr-1">
-              {Object.values(BARN_THEMES)
-                .filter((theme) => {
-                  if (themeFilter === 'coin') return !theme.isDiamondTheme;
-                  if (themeFilter === 'diamond') return theme.isDiamondTheme;
-                  return true;
-                })
-                .map((theme) => {
-                  const isUnlocked = unlockedThemes.includes(theme.id);
-                  const isActive = activeThemeId === theme.id;
+              {Object.values(BARN_THEMES).map((theme) => {
+                const isUnlocked = unlockedThemes.includes(theme.id);
+                const isActive = activeThemeId === theme.id;
 
-                  return (
-                    <div
-                      key={theme.id}
-                      onClick={() => handleSelectTheme(theme.id)}
-                      className={`p-3.5 rounded-2xl border-2 flex items-center justify-between transition-all cursor-pointer ${
-                        isActive
-                          ? 'bg-amber-500 text-white border-amber-600 shadow-md scale-101'
-                          : theme.isDiamondTheme
-                          ? 'bg-gradient-to-r from-purple-50 to-indigo-50 hover:bg-purple-100 border-purple-300 text-purple-950'
-                          : isUnlocked
-                          ? 'bg-white hover:bg-amber-100/70 border-amber-200 text-amber-950'
-                          : 'bg-slate-100 border-slate-300 text-slate-500'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-3">
-                        {theme.bgImage ? (
-                          <img
-                            src={theme.bgImage}
-                            alt={theme.name}
-                            className="w-16 h-12 rounded-xl object-cover border-2 border-amber-300 shadow-sm shrink-0"
-                          />
-                        ) : (
-                          <div className={`w-16 h-12 rounded-xl flex items-center justify-center text-2xl shadow-sm shrink-0 border-2 ${
-                            theme.isDiamondTheme ? 'bg-gradient-to-br from-indigo-900 to-purple-900 border-purple-400' : 'bg-slate-900 border-cyan-400'
-                          }`}>
-                            {theme.icon}
-                          </div>
-                        )}
-                        <div>
-                          <div className="flex items-center space-x-2">
-                            <span className="font-black text-sm">{theme.name}</span>
-                            {theme.isDiamondTheme && (
-                              <span className="bg-purple-100 text-purple-800 border border-purple-300 text-[9px] font-black px-1.5 py-0.2 rounded-full">
-                                {theme.tag}
-                              </span>
-                            )}
-                            {isActive && (
-                              <span className="bg-white text-amber-900 text-[10px] font-black px-2 py-0.2 rounded-full">
-                                กำลังใช้งาน
-                              </span>
-                            )}
-                          </div>
-                          <p className={`text-xs mt-0.5 ${isActive ? 'text-amber-100' : theme.isDiamondTheme ? 'text-purple-800' : 'text-slate-600'}`}>
-                            พลังพิเศษ: {theme.perk}
-                          </p>
-                          {!isUnlocked && (
-                            <p className="text-[10px] text-rose-600 font-bold mt-1">
-                              🔒 {theme.unlockDesc}
-                            </p>
+                return (
+                  <div
+                    key={theme.id}
+                    onClick={() => handleSelectTheme(theme.id)}
+                    className={`p-3.5 rounded-2xl border-2 flex items-center justify-between transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-amber-500 text-white border-amber-600 shadow-md scale-101'
+                        : isUnlocked
+                        ? 'bg-white hover:bg-amber-100/70 border-amber-200 text-amber-950'
+                        : 'bg-slate-100 border-slate-300 text-slate-600 hover:bg-slate-200/80'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      {theme.bgImage ? (
+                        <img
+                          src={theme.bgImage}
+                          alt={theme.name}
+                          className="w-18 h-13 rounded-xl object-cover border-2 border-amber-300 shadow-sm shrink-0"
+                        />
+                      ) : (
+                        <div className="w-18 h-13 rounded-xl flex items-center justify-center text-2xl shadow-sm shrink-0 border-2 bg-slate-900 border-cyan-400">
+                          {theme.icon}
+                        </div>
+                      )}
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <span className="font-black text-sm">{theme.name}</span>
+                          <span className="bg-amber-100 text-amber-900 border border-amber-300 text-[9px] font-black px-1.5 py-0.2 rounded-full">
+                            {theme.tag}
+                          </span>
+                          {isActive && (
+                            <span className="bg-white text-amber-900 text-[10px] font-black px-2 py-0.2 rounded-full shadow-xs">
+                              กำลังใช้งาน
+                            </span>
                           )}
                         </div>
-                      </div>
-
-                      <div>
-                        {isActive ? (
-                          <Check className="w-5 h-5 text-white stroke-[3]" />
-                        ) : isUnlocked ? (
-                          <span className="text-xs font-bold text-amber-700 bg-amber-100 px-2.5 py-1 rounded-xl">
-                            เลือกใช้
-                          </span>
-                        ) : theme.isDiamondTheme ? (
-                          <span className="text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 px-2.5 py-1 rounded-xl flex items-center space-x-1 shadow-xs">
-                            <Gem className="w-3 h-3 text-purple-200 fill-purple-300" />
-                            <span>{theme.diamondCost} 💎</span>
-                          </span>
-                        ) : (
-                          <span className="text-xs font-bold text-slate-700 bg-slate-200 px-2.5 py-1 rounded-xl flex items-center space-x-1">
-                            <Coins className="w-3 h-3" />
-                            <span>{theme.cost} ฿</span>
-                          </span>
+                        <p className={`text-xs mt-0.5 ${isActive ? 'text-amber-100' : 'text-slate-600'}`}>
+                          พลังพิเศษ: {theme.perk}
+                        </p>
+                        {!isUnlocked && theme.unlockDesc && (
+                          <p className="text-[10px] text-amber-700 font-bold mt-1">
+                            🔒 {theme.unlockDesc}
+                          </p>
                         )}
                       </div>
                     </div>
-                  );
-                })}
+
+                    <div>
+                      {isActive ? (
+                        <Check className="w-5 h-5 text-white stroke-[3]" />
+                      ) : isUnlocked ? (
+                        <span className="text-xs font-bold text-amber-800 bg-amber-100 border border-amber-300 px-3 py-1 rounded-xl shadow-xs">
+                          เลือกใช้
+                        </span>
+                      ) : (
+                        <span className="text-xs font-bold text-slate-800 bg-amber-200 border border-amber-400 px-3 py-1 rounded-xl flex items-center space-x-1 shadow-xs hover:bg-amber-300">
+                          <Coins className="w-3.5 h-3.5 text-amber-900" />
+                          <span>{theme.cost.toLocaleString()} ฿</span>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -4774,7 +4653,7 @@ export default function HappyHogView() {
                       เงินอุดหนุน & พลังงานเมื่อตรวจผ่าน
                     </span>
                     <div className="flex items-center justify-center space-x-3 text-sm font-black font-mono">
-                      <span className="text-amber-400">⚡ ฟื้นฟู 100</span>
+                      <span className="text-amber-400">⚡ ฟื้นฟูเต็ม {maxEnergy}</span>
                       <span className="text-yellow-400">+350 🪙</span>
                       <span className="text-purple-300">+15 💎</span>
                     </div>
@@ -4787,7 +4666,7 @@ export default function HappyHogView() {
                         return;
                       }
                       setLastAuditTime(Date.now());
-                      setEnergy(100);
+                      setEnergy(maxEnergy);
                       setCoins((c) => c + 350);
                       setDiamonds((d) => d + 15);
                       addExp(60);
@@ -4797,7 +4676,7 @@ export default function HappyHogView() {
                         title: '📋 ตรวจรับรองฟาร์ม อปท. ผ่านฉลุย!',
                         subtitle: 'ผลการตรวจสอบมาตรฐานสุขาภิบาลฟาร์มเป็นไปตามระเบียบ',
                         badge: 'AUDIT PASSED',
-                        rewardText: '⚡ พลังงานเต็ม 100 | +350 🪙 | +15 💎',
+                        rewardText: `⚡ พลังงานเต็ม ${maxEnergy} | +350 🪙 | +15 💎`,
                         icon: '📋',
                         color: '#2563eb'
                       });
@@ -4846,52 +4725,59 @@ export default function HappyHogView() {
             ))}
           </div>
 
-          {/* Celebration Card */}
-          <div className="relative z-10 bg-gradient-to-b from-[#2b180d] via-[#451a03] to-[#200e05] border-4 border-yellow-400 rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-[0_0_50px_rgba(251,191,36,0.65)] text-center space-y-4 animate-in zoom-in-90 duration-300">
-            {/* Top Badge */}
-            <div className="inline-block bg-gradient-to-r from-amber-500 to-yellow-400 text-amber-950 font-black text-[10px] px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
-              {celebrationReward.badge || 'REWARD UNLOCKED'}
+          {/* Celebration Card (Inspired by Reference Game Image 3) */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative z-10 bg-gradient-to-b from-[#fffbeb] via-[#fef3c7] to-[#fed7aa] border-4 border-[#854d0e] rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-[0_0_50px_rgba(245,158,11,0.6)] text-center space-y-4 animate-in zoom-in-90 duration-300 select-none"
+          >
+            {/* Top Wooden Plaque Header Banner */}
+            <div className="relative -mt-10 mx-auto inline-block">
+              <div className="bg-gradient-to-b from-[#854d0e] via-[#713f12] to-[#542d0c] border-2 border-yellow-300 px-6 py-1.5 rounded-2xl shadow-xl">
+                <span className="text-amber-100 font-black text-sm tracking-widest drop-shadow-sm font-mono">
+                  — ของรางวัล —
+                </span>
+              </div>
             </div>
 
-            {/* Glowing Icon in Pulsing Golden Ring */}
+            {/* Glowing Icon in Pulsing Ring */}
             <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-yellow-400/25 animate-ping" />
-              <div className="w-22 h-22 rounded-full bg-gradient-to-b from-yellow-300 to-amber-600 border-4 border-yellow-200 shadow-2xl flex items-center justify-center text-5xl">
+              <div className="absolute inset-0 rounded-full bg-amber-400/30 animate-ping" />
+              <div className="w-22 h-22 rounded-full bg-gradient-to-b from-yellow-200 via-amber-300 to-amber-500 border-4 border-amber-400 shadow-2xl flex items-center justify-center text-5xl">
                 {celebrationReward.icon}
               </div>
             </div>
 
             {/* Titles */}
             <div className="space-y-1">
-              <h3 className="text-xl font-black text-amber-300 font-mono tracking-tight drop-shadow-md">
+              <span className="inline-block bg-amber-200/80 text-amber-950 font-black text-[10px] px-2.5 py-0.5 rounded-full border border-amber-400 uppercase tracking-wider">
+                {celebrationReward.badge || 'REWARD UNLOCKED'}
+              </span>
+              <h3 className="text-xl font-black text-amber-950 font-mono tracking-tight drop-shadow-xs">
                 {celebrationReward.title}
               </h3>
-              <p className="text-xs text-amber-100/90 font-medium">
+              <p className="text-xs text-amber-900/80 font-medium">
                 {celebrationReward.subtitle}
               </p>
             </div>
 
-            {/* Reward Highlight Box */}
-            <div className="bg-amber-950/80 border-2 border-yellow-500/80 rounded-2xl p-4 shadow-inner">
-              <span className="text-[10px] text-amber-300/80 uppercase tracking-wider font-bold block mb-1">
-                ของรางวัลที่ได้รับ
-              </span>
-              <div className="text-xl font-black text-yellow-300 font-mono flex items-center justify-center space-x-2">
+            {/* Cream Item Cards & Reward Box */}
+            <div className="bg-white/90 border-2 border-amber-300 rounded-2xl p-4 shadow-inner space-y-1">
+              <div className="text-lg font-black text-amber-950 font-mono flex items-center justify-center space-x-2">
                 <span>{celebrationReward.rewardText}</span>
               </div>
-              <p className="text-[10px] text-emerald-300 font-bold mt-1">
+              <p className="text-[10px] text-emerald-600 font-bold">
                 ✓ บันทึกเข้าคลังและบัญชีฟาร์มเรียบร้อยแล้ว
               </p>
             </div>
 
-            {/* Claim / Dismiss Button */}
+            {/* Tap to Continue Button */}
             <div className="pt-2">
               <button
                 onClick={() => setCelebrationReward(null)}
-                className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-2xl font-black text-sm border-2 border-emerald-300 shadow-[0_5px_0_#065f46] active:translate-y-1 active:shadow-none cursor-pointer flex items-center justify-center space-x-2 animate-pulse"
+                className="w-full py-3.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-amber-950 rounded-2xl font-black text-base border-2 border-yellow-200 shadow-[0_5px_0_#92400e] active:translate-y-1 active:shadow-none cursor-pointer flex items-center justify-center space-x-2 transition-all animate-pulse"
               >
-                <Sparkles className="w-4 h-4 text-yellow-300" />
-                <span>รับรางวัลเข้าคลัง 🎁</span>
+                <Sparkles className="w-5 h-5 text-amber-950" />
+                <span>แตะเพื่อไปต่อ</span>
               </button>
             </div>
           </div>
