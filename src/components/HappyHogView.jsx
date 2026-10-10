@@ -277,10 +277,119 @@ const PIG_BREEDS = {
     badgeColor: 'bg-cyan-100 text-cyan-800 border-cyan-400',
     accessory: 'wings',
     unlockDesc: 'ล็อกอินสะสมครบ 7 วัน หรือมีเหรียญสะสมครบ 1,500 เหรียญ'
+  },
+  // === 6 DIAMOND EXCLUSIVE BREEDS (สัตว์เทพ & พันธุ์มายาใช้เพชรซื้อ) ===
+  jade_dragon: {
+    id: 'jade_dragon',
+    name: 'หมูเทพมังกรหยก',
+    tag: 'สัตว์เทพมังกร',
+    rarity: 'Mythic 💎',
+    primaryColor: '#10b981',
+    secondaryColor: '#d1fae5',
+    earColor: '#059669',
+    bellyColor: '#ecfdf5',
+    maxWeight: 350,
+    pricePerKg: 350,
+    diamondCost: 50,
+    isDiamondBreed: true,
+    description: 'มังกรหยกในร่างหมูน้อย พ่นประกายหยกประทานพร โตไวกว่าปกติ +100% สุขภาพไม่มีวันลดต่ำกว่า 50%',
+    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-400',
+    unlockDesc: 'ซื้อด้วย 50 เพชร 💎 หรือผสมพันธุ์สำเร็จ (โอกาส 1.5%)',
+    specialPerk: 'โตไว +100%, สุขภาพไม่ต่ำกว่า 50%'
+  },
+  phoenix: {
+    id: 'phoenix',
+    name: 'หมูวิหคเพลิงสุริยัน',
+    tag: 'วิหคเพลิงอมตะ',
+    rarity: 'Mythic 💎',
+    primaryColor: '#f97316',
+    secondaryColor: '#ffedd5',
+    earColor: '#ea580c',
+    bellyColor: '#fff7ed',
+    maxWeight: 400,
+    pricePerKg: 450,
+    diamondCost: 80,
+    isDiamondBreed: true,
+    description: 'ปีกเพลิงสุริยันนำโชค ปลอดโรค 100% และผลิตเหรียญขวัญถุง +150 ฿ เข้าคลังฟาร์มทุกๆ 60 วินาที',
+    badgeColor: 'bg-orange-100 text-orange-800 border-orange-400',
+    unlockDesc: 'ซื้อด้วย 80 เพชร 💎 หรือผสมพันธุ์สำเร็จ (โอกาส 1.5%)',
+    specialPerk: 'ปลอดโรค 100%, มอบ +150฿ ทุก 60s'
+  },
+  galaxy: {
+    id: 'galaxy',
+    name: 'หมูเทวาจักรวาลกาแล็กซี',
+    tag: 'เทวะกาแล็กซี',
+    rarity: 'Celestial 💎',
+    primaryColor: '#6366f1',
+    secondaryColor: '#e0e7ff',
+    earColor: '#4f46e5',
+    bellyColor: '#eef2ff',
+    maxWeight: 450,
+    pricePerKg: 600,
+    diamondCost: 120,
+    isDiamondBreed: true,
+    description: 'ละอองจักรวาลเรืองแสง พลังงานฟาร์มไม่มีวันหมด (เต็ม 100 เสมอ) และรับ EXP ฟาร์ม x3 เท่าจากทุกกิจกรรม',
+    badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-400',
+    unlockDesc: 'ซื้อด้วย 120 เพชร 💎 หรือผสมพันธุ์สำเร็จ (โอกาส 1.5%)',
+    specialPerk: 'พลังงานเต็มตลอดเวลา, EXP ฟาร์ม x3'
+  },
+  cyber_satoshi: {
+    id: 'cyber_satoshi',
+    name: 'หมูจักรกลคริปโตไซเบอร์',
+    tag: 'จักรกลขุดเพชร',
+    rarity: 'Celestial 💎',
+    primaryColor: '#06b6d4',
+    secondaryColor: '#cffafe',
+    earColor: '#0891b2',
+    bellyColor: '#ecfeff',
+    maxWeight: 480,
+    pricePerKg: 750,
+    diamondCost: 150,
+    isDiamondBreed: true,
+    description: 'ติดตั้งชิปขุดเพชรอัจฉริยะ ช่วยขุดเพชรแท้ +1 💎 เข้าคลังทุก 3 นาที และขายส่งโรงงานได้ราคาสูงถึง 15,000+ ฿',
+    badgeColor: 'bg-cyan-100 text-cyan-800 border-cyan-400',
+    unlockDesc: 'ซื้อด้วย 150 เพชร 💎 หรือผสมพันธุ์สำเร็จ (โอกาส 1.5%)',
+    specialPerk: 'ขุดเพชรแท้ +1 💎 ทุก 3 นาที'
+  },
+  inferno_titan: {
+    id: 'inferno_titan',
+    name: 'หมูราชาอสูรแมกม่า',
+    tag: 'อสูรไททัน',
+    rarity: 'Godly 💎',
+    primaryColor: '#ef4444',
+    secondaryColor: '#fee2e2',
+    earColor: '#dc2626',
+    bellyColor: '#fef2f2',
+    maxWeight: 500,
+    pricePerKg: 900,
+    diamondCost: 200,
+    isDiamondBreed: true,
+    description: 'ร่างยักษ์ 500kg แมกม่าหลอมเหลว ป้องกันโจรขโมยหมู 100% (แผดเผาคนมาแอบอุ้มหมูทันที)',
+    badgeColor: 'bg-red-100 text-red-800 border-red-400',
+    unlockDesc: 'ซื้อด้วย 200 เพชร 💎 หรือผสมพันธุ์สำเร็จ (โอกาส 1.5%)',
+    specialPerk: 'หนัก 500kg, ป้องกันขโมย 100%'
+  },
+  diamond_angel: {
+    id: 'diamond_angel',
+    name: 'หมูเทพธิดาจันทราเพชรแท้',
+    tag: 'มหาเทพจุติ',
+    rarity: 'Divine 💎',
+    primaryColor: '#a855f7',
+    secondaryColor: '#f3e8ff',
+    earColor: '#9333ea',
+    bellyColor: '#faf5ff',
+    maxWeight: 600,
+    pricePerKg: 1200,
+    diamondCost: 280,
+    isDiamondBreed: true,
+    description: 'มหาเทพธิดาหมูเพชรบริสุทธิ์ อิ่มทิพย์ตลอดกาล (ความหิวไม่ลด) และเพิ่มอัตราผสมพันธุ์ได้หมูหายากพิเศษ +50%',
+    badgeColor: 'bg-purple-100 text-purple-800 border-purple-400',
+    unlockDesc: 'ซื้อด้วย 280 เพชร 💎 หรือผสมพันธุ์สำเร็จ (โอกาส 1.5%)',
+    specialPerk: 'อิ่มทิพย์ตลอดกาล, ผสมพันธุ์ติดหายาก +50%'
   }
 };
 
-// 6 Barn Themes with 3D Isometric Scenery
+// 11 Barn Themes with 3D Isometric Scenery (6 Classic + 5 Diamond Exclusive)
 const BARN_THEMES = {
   pasture: {
     id: 'pasture',
@@ -371,6 +480,87 @@ const BARN_THEMES = {
     unlockDesc: 'ผสมพันธุ์สำเร็จ 3 ครั้ง หรือใช้ 2,000 เหรียญ',
     atmosphere: 'cyber',
     bounds: { minX: 26, maxX: 74, minY: 34, maxY: 68 }
+  },
+  // === 5 DIAMOND EXCLUSIVE THEMES (วิมานคอกหมูหรูหราใช้เพชรซื้อ) ===
+  sky_sanctuary: {
+    id: 'sky_sanctuary',
+    name: 'วิมานสวรรค์ลอยฟ้า',
+    tag: 'วิมานเทพ 💎',
+    icon: '☁️',
+    bgImage: null,
+    bgClass: 'from-[#38bdf8] via-[#bae6fd] to-[#e0f2fe]',
+    penGround: '#f1f5f9',
+    fenceBorder: '#0284c7',
+    perk: 'หมูทุกตัวโตไวกว่าปกติ +50% (ละอองสวรรค์ประทานพร)',
+    diamondCost: 40,
+    isDiamondTheme: true,
+    atmosphere: 'celestial_clouds',
+    bounds: { minX: 28, maxX: 70, minY: 36, maxY: 66 },
+    unlockDesc: 'ปลดล็อกด้วย 40 เพชร 💎'
+  },
+  atlantis: {
+    id: 'atlantis',
+    name: 'อาณาจักรคริสตัลใต้สมุทร',
+    tag: 'สมุทรคริสตัล 💎',
+    icon: '🌊',
+    bgImage: null,
+    bgClass: 'from-[#0369a1] via-[#0284c7] to-[#38bdf8]',
+    penGround: '#e0f2fe',
+    fenceBorder: '#0ea5e9',
+    perk: 'หมูสะอาด 100% ตลอดเวลา (ไม่ต้องอาบน้ำตลอดกาล)',
+    diamondCost: 60,
+    isDiamondTheme: true,
+    atmosphere: 'bubbles',
+    bounds: { minX: 28, maxX: 70, minY: 36, maxY: 66 },
+    unlockDesc: 'ปลดล็อกด้วย 60 เพชร 💎'
+  },
+  neon_ice: {
+    id: 'neon_ice',
+    name: 'ปราสาทน้ำแข็งนีออนคริสตัล',
+    tag: 'น้ำแข็งนีออน 💎',
+    icon: '❄️',
+    bgImage: null,
+    bgClass: 'from-[#1e1b4b] via-[#3b82f6] to-[#a5f3fc]',
+    penGround: '#e2e8f0',
+    fenceBorder: '#38bdf8',
+    perk: 'ความหิวลดช้าลง 75% และแปลงผักโตเร็วขึ้น x2',
+    diamondCost: 80,
+    isDiamondTheme: true,
+    atmosphere: 'snow',
+    bounds: { minX: 28, maxX: 70, minY: 36, maxY: 66 },
+    unlockDesc: 'ปลดล็อกด้วย 80 เพชร 💎'
+  },
+  lava_caldera: {
+    id: 'lava_caldera',
+    name: 'หุบเขาเพชรลาวาอสูร',
+    tag: 'ลาวาอสูร 💎',
+    icon: '🌋',
+    bgImage: null,
+    bgClass: 'from-[#450a0a] via-[#7f1d1d] to-[#b91c1c]',
+    penGround: '#44403c',
+    fenceBorder: '#ea580c',
+    perk: 'หมูทุกตัวขายได้ราคา +50% และป้องกันขโมย 100%',
+    diamondCost: 100,
+    isDiamondTheme: true,
+    atmosphere: 'magma',
+    bounds: { minX: 28, maxX: 70, minY: 36, maxY: 66 },
+    unlockDesc: 'ปลดล็อกด้วย 100 เพชร 💎'
+  },
+  galaxy_colony: {
+    id: 'galaxy_colony',
+    name: 'สถานีอวกาศสเปซเอ็กซ์จักรวาล',
+    tag: 'มหาอวกาศ 💎',
+    icon: '🪐',
+    bgImage: null,
+    bgClass: 'from-[#090d16] via-[#1e1035] to-[#3b0764]',
+    penGround: '#18181b',
+    fenceBorder: '#a855f7',
+    perk: 'หมุนวงล้อฟรี +3 ครั้งต่อวัน และโบนัสรายได้ฟาร์มทั้งหมด +60%',
+    diamondCost: 140,
+    isDiamondTheme: true,
+    atmosphere: 'galaxy_stars',
+    bounds: { minX: 26, maxX: 74, minY: 34, maxY: 68 },
+    unlockDesc: 'ปลดล็อกด้วย 140 เพชร 💎'
   }
 };
 
@@ -615,6 +805,22 @@ const PigSprite = ({ breed, isSelected, direction, weight }) => {
   const spriteSrc = `/pigs/${breed}.png`;
   const dirScale = direction === -1 || direction === 'left' ? -1 : 1;
 
+  // Custom filter and celestial styling for diamond mythic breeds
+  let filterCss = '';
+  if (breed === 'jade_dragon') {
+    filterCss = 'drop-shadow(0 0 10px rgba(16,185,129,0.9))';
+  } else if (breed === 'phoenix') {
+    filterCss = 'hue-rotate(330deg) saturate(200%) drop-shadow(0 0 12px rgba(249,115,22,0.95))';
+  } else if (breed === 'galaxy') {
+    filterCss = 'hue-rotate(190deg) saturate(220%) drop-shadow(0 0 14px rgba(129,140,248,0.95))';
+  } else if (breed === 'cyber_satoshi') {
+    filterCss = 'hue-rotate(85deg) contrast(120%) drop-shadow(0 0 12px rgba(6,182,212,0.95))';
+  } else if (breed === 'inferno_titan') {
+    filterCss = 'hue-rotate(350deg) saturate(240%) contrast(115%) drop-shadow(0 0 14px rgba(239,68,68,0.95))';
+  } else if (breed === 'diamond_angel') {
+    filterCss = 'brightness(112%) saturate(140%) drop-shadow(0 0 16px rgba(192,132,252,0.95))';
+  }
+
   return (
     <div
       style={{
@@ -625,8 +831,30 @@ const PigSprite = ({ breed, isSelected, direction, weight }) => {
         isSelected ? 'filter drop-shadow-[0_0_12px_rgba(251,191,36,0.95)]' : ''
       }`}
     >
+      {/* Celestial Aura Ring for Diamond Mythic Breeds */}
+      {b.isDiamondBreed && (
+        <div
+          className="absolute -inset-2.5 rounded-full border-2 border-dashed border-purple-400/60 animate-spin pointer-events-none"
+          style={{ animationDuration: '8s' }}
+        />
+      )}
+
+      {/* Floating Diamond Sparkle for Diamond Breeds */}
+      {b.isDiamondBreed && (
+        <div
+          className="absolute -top-3.5 flex items-center justify-center pointer-events-none animate-bounce"
+          style={{ animationDuration: '2s' }}
+        >
+          <span className="text-xs filter drop-shadow-[0_0_6px_rgba(168,85,247,0.9)]">💎</span>
+        </div>
+      )}
+
       {/* Soft Ground Contact Shadow */}
-      <div className="w-16 h-3.5 bg-black/30 rounded-full blur-[2px] absolute -bottom-1 pointer-events-none" />
+      <div
+        className={`w-16 h-3.5 rounded-full blur-[2px] absolute -bottom-1 pointer-events-none ${
+          b.isDiamondBreed ? 'bg-purple-900/40 shadow-[0_0_12px_rgba(168,85,247,0.6)]' : 'bg-black/30'
+        }`}
+      />
 
       {/* 3D Chibi Illustrated Pig Sprite (Only sprite flips horizontally) */}
       <img
@@ -634,6 +862,7 @@ const PigSprite = ({ breed, isSelected, direction, weight }) => {
         alt={b.name}
         style={{
           transform: `scaleX(${dirScale})`,
+          filter: filterCss || undefined,
           transition: 'transform 0.2s ease'
         }}
         className="w-20 h-20 sm:w-22 sm:h-22 object-contain drop-shadow-md transition-transform duration-200 hover:scale-110 active:scale-95 pointer-events-none select-none"
@@ -685,6 +914,11 @@ export default function HappyHogView() {
   const [coins, setCoins] = useState(() => {
     const saved = localStorage.getItem('happy_hog_coins');
     return saved !== null ? parseInt(saved, 10) : 250;
+  });
+
+  const [diamonds, setDiamonds] = useState(() => {
+    const saved = localStorage.getItem('happy_hog_diamonds');
+    return saved !== null ? parseInt(saved, 10) : 50; // Starter 50 diamonds!
   });
 
   const [energy, setEnergy] = useState(() => {
@@ -740,6 +974,10 @@ export default function HappyHogView() {
   const [showThemeModal, setShowThemeModal] = useState(false);
   const [showPigDexModal, setShowPigDexModal] = useState(false);
   const [showNeighborsModal, setShowNeighborsModal] = useState(false);
+  const [showDiamondShopModal, setShowDiamondShopModal] = useState(false);
+  const [diamondShopTab, setDiamondShopTab] = useState('topup'); // 'topup' | 'exchange'
+  const [shopFilter, setShopFilter] = useState('all'); // 'all' | 'coin' | 'diamond'
+  const [themeFilter, setThemeFilter] = useState('all'); // 'all' | 'coin' | 'diamond'
   const [visitingNeighbor, setVisitingNeighbor] = useState(null);
 
   // Active Barn Theme
@@ -901,14 +1139,41 @@ export default function HappyHogView() {
   const [hearts, setHearts] = useState([]);
   const [currentTime, setCurrentTime] = useState(Date.now());
 
-  // Timer loop for crop growth, energy regeneration, and yard litter spawning
+  // Timer loop for crop growth, energy regeneration, and Yard Litter spawning + Diamond / Breed passive bonuses
   useEffect(() => {
+    let secondTick = 0;
     const timer = setInterval(() => {
+      secondTick += 1;
       setCurrentTime(Date.now());
-      setEnergy((e) => Math.min(100, e + 1));
+
+      // If farm has galaxy pig, energy is locked at 100 max! Otherwise regens +1
+      setEnergy((e) => {
+        const hasGalaxy = pigs.some((p) => p.breed === 'galaxy');
+        return hasGalaxy ? 100 : Math.min(100, e + 1);
+      });
+
+      // Phoenix pig passive: grants +150 ฿ every 60 seconds
+      if (secondTick % 60 === 0) {
+        const phoenixCount = pigs.filter((p) => p.breed === 'phoenix').length;
+        if (phoenixCount > 0) {
+          const bonusCoins = phoenixCount * 150;
+          setCoins((c) => c + bonusCoins);
+          showToast(`🔥 หมูวิหคเพลิงสุริยัน มอบเปลวเพลิงนำโชค +${bonusCoins} ฿!`);
+        }
+      }
+
+      // Cyber Satoshi pig passive: mines +1 💎 every 180 seconds (3 min)
+      if (secondTick % 180 === 0) {
+        const satoshiCount = pigs.filter((p) => p.breed === 'cyber_satoshi').length;
+        if (satoshiCount > 0) {
+          const bonusDiamonds = satoshiCount * 1;
+          setDiamonds((d) => d + bonusDiamonds);
+          showToast(`💎 หมูจักรกลคริปโตไซเบอร์ ขุดเพชรแท้สำเร็จ +${bonusDiamonds} 💎!`);
+        }
+      }
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [pigs]);
 
   // Periodic Litter & Gold Drops Spawner in Farm Yard (Relaxed 75s timer, max 3 items)
   useEffect(() => {
@@ -941,6 +1206,7 @@ export default function HappyHogView() {
   // Save to LocalStorage
   useEffect(() => {
     localStorage.setItem('happy_hog_coins', coins.toString());
+    localStorage.setItem('happy_hog_diamonds', diamonds.toString());
     localStorage.setItem('happy_hog_energy', energy.toString());
     localStorage.setItem('happy_hog_pigs', JSON.stringify(pigs));
     localStorage.setItem('happy_hog_fence_locked', isLocked ? 'true' : 'false');
@@ -957,7 +1223,7 @@ export default function HappyHogView() {
     localStorage.setItem('happy_hog_farm_level', farmLevel.toString());
     localStorage.setItem('happy_hog_farm_exp', farmExp.toString());
     localStorage.setItem('happy_hog_barn_tier', barnCapacityTier.toString());
-  }, [coins, energy, pigs, isLocked, activeThemeId, unlockedThemes, unlockedBreeds, stats, crops, cropInventory, loginData, neighbors, quests, wheelSpinsToday, farmLevel, farmExp, barnCapacityTier]);
+  }, [coins, diamonds, energy, pigs, isLocked, activeThemeId, unlockedThemes, unlockedBreeds, stats, crops, cropInventory, loginData, neighbors, quests, wheelSpinsToday, farmLevel, farmExp, barnCapacityTier]);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -968,8 +1234,12 @@ export default function HappyHogView() {
 
   // Farm Experience & Level Up System
   const addExp = (amount) => {
+    // If farm has galaxy pig, EXP is tripled (x3)!
+    const hasGalaxy = pigs.some((p) => p.breed === 'galaxy');
+    const finalAmount = hasGalaxy ? amount * 3 : amount;
+
     setFarmExp((prevExp) => {
-      let currentExp = prevExp + amount;
+      let currentExp = prevExp + finalAmount;
       let currentLv = farmLevel;
       const needed = currentLv * 120;
       if (currentExp >= needed) {
@@ -1080,27 +1350,37 @@ export default function HappyHogView() {
             const nextY = Math.max(currentBounds.minY, Math.min(currentBounds.maxY, p.y + (Math.random() * 14 - 7)));
 
             // 1. Hunger decreases steadily (~0.32% per wander step)
-            const hungerLoss = 0.32 * rateModifier;
+            // If diamond_angel, hunger never drops (always full)!
+            // If theme is neon_ice, hunger drops 75% slower!
+            let hungerLoss = 0.32 * rateModifier;
+            if (activeThemeId === 'neon_ice') hungerLoss *= 0.25;
+            if (p.breed === 'diamond_angel') hungerLoss = 0;
             const nextHunger = Math.max(0, p.hunger - hungerLoss);
 
-            // 2. Cleanliness decreases much slower (~0.08% per step, even slower in onsen)
-            // If pen has uncollected waste, cleanliness drops an extra 0.04%
+            // 2. Cleanliness: If atlantis theme, cleanliness is locked at 100% (never dirty!)
             const wastePenalty = yardDrops.length > 0 ? 0.04 : 0;
-            const cleanlinessLoss = (activeThemeId === 'onsen_mud' ? 0.04 : 0.08) * rateModifier + wastePenalty;
-            const nextCleanliness = Math.max(0, p.cleanliness - cleanlinessLoss);
+            let cleanlinessLoss = (activeThemeId === 'onsen_mud' ? 0.04 : 0.08) * rateModifier + wastePenalty;
+            if (activeThemeId === 'atlantis') cleanlinessLoss = 0;
+            const nextCleanliness = activeThemeId === 'atlantis' ? 100 : Math.max(0, p.cleanliness - cleanlinessLoss);
 
-            // 3. Health only drops if the pig is starving or very dirty!
+            // 3. Health: If phoenix, disease immune 100%! If jade_dragon, never drops below 50%!
             let healthLoss = 0;
             if (nextHunger < 15) healthLoss += 0.25; // Starving
             if (nextCleanliness < 15) healthLoss += 0.2; // Filthy
-            const nextHealth = Math.max(0, p.health - healthLoss);
+            if (p.breed === 'phoenix') healthLoss = 0;
+            let nextHealth = Math.max(0, p.health - healthLoss);
+            if (p.breed === 'phoenix') nextHealth = 100;
+            if (p.breed === 'jade_dragon' && nextHealth < 50) nextHealth = 50;
 
             // 4. Gradual weight growth when well-fed & clean
+            // jade_dragon grows +100% faster (x2), sky_sanctuary grows +50% faster (x1.5)
             let weightDelta = 0;
-            if (nextHunger >= 60 && nextCleanliness >= 60 && p.health >= 80) {
+            if (nextHunger >= 60 && nextCleanliness >= 60 && nextHealth >= 80) {
               const breedMax = PIG_BREEDS[p.breed]?.maxWeight || 100;
               if (p.weight < breedMax) {
-                weightDelta = 0.05; // grows 50 grams
+                weightDelta = 0.05; // base 50 grams
+                if (p.breed === 'jade_dragon') weightDelta *= 2.0;
+                if (activeThemeId === 'sky_sanctuary') weightDelta *= 1.5;
               }
             }
 
@@ -1280,6 +1560,8 @@ export default function HappyHogView() {
     const breed = PIG_BREEDS[pig.breed] || PIG_BREEDS.pink;
     let priceMultiplier = 1.0;
     if (activeThemeId === 'golden_palace') priceMultiplier = 1.2;
+    if (activeThemeId === 'lava_caldera') priceMultiplier = 1.5;
+    if (activeThemeId === 'galaxy_colony') priceMultiplier = 1.6;
 
     const earnings = Math.round(pig.weight * breed.pricePerKg * priceMultiplier);
 
@@ -1338,6 +1620,53 @@ export default function HappyHogView() {
     showToast(`🎉 ยินดีด้วย! ได้ต้อนรับลูกหมูใหม่: ${PIG_BREEDS[breedKey].name}`);
   };
 
+  const handleBuyPigletDiamond = (breedKey, diamondCost) => {
+    if (diamonds < diamondCost) {
+      showToast(`❌ เพชรไม่พอซื้อลูกหมูพันธุ์พิเศษนี้! (ต้องการ ${diamondCost} 💎)`);
+      setShowDiamondShopModal(true);
+      return;
+    }
+    if (pigs.length >= maxPigs) {
+      showToast(`⚠️ คอกหมูเต็มแล้ว! (รับได้สูงสุด ${maxPigs} ตัว) ขยายขนาดคอกหมูก่อนนะ!`);
+      setShowBarnUpgradeModal(true);
+      return;
+    }
+
+    setDiamonds((d) => d - diamondCost);
+    playSound('fanfare', isMuted);
+
+    const names = ['มังกรหยกประทานพร', 'วิหคเพลิงนำโชค', 'เทวาจักรวาลเรืองแสง', 'ซาโตชิตัวตึง', 'ราชาอสูรไททัน', 'เทพธิดาจันทราเพชร'];
+    const randomName = names[Math.floor(Math.random() * names.length)];
+
+    const newPig = {
+      id: Date.now(),
+      name: `${randomName} #${pigs.length + 1}`,
+      breed: breedKey,
+      weight: 25,
+      hunger: 100,
+      cleanliness: 100,
+      health: 100,
+      x: 35 + Math.random() * 30,
+      y: 40 + Math.random() * 25,
+      direction: 1
+    };
+
+    setPigs((prev) => [...prev, newPig]);
+    setSelectedPigId(newPig.id);
+    if (!unlockedBreeds.includes(breedKey)) {
+      setUnlockedBreeds((prev) => [...prev, breedKey]);
+    }
+    addExp(100);
+    setCelebrationReward({
+      title: '💎 อัญเชิญหมูเทพสำเร็จ!',
+      badge: 'DIAMOND EXCLUSIVE BREED',
+      subtitle: `ยินดีต้อนรับ ${PIG_BREEDS[breedKey].name} สู่ฟาร์ม`,
+      rewardText: `ได้รับ: ${PIG_BREEDS[breedKey].name} & +100 EXP ⭐`,
+      icon: '💎',
+      color: '#8b5cf6'
+    });
+  };
+
   const handleBreed = () => {
     if (pigs.length < 2) {
       showToast('⚠️ ต้องมีหมูอย่างน้อย 2 ตัวในการผสมพันธุ์!');
@@ -1383,20 +1712,33 @@ export default function HappyHogView() {
     setCoins((c) => c - 80);
     playSound('coin', isMuted);
 
-    const roll = Math.random();
+    // Ultra-rare drop chance for diamond breeds: 1.5% as requested by user
+    const diamondBreedKeys = ['jade_dragon', 'phoenix', 'galaxy', 'cyber_satoshi', 'inferno_titan', 'diamond_angel'];
+    const hasAngel = (p1.breed === 'diamond_angel' || p2.breed === 'diamond_angel');
+    const mythicThreshold = hasAngel ? 0.03 : 0.015; // 1.5% base, 3% with diamond_angel
+
+    const mythicRoll = Math.random();
     let resultBreed = 'pink';
-    if (roll > 0.92) resultBreed = 'knight';
-    else if (roll > 0.8) resultBreed = 'rainbow';
-    else if (roll > 0.65) resultBreed = 'golden';
-    else if (roll > 0.5) resultBreed = 'shabu';
-    else if (roll > 0.35) resultBreed = 'sakura';
-    else if (roll > 0.2) resultBreed = 'engineer';
-    else if (roll > 0.1) resultBreed = 'auditor';
+    let isMythicJackpot = false;
+
+    if (mythicRoll < mythicThreshold) {
+      isMythicJackpot = true;
+      resultBreed = diamondBreedKeys[Math.floor(Math.random() * diamondBreedKeys.length)];
+    } else {
+      const roll = Math.random();
+      if (roll > 0.92) resultBreed = 'knight';
+      else if (roll > 0.8) resultBreed = 'rainbow';
+      else if (roll > 0.65) resultBreed = 'golden';
+      else if (roll > 0.5) resultBreed = 'shabu';
+      else if (roll > 0.35) resultBreed = 'sakura';
+      else if (roll > 0.2) resultBreed = 'engineer';
+      else if (roll > 0.1) resultBreed = 'auditor';
+    }
 
     const babyId = Date.now();
     const baby = {
       id: babyId,
-      name: `ลูกหมูพันธุกรรม (${PIG_BREEDS[resultBreed].tag})`,
+      name: isMythicJackpot ? `ลูกหมูเทพ (${PIG_BREEDS[resultBreed].tag})` : `ลูกหมูพันธุกรรม (${PIG_BREEDS[resultBreed].tag})`,
       breed: resultBreed,
       weight: 15,
       hunger: 100,
@@ -1423,21 +1765,32 @@ export default function HappyHogView() {
 
     setSelectedPigId(baby.id);
     setStats((s) => ({ ...s, breedCount: s.breedCount + 1 }));
-    addExp(50);
+    addExp(isMythicJackpot ? 200 : 50);
 
     if (!unlockedBreeds.includes(resultBreed)) {
       setUnlockedBreeds((prev) => [...prev, resultBreed]);
     }
 
     playSound('fanfare', isMuted);
-    setCelebrationReward({
-      title: '🧬 ผสมพันธุ์ลูกหมูสำเร็จ!',
-      badge: 'NEW PIGLET BORN!',
-      subtitle: `สายเลือดจาก ${p1.name} & ${p2.name}`,
-      rewardText: `ได้รับ: ${PIG_BREEDS[resultBreed].name} & +50 EXP`,
-      icon: '🐷',
-      color: 'from-purple-500 to-indigo-600'
-    });
+    if (isMythicJackpot) {
+      setCelebrationReward({
+        title: '💎 มหาแจ็กพอตหมูเทพในตำนานกำเนิด! (1.5%)',
+        badge: 'ULTRA RARE MYTHIC JACKPOT!',
+        subtitle: `ปาฏิหาริย์พันธุกรรมขั้นสูงสุดจาก ${p1.name} & ${p2.name}`,
+        rewardText: `ได้รับ: ${PIG_BREEDS[resultBreed].name} (มูลค่า ${PIG_BREEDS[resultBreed].diamondCost} 💎) & +200 EXP!`,
+        icon: '💎',
+        color: '#8b5cf6'
+      });
+    } else {
+      setCelebrationReward({
+        title: '🧬 ผสมพันธุ์ลูกหมูสำเร็จ!',
+        badge: 'NEW PIGLET BORN!',
+        subtitle: `สายเลือดจาก ${p1.name} & ${p2.name}`,
+        rewardText: `ได้รับ: ${PIG_BREEDS[resultBreed].name} & +50 EXP`,
+        icon: '🐷',
+        color: 'from-purple-500 to-indigo-600'
+      });
+    }
   };
 
   const handlePlantCrop = (plotId, seedKey) => {
@@ -1614,13 +1967,13 @@ export default function HappyHogView() {
     {
       id: 5,
       name: 'เพชรคลังหลวง อปท.',
-      shortLabel: '+500 ฿',
+      shortLabel: '+10 💎',
       icon: '💎',
-      rewardDesc: '+500 เหรียญทอง',
+      rewardDesc: '+10 เพชรแท้ 💎',
       color: '#8b5cf6',
       sliceGrad: ['#8b5cf6', '#7c3aed'],
       textColor: '#ffffff',
-      coins: 500
+      diamonds: 10
     },
     {
       id: 6,
@@ -1674,6 +2027,7 @@ export default function HappyHogView() {
       setIsSpinning(false);
       const won = WHEEL_PRIZES[prizeIndex];
       if (won.coins) setCoins((c) => c + won.coins);
+      if (won.diamonds) setDiamonds((d) => d + won.diamonds);
       if (won.energy) setEnergy((e) => Math.min(100, e + won.energy));
       if (won.crops) {
         setCropInventory((inv) => {
@@ -1818,12 +2172,21 @@ export default function HappyHogView() {
       return;
     }
 
-    if (coins < theme.cost) {
-      showToast(`❌ เหรียญไม่พอปลดล็อกธีมนี้ (ต้องการ ${theme.cost} เหรียญ)`);
-      return;
+    if (theme.isDiamondTheme) {
+      if (diamonds < theme.diamondCost) {
+        showToast(`❌ เพชรไม่พอปลดล็อกธีมนี้ (ต้องการ ${theme.diamondCost} 💎)`);
+        setShowDiamondShopModal(true);
+        return;
+      }
+      setDiamonds((d) => d - theme.diamondCost);
+    } else {
+      if (coins < theme.cost) {
+        showToast(`❌ เหรียญไม่พอปลดล็อกธีมนี้ (ต้องการ ${theme.cost} ฿)`);
+        return;
+      }
+      setCoins((c) => c - theme.cost);
     }
 
-    setCoins((c) => c - theme.cost);
     setUnlockedThemes((prev) => [...prev, themeKey]);
     setActiveThemeId(themeKey);
     playSound('fanfare', isMuted);
@@ -1886,6 +2249,19 @@ export default function HappyHogView() {
             <div className="bg-gradient-to-b from-white to-[#fef9c3] border-2 border-amber-700 rounded-xl px-2.5 py-1 flex items-center space-x-1 shadow-xs">
               <Coins className="w-4 h-4 text-amber-800" />
               <span className="font-black text-slate-900 font-mono text-xs">{coins.toLocaleString()}</span>
+            </div>
+
+            {/* Diamonds 💎 */}
+            <div
+              onClick={() => setShowDiamondShopModal(true)}
+              className="bg-gradient-to-b from-[#f5f3ff] to-[#ede9fe] border-2 border-purple-500 hover:border-purple-400 rounded-xl px-2.5 py-1 flex items-center space-x-1 shadow-xs cursor-pointer transition-all hover:scale-105 active:scale-95 group"
+              title="คลังเพชรแท้ (คลิกเพื่อเปิดร้านค้าเพชร / เติมเงิน / แลกเหรียญ)"
+            >
+              <Gem className="w-4 h-4 text-purple-600 fill-purple-400 group-hover:rotate-12 transition-transform" />
+              <span className="font-black text-purple-950 font-mono text-xs">{diamonds.toLocaleString()}</span>
+              <span className="bg-purple-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold group-hover:bg-purple-700 ml-0.5 shadow-xs">
+                +
+              </span>
             </div>
 
             {/* Free Crops Inventory Indicator */}
@@ -2147,6 +2523,101 @@ export default function HappyHogView() {
                         }}
                       >
                         {sp}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Sky Sanctuary Celestial Clouds & Rainbow */}
+                {activeTheme.atmosphere === 'celestial_clouds' && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    {['☁️', '✨', '🌈', '☁️', '✨', '🕊️'].map((cloud, i) => (
+                      <span
+                        key={i}
+                        className="absolute text-2xl animate-pulse opacity-85"
+                        style={{
+                          left: `${10 + i * 16}%`,
+                          top: `${12 + (i % 2) * 14}%`,
+                          animationDuration: `${2.0 + i * 0.4}s`
+                        }}
+                      >
+                        {cloud}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Atlantis Underwater Bubbles & Marine Flora */}
+                {activeTheme.atmosphere === 'bubbles' && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    {['🫧', '🌊', '🫧', '🐚', '🫧', '✨'].map((b, i) => (
+                      <span
+                        key={i}
+                        className="absolute text-xl animate-bounce opacity-85"
+                        style={{
+                          left: `${12 + i * 16}%`,
+                          top: `${14 + (i % 3) * 15}%`,
+                          animationDuration: `${1.8 + i * 0.3}s`
+                        }}
+                      >
+                        {b}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Neon Ice Castle Falling Snow & Crystal Shards */}
+                {activeTheme.atmosphere === 'snow' && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    {['❄️', '💎', '❄️', '✨', '❄️', '💠'].map((sn, i) => (
+                      <span
+                        key={i}
+                        className="absolute text-xl animate-pulse opacity-90 drop-shadow-[0_0_8px_#38bdf8]"
+                        style={{
+                          left: `${12 + i * 16}%`,
+                          top: `${10 + (i % 3) * 16}%`,
+                          animationDuration: `${1.5 + i * 0.3}s`
+                        }}
+                      >
+                        {sn}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Lava Caldera Fiery Embers & Magma Sparks */}
+                {activeTheme.atmosphere === 'magma' && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    {['🔥', '🌋', '💥', '🔥', '✨', '☄️'].map((mg, i) => (
+                      <span
+                        key={i}
+                        className="absolute text-xl animate-bounce opacity-85 drop-shadow-[0_0_8px_#ea580c]"
+                        style={{
+                          left: `${12 + i * 16}%`,
+                          top: `${16 + (i % 2) * 16}%`,
+                          animationDuration: `${1.6 + i * 0.4}s`
+                        }}
+                      >
+                        {mg}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Galaxy Space Nebula & Orbiting Planets */}
+                {activeTheme.atmosphere === 'galaxy_stars' && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    {['🪐', '⭐', '🌌', '✨', '🛸', '💫'].map((gx, i) => (
+                      <span
+                        key={i}
+                        className="absolute text-2xl animate-pulse opacity-90 drop-shadow-[0_0_12px_#a855f7]"
+                        style={{
+                          left: `${10 + i * 17}%`,
+                          top: `${12 + (i % 3) * 14}%`,
+                          animationDuration: `${1.7 + i * 0.3}s`
+                        }}
+                      >
+                        {gx}
                       </span>
                     ))}
                   </div>
@@ -2627,78 +3098,145 @@ export default function HappyHogView() {
         {/* ================= TAB 3: SHOP VIEW ================= */}
         {activeTab === 'shop' && (
           <div className="relative z-10 space-y-4">
-            <div className="flex items-center justify-between text-amber-200">
+            <div className="flex flex-wrap items-center justify-between gap-3 text-amber-200">
               <div>
-                <h2 className="text-lg font-black text-amber-100 font-mono">
-                  🏪 ตลาดซื้อขายลูกหมู อปท.
+                <h2 className="text-lg sm:text-xl font-black text-amber-100 font-mono flex items-center space-x-2">
+                  <span>🏪</span>
+                  <span>ตลาดซื้อขายลูกหมู อปท. & คลังสัตว์เทพ</span>
                 </h2>
                 <p className="text-xs text-amber-300">
-                  เลือกซื้อลูกหมูสายพันธุ์พิเศษเพื่อนำไปขุน (สายพันธุ์หายากต้องปลดล็อกก่อน)
+                  เลือกซื้อลูกหมูสายพันธุ์ทั่วไป (เหรียญทอง) หรืออัญเชิญสัตว์เทพในตำนาน (เพชรแท้ 💎)
                 </p>
               </div>
-              <div className="px-3.5 py-1.5 bg-amber-950/80 border border-amber-700 text-amber-300 rounded-xl text-xs font-mono font-bold">
-                เหรียญ: {coins.toLocaleString()}
+              <div className="flex items-center gap-2">
+                <div className="px-3 py-1 bg-amber-950/80 border border-amber-600 text-amber-300 rounded-xl text-xs font-mono font-bold">
+                  🪙 {coins.toLocaleString()} ฿
+                </div>
+                <div
+                  onClick={() => setShowDiamondShopModal(true)}
+                  className="px-3 py-1 bg-purple-950/90 hover:bg-purple-900 border border-purple-500 text-purple-200 rounded-xl text-xs font-mono font-bold cursor-pointer transition-transform hover:scale-105 active:scale-95 flex items-center space-x-1"
+                  title="คลิกเพื่อเติมเพชรหรือแลกเหรียญ"
+                >
+                  <span>💎 {diamonds.toLocaleString()}</span>
+                  <span className="bg-purple-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold ml-1">+</span>
+                </div>
               </div>
             </div>
 
+            {/* Shop Category Tabs */}
+            <div className="flex items-center space-x-2 bg-amber-950/70 p-1.5 rounded-2xl border border-amber-800/80">
+              <button
+                onClick={() => setShopFilter('all')}
+                className={`flex-1 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                  shopFilter === 'all'
+                    ? 'bg-amber-500 text-amber-950 shadow-sm'
+                    : 'text-amber-200 hover:text-white'
+                }`}
+              >
+                🌟 ทั้งหมด (14 สายพันธุ์)
+              </button>
+              <button
+                onClick={() => setShopFilter('coin')}
+                className={`flex-1 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                  shopFilter === 'coin'
+                    ? 'bg-amber-500 text-amber-950 shadow-sm'
+                    : 'text-amber-200 hover:text-white'
+                }`}
+              >
+                🪙 สายพันธุ์ทั่วไป (8 พันธุ์)
+              </button>
+              <button
+                onClick={() => setShopFilter('diamond')}
+                className={`flex-1 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                  shopFilter === 'diamond'
+                    ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-md'
+                    : 'text-purple-300 hover:text-white'
+                }`}
+              >
+                💎 สัตว์เทพเพชรแท้ (6 พันธุ์)
+              </button>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {Object.values(PIG_BREEDS).map((breed) => {
-                const isUnlocked = unlockedBreeds.includes(breed.id);
+              {Object.values(PIG_BREEDS)
+                .filter((breed) => {
+                  if (shopFilter === 'coin') return !breed.isDiamondBreed;
+                  if (shopFilter === 'diamond') return breed.isDiamondBreed;
+                  return true;
+                })
+                .map((breed) => {
+                  const isUnlocked = unlockedBreeds.includes(breed.id) || breed.isDiamondBreed;
 
-                return (
-                  <div
-                    key={breed.id}
-                    className={`rounded-2xl p-4 border-3 flex flex-col justify-between space-y-3 transition-all ${
-                      isUnlocked
-                        ? 'bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] border-amber-500 shadow-md'
-                        : 'bg-slate-200/90 border-slate-400 opacity-80'
-                    }`}
-                  >
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${breed.badgeColor}`}>
-                          {breed.tag}
-                        </span>
-                        <span className="text-xs font-mono font-black text-amber-800">
-                          {breed.pricePerKg} ฿/kg
-                        </span>
+                  return (
+                    <div
+                      key={breed.id}
+                      className={`rounded-2xl p-4 border-3 flex flex-col justify-between space-y-3 transition-all ${
+                        breed.isDiamondBreed
+                          ? 'bg-gradient-to-b from-[#faf5ff] to-[#f3e8ff] border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.3)] hover:scale-102'
+                          : isUnlocked
+                          ? 'bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] border-amber-500 shadow-md'
+                          : 'bg-slate-200/90 border-slate-400 opacity-80'
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${breed.badgeColor}`}>
+                            {breed.tag}
+                          </span>
+                          <span className={`text-xs font-mono font-black ${breed.isDiamondBreed ? 'text-purple-700' : 'text-amber-800'}`}>
+                            {breed.pricePerKg} ฿/kg
+                          </span>
+                        </div>
+
+                        {/* 3D Chibi Sprite Illustration */}
+                        <div className="py-2 flex items-center justify-center">
+                          <PigSprite breed={breed.id} isSelected={false} direction={1} weight={breed.maxWeight * 0.4} />
+                        </div>
+
+                        <h3 className="font-black text-slate-900 mt-1 font-mono text-sm text-center flex items-center justify-center space-x-1">
+                          {breed.isDiamondBreed && <span>💎</span>}
+                          <span>{breed.name}</span>
+                        </h3>
+                        <p className="text-[11px] text-slate-600 mt-1 leading-relaxed text-center">
+                          {breed.description}
+                        </p>
+
+                        {breed.specialPerk && (
+                          <div className="mt-1.5 p-1.5 bg-purple-100/80 rounded-xl border border-purple-300 text-[10px] font-bold text-purple-900 text-center">
+                            ⚡ พลังพิเศษ: {breed.specialPerk}
+                          </div>
+                        )}
+
+                        <div className="text-[10px] text-slate-700 font-bold mt-2 text-center">
+                          น้ำหนักสูงสุด: <b>{breed.maxWeight} kg</b>
+                        </div>
                       </div>
 
-                      {/* 3D Chibi Sprite Illustration */}
-                      <div className="py-2 flex items-center justify-center">
-                        <img
-                          src={`/pigs/${breed.id}.png`}
-                          alt={breed.name}
-                          className="w-20 h-20 object-contain drop-shadow-md hover:scale-110 transition-transform select-none"
-                        />
-                      </div>
-
-                      <h3 className="font-black text-slate-900 mt-1 font-mono text-sm text-center">{breed.name}</h3>
-                      <p className="text-[11px] text-slate-600 mt-1 leading-relaxed text-center">
-                        {breed.description}
-                      </p>
-                      <div className="text-[10px] text-slate-700 font-bold mt-2 text-center">
-                        น้ำหนักสูงสุด: <b>{breed.maxWeight} kg</b>
-                      </div>
+                      {breed.isDiamondBreed ? (
+                        <button
+                          onClick={() => handleBuyPigletDiamond(breed.id, breed.diamondCost)}
+                          className="w-full py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-700 hover:to-indigo-800 text-white rounded-xl font-black text-xs flex items-center justify-center space-x-1.5 shadow-[0_3px_0_#4c1d95] active:translate-y-0.5 active:shadow-none cursor-pointer transition-transform hover:scale-101"
+                        >
+                          <Gem className="w-3.5 h-3.5 text-purple-200 fill-purple-300" />
+                          <span>อัญเชิญด้วยเพชร ({breed.diamondCost} 💎)</span>
+                        </button>
+                      ) : isUnlocked ? (
+                        <button
+                          onClick={() => handleBuyPiglet(breed.id, breed.buyCost)}
+                          className="w-full py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-xl font-black text-xs flex items-center justify-center space-x-1 shadow-[0_3px_0_#b45309] active:translate-y-0.5 active:shadow-none cursor-pointer"
+                        >
+                          <Coins className="w-3.5 h-3.5" />
+                          <span>ซื้อลูกหมู ({breed.buyCost.toLocaleString()} ฿)</span>
+                        </button>
+                      ) : (
+                        <div className="p-2 bg-slate-300 rounded-xl text-center text-[10px] font-bold text-slate-700 flex items-center justify-center space-x-1">
+                          <Lock className="w-3 h-3 text-slate-600" />
+                          <span>เงื่อนไข: {breed.unlockDesc}</span>
+                        </div>
+                      )}
                     </div>
-
-                    {isUnlocked ? (
-                      <button
-                        onClick={() => handleBuyPiglet(breed.id, breed.buyCost)}
-                        className="w-full py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-xl font-black text-xs flex items-center justify-center space-x-1 shadow-[0_3px_0_#b45309] active:translate-y-0.5 active:shadow-none cursor-pointer"
-                      >
-                        <Coins className="w-3.5 h-3.5" />
-                        <span>ซื้อลูกหมู ({breed.buyCost.toLocaleString()} ฿)</span>
-                      </button>
-                    ) : (
-                      <div className="p-2 bg-slate-300 rounded-xl text-center text-[10px] font-bold text-slate-700 flex items-center justify-center space-x-1">
-                        <Lock className="w-3 h-3 text-slate-600" />
-                        <span>เงื่อนไข: {breed.unlockDesc}</span>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </div>
         )}
@@ -2843,17 +3381,22 @@ export default function HappyHogView() {
 
                   {/* Rarity Chances Info */}
                   <div className="bg-amber-100/80 p-3.5 rounded-2xl border border-amber-300 text-xs space-y-2 text-left text-amber-950 font-medium">
-                    <div className="font-black text-amber-900 flex items-center space-x-1">
-                      <Sparkles className="w-4 h-4 text-amber-600" />
-                      <span>โอกาสได้รับสายพันธุ์พิเศษจากการผสมพันธุ์:</span>
+                    <div className="font-black text-amber-900 flex items-center justify-between">
+                      <div className="flex items-center space-x-1">
+                        <Sparkles className="w-4 h-4 text-amber-600" />
+                        <span>โอกาสได้รับสายพันธุ์พิเศษจากการผสมพันธุ์:</span>
+                      </div>
+                      <span className="text-[10px] bg-purple-600 text-white px-2 py-0.5 rounded-full font-bold">
+                        💎 มีโอกาสดรอปหมูเพชร!
+                      </span>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]">
+                      <div className="text-purple-700 font-black">• 💎 สัตว์เทพเพชรแท้ (Mythic): <b>1.5% JACKPOT!</b></div>
                       <div>• หมูองค์รักษ์พิทักษ์ อปท. (Mythic): <b>8%</b></div>
                       <div>• หมูสายรุ้ง สตง. (Legendary): <b>12%</b></div>
                       <div>• หมูพัสดุทองคำแท้ (Epic): <b>15%</b></div>
                       <div>• หมูชาบูกระทะทอง (Epic): <b>15%</b></div>
-                      <div>• หมูซากุระชมพูหวาน (Epic): <b>15%</b></div>
-                      <div>• หมูผู้ตรวจ & หมูช่าง: <b>20%</b></div>
+                      <div>• หมูซากุระ & ช่าง & ผู้ตรวจ: <b>48.5%</b></div>
                     </div>
                   </div>
 
@@ -3345,72 +3888,127 @@ export default function HappyHogView() {
               </button>
             </div>
 
-            <div className="space-y-2.5 max-h-[60vh] overflow-y-auto pr-1">
-              {Object.values(BARN_THEMES).map((theme) => {
-                const isUnlocked = unlockedThemes.includes(theme.id);
-                const isActive = activeThemeId === theme.id;
+            {/* Wallet Balance & Filter */}
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center space-x-1.5 bg-amber-950/20 p-1 rounded-xl">
+                <button
+                  onClick={() => setThemeFilter('all')}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    themeFilter === 'all' ? 'bg-amber-600 text-white shadow-xs' : 'text-amber-900 hover:text-black'
+                  }`}
+                >
+                  ทั้งหมด (11)
+                </button>
+                <button
+                  onClick={() => setThemeFilter('coin')}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    themeFilter === 'coin' ? 'bg-amber-600 text-white shadow-xs' : 'text-amber-900 hover:text-black'
+                  }`}
+                >
+                  🪵 ธีมทั่วไป (6)
+                </button>
+                <button
+                  onClick={() => setThemeFilter('diamond')}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    themeFilter === 'diamond' ? 'bg-purple-600 text-white shadow-xs' : 'text-purple-800 hover:text-purple-950'
+                  }`}
+                >
+                  💎 วิมานเพชร (5)
+                </button>
+              </div>
 
-                return (
-                  <div
-                    key={theme.id}
-                    onClick={() => handleSelectTheme(theme.id)}
-                    className={`p-3.5 rounded-2xl border-2 flex items-center justify-between transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-amber-500 text-white border-amber-600 shadow-md scale-101'
-                        : isUnlocked
-                        ? 'bg-white hover:bg-amber-100/70 border-amber-200 text-amber-950'
-                        : 'bg-slate-100 border-slate-300 text-slate-500'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      {theme.bgImage ? (
-                        <img
-                          src={theme.bgImage}
-                          alt={theme.name}
-                          className="w-16 h-12 rounded-xl object-cover border-2 border-amber-300 shadow-sm shrink-0"
-                        />
-                      ) : (
-                        <div className="w-16 h-12 rounded-xl bg-slate-900 border-2 border-cyan-400 flex items-center justify-center text-2xl shadow-sm shrink-0">
-                          {theme.icon}
-                        </div>
-                      )}
-                      <div>
-                        <div className="flex items-center space-x-2">
-                          <span className="font-black text-sm">{theme.name}</span>
-                          {isActive && (
-                            <span className="bg-white text-amber-900 text-[10px] font-black px-2 py-0.2 rounded-full">
-                              กำลังใช้งาน
-                            </span>
+              <div className="flex items-center space-x-2 text-xs font-mono font-bold">
+                <span className="text-amber-800">🪙 {coins.toLocaleString()} ฿</span>
+                <span className="text-purple-700">💎 {diamonds.toLocaleString()} 💎</span>
+              </div>
+            </div>
+
+            <div className="space-y-2.5 max-h-[55vh] overflow-y-auto pr-1">
+              {Object.values(BARN_THEMES)
+                .filter((theme) => {
+                  if (themeFilter === 'coin') return !theme.isDiamondTheme;
+                  if (themeFilter === 'diamond') return theme.isDiamondTheme;
+                  return true;
+                })
+                .map((theme) => {
+                  const isUnlocked = unlockedThemes.includes(theme.id);
+                  const isActive = activeThemeId === theme.id;
+
+                  return (
+                    <div
+                      key={theme.id}
+                      onClick={() => handleSelectTheme(theme.id)}
+                      className={`p-3.5 rounded-2xl border-2 flex items-center justify-between transition-all cursor-pointer ${
+                        isActive
+                          ? 'bg-amber-500 text-white border-amber-600 shadow-md scale-101'
+                          : theme.isDiamondTheme
+                          ? 'bg-gradient-to-r from-purple-50 to-indigo-50 hover:bg-purple-100 border-purple-300 text-purple-950'
+                          : isUnlocked
+                          ? 'bg-white hover:bg-amber-100/70 border-amber-200 text-amber-950'
+                          : 'bg-slate-100 border-slate-300 text-slate-500'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        {theme.bgImage ? (
+                          <img
+                            src={theme.bgImage}
+                            alt={theme.name}
+                            className="w-16 h-12 rounded-xl object-cover border-2 border-amber-300 shadow-sm shrink-0"
+                          />
+                        ) : (
+                          <div className={`w-16 h-12 rounded-xl flex items-center justify-center text-2xl shadow-sm shrink-0 border-2 ${
+                            theme.isDiamondTheme ? 'bg-gradient-to-br from-indigo-900 to-purple-900 border-purple-400' : 'bg-slate-900 border-cyan-400'
+                          }`}>
+                            {theme.icon}
+                          </div>
+                        )}
+                        <div>
+                          <div className="flex items-center space-x-2">
+                            <span className="font-black text-sm">{theme.name}</span>
+                            {theme.isDiamondTheme && (
+                              <span className="bg-purple-100 text-purple-800 border border-purple-300 text-[9px] font-black px-1.5 py-0.2 rounded-full">
+                                {theme.tag}
+                              </span>
+                            )}
+                            {isActive && (
+                              <span className="bg-white text-amber-900 text-[10px] font-black px-2 py-0.2 rounded-full">
+                                กำลังใช้งาน
+                              </span>
+                            )}
+                          </div>
+                          <p className={`text-xs mt-0.5 ${isActive ? 'text-amber-100' : theme.isDiamondTheme ? 'text-purple-800' : 'text-slate-600'}`}>
+                            พลังพิเศษ: {theme.perk}
+                          </p>
+                          {!isUnlocked && (
+                            <p className="text-[10px] text-rose-600 font-bold mt-1">
+                              🔒 {theme.unlockDesc}
+                            </p>
                           )}
                         </div>
-                        <p className={`text-xs mt-0.5 ${isActive ? 'text-amber-100' : 'text-slate-600'}`}>
-                          พลังพิเศษ: {theme.perk}
-                        </p>
-                        {!isUnlocked && (
-                          <p className="text-[10px] text-rose-600 font-bold mt-1">
-                            🔒 {theme.unlockDesc}
-                          </p>
+                      </div>
+
+                      <div>
+                        {isActive ? (
+                          <Check className="w-5 h-5 text-white stroke-[3]" />
+                        ) : isUnlocked ? (
+                          <span className="text-xs font-bold text-amber-700 bg-amber-100 px-2.5 py-1 rounded-xl">
+                            เลือกใช้
+                          </span>
+                        ) : theme.isDiamondTheme ? (
+                          <span className="text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 px-2.5 py-1 rounded-xl flex items-center space-x-1 shadow-xs">
+                            <Gem className="w-3 h-3 text-purple-200 fill-purple-300" />
+                            <span>{theme.diamondCost} 💎</span>
+                          </span>
+                        ) : (
+                          <span className="text-xs font-bold text-slate-700 bg-slate-200 px-2.5 py-1 rounded-xl flex items-center space-x-1">
+                            <Coins className="w-3 h-3" />
+                            <span>{theme.cost} ฿</span>
+                          </span>
                         )}
                       </div>
                     </div>
-
-                    <div>
-                      {isActive ? (
-                        <Check className="w-5 h-5 text-white stroke-[3]" />
-                      ) : isUnlocked ? (
-                        <span className="text-xs font-bold text-amber-700 bg-amber-100 px-2.5 py-1 rounded-xl">
-                          เลือกใช้
-                        </span>
-                      ) : (
-                        <span className="text-xs font-bold text-slate-700 bg-slate-200 px-2.5 py-1 rounded-xl flex items-center space-x-1">
-                          <Coins className="w-3 h-3" />
-                          <span>{theme.cost} ฿</span>
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </div>
         </div>
@@ -3427,7 +4025,7 @@ export default function HappyHogView() {
                   <span>สมุดรวบรวมสายพันธุ์หมู (Pig Dex)</span>
                 </h3>
                 <p className="text-[11px] text-amber-800 font-bold">
-                  สะสมสายพันธุ์หมูครบ 8 สายพันธุ์ เพื่อเป็นสุดยอดเกษตรกร อปท.
+                  สะสมสายพันธุ์หมูครบ 14 สายพันธุ์ (8 สายพันธุ์ทั่วไป + 6 สัตว์เทพเพชรแท้ 💎)
                 </p>
               </div>
               <button
@@ -3440,13 +4038,15 @@ export default function HappyHogView() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto pr-1">
               {Object.values(PIG_BREEDS).map((breed) => {
-                const isUnlocked = unlockedBreeds.includes(breed.id);
+                const isUnlocked = unlockedBreeds.includes(breed.id) || breed.isDiamondBreed;
 
                 return (
                   <div
                     key={breed.id}
                     className={`p-3.5 rounded-2xl border-2 flex items-center space-x-3 ${
-                      isUnlocked
+                      breed.isDiamondBreed
+                        ? 'bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-400 shadow-sm'
+                        : isUnlocked
                         ? 'bg-white border-amber-300 shadow-sm'
                         : 'bg-slate-100/90 border-slate-300 opacity-75'
                     }`}
@@ -3455,7 +4055,7 @@ export default function HappyHogView() {
                       style={{ backgroundColor: breed.primaryColor }}
                       className="w-12 h-12 rounded-2xl border-2 border-black/20 flex items-center justify-center text-2xl shadow-inner shrink-0"
                     >
-                      {isUnlocked ? '🐷' : '🔒'}
+                      {breed.isDiamondBreed ? '💎' : isUnlocked ? '🐷' : '🔒'}
                     </div>
 
                     <div className="flex-1">
@@ -3469,7 +4069,9 @@ export default function HappyHogView() {
                         {breed.description}
                       </p>
                       <div className="text-[9px] font-bold mt-1 text-amber-800">
-                        {isUnlocked ? (
+                        {breed.isDiamondBreed ? (
+                          <span className="text-purple-700">💎 สัตว์เทพ (ราคา {breed.diamondCost} เพชร | ขาย {breed.pricePerKg} ฿/kg)</span>
+                        ) : isUnlocked ? (
                           <span className="text-emerald-700">✅ ปลดล็อกแล้ว (ราคาขาย {breed.pricePerKg} ฿/kg)</span>
                         ) : (
                           <span className="text-rose-700">🔒 ปลดล็อก: {breed.unlockDesc}</span>
@@ -3800,6 +4402,182 @@ export default function HappyHogView() {
                 </div>
               );
             })()}
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL: DIAMOND VAULT & TOP-UP SHOP ================= */}
+      {showDiamondShopModal && (
+        <div className="fixed inset-0 z-60 bg-black/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+          <div className="relative bg-gradient-to-b from-[#2e1065] via-[#3b0764] to-[#1e1b4b] border-4 border-purple-400 rounded-3xl p-5 sm:p-7 max-w-lg w-full shadow-[0_0_50px_rgba(168,85,247,0.5)] space-y-4 text-white">
+            <button
+              onClick={() => setShowDiamondShopModal(false)}
+              className="absolute top-4 right-4 p-1.5 bg-white/10 hover:bg-white/20 rounded-full text-purple-200 cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Header */}
+            <div className="text-center space-y-1">
+              <div className="w-14 h-14 bg-gradient-to-tr from-purple-500 to-fuchsia-400 text-white rounded-2xl flex items-center justify-center mx-auto text-3xl shadow-lg border-2 border-purple-200">
+                💎
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black font-mono text-purple-100 flex items-center justify-center space-x-1.5">
+                <span>คลังเพชรแท้ & ระบบเติมเงิน</span>
+              </h3>
+              <p className="text-xs text-purple-300">
+                เพชรใช้สำหรับอัญเชิญหมูเทพในตำนาน และปลดล็อกวิมานคอกหมูสุดหรู
+              </p>
+            </div>
+
+            {/* Current Balance Display */}
+            <div className="bg-black/40 border border-purple-500/50 rounded-2xl p-3 flex items-center justify-around text-center">
+              <div>
+                <span className="text-[10px] text-purple-300 font-bold block">💎 เพชรคงเหลือ</span>
+                <span className="text-lg font-black font-mono text-yellow-300">{diamonds.toLocaleString()} 💎</span>
+              </div>
+              <div className="w-px h-8 bg-purple-700/60" />
+              <div>
+                <span className="text-[10px] text-purple-300 font-bold block">🪙 เหรียญทองฟาร์ม</span>
+                <span className="text-lg font-black font-mono text-amber-300">{coins.toLocaleString()} ฿</span>
+              </div>
+            </div>
+
+            {/* Tabs: [Top-Up IAP Packages] vs [Coin Exchange] */}
+            <div className="flex items-center space-x-1.5 bg-black/30 p-1.5 rounded-2xl border border-purple-500/40">
+              <button
+                onClick={() => setDiamondShopTab('topup')}
+                className={`flex-1 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                  diamondShopTab === 'topup'
+                    ? 'bg-gradient-to-r from-purple-500 to-fuchsia-600 text-white shadow-md'
+                    : 'text-purple-300 hover:text-white'
+                }`}
+              >
+                💳 เติมเงินแพ็กเกจเพชร (จำลอง Demo)
+              </button>
+              <button
+                onClick={() => setDiamondShopTab('exchange')}
+                className={`flex-1 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                  diamondShopTab === 'exchange'
+                    ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-amber-950 shadow-md'
+                    : 'text-purple-300 hover:text-white'
+                }`}
+              >
+                🪙 ตู้แลกเหรียญเป็นเพชร
+              </button>
+            </div>
+
+            {/* Tab 1: Simulated Top-Up Packages */}
+            {diamondShopTab === 'topup' && (
+              <div className="space-y-2.5 max-h-[50vh] overflow-y-auto pr-1">
+                {[
+                  { id: 'pack_starter', name: 'ถุงเพชรเริ่มต้น', diamonds: 100, bonus: 0, price: '฿35', tag: 'STARTER', color: 'border-purple-400' },
+                  { id: 'pack_popular', name: 'หีบสมบัติเพชรยอดนิยม', diamonds: 350, bonus: 50, price: '฿99', tag: 'POPULAR 🔥', isHot: true, color: 'border-fuchsia-400' },
+                  { id: 'pack_vault', name: 'คลังเพชรราชันย์', diamonds: 1000, bonus: 200, price: '฿249', tag: '+20% BONUS', color: 'border-indigo-400' },
+                  { id: 'pack_emperor', name: 'กองเพชรจักรพรรดิ', diamonds: 2500, bonus: 600, price: '฿599', tag: 'BEST VALUE 👑', isHot: true, color: 'border-yellow-400' }
+                ].map((pack) => {
+                  const totalDiamonds = pack.diamonds + pack.bonus;
+                  return (
+                    <div
+                      key={pack.id}
+                      className={`p-3 rounded-2xl bg-gradient-to-r from-purple-950/70 to-indigo-950/70 border-2 ${pack.color} flex items-center justify-between shadow-md transition-all hover:scale-101`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 rounded-xl bg-purple-900/80 border border-purple-400 flex items-center justify-center text-2xl shadow-inner shrink-0">
+                          💎
+                        </div>
+                        <div>
+                          <div className="flex items-center space-x-1.5">
+                            <span className="font-black text-xs text-white">{pack.name}</span>
+                            <span className="bg-yellow-400 text-yellow-950 text-[9px] font-black px-1.5 py-0.2 rounded-full">
+                              {pack.tag}
+                            </span>
+                          </div>
+                          <div className="text-xs font-mono font-black text-yellow-300 mt-0.5">
+                            +{pack.diamonds} 💎 {pack.bonus > 0 && <span className="text-emerald-400 font-bold">(แถม {pack.bonus} 💎)</span>}
+                          </div>
+                          <span className="text-[10px] text-purple-300 font-medium">รวมรับ {totalDiamonds.toLocaleString()} เพชรแท้</span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          setDiamonds((d) => d + totalDiamonds);
+                          playSound('fanfare', isMuted);
+                          setShowDiamondShopModal(false);
+                          setCelebrationReward({
+                            title: '💎 เติมเพชรสำเร็จ!',
+                            badge: 'SIMULATED TOP-UP COMPLETE',
+                            subtitle: `ซื้อแพ็กเกจ "${pack.name}" เรียบร้อยแล้ว`,
+                            rewardText: `+${totalDiamonds.toLocaleString()} เพชรแท้ 💎`,
+                            icon: '💎',
+                            color: '#8b5cf6'
+                          });
+                        }}
+                        className="px-3.5 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl font-black text-xs shadow-[0_3px_0_#065f46] active:translate-y-0.5 active:shadow-none cursor-pointer flex flex-col items-center shrink-0"
+                      >
+                        <span>{pack.price}</span>
+                        <span className="text-[8px] opacity-80">(แตะเติมทันที)</span>
+                      </button>
+                    </div>
+                  );
+                })}
+
+                <div className="p-2.5 bg-purple-950/40 rounded-xl border border-purple-600/40 text-[10px] text-purple-300 text-center leading-relaxed">
+                  💡 <b>โหมดจำลองระบบเติมเงิน (Simulation Mode):</b> กดเติมได้ทันทีโดยไม่ต้องจ่ายเงินจริง เพื่อทดลองใช้อัญเชิญหมูเทพและธีมวิมานเพชรได้อย่างอิสระ!
+                </div>
+              </div>
+            )}
+
+            {/* Tab 2: Farm Coin to Diamond Exchange */}
+            {diamondShopTab === 'exchange' && (
+              <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-1">
+                {[
+                  { costCoins: 5000, getDiamonds: 20, label: 'แลกแพ็กเล็ก' },
+                  { costCoins: 15000, getDiamonds: 70, label: 'แลกแพ็กกลาง (+10 💎 โบนัส)' },
+                  { costCoins: 30000, getDiamonds: 150, label: 'แลกแพ็กใหญ่ (+30 💎 คุ้มสุด)' }
+                ].map((item, idx) => {
+                  const canAfford = coins >= item.costCoins;
+                  return (
+                    <div
+                      key={idx}
+                      className="p-3.5 rounded-2xl bg-black/40 border-2 border-amber-500/50 flex items-center justify-between"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="text-2xl">🪙 ➔ 💎</div>
+                        <div>
+                          <div className="text-xs font-black text-white">{item.label}</div>
+                          <div className="text-xs font-mono font-bold text-amber-300">
+                            ใช้ {item.costCoins.toLocaleString()} 🪙 ➔ รับ {item.getDiamonds} 💎
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          if (coins < item.costCoins) {
+                            showToast(`❌ เหรียญไม่พอแลกเปลี่ยน (ต้องการ ${item.costCoins.toLocaleString()} ฿)`);
+                            return;
+                          }
+                          setCoins((c) => c - item.costCoins);
+                          setDiamonds((d) => d + item.getDiamonds);
+                          playSound('coin', isMuted);
+                          showToast(`✨ แลกเปลี่ยนสำเร็จ! ได้รับ +${item.getDiamonds} 💎`);
+                        }}
+                        disabled={!canAfford}
+                        className={`px-4 py-2 rounded-xl font-black text-xs transition-all cursor-pointer ${
+                          canAfford
+                            ? 'bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-amber-950 shadow-md active:translate-y-0.5'
+                            : 'bg-slate-700 text-slate-400 cursor-not-allowed'
+                        }`}
+                      >
+                        {canAfford ? 'แลกเปลี่ยนทันที' : 'เหรียญไม่พอ'}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       )}
