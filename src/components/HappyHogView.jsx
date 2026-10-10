@@ -404,7 +404,7 @@ const BARN_THEMES = {
     cost: 0,
     unlockedByDefault: true,
     atmosphere: 'butterflies',
-    bounds: { minX: 32, maxX: 66, minY: 36, maxY: 66 }
+    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 }
   },
   cozy_wood: {
     id: 'cozy_wood',
@@ -419,7 +419,7 @@ const BARN_THEMES = {
     cost: 0,
     unlockedByDefault: true,
     atmosphere: 'leaves',
-    bounds: { minX: 30, maxX: 68, minY: 38, maxY: 68 }
+    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 }
   },
   onsen_mud: {
     id: 'onsen_mud',
@@ -434,7 +434,7 @@ const BARN_THEMES = {
     cost: 400,
     unlockDesc: 'อาบน้ำหมูสะสมครบ 8 ครั้ง หรือใช้ 400 เหรียญ',
     atmosphere: 'steam',
-    bounds: { minX: 32, maxX: 70, minY: 38, maxY: 70 }
+    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 }
   },
   lanna: {
     id: 'lanna',
@@ -449,7 +449,7 @@ const BARN_THEMES = {
     cost: 600,
     unlockDesc: 'มีหมูน้ำหนัก 90 kg ขึ้นไป หรือใช้ 600 เหรียญ',
     atmosphere: 'lanterns',
-    bounds: { minX: 28, maxX: 68, minY: 36, maxY: 66 }
+    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 }
   },
   golden_palace: {
     id: 'golden_palace',
@@ -464,7 +464,7 @@ const BARN_THEMES = {
     cost: 1200,
     unlockDesc: 'ครอบครองหมูทองคำ หรือใช้ 1,200 เหรียญ',
     atmosphere: 'sparkles',
-    bounds: { minX: 26, maxX: 70, minY: 36, maxY: 66 }
+    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 }
   },
   cyber_space: {
     id: 'cyber_space',
@@ -479,7 +479,7 @@ const BARN_THEMES = {
     cost: 2000,
     unlockDesc: 'ผสมพันธุ์สำเร็จ 3 ครั้ง หรือใช้ 2,000 เหรียญ',
     atmosphere: 'cyber',
-    bounds: { minX: 26, maxX: 74, minY: 34, maxY: 68 }
+    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 }
   },
   // === 5 DIAMOND EXCLUSIVE THEMES (วิมานคอกหมูหรูหราใช้เพชรซื้อ) ===
   sky_sanctuary: {
@@ -495,7 +495,7 @@ const BARN_THEMES = {
     diamondCost: 40,
     isDiamondTheme: true,
     atmosphere: 'celestial_clouds',
-    bounds: { minX: 28, maxX: 70, minY: 36, maxY: 66 },
+    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 },
     unlockDesc: 'ปลดล็อกด้วย 40 เพชร 💎'
   },
   atlantis: {
@@ -511,7 +511,7 @@ const BARN_THEMES = {
     diamondCost: 60,
     isDiamondTheme: true,
     atmosphere: 'bubbles',
-    bounds: { minX: 28, maxX: 70, minY: 36, maxY: 66 },
+    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 },
     unlockDesc: 'ปลดล็อกด้วย 60 เพชร 💎'
   },
   neon_ice: {
@@ -527,7 +527,7 @@ const BARN_THEMES = {
     diamondCost: 80,
     isDiamondTheme: true,
     atmosphere: 'snow',
-    bounds: { minX: 28, maxX: 70, minY: 36, maxY: 66 },
+    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 },
     unlockDesc: 'ปลดล็อกด้วย 80 เพชร 💎'
   },
   lava_caldera: {
@@ -543,7 +543,7 @@ const BARN_THEMES = {
     diamondCost: 100,
     isDiamondTheme: true,
     atmosphere: 'magma',
-    bounds: { minX: 28, maxX: 70, minY: 36, maxY: 66 },
+    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 },
     unlockDesc: 'ปลดล็อกด้วย 100 เพชร 💎'
   },
   galaxy_colony: {
@@ -559,7 +559,7 @@ const BARN_THEMES = {
     diamondCost: 140,
     isDiamondTheme: true,
     atmosphere: 'galaxy_stars',
-    bounds: { minX: 26, maxX: 74, minY: 34, maxY: 68 },
+    bounds: { minX: 8, maxX: 88, minY: 22, maxY: 84 },
     unlockDesc: 'ปลดล็อกด้วย 140 เพชร 💎'
   }
 };
@@ -1204,8 +1204,8 @@ export default function HappyHogView() {
         const newDrop = {
           id: Date.now(),
           ...selected,
-          x: Math.round(34 + Math.random() * 32),
-          y: Math.round(38 + Math.random() * 26)
+          x: Math.round(16 + Math.random() * 68),
+          y: Math.round(26 + Math.random() * 54)
         };
         return [...prev, newDrop];
       });
@@ -1364,14 +1364,34 @@ export default function HappyHogView() {
   useEffect(() => {
     const interval = setInterval(() => {
       setPigs((prevPigs) =>
-        prevPigs.map((p) => {
+        prevPigs.map((p, idx) => {
           // Individual metabolism modifier based on pig id so they don't decay in lockstep
           const rateModifier = 0.85 + ((p.id % 5) * 0.07);
 
-          if (Math.random() < 0.45) {
-            const currentBounds = BARN_THEMES[activeThemeId]?.bounds || { minX: 30, maxX: 68, minY: 36, maxY: 66 };
-            const nextX = Math.max(currentBounds.minX, Math.min(currentBounds.maxX, p.x + (Math.random() * 16 - 8)));
-            const nextY = Math.max(currentBounds.minY, Math.min(currentBounds.maxY, p.y + (Math.random() * 14 - 7)));
+          if (Math.random() < 0.65) {
+            const currentBounds = BARN_THEMES[activeThemeId]?.bounds || { minX: 8, maxX: 88, minY: 22, maxY: 84 };
+
+            // Crowd repulsion: steer away gently if another pig is close to disperse across the wide pen
+            let repelX = 0;
+            let repelY = 0;
+            prevPigs.forEach((other, oIdx) => {
+              if (idx !== oIdx) {
+                const dx = p.x - other.x;
+                const dy = p.y - other.y;
+                const distSq = dx * dx + dy * dy;
+                if (distSq < 169 && distSq > 0.01) {
+                  const dist = Math.sqrt(distSq);
+                  repelX += (dx / dist) * 7;
+                  repelY += (dy / dist) * 5;
+                }
+              }
+            });
+
+            const stepX = (Math.random() * 22 - 11) + repelX;
+            const stepY = (Math.random() * 16 - 8) + repelY;
+
+            const nextX = Math.max(currentBounds.minX, Math.min(currentBounds.maxX, p.x + stepX));
+            const nextY = Math.max(currentBounds.minY, Math.min(currentBounds.maxY, p.y + stepY));
 
             // 1. Hunger decreases steadily (~0.32% per wander step)
             // If diamond_angel, hunger never drops (always full)!
@@ -1657,8 +1677,8 @@ export default function HappyHogView() {
       hunger: 90,
       cleanliness: 100,
       health: 100,
-      x: 35 + Math.random() * 30,
-      y: 40 + Math.random() * 25,
+      x: Math.round(15 + Math.random() * 70),
+      y: Math.round(28 + Math.random() * 52),
       direction: 1
     };
 
@@ -1694,8 +1714,8 @@ export default function HappyHogView() {
       hunger: 100,
       cleanliness: 100,
       health: 100,
-      x: 35 + Math.random() * 30,
-      y: 40 + Math.random() * 25,
+      x: Math.round(15 + Math.random() * 70),
+      y: Math.round(28 + Math.random() * 52),
       direction: 1
     };
 
@@ -1797,8 +1817,8 @@ export default function HappyHogView() {
       hunger: 100,
       cleanliness: 100,
       health: 100,
-      x: 50,
-      y: 50,
+      x: Math.round(20 + Math.random() * 60),
+      y: Math.round(30 + Math.random() * 45),
       direction: 1,
       breedCooldownUntil: now + 180000 // baby rests 3 min
     };
@@ -2835,28 +2855,18 @@ export default function HappyHogView() {
                         weight={pig.weight}
                       />
 
-                      {/* 3. Name, Weight, and Health Status Bar Underneath (Upright Text, Never Mirrored!) */}
-                      <div
-                        className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none whitespace-nowrap z-35"
-                      >
-                        <div className={`px-2 py-0.5 rounded-full border shadow-md flex items-center space-x-1 transition-all ${
-                          isSelected
-                            ? 'bg-[#2b180d] text-amber-200 text-[10px] font-black border-amber-400 ring-2 ring-amber-400/80 scale-105'
-                            : 'bg-[#2b180d]/85 text-amber-100/90 text-[9px] font-bold border-amber-700/70'
-                        }`}>
-                          <span>{pig.name.length > 12 && !isSelected ? `${pig.name.slice(0, 11)}…` : pig.name}</span>
-                          <span className="text-amber-400 font-mono text-[9px]">({pig.weight}kg)</span>
-                          {isResting && (
-                            <span className="text-amber-300 text-[8px]" title="กำลังพักฟื้นหลังคลอด">💤</span>
-                          )}
+                      {/* 3. Clean Selection Marker & Subtle Resting Indicator (No Text Tags to keep visuals relaxed and spacious) */}
+                      {isSelected && (
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-16 h-4.5 rounded-full border-2 border-amber-400/90 bg-amber-400/25 shadow-[0_0_12px_rgba(251,191,36,0.7)] animate-pulse pointer-events-none -z-10" />
+                      )}
+                      {isResting && (
+                        <div
+                          className="absolute -top-7 right-0 text-sm animate-pulse pointer-events-none drop-shadow-md select-none"
+                          title="กำลังพักฟื้นหลังคลอด"
+                        >
+                          💤
                         </div>
-                        <div className="w-12 h-1.5 bg-slate-900/80 rounded-full overflow-hidden mt-0.5 border border-white/40 flex shadow-xs">
-                          <div
-                            className={`h-full ${pig.hunger < 40 ? 'bg-rose-500' : 'bg-emerald-400'}`}
-                            style={{ width: `${pig.hunger}%` }}
-                          />
-                        </div>
-                      </div>
+                      )}
                     </div>
                   );
                 })}
