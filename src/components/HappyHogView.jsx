@@ -1364,198 +1364,94 @@ export const BARN_DECORS = {
     layer: 'mid',
     scale: 1.15,
     tag: 'บ่อน้ำแร่'
-  },
-  decor_pasture_cottage: {
-    id: 'decor_pasture_cottage',
-    name: 'บ้านคอตเทจชนบทอบอุ่น',
-    category: 'building',
-    icon: '🏡',
-    cost: 380,
-    perk: 'บ้านพักชนบทอบอุ่น เพิ่มความสุขหมู +20% และเพิ่มโอกาสผสมพันธุ์ติด',
-    defaultPos: { x: 19, y: 32 },
-    slotId: 'slot_cottage',
-    layer: 'back',
-    scale: 1.25,
-    tag: 'บ้านพัก'
-  },
-  decor_pasture_barn: {
-    id: 'decor_pasture_barn',
-    name: 'โรงนาสีแดง & หอไซโล',
-    category: 'building',
-    icon: '🏚️',
-    cost: 350,
-    perk: 'โรงนาเก็บเสบียง จุอาหารเพิ่มขึ้น +50% และลดความหิวของหมู',
-    defaultPos: { x: 84, y: 26 },
-    slotId: 'slot_barn',
-    layer: 'back',
-    scale: 1.25,
-    tag: 'โรงนา'
-  },
-  decor_pasture_apple_tree: {
-    id: 'decor_pasture_apple_tree',
-    name: 'ต้นแอปเปิ้ลฟาร์มผลดก',
-    category: 'tree',
-    icon: '🍎',
-    cost: 180,
-    perk: 'แอปเปิ้ลหอมหวาน หมูอารมณ์ดี +15% และดรอปผลผลิตบ่อยขึ้น',
-    defaultPos: { x: 72, y: 18 },
-    slotId: 'slot_tree',
-    layer: 'back',
-    scale: 1.15,
-    tag: 'ต้นไม้ผล'
-  },
-  decor_pasture_lamp: {
-    id: 'decor_pasture_lamp',
-    name: 'โคมไฟถนนฟาร์มวินเทจ',
-    category: 'light',
-    icon: '🏮',
-    cost: 120,
-    perk: 'ส่องแสงสว่างริมทางเดิน ให้หมูเดินปลอดภัยในยามค่ำคืน',
-    defaultPos: { x: 14, y: 64 },
-    slotId: 'slot_lamp',
-    layer: 'front',
-    scale: 1.0,
-    tag: 'โคมไฟ'
-  },
-  decor_pasture_flowerbed: {
-    id: 'decor_pasture_flowerbed',
-    name: 'แปลงดอกไม้หน้ารั้วคอก',
-    category: 'flora',
-    icon: '🌸',
-    cost: 110,
-    perk: 'แปลงดอกไม้สดใส กลิ่นหอมเย้ายวนใจ หมูสดชื่น +10%',
-    defaultPos: { x: 42, y: 76 },
-    slotId: 'slot_flowerbed',
-    layer: 'mid',
-    scale: 1.0,
-    tag: 'แปลงดอกไม้'
-  },
-  decor_pasture_mailbox: {
-    id: 'decor_pasture_mailbox',
-    name: 'ตู้จดหมายฟาร์ม & รางน้ำ',
-    category: 'water',
-    icon: '📮',
-    cost: 90,
-    perk: 'จุดรับจดหมายและดื่มน้ำ หมูคลายกระหาย +10%',
-    defaultPos: { x: 74, y: 74 },
-    slotId: 'slot_utility',
-    layer: 'mid',
-    scale: 1.0,
-    tag: 'ของใช้'
-  },
-  decor_pasture_crates: {
-    id: 'decor_pasture_crates',
-    name: 'ลังไม้ฟาร์มเก็บพืชผล',
-    category: 'building',
-    icon: '📦',
-    cost: 80,
-    perk: 'ลังไม้ฟาร์มบรรจุพืชผล เพิ่มโบนัสเหรียญเมื่อขายผลผลิต +5%',
-    defaultPos: { x: 19, y: 72 },
-    slotId: 'slot_crates',
-    layer: 'front',
-    scale: 0.95,
-    tag: 'ลังไม้'
-  },
-  decor_pasture_trough: {
-    id: 'decor_pasture_trough',
-    name: 'รางน้ำไม้ใสแจ๋ว',
-    category: 'water',
-    icon: '🥣',
-    cost: 95,
-    perk: 'รางน้ำไม้ธรรมชาติ เติมน้ำสะอาดให้หมูดื่มตลอดวัน',
-    defaultPos: { x: 80, y: 55 },
-    slotId: 'slot_utility',
-    layer: 'mid',
-    scale: 1.05,
-    tag: 'รางน้ำ'
   }
 };
 
-// 7 Designated Decor Plots on the 2.5D pasture farm map
+// 7 Designated Decor Plots on the 2.5D farm map (all empty by default for 100% clean pen)
 export const PASTURE_DECOR_SLOTS = [
   {
     id: 'slot_cottage',
     name: 'พื้นที่สิ่งปลูกสร้างหลัก (ซ้ายบน)',
-    shortName: 'บ้านพัก',
-    icon: '🏡',
+    shortName: 'บ้านพัก/ปราสาท',
+    icon: '🏛️',
     allowedCategories: ['building'],
-    defaultItem: 'decor_pasture_cottage',
+    defaultItem: null,
     pos: { x: 19, y: 32 },
     scale: 1.25,
     layer: 'back',
-    desc: 'ตำแหน่งวางบ้านคอตเทจ หรือปราสาทหลวง'
+    desc: 'ตำแหน่งวางปราสาททองคำหลวง หรือบ้านเห็ดแฟนตาซี'
   },
   {
     id: 'slot_barn',
-    name: 'พื้นที่โรงนา & โกดัง (ขวาบน)',
-    shortName: 'โรงนา/โกดัง',
-    icon: '🏚️',
+    name: 'พื้นที่โรงนา & ศาลา (ขวาบน)',
+    shortName: 'ศาลา/เพิงพัก',
+    icon: '🛖',
     allowedCategories: ['building'],
-    defaultItem: 'decor_pasture_barn',
+    defaultItem: null,
     pos: { x: 84, y: 26 },
     scale: 1.25,
     layer: 'back',
-    desc: 'ตำแหน่งวางโรงนาสีแดง หอไซโล หรือเพิงพัก'
+    desc: 'ตำแหน่งวางศาลาล้านนา หรือซุ้มเพิงฟางบังแดด'
   },
   {
     id: 'slot_tree',
-    name: 'พื้นที่ต้นไม้ใหญ่ & สวนผลไม้ (เนินเขาขวา)',
+    name: 'พื้นที่ต้นไม้ใหญ่ & สวนร่มรื่น (เนินเขาขวา)',
     shortName: 'สวนต้นไม้',
-    icon: '🍎',
+    icon: '🌳',
     allowedCategories: ['tree'],
-    defaultItem: 'decor_pasture_apple_tree',
+    defaultItem: null,
     pos: { x: 72, y: 18 },
     scale: 1.15,
     layer: 'back',
-    desc: 'ตำแหน่งปลูกต้นแอปเปิ้ล ต้นโอ๊ค ซากุระ หรือสน'
+    desc: 'ตำแหน่งปลูกต้นโอ๊คยักษ์ ต้นซากุระ ต้นสน หรือไม้สักทอง'
   },
   {
     id: 'slot_lamp',
     name: 'พื้นที่โคมไฟส่องทาง (ริมถนนซ้าย)',
     shortName: 'เสาไฟริมทาง',
     icon: '🏮',
-    allowedCategories: ['light'],
-    defaultItem: 'decor_pasture_lamp',
+    allowedCategories: ['light', 'tree'],
+    defaultItem: null,
     pos: { x: 14, y: 64 },
     scale: 1.0,
     layer: 'front',
-    desc: 'ตำแหน่งวางเสาไฟ โคมไฟถนนวินเทจ เสาไฮเทค'
+    desc: 'ตำแหน่งวางเสาไฮเทค โคมไฟวินเทจ หรือโคมคริสตัล'
   },
   {
     id: 'slot_flowerbed',
-    name: 'พื้นที่แปลงดอกไม้หน้ารั้ว (ด้านหน้า)',
-    shortName: 'แปลงดอกไม้',
+    name: 'พื้นที่แปลงดอกไม้/ผัก (หน้ารั้ว)',
+    shortName: 'แปลงดอกไม้/ผัก',
     icon: '🌸',
     allowedCategories: ['flora'],
-    defaultItem: 'decor_pasture_flowerbed',
+    defaultItem: null,
     pos: { x: 42, y: 76 },
     scale: 1.0,
     layer: 'mid',
-    desc: 'ตำแหน่งวางแปลงดอกไม้ กระบะผัก หรือแนวพุ่มกุหลาบ'
+    desc: 'ตำแหน่งวางพุ่มกุหลาบ แปลงผักสวนครัว หรือทุ่งดอกไม้'
   },
   {
     id: 'slot_utility',
-    name: 'พื้นที่ของประดับหน้าประตู (ด้านหน้าขวา)',
-    shortName: 'ตู้จดหมาย/น้ำพุ',
-    icon: '📮',
-    allowedCategories: ['water', 'building', 'flora'],
-    defaultItem: 'decor_pasture_mailbox',
+    name: 'พื้นที่น้ำพุ & บ่อน้ำดื่ม (หน้ารั้วขวา)',
+    shortName: 'น้ำพุ/บ่อน้ำ',
+    icon: '⛲',
+    allowedCategories: ['water', 'building'],
+    defaultItem: null,
     pos: { x: 74, y: 74 },
     scale: 1.0,
     layer: 'mid',
-    desc: 'ตำแหน่งวางตู้จดหมาย น้ำพุ บ่อน้ำ หรือรางน้ำ'
+    desc: 'ตำแหน่งวางน้ำพุทองคำเศรษฐี บ่อน้ำศิลา หรือบ่อออนเซ็น'
   },
   {
     id: 'slot_crates',
-    name: 'พื้นที่กล่องเก็บเสบียง (ริมรั้วซ้าย)',
-    shortName: 'ลังไม้เสบียง',
-    icon: '📦',
-    allowedCategories: ['building', 'flora'],
-    defaultItem: 'decor_pasture_crates',
+    name: 'พื้นที่ของประดับธรรมชาติ (ริมทางซ้าย)',
+    shortName: 'ของประดับริมทาง',
+    icon: '🪵',
+    allowedCategories: ['flora', 'building'],
+    defaultItem: null,
     pos: { x: 19, y: 72 },
     scale: 0.95,
     layer: 'front',
-    desc: 'ตำแหน่งวางลังไม้ฟาร์ม หรือขอนไม้โบราณ'
+    desc: 'ตำแหน่งวางตอไม้ขอนโบราณ หรือเห็ดเรืองแสง'
   }
 ];
 
@@ -1569,14 +1465,6 @@ const DECOR_PNG_MAP = {
   ancient_oak: { src: './pigs/decor_ancient_oak.png', width: 'w-22 sm:w-26', height: 'h-22 sm:h-26' },
   sakura_tree: { src: './pigs/decor_sakura_tree.png', width: 'w-22 sm:w-26', height: 'h-22 sm:h-26' },
   cyber_pylon: { src: './pigs/decor_cyber_pylon.png', width: 'w-18 sm:w-22', height: 'h-24 sm:h-28' },
-  decor_pasture_cottage: { src: './pigs/decor_pasture_cottage.png', width: 'w-28 sm:w-36', height: 'h-28 sm:h-36' },
-  decor_pasture_barn: { src: './pigs/decor_pasture_barn.png', width: 'w-28 sm:w-36', height: 'h-28 sm:h-36' },
-  decor_pasture_apple_tree: { src: './pigs/decor_pasture_apple_tree.png', width: 'w-20 sm:w-26', height: 'h-22 sm:h-28' },
-  decor_pasture_lamp: { src: './pigs/decor_pasture_lamp.png', width: 'w-10 sm:w-14', height: 'h-20 sm:h-26' },
-  decor_pasture_crates: { src: './pigs/decor_pasture_crates.png', width: 'w-16 sm:w-20', height: 'h-14 sm:h-18' },
-  decor_pasture_flowerbed: { src: './pigs/decor_pasture_flowerbed.png', width: 'w-20 sm:w-24', height: 'h-14 sm:h-18' },
-  decor_pasture_mailbox: { src: './pigs/decor_pasture_mailbox.png', width: 'w-10 sm:w-14', height: 'h-14 sm:h-18' },
-  decor_pasture_trough: { src: './pigs/decor_pasture_trough.png', width: 'w-14 sm:w-18', height: 'h-10 sm:h-14' },
 };
 
 // Component to render modular decor items with isometric 3/4 styling & shadows
@@ -1890,14 +1778,6 @@ export default function HappyHogView() {
       if (saved) return JSON.parse(saved);
     } catch (e) {}
     return [
-      'decor_pasture_cottage',
-      'decor_pasture_barn',
-      'decor_pasture_apple_tree',
-      'decor_pasture_lamp',
-      'decor_pasture_flowerbed',
-      'decor_pasture_mailbox',
-      'decor_pasture_crates',
-      'decor_pasture_trough',
       'golden_palace_building',
       'golden_fountain',
       'stone_well',
@@ -1912,25 +1792,27 @@ export default function HappyHogView() {
   });
   const [equippedDecors, setEquippedDecors] = useState(() => {
     try {
-      const saved = localStorage.getItem('happy_hog_equipped_decors');
+      localStorage.removeItem('happy_hog_equipped_decors');
+      const saved = localStorage.getItem('happy_hog_equipped_decors_clean');
       if (saved) return JSON.parse(saved);
     } catch (e) {}
     return [];
   });
-  // 7 Designated Decor Plots on the 2.5D pasture map
+  // 7 Designated Decor Plots on the 2.5D map (100% clean and empty by default)
   const [slotDecors, setSlotDecors] = useState(() => {
     try {
-      const saved = localStorage.getItem('happy_hog_slot_decors');
+      localStorage.removeItem('happy_hog_slot_decors');
+      const saved = localStorage.getItem('happy_hog_slot_decors_clean');
       if (saved) return JSON.parse(saved);
     } catch (e) {}
     return {
-      slot_cottage: 'decor_pasture_cottage',
-      slot_barn: 'decor_pasture_barn',
-      slot_tree: 'decor_pasture_apple_tree',
-      slot_lamp: 'decor_pasture_lamp',
-      slot_flowerbed: 'decor_pasture_flowerbed',
-      slot_utility: 'decor_pasture_mailbox',
-      slot_crates: 'decor_pasture_crates'
+      slot_cottage: null,
+      slot_barn: null,
+      slot_tree: null,
+      slot_lamp: null,
+      slot_flowerbed: null,
+      slot_utility: null,
+      slot_crates: null
     };
   });
   const [isDecorEditMode, setIsDecorEditMode] = useState(false);
@@ -2817,7 +2699,7 @@ export default function HappyHogView() {
     setSlotDecors((prev) => {
       const next = { ...prev, [slotId]: decorId };
       try {
-        localStorage.setItem('happy_hog_slot_decors', JSON.stringify(next));
+        localStorage.setItem('happy_hog_slot_decors_clean', JSON.stringify(next));
       } catch (e) {}
       return next;
     });
@@ -2831,7 +2713,7 @@ export default function HappyHogView() {
     setSlotDecors((prev) => {
       const next = { ...prev, [slotId]: null };
       try {
-        localStorage.setItem('happy_hog_slot_decors', JSON.stringify(next));
+        localStorage.setItem('happy_hog_slot_decors_clean', JSON.stringify(next));
       } catch (e) {}
       return next;
     });
@@ -2841,20 +2723,20 @@ export default function HappyHogView() {
   };
 
   const handleResetPastureSlots = () => {
-    const defaults = {
-      slot_cottage: 'decor_pasture_cottage',
-      slot_barn: 'decor_pasture_barn',
-      slot_tree: 'decor_pasture_apple_tree',
-      slot_lamp: 'decor_pasture_lamp',
-      slot_flowerbed: 'decor_pasture_flowerbed',
-      slot_utility: 'decor_pasture_mailbox',
-      slot_crates: 'decor_pasture_crates'
+    const cleared = {
+      slot_cottage: null,
+      slot_barn: null,
+      slot_tree: null,
+      slot_lamp: null,
+      slot_flowerbed: null,
+      slot_utility: null,
+      slot_crates: null
     };
-    setSlotDecors(defaults);
+    setSlotDecors(cleared);
     try {
-      localStorage.setItem('happy_hog_slot_decors', JSON.stringify(defaults));
+      localStorage.setItem('happy_hog_slot_decors_clean', JSON.stringify(cleared));
     } catch (e) {}
-    showToast('🏡 คืนค่าของตกแต่งทุ่งหญ้าคลาสสิกครบทุกตำแหน่ง!');
+    showToast('🏡 ล้างตำแหน่งของตกแต่งทั้งหมด คอกโล่งสะอาด 100%!');
     playSound('feed', isMuted);
   };
 
@@ -2870,11 +2752,12 @@ export default function HappyHogView() {
     };
     setSlotDecors(cleared);
     try {
-      localStorage.setItem('happy_hog_slot_decors', JSON.stringify(cleared));
+      localStorage.setItem('happy_hog_slot_decors_clean', JSON.stringify(cleared));
     } catch (e) {}
     showToast('🧹 นำของตกแต่งออกจากทุกตำแหน่ง (เหลือเฉพาะคอกและทุ่งหญ้าโล่ง 100%)');
     playSound('feed', isMuted);
   };
+
 
   const handleBuyDecor = (decorId) => {
     const decor = BARN_DECORS[decorId];
@@ -4527,17 +4410,10 @@ export default function HappyHogView() {
                     <span>🎨 โหมดจัดตำแหน่ง: แตะ '+' เพื่อวาง หรือแตะของเดิมเพื่อเปลี่ยน/เก็บ</span>
                     <button
                       onClick={handleClearAllSlots}
-                      className="ml-2 px-2 py-0.5 bg-rose-700 hover:bg-rose-600 text-white text-[9px] rounded-lg font-black cursor-pointer"
-                      title="นำของออกทั้งหมดเหลือเฉพาะลานคอกและทุ่งหญ้าโล่ง"
+                      className="ml-2 px-2.5 py-0.5 bg-rose-700 hover:bg-rose-600 text-white text-[9px] rounded-lg font-black cursor-pointer"
+                      title="นำของออกทั้งหมดเหลือเฉพาะลานคอกและทุ่งหญ้าโล่ง 100%"
                     >
                       🧹 คอกโล่ง 100%
-                    </button>
-                    <button
-                      onClick={handleResetPastureSlots}
-                      className="px-2 py-0.5 bg-emerald-700 hover:bg-emerald-600 text-white text-[9px] rounded-lg font-black cursor-pointer"
-                      title="วางของตกแต่งชุดทุ่งหญ้าคลาสสิกครบทุกตำแหน่ง"
-                    >
-                      🏡 คืนค่าเดิม
                     </button>
                   </div>
                 )}
