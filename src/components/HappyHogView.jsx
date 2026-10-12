@@ -668,7 +668,7 @@ const BARN_THEMES = {
     cost: 0,
     unlockedByDefault: true,
     atmosphere: 'butterflies',
-    bounds: { minX: 18, maxX: 82, minY: 32, maxY: 76 }
+    bounds: { minX: 32, maxX: 61, minY: 48, maxY: 66 }
   },
   cozy_wood: {
     id: 'cozy_wood',
@@ -683,7 +683,7 @@ const BARN_THEMES = {
     cost: 0,
     unlockedByDefault: true,
     atmosphere: 'leaves',
-    bounds: { minX: 18, maxX: 82, minY: 32, maxY: 76 }
+    bounds: { minX: 32, maxX: 61, minY: 48, maxY: 66 }
   },
   onsen_mud: {
     id: 'onsen_mud',
@@ -698,7 +698,7 @@ const BARN_THEMES = {
     cost: 400,
     unlockDesc: 'อาบน้ำหมูสะสมครบ 8 ครั้ง หรือใช้ 400 เหรียญ',
     atmosphere: 'steam',
-    bounds: { minX: 18, maxX: 82, minY: 32, maxY: 76 }
+    bounds: { minX: 32, maxX: 61, minY: 48, maxY: 66 }
   },
   lanna: {
     id: 'lanna',
@@ -713,7 +713,7 @@ const BARN_THEMES = {
     cost: 800,
     unlockDesc: 'มีหมูน้ำหนัก 90 kg ขึ้นไป หรือใช้ 800 เหรียญ',
     atmosphere: 'lanterns',
-    bounds: { minX: 18, maxX: 82, minY: 32, maxY: 76 }
+    bounds: { minX: 32, maxX: 61, minY: 48, maxY: 66 }
   },
   golden_palace: {
     id: 'golden_palace',
@@ -727,7 +727,7 @@ const BARN_THEMES = {
     cost: 1500,
     unlockDesc: 'ครอบครองหมูทองคำ หรือใช้ 1,500 เหรียญ',
     atmosphere: 'sparkles',
-    bounds: { minX: 18, maxX: 82, minY: 32, maxY: 76 }
+    bounds: { minX: 32, maxX: 61, minY: 48, maxY: 66 }
   },
   cyber_space: {
     id: 'cyber_space',
@@ -742,21 +742,47 @@ const BARN_THEMES = {
     cost: 2200,
     unlockDesc: 'ผสมพันธุ์สำเร็จ 3 ครั้ง หรือใช้ 2,200 เหรียญ',
     atmosphere: 'cyber',
-    bounds: { minX: 18, maxX: 82, minY: 32, maxY: 76 }
+    bounds: { minX: 32, maxX: 61, minY: 48, maxY: 66 }
   }
 };
 
-// Helper function to generate clean coordinates strictly inside the active barn theme's pen boundaries
+// Helper functions to ensure pigs and items are STRICTLY inside the wooden fence (isometric boundary)
+const isInsideFence = (x, y) => {
+  if (x < 32 || x > 61 || y < 48 || y > 66) return false;
+  const topLimit = x <= 48 
+    ? (53 - 0.421 * (x - 29) + 2.5) 
+    : (45 + 0.5 * (x - 48) + 2.5);
+  if (y < topLimit) return false;
+  const bottomLimit = x <= 44
+    ? (53 + 1.133 * (x - 29) - 3.0)
+    : (70 - 0.85 * (x - 44) - 3.0);
+  if (y > bottomLimit) return false;
+  return true;
+};
+
+const clampPigToFence = (x, y) => {
+  if (isInsideFence(x, y)) return { x: Math.round(x), y: Math.round(y) };
+  const targetX = 46;
+  const targetY = 57;
+  for (let t = 0.05; t <= 1.0; t += 0.05) {
+    const testX = x + (targetX - x) * t;
+    const testY = y + (targetY - y) * t;
+    if (isInsideFence(testX, testY)) {
+      return { x: Math.round(testX), y: Math.round(testY) };
+    }
+  }
+  return { x: targetX, y: targetY };
+};
+
 const getRandomCoordInBarn = (themeId) => {
-  const bounds = BARN_THEMES[themeId]?.bounds || { minX: 25, maxX: 72, minY: 40, maxY: 72 };
-  const minX = bounds.minX + 2;
-  const maxX = bounds.maxX - 2;
-  const minY = bounds.minY + 2;
-  const maxY = bounds.maxY - 2;
-  return {
-    x: Math.round(minX + Math.random() * (maxX - minX)),
-    y: Math.round(minY + Math.random() * (maxY - minY))
-  };
+  for (let attempts = 0; attempts < 60; attempts++) {
+    const rx = Math.round(33 + Math.random() * (60 - 33));
+    const ry = Math.round(49 + Math.random() * (65 - 49));
+    if (isInsideFence(rx, ry)) {
+      return { x: rx, y: ry };
+    }
+  }
+  return { x: 46, y: 57 };
 };
 
 const FOODS = [
@@ -1739,7 +1765,13 @@ export default function HappyHogView() {
     const saved = localStorage.getItem('happy_hog_pigs');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((p) => {
+            const clamped = clampPigToFence(p.x, p.y);
+            return { ...p, x: clamped.x, y: clamped.y };
+          });
+        }
       } catch (e) {}
     }
     return [
@@ -1752,7 +1784,7 @@ export default function HappyHogView() {
         cleanliness: 70,
         health: 100,
         x: 44,
-        y: 50,
+        y: 54,
         direction: 1
       },
       {
@@ -1763,12 +1795,22 @@ export default function HappyHogView() {
         hunger: 80,
         cleanliness: 35,
         health: 100,
-        x: 54,
-        y: 54,
+        x: 52,
+        y: 56,
         direction: -1
       }
     ];
   });
+
+  // Ensure all pigs immediately snap inside the fence on load or theme change
+  useEffect(() => {
+    setPigs((prev) =>
+      prev.map((p) => {
+        const clamped = clampPigToFence(p.x, p.y);
+        return { ...p, x: clamped.x, y: clamped.y };
+      })
+    );
+  }, [activeThemeId]);
 
   const [selectedPigId, setSelectedPigId] = useState(1);
   const [tappedPigId, setTappedPigId] = useState(null);
@@ -2217,11 +2259,10 @@ export default function HappyHogView() {
           // Individual metabolism modifier based on pig id so they don't decay in lockstep
           const rateModifier = 0.85 + ((p.id % 5) * 0.07);
 
-          const currentBounds = BARN_THEMES[activeThemeId]?.bounds || { minX: 25, maxX: 75, minY: 35, maxY: 75 };
-          const isOutside = p.x < currentBounds.minX || p.x > currentBounds.maxX || p.y < currentBounds.minY || p.y > currentBounds.maxY;
+          const isOutside = !isInsideFence(p.x, p.y);
 
           if (Math.random() < 0.65 || isOutside) {
-            // Crowd repulsion: steer away gently if another pig is close to disperse across the wide pen
+            // Crowd repulsion: steer away gently if another pig is close to disperse across the pen
             let repelX = 0;
             let repelY = 0;
             prevPigs.forEach((other, oIdx) => {
@@ -2229,22 +2270,27 @@ export default function HappyHogView() {
                 const dx = p.x - other.x;
                 const dy = p.y - other.y;
                 const distSq = dx * dx + dy * dy;
-                if (distSq < 100 && distSq > 0.01) {
+                if (distSq < 36 && distSq > 0.01) {
                   const dist = Math.sqrt(distSq);
-                  repelX += (dx / dist) * 5;
-                  repelY += (dy / dist) * 3.5;
+                  repelX += (dx / dist) * 2.2;
+                  repelY += (dy / dist) * 1.6;
                 }
               }
             });
 
-            // Moderate stroll step size so pigs don't jump wildly across scenery
-            const targetCenterX = (currentBounds.minX + currentBounds.maxX) / 2;
-            const targetCenterY = (currentBounds.minY + currentBounds.maxY) / 2;
-            const stepX = isOutside ? (targetCenterX - p.x) * 0.45 : (Math.random() * 10 - 5) + repelX;
-            const stepY = isOutside ? (targetCenterY - p.y) * 0.45 : (Math.random() * 8 - 4) + repelY;
+            let nextX, nextY;
+            if (isOutside) {
+              const clamped = clampPigToFence(p.x, p.y);
+              nextX = clamped.x;
+              nextY = clamped.y;
+            } else {
+              const stepX = (Math.random() * 5 - 2.5) + repelX;
+              const stepY = (Math.random() * 4 - 2.0) + repelY;
+              const clamped = clampPigToFence(p.x + stepX, p.y + stepY);
+              nextX = clamped.x;
+              nextY = clamped.y;
+            }
 
-            const nextX = Math.max(currentBounds.minX, Math.min(currentBounds.maxX, p.x + stepX));
-            const nextY = Math.max(currentBounds.minY, Math.min(currentBounds.maxY, p.y + stepY));
             const hasMoved = Math.abs(nextX - p.x) > 0.3 || Math.abs(nextY - p.y) > 0.3;
 
             // 1. Hunger decreases gently (~0.05% per wander step for relaxed casual pacing)
@@ -3111,13 +3157,13 @@ export default function HappyHogView() {
     {
       id: 0,
       name: 'เหรียญทองขวัญถุง',
-      shortLabel: '+150 ฿',
+      shortLabel: '+1,000 ฿',
       icon: '💰',
-      rewardDesc: '+150 เหรียญทอง',
+      rewardDesc: '+1,000 เหรียญทอง',
       color: '#f59e0b',
       sliceGrad: ['#f59e0b', '#d97706'],
       textColor: '#ffffff',
-      coins: 150
+      coins: 1000
     },
     {
       id: 1,
@@ -3144,13 +3190,13 @@ export default function HappyHogView() {
     {
       id: 3,
       name: 'ถุงทองคำเพิ่มพูน',
-      shortLabel: '+300 ฿',
+      shortLabel: '+3,000 ฿',
       icon: '🪙',
-      rewardDesc: '+300 เหรียญทอง',
+      rewardDesc: '+3,000 เหรียญทอง',
       color: '#ec4899',
       sliceGrad: ['#ec4899', '#db2777'],
       textColor: '#ffffff',
-      coins: 300
+      coins: 3000
     },
     {
       id: 4,
@@ -3190,7 +3236,7 @@ export default function HappyHogView() {
       name: `มหาแจ็กพอต: ${todayDiamondPig.name}`,
       shortLabel: todayDiamondPig.shortLabel,
       icon: todayDiamondPig.icon,
-      rewardDesc: `👑 มหาแจ็กพอตแตก (0.01%)! ได้รับ "${todayDiamondPig.name}" (สัตว์เทพมูลค่า ${PIG_BREEDS[todayDiamondPig.key]?.diamondCost || 999} 💎) เข้าสู่คอกฟาร์มทันที!`,
+      rewardDesc: `👑 มหาแจ็กพอตแตก! ได้รับ "${todayDiamondPig.name}" (สัตว์เทพมูลค่า ${PIG_BREEDS[todayDiamondPig.key]?.diamondCost || 999} 💎) เข้าสู่คอกฟาร์มทันที!`,
       color: '#e11d48',
       sliceGrad: ['#e11d48', '#be123c'],
       textColor: '#fef08a',
@@ -3203,15 +3249,15 @@ export default function HappyHogView() {
 
   const handleSpinWheel = () => {
     if (isSpinning) return;
-    if (wheelSpinsToday <= 0 && coins < 50) {
-      showToast('❌ สิทธิ์หมุนฟรีหมดแล้ว และเหรียญไม่พอ (รอบละ 50 เหรียญ)');
+    if (wheelSpinsToday <= 0 && coins < 100) {
+      showToast('❌ สิทธิ์หมุนฟรีหมดแล้ว และเหรียญไม่พอ (รอบละ 100 เหรียญ)');
       return;
     }
 
     if (wheelSpinsToday > 0) {
       setWheelSpinsToday((s) => s - 1);
     } else {
-      setCoins((c) => c - 50);
+      setCoins((c) => c - 100);
     }
 
     advanceQuest('spin_wheel', 1);
@@ -3224,19 +3270,19 @@ export default function HappyHogView() {
     let prizeIndex;
 
     if (roll < 0.0001) {
-      // 0.01% chance for Daily Diamond Pig Grand Jackpot!
+      // Grand Jackpot: Daily Diamond Pig
       prizeIndex = 7;
     } else {
       // Remaining 99.99% distributed across normal prizes
       const sub = Math.random();
       if (sub < 0.25) {
-        prizeIndex = 0; // +150 ฿ (25%)
+        prizeIndex = 0; // +1,000 ฿ (25%)
       } else if (sub < 0.45) {
         prizeIndex = 2; // +30 ⚡ (20%)
       } else if (sub < 0.63) {
         prizeIndex = 1; // ข้าวโพด x3 (18%)
       } else if (sub < 0.78) {
-        prizeIndex = 3; // +300 ฿ (15%)
+        prizeIndex = 3; // +3,000 ฿ (15%)
       } else if (sub < 0.90) {
         prizeIndex = 4; // แครอท x2 (12%)
       } else if (sub < 0.985) {
@@ -3266,7 +3312,7 @@ export default function HappyHogView() {
         const coord = getRandomCoordInBarn(activeThemeId);
         const wonPig = {
           id: Date.now(),
-          name: `${won.pigMeta.name} (วงล้อ 0.01%)`,
+          name: won.pigMeta.name,
           breed: won.pigBreed,
           weight: 25,
           hunger: 100,
@@ -3299,14 +3345,14 @@ export default function HappyHogView() {
       // Trigger Big Reward Celebration Modal!
       if (won.isDiamondPigJackpot) {
         setCelebrationReward({
-          title: '👑 มหาแจ็กพอตหมูเพชรในตำนานแตก! (0.01%)',
+          title: '👑 มหาแจ็กพอตหมูเพชรในตำนานแตก!',
           subtitle: `ปาฏิหาริย์วงล้อหมูพารวย! คุณได้รับ "${won.pigMeta.name}"`,
           icon: won.pigMeta.icon,
-          badge: 'ULTRA RARE JACKPOT (0.01%)',
+          badge: 'ULTRA RARE GRAND JACKPOT',
           rewardText: `ได้รับ: ${won.pigMeta.name} (สัตว์เทพมูลค่า ${PIG_BREEDS[won.pigBreed]?.diamondCost || 999} 💎) เข้าฟาร์มทันที! & +300 EXP`,
           color: '#e11d48'
         });
-        showToast(`👑 มหาแจ็กพอต 0.01% แตก! ได้รับ "${won.pigMeta.name}" เข้าสู่ฟาร์มแล้ว!`);
+        showToast(`👑 มหาแจ็กพอตแตก! ได้รับ "${won.pigMeta.name}" เข้าสู่ฟาร์มแล้ว!`);
       } else {
         setCelebrationReward({
           title: '🎉 ยินดีด้วย! คุณได้รับรางวัล',
@@ -3440,9 +3486,8 @@ export default function HappyHogView() {
     const clampPigsToTheme = () => {
       setPigs((prev) =>
         prev.map((p) => {
-          const clampedX = Math.max(targetBounds.minX + 2, Math.min(targetBounds.maxX - 2, p.x));
-          const clampedY = Math.max(targetBounds.minY + 2, Math.min(targetBounds.maxY - 2, p.y));
-          return { ...p, x: Math.round(clampedX), y: Math.round(clampedY) };
+          const clamped = clampPigToFence(p.x, p.y);
+          return { ...p, x: clamped.x, y: clamped.y };
         })
       );
     };
@@ -6395,7 +6440,7 @@ export default function HappyHogView() {
                   </span>
                 </h3>
                 <p className="text-[11px] text-amber-200/90">
-                  สิทธิ์หมุนฟรี: <b className="text-yellow-400 font-mono text-xs">{wheelSpinsToday}</b> รอบ (รอบต่อไป 50 🪙)
+                  สิทธิ์หมุนฟรี: <b className="text-yellow-400 font-mono text-xs">{wheelSpinsToday}</b> รอบ (รอบต่อไป 100 🪙)
                 </p>
               </div>
               <button
@@ -6417,7 +6462,6 @@ export default function HappyHogView() {
                 <div>
                   <div className="text-[10px] font-black text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
                     <span>👑 มหาแจ็กพอตประจำวันนี้</span>
-                    <span className="bg-rose-600 text-white text-[9px] px-1.5 py-0.2 rounded-full font-mono font-black animate-pulse">0.01%</span>
                   </div>
                   <div className="text-xs font-black text-white">{todayDiamondPig.name}</div>
                   <div className="text-[9px] text-purple-200">สลับสายพันธุ์สัตว์เทพทุกเที่ยงคืน (00:00 น.)</div>
@@ -6588,8 +6632,8 @@ export default function HappyHogView() {
                 <span className="text-[10px] text-amber-300 font-bold">
                   🎁 รางวัลทั้งหมดในวงล้อ:
                 </span>
-                <span className="text-[9px] text-rose-300 font-mono font-bold">
-                  แจ็กพอต 0.01% (1 ใน 10,000)
+                <span className="text-[9px] text-amber-300/80 font-mono font-bold">
+                  รางวัลใหญ่ประจำวัน 👑
                 </span>
               </div>
               <div className="grid grid-cols-4 gap-1.5 text-[10px] font-bold">
@@ -6622,13 +6666,13 @@ export default function HappyHogView() {
             <div className="pt-1">
               <button
                 onClick={handleSpinWheel}
-                disabled={isSpinning || (wheelSpinsToday <= 0 && coins < 50)}
+                disabled={isSpinning || (wheelSpinsToday <= 0 && coins < 100)}
                 className={`w-full py-3.5 rounded-2xl font-black text-sm flex items-center justify-center space-x-2 transition-all cursor-pointer ${
                   isSpinning
                     ? 'bg-amber-800 text-amber-200 cursor-wait'
                     : wheelSpinsToday > 0
                     ? 'bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 text-amber-950 shadow-[0_4px_0_#b45309] active:translate-y-1 active:shadow-none animate-pulse'
-                    : coins >= 50
+                    : coins >= 100
                     ? 'bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white shadow-[0_4px_0_#4338ca] active:translate-y-1 active:shadow-none'
                     : 'bg-stone-700 text-stone-500 cursor-not-allowed'
                 }`}
@@ -6639,9 +6683,9 @@ export default function HappyHogView() {
                     ? 'กำลังหมุนลุ้นรางวัล...'
                     : wheelSpinsToday > 0
                     ? `หมุนวงล้อทันที (ฟรี ${wheelSpinsToday} รอบ)`
-                    : coins >= 50
-                    ? 'หมุนเพิ่ม (ใช้ 50 🪙)'
-                    : 'เหรียญไม่พอหมุน (ต้องการ 50 🪙)'}
+                    : coins >= 100
+                    ? 'หมุนเพิ่ม (ใช้ 100 🪙)'
+                    : 'เหรียญไม่พอหมุน (ต้องการ 100 🪙)'}
                 </span>
               </button>
             </div>
