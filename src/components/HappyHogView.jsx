@@ -389,260 +389,263 @@ const PIG_BREEDS = {
   }
 };
 
-// Pig Periodic Harvest Drop Configuration per Breed (Balanced Economy)
+// Pig Periodic Harvest Drop Configuration per Breed (Balanced Economy - Minimum 10+ Minutes)
 const PIG_DROP_CONFIG = {
   pink: {
-    cycleSeconds: 120, // 2 นาที
+    cycleSeconds: 600, // 10 นาที
     icon: '🌾',
     title: 'ผลผลิตฟาร์มพื้นฐาน',
     isMythic: false,
     roll: () => ({
-      coins: Math.floor(20 + Math.random() * 15),
+      coins: Math.floor(80 + Math.random() * 40),
       diamonds: 0,
-      exp: 5,
+      exp: 15,
       energy: 0,
       text: 'รำข้าวหมัก & เหรียญขวัญถุง'
     })
   },
   auditor: {
-    cycleSeconds: 140,
+    cycleSeconds: 660, // 11 นาที
     icon: '📜',
     title: 'เอกสารผ่านการตรวจ ปค.5',
     isMythic: false,
     roll: () => ({
-      coins: Math.floor(35 + Math.random() * 25),
+      coins: Math.floor(130 + Math.random() * 50),
       diamonds: 0,
-      exp: 10,
+      exp: 20,
       energy: 0,
       text: 'รายงานตรวจสอบผ่านฉลุย'
     })
   },
   engineer: {
-    cycleSeconds: 150,
+    cycleSeconds: 720, // 12 นาที
     icon: '🔧',
     title: 'อุปกรณ์ตรวจงานช่าง',
     isMythic: false,
     roll: () => ({
-      coins: Math.floor(50 + Math.random() * 30),
+      coins: Math.floor(180 + Math.random() * 60),
       diamonds: 0,
-      exp: 12,
+      exp: 25,
       energy: 0,
       text: 'น็อตทองคำ Factor F'
     })
   },
   sakura: {
-    cycleSeconds: 160,
+    cycleSeconds: 780, // 13 นาที
     icon: '🌸',
     title: 'ดอกซากุระนำโชค',
     isMythic: false,
     roll: () => ({
-      coins: Math.floor(65 + Math.random() * 30),
+      coins: Math.floor(220 + Math.random() * 70),
       diamonds: 0,
-      exp: 15,
+      exp: 30,
       energy: 1,
       text: 'กลีบซากุระสดชื่น (+1 ⚡)'
     })
   },
   shabu: {
-    cycleSeconds: 160,
+    cycleSeconds: 840, // 14 นาที
     icon: '🍲',
     title: 'ซุปกระทะทองคำ',
     isMythic: false,
     roll: () => ({
-      coins: Math.floor(80 + Math.random() * 35),
+      coins: Math.floor(260 + Math.random() * 80),
       diamonds: 0,
-      exp: 18,
+      exp: 35,
       energy: 1,
       text: 'น้ำซุปชาบูเข้มข้น (+1 ⚡)'
     })
   },
   golden: {
-    cycleSeconds: 180,
+    cycleSeconds: 900, // 15 นาที
     icon: '💰',
     title: 'ถุงทองคำการคลัง',
     isMythic: false,
     roll: () => ({
-      coins: Math.floor(130 + Math.random() * 50),
+      coins: Math.floor(450 + Math.random() * 120),
       diamonds: 0,
-      exp: 25,
+      exp: 50,
       energy: 0,
       text: 'ถุงทองคำเบิกจ่ายหลวง'
     })
   },
   rainbow: {
-    cycleSeconds: 200,
+    cycleSeconds: 960, // 16 นาที
     icon: '🌈',
     title: 'ผลึกแก้วรุ้ง 7 สี',
     isMythic: false,
     roll: () => ({
-      coins: Math.floor(180 + Math.random() * 60),
+      coins: Math.floor(550 + Math.random() * 150),
       diamonds: 0,
-      exp: 35,
+      exp: 65,
       energy: 1,
       text: 'ผลึกสายรุ้ง สตง. (+1 ⚡)'
     })
   },
   knight: {
-    cycleSeconds: 220,
+    cycleSeconds: 1020, // 17 นาที
     icon: '🛡️',
     title: 'ตราเกียรติยศอัศวิน',
     isMythic: false,
     roll: () => ({
-      coins: Math.floor(220 + Math.random() * 80),
+      coins: Math.floor(650 + Math.random() * 180),
       diamonds: 0,
-      exp: 40,
+      exp: 75,
       energy: 2,
       text: 'ตราพิทักษ์ อปท. (+2 ⚡)'
     })
   },
-  // 6 Diamond Mythic Breeds (โอกาสดรอปเพชรต่ำเพื่อรักษาเสถียรภาพระบบเงิน)
+
+  // 6 Diamond Mythic Breeds (15-25 นาที รอบดรอปสมดุล โอกาสดรอปเพชรสมเหตุสมผล)
   jade_dragon: {
-    cycleSeconds: 180, // 3 นาที
+    cycleSeconds: 900, // 15 นาที
     icon: '🟢',
     title: 'พรสมบัติมังกรหยก',
     isMythic: true,
     roll: () => {
-      const isDiamond = Math.random() < 0.12;
+      const isDiamond = Math.random() < 0.15;
       if (isDiamond) {
         return {
-          coins: 100,
+          coins: 200,
           diamonds: 1,
-          exp: 30,
+          exp: 60,
           energy: 1,
-          text: '💎 ผลึกเพชรหยกมังกร (+1 💎, +100 ฿)'
+          text: '💎 ผลึกเพชรหยกมังกร (+1 💎, +200 ฿)'
         };
       }
       return {
-        coins: Math.floor(280 + Math.random() * 80),
+        coins: Math.floor(550 + Math.random() * 150),
         diamonds: 0,
-        exp: 25,
+        exp: 45,
         energy: 1,
         text: '🟢 หยกมังกรเรืองแสง (+1 ⚡)'
       };
     }
   },
   phoenix: {
-    cycleSeconds: 180, // 3 นาที
+    cycleSeconds: 960, // 16 นาที
     icon: '🔥',
     title: 'ขนนกเพลิงสุริยัน',
-    isMythic: true,
-    roll: () => {
-      const isDiamond = Math.random() < 0.12;
-      if (isDiamond) {
-        return {
-          coins: 120,
-          diamonds: 1,
-          exp: 35,
-          energy: 2,
-          text: '💎 เพชรเปลวเพลิงสุริยัน (+1 💎, +120 ฿)'
-        };
-      }
-      return {
-        coins: Math.floor(320 + Math.random() * 90),
-        diamonds: 0,
-        exp: 30,
-        energy: 2,
-        text: '🔥 สะเก็ดไฟฟีนิกซ์อมตะ (+2 ⚡)'
-      };
-    }
-  },
-  galaxy: {
-    cycleSeconds: 210, // 3.5 นาที
-    icon: '🌌',
-    title: 'เศษละอองดาวคอสมิก',
-    isMythic: true,
-    roll: () => {
-      const roll = Math.random();
-      if (roll < 0.15) {
-        const diaCount = roll < 0.03 ? 2 : 1;
-        return {
-          coins: 150,
-          diamonds: diaCount,
-          exp: 60,
-          energy: 2,
-          text: `💎 เพชรดวงดาวเนบิวลา (+${diaCount} 💎, +150 ฿)`
-        };
-      }
-      return {
-        coins: Math.floor(380 + Math.random() * 100),
-        diamonds: 0,
-        exp: 50,
-        energy: 1,
-        text: '🌌 เศษผลึกดาวฤกษ์กาแล็กซี'
-      };
-    }
-  },
-  cyber_satoshi: {
-    cycleSeconds: 180, // 3 นาที
-    icon: '⚡',
-    title: 'บล็อกเชนขุดเพชร',
     isMythic: true,
     roll: () => {
       const isDiamond = Math.random() < 0.15;
       if (isDiamond) {
         return {
-          coins: 140,
+          coins: 250,
           diamonds: 1,
-          exp: 40,
-          energy: 1,
-          text: '💎 บล็อกขุดสำเร็จ (+1 💎, +140 ฿)'
+          exp: 70,
+          energy: 2,
+          text: '💎 เพชรเปลวเพลิงสุริยัน (+1 💎, +250 ฿)'
         };
       }
       return {
-        coins: Math.floor(360 + Math.random() * 90),
+        coins: Math.floor(650 + Math.random() * 180),
         diamonds: 0,
-        exp: 35,
+        exp: 55,
+        energy: 2,
+        text: '🔥 สะเก็ดไฟฟีนิกซ์อมตะ (+2 ⚡)'
+      };
+    }
+  },
+  cyber_satoshi: {
+    cycleSeconds: 1020, // 17 นาที
+    icon: '⚡',
+    title: 'บล็อกเชนขุดเพชร',
+    isMythic: true,
+    roll: () => {
+      const roll = Math.random();
+      if (roll < 0.18) {
+        const diaCount = roll < 0.03 ? 2 : 1;
+        return {
+          coins: 300,
+          diamonds: diaCount,
+          exp: 80,
+          energy: 1,
+          text: `💎 บล็อกขุดเพชรสำเร็จ (+${diaCount} 💎, +300 ฿)`
+        };
+      }
+      return {
+        coins: Math.floor(750 + Math.random() * 200),
+        diamonds: 0,
+        exp: 65,
         energy: 1,
         text: '⚡ ชิปข้อมูลไฮเทคระดับตำนาน'
       };
     }
   },
   inferno_titan: {
-    cycleSeconds: 210, // 3.5 นาที
+    cycleSeconds: 1080, // 18 นาที
     icon: '🌋',
     title: 'ผลึกแมกมาโบราณ',
     isMythic: true,
     roll: () => {
-      const isDiamond = Math.random() < 0.12;
-      if (isDiamond) {
+      const roll = Math.random();
+      if (roll < 0.18) {
+        const diaCount = roll < 0.03 ? 2 : 1;
         return {
-          coins: 160,
-          diamonds: 1,
-          exp: 45,
+          coins: 350,
+          diamonds: diaCount,
+          exp: 90,
           energy: 2,
-          text: '💎 ผลึกเพชรภูเขาไฟ (+1 💎, +160 ฿)'
+          text: `💎 ผลึกเพชรภูเขาไฟ (+${diaCount} 💎, +350 ฿)`
         };
       }
       return {
-        coins: Math.floor(400 + Math.random() * 110),
+        coins: Math.floor(850 + Math.random() * 220),
         diamonds: 0,
-        exp: 40,
+        exp: 75,
         energy: 2,
         text: '🌋 ผลึกหินลาวาไททัน (+2 ⚡)'
       };
     }
   },
+  galaxy: {
+    cycleSeconds: 1200, // 20 นาที
+    icon: '🌌',
+    title: 'เศษละอองดาวคอสมิก',
+    isMythic: true,
+    roll: () => {
+      const roll = Math.random();
+      if (roll < 0.20) {
+        const diaCount = roll < 0.04 ? 2 : 1;
+        return {
+          coins: 400,
+          diamonds: diaCount,
+          exp: 110,
+          energy: 2,
+          text: `💎 เพชรดวงดาวเนบิวลา (+${diaCount} 💎, +400 ฿)`
+        };
+      }
+      return {
+        coins: Math.floor(950 + Math.random() * 250),
+        diamonds: 0,
+        exp: 90,
+        energy: 1,
+        text: '🌌 เศษผลึกดาวฤกษ์กาแล็กซี'
+      };
+    }
+  },
   diamond_angel: {
-    cycleSeconds: 240, // 4 นาที
+    cycleSeconds: 1500, // 25 นาที
     icon: '🪽',
     title: 'ขนนกเทพธิดาจันทรา',
     isMythic: true,
     roll: () => {
       const roll = Math.random();
-      if (roll < 0.18) {
-        const diaCount = roll < 0.04 ? 2 : 1;
+      if (roll < 0.25) {
+        const diaCount = roll < 0.03 ? 3 : roll < 0.08 ? 2 : 1;
         return {
-          coins: 200,
+          coins: 500,
           diamonds: diaCount,
-          exp: 80,
+          exp: 150,
           energy: 3,
-          text: `💎 เพชรจันทราสวรรค์ (+${diaCount} 💎, +200 ฿, +3 ⚡)`
+          text: `💎 เพชรจันทราสวรรค์ (+${diaCount} 💎, +500 ฿, +3 ⚡)`
         };
       }
       return {
-        coins: Math.floor(450 + Math.random() * 150),
+        coins: Math.floor(1200 + Math.random() * 300),
         diamonds: 0,
-        exp: 60,
+        exp: 120,
         energy: 3,
         text: '🪽 ขนนกแสงทิพย์บริสุทธิ์ (+3 ⚡)'
       };
@@ -1364,141 +1367,30 @@ export const BARN_DECORS = {
   }
 };
 
+const DECOR_PNG_MAP = {
+  golden_palace_building: { src: './pigs/decor_golden_palace_building.png', width: 'w-24 sm:w-28', height: 'h-24 sm:h-28' },
+  stone_well: { src: './pigs/decor_stone_well.png', width: 'w-16 sm:w-20', height: 'h-18 sm:h-22' },
+  golden_fountain: { src: './pigs/decor_golden_fountain.png', width: 'w-18 sm:w-22', height: 'h-20 sm:h-24' },
+  rose_hedge: { src: './pigs/decor_rose_hedge.png', width: 'w-18 sm:w-22', height: 'h-16 sm:h-18' },
+  veggie_patch: { src: './pigs/decor_veggie_patch.png', width: 'w-20 sm:w-24', height: 'h-16 sm:h-20' },
+  pine_tree: { src: './pigs/decor_pine_tree.png', width: 'w-18 sm:w-22', height: 'h-22 sm:h-26' },
+  ancient_oak: { src: './pigs/decor_ancient_oak.png', width: 'w-22 sm:w-26', height: 'h-22 sm:h-26' },
+  sakura_tree: { src: './pigs/decor_sakura_tree.png', width: 'w-22 sm:w-26', height: 'h-22 sm:h-26' },
+  cyber_pylon: { src: './pigs/decor_cyber_pylon.png', width: 'w-18 sm:w-22', height: 'h-24 sm:h-28' },
+};
+
 // Component to render modular decor items with isometric 3/4 styling & shadows
 const DecorItemSprite = ({ decor, isNight }) => {
   const { id } = decor;
 
-  if (id === 'golden_palace_building') {
-    return (
-      <svg width="140" height="110" viewBox="0 0 140 110" className="drop-shadow-2xl select-none pointer-events-none">
-        <ellipse cx="70" cy="100" rx="65" ry="9" fill="rgba(0,0,0,0.25)" />
-        {/* Main Palace Body */}
-        <path d="M25 50 L70 20 L115 50 L115 98 L25 98 Z" fill="#fef08a" stroke="#ca8a04" strokeWidth="2.5" />
-        {/* Side Wings */}
-        <rect x="15" y="60" width="20" height="38" rx="2" fill="#fef9c3" stroke="#ca8a04" strokeWidth="2" />
-        <rect x="105" y="60" width="20" height="38" rx="2" fill="#fef9c3" stroke="#ca8a04" strokeWidth="2" />
-        {/* Golden Central Dome */}
-        <path d="M48 42 Q70 8 92 42 Z" fill="#eab308" stroke="#a16207" strokeWidth="2.5" />
-        <circle cx="70" cy="8" r="4.5" fill="#fde047" stroke="#854d0e" strokeWidth="1.5" />
-        <polygon points="70,1 68,6 72,6" fill="#facc15" />
-        {/* Grand Portico Columns */}
-        <rect x="42" y="64" width="6" height="34" fill="#ffffff" stroke="#ca8a04" strokeWidth="1.5" />
-        <rect x="58" y="64" width="6" height="34" fill="#ffffff" stroke="#ca8a04" strokeWidth="1.5" />
-        <rect x="76" y="64" width="6" height="34" fill="#ffffff" stroke="#ca8a04" strokeWidth="1.5" />
-        <rect x="92" y="64" width="6" height="34" fill="#ffffff" stroke="#ca8a04" strokeWidth="1.5" />
-        {/* Golden Arch Entrance */}
-        <path d="M64 74 Q70 66 76 74 L76 98 L64 98 Z" fill="#713f12" stroke="#451a03" strokeWidth="1.8" />
-        {/* Royal Crest Banner */}
-        <polygon points="62,50 78,50 70,62" fill="#dc2626" stroke="#991b1b" strokeWidth="1" />
-        <circle cx="70" cy="55" r="2.5" fill="#fde047" />
-      </svg>
-    );
-  }
-
-  if (id === 'stone_well') {
+  const pngMeta = DECOR_PNG_MAP[id];
+  if (pngMeta) {
     return (
       <img
-        src="./pigs/decor_stone_well.png"
-        alt="Stone Well"
-        className="w-18 h-20 object-contain drop-shadow-xl select-none pointer-events-none hover:scale-105 transition-transform"
+        src={pngMeta.src}
+        alt={decor.name || id}
+        className={`${pngMeta.width} ${pngMeta.height} object-contain drop-shadow-xl select-none pointer-events-none hover:scale-105 transition-transform`}
       />
-    );
-  }
-
-  if (id === 'rose_hedge') {
-    return (
-      <svg width="80" height="48" viewBox="0 0 80 48" className="drop-shadow-md select-none pointer-events-none">
-        <ellipse cx="40" cy="42" rx="36" ry="5.5" fill="rgba(0,0,0,0.18)" />
-        {/* Green Hedge Bush */}
-        <ellipse cx="40" cy="30" rx="34" ry="14" fill="#15803d" stroke="#14532d" strokeWidth="2" />
-        <circle cx="22" cy="24" r="14" fill="#16a34a" />
-        <circle cx="58" cy="24" r="14" fill="#16a34a" />
-        <circle cx="40" cy="20" r="15" fill="#22c55e" />
-        {/* Blooming Roses */}
-        <circle cx="20" cy="20" r="5.5" fill="#e11d48" stroke="#9f1239" strokeWidth="1.2" />
-        <circle cx="20" cy="20" r="2.5" fill="#fda4af" />
-        <circle cx="40" cy="15" r="6" fill="#f43f5e" stroke="#9f1239" strokeWidth="1.2" />
-        <circle cx="40" cy="15" r="2.5" fill="#ffe4e6" />
-        <circle cx="60" cy="20" r="5.5" fill="#e11d48" stroke="#9f1239" strokeWidth="1.2" />
-        <circle cx="60" cy="20" r="2.5" fill="#fda4af" />
-        <circle cx="30" cy="28" r="4.5" fill="#fb7185" />
-        <circle cx="50" cy="28" r="4.5" fill="#fb7185" />
-      </svg>
-    );
-  }
-
-  if (id === 'veggie_patch') {
-    return (
-      <svg width="75" height="46" viewBox="0 0 75 46" className="drop-shadow-md select-none pointer-events-none">
-        <ellipse cx="37" cy="40" rx="34" ry="5.5" fill="rgba(0,0,0,0.18)" />
-        {/* Soil Raised Bed */}
-        <ellipse cx="37" cy="32" rx="32" ry="11" fill="#78350f" stroke="#451a03" strokeWidth="2" />
-        <ellipse cx="37" cy="30" rx="28" ry="8" fill="#92400e" />
-        {/* Crops (Carrots and Lettuce) */}
-        <circle cx="20" cy="26" r="6.5" fill="#16a34a" />
-        <circle cx="20" cy="26" r="3.5" fill="#86efac" />
-        <polygon points="34,22 40,22 37,32" fill="#ea580c" />
-        <circle cx="37" cy="20" r="3" fill="#22c55e" />
-        <circle cx="54" cy="26" r="6.5" fill="#16a34a" />
-        <circle cx="54" cy="26" r="3.5" fill="#86efac" />
-      </svg>
-    );
-  }
-
-  if (id === 'golden_fountain') {
-    return (
-      <svg width="76" height="84" viewBox="0 0 76 84" className="drop-shadow-[0_0_12px_rgba(251,191,36,0.6)] select-none pointer-events-none">
-        <ellipse cx="38" cy="74" rx="32" ry="7" fill="rgba(0,0,0,0.25)" />
-        <ellipse cx="38" cy="66" rx="30" ry="9" fill="#ca8a04" stroke="#713f12" strokeWidth="2.5" />
-        <ellipse cx="38" cy="64" rx="26" ry="7" fill="#38bdf8" />
-        <rect x="34" y="38" width="8" height="26" fill="#eab308" stroke="#713f12" strokeWidth="2" />
-        <ellipse cx="38" cy="38" rx="17" ry="5.5" fill="#fde047" stroke="#713f12" strokeWidth="2" />
-        <circle cx="38" cy="22" r="8" fill="#facc15" stroke="#713f12" strokeWidth="2" />
-        <line x1="38" y1="14" x2="38" y2="4" stroke="#bae6fd" strokeWidth="2.5" strokeLinecap="round" className="animate-pulse" />
-      </svg>
-    );
-  }
-
-  if (id === 'pine_tree') {
-    return (
-      <svg width="76" height="92" viewBox="0 0 76 92" className="drop-shadow-lg select-none pointer-events-none">
-        <ellipse cx="38" cy="84" rx="30" ry="7" fill="rgba(0,0,0,0.24)" />
-        <path d="M34 56 L32 82 L44 82 L42 56 Z" fill="#78350f" stroke="#3d1b06" strokeWidth="2.5" />
-        <polygon points="12,62 38,36 64,62" fill="#1e3a2f" stroke="#0f1d17" strokeWidth="2.5" />
-        <polygon points="16,60 38,38 60,60" fill="#2d5a46" />
-        <polygon points="18,44 38,20 58,44" fill="#366b53" stroke="#0f1d17" strokeWidth="2.5" />
-        <polygon points="22,42 38,22 54,42" fill="#428164" />
-        <polygon points="26,26 38,8 50,26" fill="#4ea07c" stroke="#0f1d17" strokeWidth="2.5" />
-        <circle cx="38" cy="8" r="2.5" fill="#a7f3d0" />
-      </svg>
-    );
-  }
-
-  if (id === 'ancient_oak') {
-    return (
-      <svg width="88" height="102" viewBox="0 0 88 102" className="drop-shadow-xl select-none pointer-events-none">
-        <ellipse cx="44" cy="94" rx="36" ry="7.5" fill="rgba(0,0,0,0.22)" />
-        <path d="M38 50 Q42 74 34 90 L54 90 Q46 74 50 50 Z" fill="#6d3914" stroke="#361a07" strokeWidth="2.8" />
-        <ellipse cx="44" cy="44" rx="38" ry="30" fill="#166534" stroke="#052e16" strokeWidth="2.5" />
-        <circle cx="30" cy="38" r="22" fill="#15803d" />
-        <circle cx="58" cy="38" r="22" fill="#16a34a" />
-        <circle cx="44" cy="24" r="23" fill="#22c55e" />
-        <circle cx="40" cy="18" r="9" fill="#86efac" opacity="0.6" />
-      </svg>
-    );
-  }
-
-  if (id === 'sakura_tree') {
-    return (
-      <svg width="84" height="98" viewBox="0 0 84 98" className="drop-shadow-lg select-none pointer-events-none">
-        <ellipse cx="42" cy="90" rx="32" ry="7" fill="rgba(0,0,0,0.2)" />
-        <path d="M37 50 Q40 72 33 86 L51 86 Q44 72 47 50 Z" fill="#582e17" stroke="#2d1509" strokeWidth="2.5" />
-        <ellipse cx="42" cy="42" rx="36" ry="28" fill="#be185d" stroke="#500724" strokeWidth="2.5" />
-        <circle cx="28" cy="36" r="20" fill="#db2777" />
-        <circle cx="56" cy="36" r="20" fill="#ec4899" />
-        <circle cx="42" cy="22" r="22" fill="#f472b6" />
-        <circle cx="38" cy="16" r="8" fill="#fbcfe8" opacity="0.75" />
-      </svg>
     );
   }
 
@@ -1512,17 +1404,6 @@ const DecorItemSprite = ({ decor, isNight }) => {
         <circle cx="56" cy="38" r="20" fill="#d97706" />
         <circle cx="42" cy="24" r="22" fill="#f59e0b" />
         <circle cx="38" cy="18" r="8" fill="#fde68a" opacity="0.7" />
-      </svg>
-    );
-  }
-
-  if (id === 'cyber_pylon') {
-    return (
-      <svg width="64" height="92" viewBox="0 0 64 92" className="drop-shadow-[0_0_12px_rgba(6,182,212,0.6)] select-none pointer-events-none">
-        <ellipse cx="32" cy="84" rx="24" ry="6" fill="rgba(6,182,212,0.3)" />
-        <path d="M24 28 L20 82 L44 82 L40 28 Z" fill="#0f172a" stroke="#06b6d4" strokeWidth="2.5" />
-        <circle cx="32" cy="22" r="13" fill="#0891b2" stroke="#22d3ee" strokeWidth="2.5" />
-        <circle cx="32" cy="22" r="6" fill="#67e8f9" className="animate-pulse" />
       </svg>
     );
   }
@@ -1971,21 +1852,44 @@ export default function HappyHogView() {
     }
   });
 
-  // Daily Quests State
+  // Daily Quests State (Rich, expanded 12 quests with automatic daily midnight reset)
   const INITIAL_QUESTS = [
-    { id: 'feed', title: 'ให้อาหารหมูในคอก', desc: 'ให้อาหารน้องหมูตัวใดก็ได้ 3 ครั้ง', target: 3, current: 0, rewardCoins: 120, rewardEnergy: 20, icon: '🥣', claimed: false },
-    { id: 'bath', title: 'อาบน้ำขัดตัวหมู', desc: 'พาหมูไปแช่น้ำขัดผิว 2 ครั้ง', target: 2, current: 0, rewardCoins: 100, rewardEnergy: 15, icon: '🧼', claimed: false },
-    { id: 'crop', title: 'เก็บเกี่ยวผลผลิตการเกษตร', desc: 'เก็บเกี่ยวพืชผักจากแปลงปลูก 2 แปลง', target: 2, current: 0, rewardCoins: 150, rewardCrops: { bran: 2 }, icon: '🧺', claimed: false },
-    { id: 'clean', title: 'เก็บกวาดลานฟาร์ม', desc: 'เก็บมูลหมูหรือวัชพืชในลานฟาร์ม 3 ชิ้น', target: 3, current: 0, rewardCoins: 120, icon: '🧹', claimed: false },
-    { id: 'visit', title: 'ออกไปเยี่ยมเพื่อน อบต.', desc: 'เยี่ยมคอกเพื่อนร่วมงานและช่วยให้อาหาร', target: 1, current: 0, rewardCoins: 100, icon: '🚜', claimed: false },
-    { id: 'sell', title: 'ขายหมูส่งโรงงานพัสดุ', desc: 'เลี้ยงหมูจนโตแล้วขายทำกำไร 1 ตัว', target: 1, current: 0, rewardCoins: 300, icon: '💰', claimed: false }
+    { id: 'feed', title: 'ให้อาหารหมูในคอก', desc: 'ให้อาหารน้องหมูตัวใดก็ได้ 3 ครั้ง', target: 3, current: 0, rewardCoins: 150, rewardEnergy: 20, icon: '🥣', claimed: false },
+    { id: 'bath', title: 'อาบน้ำขัดตัวหมู', desc: 'พาหมูไปแช่น้ำขัดผิว 2 ครั้ง', target: 2, current: 0, rewardCoins: 130, rewardEnergy: 15, icon: '🧼', claimed: false },
+    { id: 'pet', title: 'ลูบหัวสร้างความสุข', desc: 'ลูบหัวน้องหมูในคอกให้ร้องอู๊ดๆ 5 ครั้ง', target: 5, current: 0, rewardCoins: 120, rewardEnergy: 10, icon: '💖', claimed: false },
+    { id: 'drop_collect', title: 'เก็บของขวัญผลผลิตจากหมู', desc: 'แตะรับของขวัญดรอปจากหมูในคอก 3 ครั้ง', target: 3, current: 0, rewardCoins: 250, rewardEnergy: 20, icon: '🎁', claimed: false },
+    { id: 'clean', title: 'เก็บกวาดลานฟาร์ม', desc: 'เก็บมูลหมูหรือวัชพืชในลานฟาร์ม 3 ชิ้น', target: 3, current: 0, rewardCoins: 150, icon: '🧹', claimed: false },
+    { id: 'crop', title: 'เก็บเกี่ยวผลผลิตการเกษตร', desc: 'เก็บเกี่ยวพืชผักจากแปลงปลูก 2 แปลง', target: 2, current: 0, rewardCoins: 180, rewardCrops: { bran: 2 }, icon: '🧺', claimed: false },
+    { id: 'plant_crop', title: 'หว่านเมล็ดพันธุ์พืชผัก', desc: 'ปลูกพืชผักในแปลงเกษตร 3 แปลง', target: 3, current: 0, rewardCoins: 160, icon: '🌱', claimed: false },
+    { id: 'spin_wheel', title: 'หมุนวงล้อเสี่ยงโชคหมูทอง', desc: 'ร่วมสนุกหมุนวงล้อนำโชค 1 ครั้ง', target: 1, current: 0, rewardCoins: 120, icon: '🎡', claimed: false },
+    { id: 'visit', title: 'ออกไปเยี่ยมเพื่อน อบต.', desc: 'เยี่ยมคอกเพื่อนร่วมงานและช่วยให้อาหาร 1 ครั้ง', target: 1, current: 0, rewardCoins: 150, icon: '🚜', claimed: false },
+    { id: 'sell', title: 'ขายหมูส่งโรงงานพัสดุ', desc: 'เลี้ยงหมูจนโตแล้วขายทำกำไร 1 ตัว', target: 1, current: 0, rewardCoins: 350, icon: '💰', claimed: false },
+    { id: 'decor_care', title: 'นักตกแต่งคอกหมูมืออาชีพ', desc: 'ติดตั้งหรือปรับเปลี่ยนของประดับในคอก 1 ชิ้น', target: 1, current: 0, rewardCoins: 180, icon: '🪴', claimed: false },
+    { id: 'lab_breed', title: 'วิจัยขยายสายพันธุ์ในแล็บ', desc: 'ผสมพันธุ์ลูกหมูในห้องทดลอง 1 ครั้ง', target: 1, current: 0, rewardCoins: 500, rewardDiamonds: 1, icon: '🧬', claimed: false }
   ];
 
   const [quests, setQuests] = useState(() => {
     try {
+      const today = new Date().toISOString().slice(0, 10);
+      const savedDate = localStorage.getItem('happy_hog_quest_date');
       const saved = JSON.parse(localStorage.getItem('happy_hog_quests') || '[]');
-      if (Array.isArray(saved) && saved.length > 0) return saved;
-      return INITIAL_QUESTS;
+      
+      // If day changed or no date saved, reset to fresh daily quests
+      if (savedDate !== today || !Array.isArray(saved) || saved.length === 0) {
+        localStorage.setItem('happy_hog_quest_date', today);
+        localStorage.setItem('happy_hog_wheel_spins', '3');
+        return INITIAL_QUESTS;
+      }
+
+      // Merge saved progress with current INITIAL_QUESTS
+      return INITIAL_QUESTS.map((initQ) => {
+        const found = saved.find((s) => s.id === initQ.id);
+        if (found) {
+          const current = typeof found.current === 'number' ? found.current : (typeof found.progress === 'number' ? found.progress : 0);
+          return { ...initQ, current, claimed: !!found.claimed };
+        }
+        return initQ;
+      });
     } catch {
       return INITIAL_QUESTS;
     }
@@ -2066,6 +1970,7 @@ export default function HappyHogView() {
 
   const [bubbles, setBubbles] = useState([]);
   const [hearts, setHearts] = useState([]);
+  const [floatingRewards, setFloatingRewards] = useState([]);
   const [currentTime, setCurrentTime] = useState(Date.now());
 
   // Timer loop for crop growth, energy regeneration (1 min / 1 energy), and Yard Litter spawning + Diamond / Breed passive bonuses
@@ -2074,6 +1979,19 @@ export default function HappyHogView() {
     const timer = setInterval(() => {
       secondTick += 1;
       setCurrentTime(Date.now());
+
+      // Daily midnight check: auto-reset daily quests and wheel spins when the calendar day rolls over
+      if (secondTick % 10 === 0) {
+        const todayCalendar = new Date().toISOString().slice(0, 10);
+        const savedQuestDate = localStorage.getItem('happy_hog_quest_date');
+        if (savedQuestDate && savedQuestDate !== todayCalendar) {
+          localStorage.setItem('happy_hog_quest_date', todayCalendar);
+          localStorage.setItem('happy_hog_wheel_spins', '3');
+          setWheelSpinsToday(3);
+          setQuests(INITIAL_QUESTS);
+          showToast('🌅 วันใหม่เริ่มต้นแล้ว! ภารกิจประจำวันและสิทธิ์หมุนวงล้อรีเซ็ตเรียบร้อยแล้ว');
+        }
+      }
 
       // Energy regen: +1 every 60 seconds (1 minute / 1 energy) naturally, or fast +1 every 15s if farm has galaxy pig
       const hasGalaxy = pigs.some((p) => p.breed === 'galaxy');
@@ -2495,6 +2413,7 @@ export default function HappyHogView() {
     let totalExpEarned = 0;
     let totalDiamondsEarned = 0;
     let collectedCount = 0;
+    const newFloating = [];
 
     const updatedPigs = pigs.map((p) => {
       const dropCfg = PIG_DROP_CONFIG[p.breed] || PIG_DROP_CONFIG.pink;
@@ -2502,11 +2421,28 @@ export default function HappyHogView() {
       const isReady = (currentTime - (p.lastDropTime || 0)) >= cycleMs;
       if (isReady) {
         collectedCount++;
-        totalCoinsEarned += dropCfg.coinReward || 50;
-        totalExpEarned += dropCfg.expReward || 15;
-        if (dropCfg.isMythic && Math.random() < (dropCfg.diamondChance || 0.3)) {
-          totalDiamondsEarned += dropCfg.diamondCount || 1;
+        const reward = dropCfg.roll();
+        totalCoinsEarned += reward.coins || dropCfg.coinReward || 50;
+        totalExpEarned += reward.exp || dropCfg.expReward || 15;
+        if (reward.diamonds > 0) {
+          totalDiamondsEarned += reward.diamonds;
         }
+
+        const items = [
+          { icon: '🪙', text: `+${(reward.coins || dropCfg.coinReward || 50).toLocaleString()} ฿` },
+          reward.diamonds > 0 ? { icon: '💎', text: `+${reward.diamonds} 💎` } : null,
+          { icon: '⭐', text: `+${reward.exp || dropCfg.expReward || 15} EXP` }
+        ].filter(Boolean);
+
+        newFloating.push({
+          id: Date.now() + Math.random() + collectedCount,
+          x: p.x,
+          y: Math.max(14, p.y - 12),
+          items,
+          isMythic: reward.diamonds > 0
+        });
+
+        triggerPigJoy(p.id);
         return { ...p, lastDropTime: currentTime };
       }
       return p;
@@ -2515,10 +2451,18 @@ export default function HappyHogView() {
     if (collectedCount > 0) {
       setPigs(updatedPigs);
       setCoins((c) => c + totalCoinsEarned);
-      setDiamonds((d) => d + totalDiamondsEarned);
+      if (totalDiamondsEarned > 0) setDiamonds((d) => d + totalDiamondsEarned);
       setFarmExp((exp) => exp + totalExpEarned);
-      playSound('fanfare', isMuted);
-      showToast(`🎉 เก็บของขวัญจากหมู ${collectedCount} ตัวสำเร็จ! (+${totalCoinsEarned} 🪙${totalDiamondsEarned > 0 ? `, +${totalDiamondsEarned} 💎` : ''}, +${totalExpEarned} EXP)`);
+      playSound(totalDiamondsEarned > 0 ? 'fanfare' : 'coin', isMuted);
+
+      // Trigger floating badges for all collected pigs
+      setFloatingRewards((prev) => [...prev, ...newFloating]);
+      setTimeout(() => {
+        setFloatingRewards((prev) => prev.filter((fr) => !newFloating.some((nf) => nf.id === fr.id)));
+      }, 2200);
+
+      advanceQuest('drop_collect', collectedCount);
+      showToast(`🎉 เก็บของขวัญจากหมู ${collectedCount} ตัวสำเร็จ! (+${totalCoinsEarned.toLocaleString()} 🪙${totalDiamondsEarned > 0 ? `, +${totalDiamondsEarned} 💎` : ''}, +${totalExpEarned} EXP)`);
     } else {
       showToast('⏳ ยังไม่มีของขวัญที่พร้อมเก็บในขณะนี้');
     }
@@ -2558,6 +2502,31 @@ export default function HappyHogView() {
     triggerPigJoy(pig.id);
     playSound(reward.diamonds > 0 ? 'fanfare' : 'coin', isMuted);
 
+    // Floating Reward Animation Badges
+    const rewardItems = [
+      reward.coins > 0 ? { icon: '🪙', text: `+${reward.coins.toLocaleString()} ฿` } : null,
+      reward.diamonds > 0 ? { icon: '💎', text: `+${reward.diamonds} 💎` } : null,
+      reward.exp > 0 ? { icon: '⭐', text: `+${reward.exp} EXP` } : null,
+      reward.energy > 0 ? { icon: '⚡', text: `+${reward.energy} ⚡` } : null
+    ].filter(Boolean);
+
+    const newEffectId = Date.now() + Math.random();
+    setFloatingRewards((prev) => [
+      ...prev,
+      {
+        id: newEffectId,
+        x: pig.x,
+        y: Math.max(14, pig.y - 12),
+        items: rewardItems,
+        isMythic: reward.diamonds > 0
+      }
+    ]);
+    setTimeout(() => {
+      setFloatingRewards((prev) => prev.filter((fr) => fr.id !== newEffectId));
+    }, 2200);
+
+    advanceQuest('drop_collect', 1);
+
     setHearts((h) => [...h, { id: Date.now(), x: pig.x, y: pig.y - 12 }]);
     setTimeout(() => setHearts((h) => h.slice(1)), 1200);
 
@@ -2579,6 +2548,7 @@ export default function HappyHogView() {
         next = [...prev, decorId];
         const decor = BARN_DECORS[decorId];
         showToast(`✨ ติดตั้ง ${decor?.name || 'ของตกแต่ง'} ในคอกแล้ว!`);
+        advanceQuest('decor_care', 1);
       }
       try {
         localStorage.setItem('happy_hog_equipped_decors', JSON.stringify(next));
@@ -2944,6 +2914,7 @@ export default function HappyHogView() {
 
     setSelectedPigId(baby.id);
     setStats((s) => ({ ...s, breedCount: s.breedCount + 1 }));
+    advanceQuest('lab_breed', 1);
     addExp(isMythicJackpot ? 200 : 50);
 
     if (!unlockedBreeds.includes(resultBreed)) {
@@ -2972,6 +2943,8 @@ export default function HappyHogView() {
     }
   };
 
+  const handleBreedPigs = handleBreed;
+
   const handlePlantCrop = (plotId, seedKey) => {
     const meta = CROPS_META[seedKey];
     if (coins < meta.seedCost) {
@@ -2994,8 +2967,11 @@ export default function HappyHogView() {
           : plot
       )
     );
+    advanceQuest('plant_crop', 1);
     showToast(`🌱 หว่านเมล็ด "${meta.name}" แล้ว! (รอ ${meta.duration} วินาที, -1 ⚡)`);
   };
+
+  const handlePlantSeed = handlePlantCrop;
 
   const handleHarvestCrop = (plotId) => {
     const plot = crops.find((p) => p.id === plotId);
@@ -3039,9 +3015,15 @@ export default function HappyHogView() {
     showToast(`✨ เก็บ ${drop.label} สะอาดเอี่ยม! ได้รับ +${drop.reward} 🪙 & +8 EXP (-1 ⚡)`);
   };
 
-  const handleClaimQuest = (quest) => {
-    if (quest.current < quest.target || quest.claimed) return;
+  const handleClaimQuest = (questOrId) => {
+    const quest = typeof questOrId === 'string'
+      ? quests.find((q) => q.id === questOrId)
+      : questOrId;
+    if (!quest) return;
+    const currentProgress = typeof quest.current === 'number' ? quest.current : (typeof quest.progress === 'number' ? quest.progress : 0);
+    if (currentProgress < quest.target || quest.claimed) return;
     if (quest.rewardCoins) setCoins((c) => c + quest.rewardCoins);
+    if (quest.rewardDiamonds) setDiamonds((d) => d + quest.rewardDiamonds);
     if (quest.rewardEnergy) setEnergy((e) => Math.min(maxEnergy, e + quest.rewardEnergy));
     if (quest.rewardCrops) {
       setCropInventory((inv) => {
@@ -3062,6 +3044,7 @@ export default function HappyHogView() {
       badge: 'DAILY QUEST COMPLETED',
       rewardText: [
         quest.rewardCoins ? `+${quest.rewardCoins} 🪙` : null,
+        quest.rewardDiamonds ? `+${quest.rewardDiamonds} 💎` : null,
         quest.rewardEnergy ? `+${quest.rewardEnergy} ⚡` : null,
         quest.rewardCrops ? `+2 🌾` : null,
         '+40 EXP ⭐'
@@ -3207,6 +3190,8 @@ export default function HappyHogView() {
     } else {
       setCoins((c) => c - 50);
     }
+
+    advanceQuest('spin_wheel', 1);
 
     setIsSpinning(true);
     playSound('feed', isMuted);
@@ -3837,6 +3822,36 @@ export default function HappyHogView() {
                   </div>
                 ))}
 
+                {/* Floating Reward Badges on Drop Collection */}
+                {floatingRewards.map((fr) => (
+                  <div
+                    key={fr.id}
+                    style={{
+                      left: `${fr.x}%`,
+                      top: `${fr.y}%`
+                    }}
+                    className="absolute pointer-events-none z-50 flex flex-col items-center -translate-x-1/2 gap-1.5 select-none animate-float-reward"
+                  >
+                    {fr.items.map((it, idx) => (
+                      <div
+                        key={idx}
+                        className={`px-3 py-1 rounded-full font-black text-xs shadow-2xl border-2 flex items-center space-x-1.5 backdrop-blur-md transform transition-all ${
+                          it.icon === '💎'
+                            ? 'bg-gradient-to-r from-purple-900/95 via-indigo-900/95 to-purple-900/95 text-cyan-200 border-cyan-300 shadow-purple-500/50 scale-110 animate-pulse'
+                            : it.icon === '🪙'
+                            ? 'bg-gradient-to-r from-amber-950/95 via-yellow-950/95 to-amber-950/95 text-yellow-300 border-amber-300 shadow-amber-500/40'
+                            : it.icon === '⚡'
+                            ? 'bg-gradient-to-r from-sky-950/95 to-blue-950/95 text-sky-300 border-sky-400 shadow-sky-500/40'
+                            : 'bg-gradient-to-r from-emerald-950/95 to-teal-950/95 text-emerald-300 border-emerald-400 shadow-emerald-500/40'
+                        }`}
+                      >
+                        <span className="text-sm drop-shadow-sm">{it.icon}</span>
+                        <span className="font-mono tracking-tight font-black text-[11px] sm:text-xs">{it.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+
                 {/* ================= INTERACTIVE FARM YARD DROPS (TAP-TO-EARN & CLEANUP) ================= */}
                 {yardDrops.map((drop) => (
                   <div
@@ -3906,6 +3921,9 @@ export default function HappyHogView() {
                         } else {
                           triggerPigJoy(pig.id);
                           playSound('oink', isMuted);
+                          advanceQuest('pet', 1);
+                          setHearts((h) => [...h, { id: Date.now(), x: pig.x, y: pig.y - 12 }]);
+                          setTimeout(() => setHearts((h) => h.slice(1)), 1200);
                         }
                       }}
                       style={{
@@ -5022,6 +5040,11 @@ export default function HappyHogView() {
                               +{q.rewardCoins} 🪙
                             </span>
                           )}
+                          {q.rewardDiamonds && (
+                            <span className="text-[10px] font-black bg-purple-100 text-purple-900 px-2 py-0.5 rounded-full border border-purple-300">
+                              +{q.rewardDiamonds} 💎
+                            </span>
+                          )}
                           {q.rewardEnergy && (
                             <span className="text-[10px] font-black bg-blue-100 text-blue-900 px-2 py-0.5 rounded-full border border-blue-300">
                               +{q.rewardEnergy} ⚡
@@ -5625,7 +5648,7 @@ export default function HappyHogView() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 max-h-[55vh] overflow-y-auto pr-1">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-h-[55vh] overflow-y-auto pr-1">
                       {Object.values(BARN_DECORS)
                         .filter((d) => decorCategoryFilter === 'all' || d.category === decorCategoryFilter)
                         .map((item) => {
@@ -5635,48 +5658,58 @@ export default function HappyHogView() {
                           return (
                             <div
                               key={item.id}
-                              className="bg-white rounded-2xl border-2 border-amber-400 p-2.5 flex flex-col justify-between items-center text-center shadow-sm space-y-1.5"
+                              className={`rounded-2xl border-2 p-2.5 flex flex-col justify-between items-center text-center shadow-sm space-y-2 transition-all ${
+                                isEquipped
+                                  ? 'bg-gradient-to-b from-emerald-50/90 to-teal-50/90 border-emerald-500 ring-2 ring-emerald-400/40'
+                                  : isUnlocked
+                                  ? 'bg-white border-sky-400'
+                                  : 'bg-white border-amber-300'
+                              }`}
                             >
-                              <div className="w-full flex justify-between items-center text-[9px] text-amber-800 font-bold">
-                                <span className="bg-amber-100 px-1.5 py-0.5 rounded-full">{item.tag}</span>
+                              <div className="w-full flex justify-between items-center text-[10px] font-bold">
+                                <span className="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full border border-amber-200">{item.tag}</span>
                                 {isEquipped ? (
-                                  <span className="bg-emerald-600 text-white px-1.5 py-0.5 rounded-full font-black">
-                                    ติดตั้ง
+                                  <span className="bg-emerald-600 text-white px-2 py-0.5 rounded-full font-black text-[10px] shadow-xs">
+                                    ✓ วางในคอก
                                   </span>
                                 ) : isUnlocked ? (
-                                  <span className="bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded-full">
-                                    มีแล้ว
+                                  <span className="bg-sky-100 text-sky-800 px-2 py-0.5 rounded-full font-bold text-[10px] border border-sky-300">
+                                    มีในคลัง
                                   </span>
-                                ) : null}
+                                ) : (
+                                  <span className="font-mono text-amber-900 font-extrabold text-[11px]">
+                                    {item.cost.toLocaleString()} 🪙
+                                  </span>
+                                )}
                               </div>
 
-                              <div className="h-20 flex items-center justify-center my-0.5">
+                              <div className="w-full h-24 flex items-center justify-center p-1 bg-amber-50/50 rounded-xl border border-amber-100/60 overflow-hidden">
                                 <DecorItemSprite decor={item} isNight={false} />
                               </div>
 
-                              <div className="w-full space-y-0.5">
-                                <div className="font-black text-slate-900 text-xs truncate">{item.name}</div>
-                                <div className="text-[9px] text-amber-900 line-clamp-2 h-6">{item.perk}</div>
+                              <div className="w-full space-y-1">
+                                <div className="font-black text-slate-900 text-xs truncate" title={item.name}>{item.name}</div>
+                                <div className="text-[10px] text-slate-600 line-clamp-2 min-h-[28px] leading-tight" title={item.perk}>{item.perk}</div>
                               </div>
 
-                              <div className="w-full pt-1 border-t border-amber-200">
+                              <div className="w-full pt-1.5 border-t border-amber-200">
                                 {isUnlocked ? (
                                   <button
                                     onClick={() => handleToggleEquipDecor(item.id)}
-                                    className={`w-full py-1 rounded-lg font-black text-[11px] cursor-pointer ${
+                                    className={`w-full py-1.5 rounded-xl font-black text-xs cursor-pointer shadow-xs active:scale-95 transition-all flex items-center justify-center space-x-1 ${
                                       isEquipped
-                                        ? 'bg-rose-100 text-rose-700 hover:bg-rose-200'
-                                        : 'bg-emerald-600 text-white hover:bg-emerald-500'
+                                        ? 'bg-rose-500 hover:bg-rose-600 text-white shadow-rose-200'
+                                        : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-200'
                                     }`}
                                   >
-                                    {isEquipped ? '📦 ถอดออก' : '✨ ติดตั้ง'}
+                                    <span>{isEquipped ? '📦 ถอดออกจากคอก' : '✨ นำไปวางในคอก'}</span>
                                   </button>
                                 ) : (
                                   <button
                                     onClick={() => handleBuyDecor(item.id)}
-                                    className="w-full py-1 rounded-lg font-black text-[11px] bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 text-amber-950 border border-amber-600 cursor-pointer active:scale-95"
+                                    className="w-full py-1.5 rounded-xl font-black text-xs bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 text-amber-950 border border-amber-600 shadow-xs cursor-pointer active:scale-95 transition-all flex items-center justify-center space-x-1"
                                   >
-                                    {item.cost} 🪙
+                                    <span>ซื้อ {item.cost.toLocaleString()} 🪙</span>
                                   </button>
                                 )}
                               </div>
@@ -5794,40 +5827,46 @@ export default function HappyHogView() {
               <div className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto pr-1">
                   {quests.map((q) => {
-                    const progressPct = Math.min(100, Math.round((q.progress / q.target) * 100));
+                    const currentVal = typeof q.current === 'number' ? q.current : (typeof q.progress === 'number' ? q.progress : 0);
+                    const progressPct = Math.min(100, Math.round((currentVal / q.target) * 100));
+                    const isCompleted = currentVal >= q.target;
+
                     return (
                       <div
                         key={q.id}
                         className={`p-3.5 rounded-2xl border-2 flex flex-col justify-between space-y-2.5 transition-all ${
                           q.claimed
                             ? 'bg-slate-100 border-slate-300 opacity-60'
-                            : q.progress >= q.target
-                            ? 'bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-500 shadow-md'
+                            : isCompleted
+                            ? 'bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-emerald-500 shadow-md ring-1 ring-emerald-300'
                             : 'bg-white border-amber-300 shadow-xs'
                         }`}
                       >
                         <div className="flex items-start justify-between gap-2">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-2xl">{q.icon}</span>
+                          <div className="flex items-center space-x-2.5">
+                            <span className="text-2xl shrink-0 p-1 bg-amber-50 rounded-xl border border-amber-200">{q.icon}</span>
                             <div>
                               <div className="font-black text-slate-900 text-xs">{q.title}</div>
-                              <div className="text-[11px] text-slate-600">{q.description}</div>
+                              <div className="text-[11px] text-slate-600 line-clamp-2 mt-0.5">{q.desc || q.description}</div>
                             </div>
                           </div>
-                          <div className="text-right shrink-0">
-                            <div className="text-[11px] font-black text-amber-900 font-mono">+{q.rewardCoins} 🪙</div>
-                            <div className="text-[10px] font-bold text-emerald-700 font-mono">+{q.rewardExp} EXP</div>
+                          <div className="text-right shrink-0 flex flex-col items-end space-y-0.5">
+                            {q.rewardCoins && <div className="text-[11px] font-black text-amber-900 font-mono">+{q.rewardCoins.toLocaleString()} 🪙</div>}
+                            {q.rewardDiamonds && <div className="text-[10px] font-black text-purple-700 font-mono">+{q.rewardDiamonds} 💎</div>}
+                            {q.rewardEnergy && <div className="text-[10px] font-black text-sky-700 font-mono">+{q.rewardEnergy} ⚡</div>}
+                            {q.rewardCrops && <div className="text-[10px] font-bold text-amber-700 font-mono">+2 🌾</div>}
+                            <div className="text-[10px] font-bold text-emerald-700 font-mono">+40 EXP</div>
                           </div>
                         </div>
 
                         <div className="space-y-1">
                           <div className="flex justify-between text-[10px] font-bold text-slate-700">
                             <span>ความคืบหน้า</span>
-                            <span>{q.progress}/{q.target}</span>
+                            <span className="font-mono">{currentVal}/{q.target} ({progressPct}%)</span>
                           </div>
                           <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
                             <div
-                              className="bg-emerald-500 h-full transition-all duration-300"
+                              className={`h-full transition-all duration-300 ${isCompleted ? 'bg-emerald-500' : 'bg-amber-500'}`}
                               style={{ width: `${progressPct}%` }}
                             />
                           </div>
@@ -5835,21 +5874,21 @@ export default function HappyHogView() {
 
                         <div>
                           {q.claimed ? (
-                            <div className="text-center text-xs font-bold text-slate-400 py-1">
+                            <div className="text-center text-xs font-bold text-slate-400 py-1 bg-slate-200/50 rounded-xl">
                               ✓ รับรางวัลแล้ว
                             </div>
                           ) : (
                             <button
-                              onClick={() => handleClaimQuest(q.id)}
-                              disabled={q.progress < q.target}
+                              onClick={() => handleClaimQuest(q)}
+                              disabled={!isCompleted}
                               className={`w-full py-1.5 rounded-xl font-black text-xs transition-all cursor-pointer flex items-center justify-center space-x-1 ${
-                                q.progress >= q.target
+                                isCompleted
                                   ? 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 text-white shadow-sm active:scale-95 animate-pulse'
                                   : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                               }`}
                             >
                               <span>🎁</span>
-                              <span>{q.progress >= q.target ? 'กดรับรางวัล!' : 'ยังทำไม่สำเร็จ'}</span>
+                              <span>{isCompleted ? 'กดรับรางวัล!' : 'ยังทำไม่สำเร็จ'}</span>
                             </button>
                           )}
                         </div>
