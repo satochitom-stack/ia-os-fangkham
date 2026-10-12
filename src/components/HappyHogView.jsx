@@ -3086,6 +3086,27 @@ export default function HappyHogView() {
     });
   };
 
+  // Rotating Diamond Breeds for Lucky Wheel Grand Jackpot (1 breed per day, rotates daily)
+  const ROTATING_DIAMOND_PIGS = [
+    { key: 'jade_dragon', name: 'หมูมังกรหยกประทานพร', shortLabel: 'มังกรหยก 💎', icon: '🐉', tag: 'มังกรหยก' },
+    { key: 'phoenix', name: 'หมูวิหคเพลิงสุริยัน', shortLabel: 'วิหคเพลิง 💎', icon: '🔥', tag: 'วิหคเพลิง' },
+    { key: 'galaxy', name: 'หมูจักรวาลเรืองแสง', shortLabel: 'กาแล็กซี่ 💎', icon: '🌌', tag: 'กาแล็กซี่' },
+    { key: 'cyber_satoshi', name: 'หมูจักรกลคริปโตไซเบอร์', shortLabel: 'ไซเบอร์ 💎', icon: '🤖', tag: 'ไซเบอร์' },
+    { key: 'inferno_titan', name: 'หมูอสูรไททันเพลิงกัลป์', shortLabel: 'ไททัน 💎', icon: '🌋', tag: 'ไททัน' },
+    { key: 'diamond_angel', name: 'หมูเทพธิดาจันทราเพชร', shortLabel: 'เทพธิดา 💎', icon: '🕊️', tag: 'เทพธิดา' }
+  ];
+
+  // Daily Rotating Diamond Pig Grand Jackpot (Calculated by Thailand Date UTC+7)
+  const getTodayDiamondPig = () => {
+    const now = new Date();
+    // Thai Time UTC+7 (GMT+7)
+    const thaiDate = new Date(now.getTime() + (7 * 60 * 60 * 1000));
+    const dayNumber = Math.floor(Date.UTC(thaiDate.getUTCFullYear(), thaiDate.getUTCMonth(), thaiDate.getUTCDate()) / (1000 * 60 * 60 * 24));
+    return ROTATING_DIAMOND_PIGS[Math.abs(dayNumber) % ROTATING_DIAMOND_PIGS.length];
+  };
+
+  const todayDiamondPig = getTodayDiamondPig();
+
   const WHEEL_PRIZES = [
     {
       id: 0,
@@ -3166,15 +3187,17 @@ export default function HappyHogView() {
     },
     {
       id: 7,
-      name: 'แจ็กพอตเศรษฐีพันล้าน',
-      shortLabel: '1,000฿ 👑',
-      icon: '👑',
-      rewardDesc: 'แจ็กพอต 1,000 เหรียญทองคำ!',
+      name: `มหาแจ็กพอต: ${todayDiamondPig.name}`,
+      shortLabel: todayDiamondPig.shortLabel,
+      icon: todayDiamondPig.icon,
+      rewardDesc: `👑 มหาแจ็กพอตแตก (0.01%)! ได้รับ "${todayDiamondPig.name}" (สัตว์เทพมูลค่า ${PIG_BREEDS[todayDiamondPig.key]?.diamondCost || 999} 💎) เข้าสู่คอกฟาร์มทันที!`,
       color: '#e11d48',
       sliceGrad: ['#e11d48', '#be123c'],
       textColor: '#fef08a',
-      coins: 1000,
-      isJackpot: true
+      isJackpot: true,
+      isDiamondPigJackpot: true,
+      pigBreed: todayDiamondPig.key,
+      pigMeta: todayDiamondPig
     }
   ];
 
@@ -3195,7 +3218,34 @@ export default function HappyHogView() {
 
     setIsSpinning(true);
     playSound('feed', isMuted);
-    const prizeIndex = Math.floor(Math.random() * WHEEL_PRIZES.length);
+
+    // Precise probability roll: Grand Jackpot = strictly 0.01% (0.0001)
+    const roll = Math.random();
+    let prizeIndex;
+
+    if (roll < 0.0001) {
+      // 0.01% chance for Daily Diamond Pig Grand Jackpot!
+      prizeIndex = 7;
+    } else {
+      // Remaining 99.99% distributed across normal prizes
+      const sub = Math.random();
+      if (sub < 0.25) {
+        prizeIndex = 0; // +150 ฿ (25%)
+      } else if (sub < 0.45) {
+        prizeIndex = 2; // +30 ⚡ (20%)
+      } else if (sub < 0.63) {
+        prizeIndex = 1; // ข้าวโพด x3 (18%)
+      } else if (sub < 0.78) {
+        prizeIndex = 3; // +300 ฿ (15%)
+      } else if (sub < 0.90) {
+        prizeIndex = 4; // แครอท x2 (12%)
+      } else if (sub < 0.985) {
+        prizeIndex = 6; // ฟักทอง x1 (8.5%)
+      } else {
+        prizeIndex = 5; // +50 💎 (1.49%)
+      }
+    }
+
     const sliceAngle = 45; // 360 / 8
     const extraTurns = 6 * 360;
     // Align center of prizeIndex slice with 12 o'clock pointer (-90 deg)
@@ -3206,6 +3256,31 @@ export default function HappyHogView() {
     setTimeout(() => {
       setIsSpinning(false);
       const won = WHEEL_PRIZES[prizeIndex];
+
+      if (won.isDiamondPigJackpot && won.pigBreed) {
+        // Unlock breed permanently
+        if (!unlockedBreeds.includes(won.pigBreed)) {
+          setUnlockedBreeds((prev) => [...prev, won.pigBreed]);
+        }
+        // Spawn pig in farm
+        const coord = getRandomCoordInBarn(activeThemeId);
+        const wonPig = {
+          id: Date.now(),
+          name: `${won.pigMeta.name} (วงล้อ 0.01%)`,
+          breed: won.pigBreed,
+          weight: 25,
+          hunger: 100,
+          cleanliness: 100,
+          health: 100,
+          x: coord.x,
+          y: coord.y,
+          direction: 1
+        };
+        setPigs((prev) => [...prev, wonPig]);
+        setSelectedPigId(wonPig.id);
+        addExp(300);
+      }
+
       if (won.coins) setCoins((c) => c + won.coins);
       if (won.diamonds) setDiamonds((d) => d + won.diamonds);
       if (won.energy) setEnergy((e) => Math.min(maxEnergy, e + won.energy));
@@ -3218,16 +3293,30 @@ export default function HappyHogView() {
           return next;
         });
       }
-      playSound('fanfare', isMuted);
+
+      playSound(won.isJackpot ? 'fanfare' : 'coin', isMuted);
+
       // Trigger Big Reward Celebration Modal!
-      setCelebrationReward({
-        title: won.isJackpot ? '👑 มหาแจ็กพอต 1,000฿ แตก!' : '🎉 ยินดีด้วย! คุณได้รับรางวัล',
-        subtitle: `วงล้อหมูพารวยหยุดที่ช่อง "${won.name}"`,
-        icon: won.icon,
-        badge: won.isJackpot ? 'MEGA JACKPOT' : 'LUCKY PIGGY WHEEL',
-        rewardText: won.rewardDesc,
-        color: won.color
-      });
+      if (won.isDiamondPigJackpot) {
+        setCelebrationReward({
+          title: '👑 มหาแจ็กพอตหมูเพชรในตำนานแตก! (0.01%)',
+          subtitle: `ปาฏิหาริย์วงล้อหมูพารวย! คุณได้รับ "${won.pigMeta.name}"`,
+          icon: won.pigMeta.icon,
+          badge: 'ULTRA RARE JACKPOT (0.01%)',
+          rewardText: `ได้รับ: ${won.pigMeta.name} (สัตว์เทพมูลค่า ${PIG_BREEDS[won.pigBreed]?.diamondCost || 999} 💎) เข้าฟาร์มทันที! & +300 EXP`,
+          color: '#e11d48'
+        });
+        showToast(`👑 มหาแจ็กพอต 0.01% แตก! ได้รับ "${won.pigMeta.name}" เข้าสู่ฟาร์มแล้ว!`);
+      } else {
+        setCelebrationReward({
+          title: '🎉 ยินดีด้วย! คุณได้รับรางวัล',
+          subtitle: `วงล้อหมูพารวยหยุดที่ช่อง "${won.name}"`,
+          icon: won.icon,
+          badge: 'LUCKY PIGGY WHEEL',
+          rewardText: won.rewardDesc,
+          color: won.color
+        });
+      }
     }, 3600);
   };
 
@@ -6318,6 +6407,29 @@ export default function HappyHogView() {
               </button>
             </div>
 
+            {/* Daily Rotating Diamond Pig Grand Jackpot Banner */}
+            <div className="bg-gradient-to-r from-purple-950 via-rose-950 to-purple-950 border-2 border-amber-400 rounded-2xl p-2.5 flex items-center justify-between text-left shadow-lg">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-11 h-11 bg-black/60 rounded-xl border border-amber-300 flex items-center justify-center p-1 shrink-0 relative overflow-hidden shadow-inner">
+                  <img src={`./pigs/${todayDiamondPig.key}.png`} alt={todayDiamondPig.name} className="w-9 h-9 object-contain drop-shadow-md animate-pulse" />
+                  <span className="absolute -top-1 -right-1 text-xs">👑</span>
+                </div>
+                <div>
+                  <div className="text-[10px] font-black text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <span>👑 มหาแจ็กพอตประจำวันนี้</span>
+                    <span className="bg-rose-600 text-white text-[9px] px-1.5 py-0.2 rounded-full font-mono font-black animate-pulse">0.01%</span>
+                  </div>
+                  <div className="text-xs font-black text-white">{todayDiamondPig.name}</div>
+                  <div className="text-[9px] text-purple-200">สลับสายพันธุ์สัตว์เทพทุกเที่ยงคืน (00:00 น.)</div>
+                </div>
+              </div>
+              <div className="text-right shrink-0">
+                <span className="bg-purple-600/90 text-yellow-300 text-[10px] font-black px-2 py-1 rounded-xl border border-purple-400/60 shadow-xs block">
+                  {PIG_BREEDS[todayDiamondPig.key]?.diamondCost || 999} 💎
+                </span>
+              </div>
+            </div>
+
             {/* Rotating Wheel Viewport with Golden Frame and 16 LED Bulbs */}
             <div className="relative w-72 h-72 sm:w-80 sm:h-80 mx-auto my-1 flex items-center justify-center select-none">
               {/* Outer Golden Glow */}
@@ -6397,24 +6509,48 @@ export default function HappyHogView() {
 
                         {/* Slice Content (Oriented radially towards center) */}
                         <g transform={`rotate(${midAngle + 90}, 150, 150)`}>
-                          {/* Large Icon */}
-                          <text
-                            x="150"
-                            y="44"
-                            fontSize="24"
-                            textAnchor="middle"
-                            dominantBaseline="central"
-                            className="select-none"
-                            style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))' }}
-                          >
-                            {prize.icon}
-                          </text>
+                          {/* Large Icon or Diamond Pig Sprite */}
+                          {prize.isDiamondPigJackpot && prize.pigBreed ? (
+                            <g>
+                              <image
+                                href={`./pigs/${prize.pigBreed}.png`}
+                                x="133"
+                                y="25"
+                                width="34"
+                                height="34"
+                                className="select-none pointer-events-none"
+                                style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.6))' }}
+                              />
+                              <text
+                                x="150"
+                                y="21"
+                                fontSize="12"
+                                textAnchor="middle"
+                                dominantBaseline="central"
+                                className="select-none pointer-events-none"
+                              >
+                                👑
+                              </text>
+                            </g>
+                          ) : (
+                            <text
+                              x="150"
+                              y="44"
+                              fontSize="24"
+                              textAnchor="middle"
+                              dominantBaseline="central"
+                              className="select-none pointer-events-none"
+                              style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))' }}
+                            >
+                              {prize.icon}
+                            </text>
+                          )}
 
                           {/* Bold, Clear, Crisp Prize Label */}
                           <text
                             x="150"
                             y="75"
-                            fontSize="11.5"
+                            fontSize={prize.isDiamondPigJackpot ? "10" : "11.5"}
                             fontWeight="900"
                             fill={prize.textColor}
                             textAnchor="middle"
@@ -6422,7 +6558,7 @@ export default function HappyHogView() {
                             stroke="#1a0802"
                             strokeWidth="2.5"
                             paintOrder="stroke fill"
-                            className="font-mono tracking-tight select-none"
+                            className="font-mono tracking-tight select-none pointer-events-none"
                           >
                             {prize.shortLabel}
                           </text>
@@ -6448,17 +6584,35 @@ export default function HappyHogView() {
 
             {/* Prize Summary Legend Grid */}
             <div className="bg-amber-950/70 p-2.5 rounded-2xl border border-amber-700/80">
-              <span className="text-[10px] text-amber-300 font-bold block mb-1.5 text-left">
-                🎁 รางวัลทั้งหมดในวงล้อ:
-              </span>
+              <div className="flex items-center justify-between mb-1.5 text-left">
+                <span className="text-[10px] text-amber-300 font-bold">
+                  🎁 รางวัลทั้งหมดในวงล้อ:
+                </span>
+                <span className="text-[9px] text-rose-300 font-mono font-bold">
+                  แจ็กพอต 0.01% (1 ใน 10,000)
+                </span>
+              </div>
               <div className="grid grid-cols-4 gap-1.5 text-[10px] font-bold">
                 {WHEEL_PRIZES.map((p) => (
                   <div
                     key={p.id}
-                    className="bg-black/30 border border-amber-600/50 rounded-xl p-1 flex items-center justify-center space-x-1 text-amber-100"
+                    className={`rounded-xl p-1 flex items-center justify-center space-x-1 ${
+                      p.isDiamondPigJackpot
+                        ? 'bg-gradient-to-r from-rose-900/90 to-purple-900/90 border-2 border-amber-400 text-yellow-300 font-black ring-1 ring-amber-300 shadow-sm'
+                        : 'bg-black/30 border border-amber-600/50 text-amber-100'
+                    }`}
                   >
-                    <span>{p.icon}</span>
-                    <span className="text-[9px] font-mono">{p.shortLabel}</span>
+                    {p.isDiamondPigJackpot ? (
+                      <>
+                        <span className="text-xs">👑</span>
+                        <span className="text-[9px] font-mono font-black">{p.shortLabel}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>{p.icon}</span>
+                        <span className="text-[9px] font-mono">{p.shortLabel}</span>
+                      </>
+                    )}
                   </div>
                 ))}
               </div>
