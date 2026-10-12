@@ -1367,94 +1367,6 @@ export const BARN_DECORS = {
   }
 };
 
-// 7 Designated Decor Plots on the 2.5D farm map (all empty by default for 100% clean pen)
-export const PASTURE_DECOR_SLOTS = [
-  {
-    id: 'slot_cottage',
-    name: 'พื้นที่สิ่งปลูกสร้างหลัก (ซ้ายบน)',
-    shortName: 'บ้านพัก/ปราสาท',
-    icon: '🏛️',
-    allowedCategories: ['building'],
-    defaultItem: null,
-    pos: { x: 19, y: 32 },
-    scale: 1.25,
-    layer: 'back',
-    desc: 'ตำแหน่งวางปราสาททองคำหลวง หรือบ้านเห็ดแฟนตาซี'
-  },
-  {
-    id: 'slot_barn',
-    name: 'พื้นที่โรงนา & ศาลา (ขวาบน)',
-    shortName: 'ศาลา/เพิงพัก',
-    icon: '🛖',
-    allowedCategories: ['building'],
-    defaultItem: null,
-    pos: { x: 84, y: 26 },
-    scale: 1.25,
-    layer: 'back',
-    desc: 'ตำแหน่งวางศาลาล้านนา หรือซุ้มเพิงฟางบังแดด'
-  },
-  {
-    id: 'slot_tree',
-    name: 'พื้นที่ต้นไม้ใหญ่ & สวนร่มรื่น (เนินเขาขวา)',
-    shortName: 'สวนต้นไม้',
-    icon: '🌳',
-    allowedCategories: ['tree'],
-    defaultItem: null,
-    pos: { x: 72, y: 18 },
-    scale: 1.15,
-    layer: 'back',
-    desc: 'ตำแหน่งปลูกต้นโอ๊คยักษ์ ต้นซากุระ ต้นสน หรือไม้สักทอง'
-  },
-  {
-    id: 'slot_lamp',
-    name: 'พื้นที่โคมไฟส่องทาง (ริมถนนซ้าย)',
-    shortName: 'เสาไฟริมทาง',
-    icon: '🏮',
-    allowedCategories: ['light', 'tree'],
-    defaultItem: null,
-    pos: { x: 14, y: 64 },
-    scale: 1.0,
-    layer: 'front',
-    desc: 'ตำแหน่งวางเสาไฮเทค โคมไฟวินเทจ หรือโคมคริสตัล'
-  },
-  {
-    id: 'slot_flowerbed',
-    name: 'พื้นที่แปลงดอกไม้/ผัก (หน้ารั้ว)',
-    shortName: 'แปลงดอกไม้/ผัก',
-    icon: '🌸',
-    allowedCategories: ['flora'],
-    defaultItem: null,
-    pos: { x: 42, y: 76 },
-    scale: 1.0,
-    layer: 'mid',
-    desc: 'ตำแหน่งวางพุ่มกุหลาบ แปลงผักสวนครัว หรือทุ่งดอกไม้'
-  },
-  {
-    id: 'slot_utility',
-    name: 'พื้นที่น้ำพุ & บ่อน้ำดื่ม (หน้ารั้วขวา)',
-    shortName: 'น้ำพุ/บ่อน้ำ',
-    icon: '⛲',
-    allowedCategories: ['water', 'building'],
-    defaultItem: null,
-    pos: { x: 74, y: 74 },
-    scale: 1.0,
-    layer: 'mid',
-    desc: 'ตำแหน่งวางน้ำพุทองคำเศรษฐี บ่อน้ำศิลา หรือบ่อออนเซ็น'
-  },
-  {
-    id: 'slot_crates',
-    name: 'พื้นที่ของประดับธรรมชาติ (ริมทางซ้าย)',
-    shortName: 'ของประดับริมทาง',
-    icon: '🪵',
-    allowedCategories: ['flora', 'building'],
-    defaultItem: null,
-    pos: { x: 19, y: 72 },
-    scale: 0.95,
-    layer: 'front',
-    desc: 'ตำแหน่งวางตอไม้ขอนโบราณ หรือเห็ดเรืองแสง'
-  }
-];
-
 const DECOR_PNG_MAP = {
   golden_palace_building: { src: './pigs/decor_golden_palace_building.png', width: 'w-24 sm:w-28', height: 'h-24 sm:h-28' },
   stone_well: { src: './pigs/decor_stone_well.png', width: 'w-16 sm:w-20', height: 'h-18 sm:h-22' },
@@ -1771,52 +1683,21 @@ export default function HappyHogView() {
   // Barn Upgrade Modal
   const [showBarnUpgradeModal, setShowBarnUpgradeModal] = useState(false);
 
-  // Modular Barn Decor Kit & Designated Plots
+  // Modular Barn Decor Kit (Tilemap.exe EP.3)
   const [unlockedDecors, setUnlockedDecors] = useState(() => {
     try {
       const saved = localStorage.getItem('happy_hog_unlocked_decors');
       if (saved) return JSON.parse(saved);
     } catch (e) {}
-    return [
-      'golden_palace_building',
-      'golden_fountain',
-      'stone_well',
-      'rose_hedge',
-      'pine_tree',
-      'mushroom_cottage',
-      'vintage_lamp',
-      'flower_meadow',
-      'straw_hut',
-      'ancient_stump'
-    ];
+    return ['golden_palace_building', 'golden_fountain', 'stone_well', 'rose_hedge', 'pine_tree', 'mushroom_cottage', 'vintage_lamp', 'flower_meadow', 'straw_hut', 'ancient_stump'];
   });
   const [equippedDecors, setEquippedDecors] = useState(() => {
     try {
-      localStorage.removeItem('happy_hog_equipped_decors');
-      const saved = localStorage.getItem('happy_hog_equipped_decors_clean');
+      const saved = localStorage.getItem('happy_hog_equipped_decors');
       if (saved) return JSON.parse(saved);
     } catch (e) {}
     return [];
   });
-  // 7 Designated Decor Plots on the 2.5D map (100% clean and empty by default)
-  const [slotDecors, setSlotDecors] = useState(() => {
-    try {
-      localStorage.removeItem('happy_hog_slot_decors');
-      const saved = localStorage.getItem('happy_hog_slot_decors_clean');
-      if (saved) return JSON.parse(saved);
-    } catch (e) {}
-    return {
-      slot_cottage: null,
-      slot_barn: null,
-      slot_tree: null,
-      slot_lamp: null,
-      slot_flowerbed: null,
-      slot_utility: null,
-      slot_crates: null
-    };
-  });
-  const [isDecorEditMode, setIsDecorEditMode] = useState(false);
-  const [activeSlotForModal, setActiveSlotForModal] = useState(null);
   const [inGameModal, setInGameModal] = useState(null); // null | 'shop' | 'crops' | 'quests' | 'breed' | 'decor'
   const [shopCategoryTab, setShopCategoryTab] = useState('pigs'); // 'pigs' | 'food' | 'decors'
   const [decorCategoryFilter, setDecorCategoryFilter] = useState('all');
@@ -2694,70 +2575,6 @@ export default function HappyHogView() {
     } catch (e) {}
     showToast('📐 จัดวางของตกแต่งรอบนอกตามหลักสถาปัตยกรรม (เว้นพื้นที่ตรงกลาง 40% ให้ลูกหมูวิ่งเล่น)!');
   };
-
-  const handlePlaceDecorInSlot = (slotId, decorId) => {
-    setSlotDecors((prev) => {
-      const next = { ...prev, [slotId]: decorId };
-      try {
-        localStorage.setItem('happy_hog_slot_decors_clean', JSON.stringify(next));
-      } catch (e) {}
-      return next;
-    });
-    const decor = BARN_DECORS[decorId];
-    showToast(`✨ วาง ${decor?.name || decorId} ลงในตำแหน่งเรียบร้อย!`);
-    playSound('feed', isMuted);
-    setActiveSlotForModal(null);
-  };
-
-  const handleRemoveDecorFromSlot = (slotId) => {
-    setSlotDecors((prev) => {
-      const next = { ...prev, [slotId]: null };
-      try {
-        localStorage.setItem('happy_hog_slot_decors_clean', JSON.stringify(next));
-      } catch (e) {}
-      return next;
-    });
-    showToast('📦 เก็บของตกแต่งกลับเข้ากระเป๋าเรียบร้อยแล้ว');
-    playSound('feed', isMuted);
-    setActiveSlotForModal(null);
-  };
-
-  const handleResetPastureSlots = () => {
-    const cleared = {
-      slot_cottage: null,
-      slot_barn: null,
-      slot_tree: null,
-      slot_lamp: null,
-      slot_flowerbed: null,
-      slot_utility: null,
-      slot_crates: null
-    };
-    setSlotDecors(cleared);
-    try {
-      localStorage.setItem('happy_hog_slot_decors_clean', JSON.stringify(cleared));
-    } catch (e) {}
-    showToast('🏡 ล้างตำแหน่งของตกแต่งทั้งหมด คอกโล่งสะอาด 100%!');
-    playSound('feed', isMuted);
-  };
-
-  const handleClearAllSlots = () => {
-    const cleared = {
-      slot_cottage: null,
-      slot_barn: null,
-      slot_tree: null,
-      slot_lamp: null,
-      slot_flowerbed: null,
-      slot_utility: null,
-      slot_crates: null
-    };
-    setSlotDecors(cleared);
-    try {
-      localStorage.setItem('happy_hog_slot_decors_clean', JSON.stringify(cleared));
-    } catch (e) {}
-    showToast('🧹 นำของตกแต่งออกจากทุกตำแหน่ง (เหลือเฉพาะคอกและทุ่งหญ้าโล่ง 100%)');
-    playSound('feed', isMuted);
-  };
-
 
   const handleBuyDecor = (decorId) => {
     const decor = BARN_DECORS[decorId];
@@ -4143,98 +3960,32 @@ export default function HappyHogView() {
                 ))}
 
                 
-                {/* ================= 2.5D DESIGNATED DECOR SLOTS (PASTURE & MODULAR) ================= */}
-                {PASTURE_DECOR_SLOTS.map((slot) => {
-                  const equippedId = slotDecors[slot.id];
-                  const decor = equippedId ? BARN_DECORS[equippedId] : null;
-                  const zVal = slot.layer === 'back' ? 12 : slot.layer === 'front' ? 42 : 24;
-
+                {/* ================= EQUIPPED MODULAR BARN DECORS (Tilemap.exe EP.3 Kit) ================= */}
+                {equippedDecors.map((decId) => {
+                  const decor = BARN_DECORS[decId];
+                  if (!decor) return null;
+                  const pos = decor.defaultPos || { x: 50, y: 50 };
+                  const zVal = decor.layer === 'back' ? 12 : decor.layer === 'front' ? 40 : Math.floor(pos.y * 10);
                   return (
                     <div
-                      key={slot.id}
+                      key={decor.id}
                       style={{
-                        left: `${slot.pos.x}%`,
-                        top: `${slot.pos.y}%`,
-                        transform: `translate(-50%, -100%) scale(${slot.scale || 1})`,
+                        left: `${pos.x}%`,
+                        top: `${pos.y}%`,
+                        transform: `translate(-50%, -100%) scale(${decor.scale || 1})`,
                         zIndex: zVal
                       }}
-                      className="absolute pointer-events-auto select-none"
+                      className="absolute pointer-events-auto cursor-pointer group transition-transform hover:scale-110 active:scale-95"
+                      onClick={() => showToast(`🪴 ${decor.name}: ${decor.perk}`)}
+                      title={`${decor.name} (${decor.perk}) - แตะเพื่อดูคุณสมบัติ`}
                     >
-                      {/* If Decor is Placed */}
-                      {decor ? (
-                        <div
-                          onClick={() => {
-                            if (isDecorEditMode) {
-                              setActiveSlotForModal(slot);
-                              playSound('bubble', isMuted);
-                            } else {
-                              showToast(`🪴 ${decor.name}: ${decor.perk}`);
-                            }
-                          }}
-                          className={`relative group cursor-pointer transition-transform ${
-                            isDecorEditMode ? 'hover:scale-110 active:scale-95' : 'hover:scale-105'
-                          }`}
-                        >
-                          <DecorItemSprite decor={decor} isNight={activeThemeId === 'cyber_space'} />
-
-                          {/* Edit Badge when in Decor Mode */}
-                          {isDecorEditMode && (
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 hover:bg-amber-400 text-stone-900 text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg border border-white whitespace-nowrap flex items-center gap-1 z-50 animate-bounce">
-                              <span>✏️ {slot.shortName}</span>
-                            </div>
-                          )}
-
-                          {/* Normal Hover Info */}
-                          {!isDecorEditMode && (
-                            <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-7 left-1/2 -translate-x-1/2 bg-[#2b180d]/95 text-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-lg whitespace-nowrap border border-amber-500/60 pointer-events-none shadow-lg z-50">
-                              {decor.name}
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        /* If Slot is Empty (show pulse marker in Edit Mode) */
-                        isDecorEditMode && (
-                          <div
-                            onClick={() => {
-                              setActiveSlotForModal(slot);
-                              playSound('bubble', isMuted);
-                            }}
-                            className="cursor-pointer flex flex-col items-center justify-center px-2.5 py-1.5 rounded-2xl border-2 border-dashed border-amber-300 bg-amber-950/80 text-amber-200 hover:bg-amber-900 hover:scale-110 active:scale-95 transition-all shadow-xl animate-pulse backdrop-blur-xs"
-                          >
-                            <span className="text-xl">{slot.icon}</span>
-                            <span className="text-[10px] font-black whitespace-nowrap tracking-tight">+ วาง{slot.shortName}</span>
-                          </div>
-                        )
-                      )}
+                      <DecorItemSprite decor={decor} isNight={activeThemeId === 'cyber_space'} />
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-7 left-1/2 -translate-x-1/2 bg-[#2b180d]/95 text-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-lg whitespace-nowrap border border-amber-500/60 pointer-events-none shadow-lg z-50">
+                        {decor.name}
+                      </div>
                     </div>
                   );
                 })}
-
-                {/* Fallback rendering for any equippedDecors not assigned to pasture slots */}
-                {equippedDecors
-                  .filter((decId) => !Object.values(slotDecors).includes(decId))
-                  .map((decId) => {
-                    const decor = BARN_DECORS[decId];
-                    if (!decor) return null;
-                    const pos = decor.defaultPos || { x: 50, y: 50 };
-                    const zVal = decor.layer === 'back' ? 12 : decor.layer === 'front' ? 40 : Math.floor(pos.y * 10);
-                    return (
-                      <div
-                        key={decor.id}
-                        style={{
-                          left: `${pos.x}%`,
-                          top: `${pos.y}%`,
-                          transform: `translate(-50%, -100%) scale(${decor.scale || 1})`,
-                          zIndex: zVal
-                        }}
-                        className="absolute pointer-events-auto cursor-pointer group transition-transform hover:scale-110 active:scale-95"
-                        onClick={() => showToast(`🪴 ${decor.name}: ${decor.perk}`)}
-                        title={`${decor.name} (${decor.perk})`}
-                      >
-                        <DecorItemSprite decor={decor} isNight={activeThemeId === 'cyber_space'} />
-                      </div>
-                    );
-                  })}
 
                 {/* ================= ROAMING CHIBI PIGS WITH SPEECH BUBBLES ================= */}
                 {/* ================= ROAMING CHIBI PIGS WITH SPEECH BUBBLES ================= */}
@@ -4381,42 +4132,7 @@ export default function HappyHogView() {
                     <Palette className="w-3 h-3 text-emerald-600" />
                     <span>ธีม: {activeTheme.name}</span>
                   </button>
-
-                  {/* Decor Placement Mode Toggle */}
-                  <button
-                    onClick={() => {
-                      setIsDecorEditMode(!isDecorEditMode);
-                      playSound('feed', isMuted);
-                      if (!isDecorEditMode) {
-                        showToast('🎨 เข้าสู่โหมดจัดวาง: แตะ '+' เพื่อเลือกของลงตำแหน่ง หรือแตะของเดิมเพื่อเปลี่ยน/เก็บ!');
-                      } else {
-                        showToast('✅ บันทึกการจัดวางของตกแต่งเรียบร้อยแล้ว!');
-                      }
-                    }}
-                    className={`px-2.5 py-1 rounded-xl text-[10px] font-black flex items-center space-x-1 border-2 shadow-md cursor-pointer transition-all ${
-                      isDecorEditMode
-                        ? 'bg-amber-500 text-stone-950 border-yellow-200 animate-pulse ring-2 ring-amber-300'
-                        : 'bg-stone-900/85 hover:bg-stone-900 text-amber-200 border-amber-600/80'
-                    }`}
-                    title="เปิด/ปิดโหมดจัดวางของตกแต่งประจำตำแหน่ง"
-                  >
-                    <span>{isDecorEditMode ? '✅ เสร็จสิ้นจัดวาง' : '🛠️ จัดวางของแต่ง'}</span>
-                  </button>
                 </div>
-
-                {/* Floating Guidance Banner when in Decor Mode */}
-                {isDecorEditMode && (
-                  <div className="absolute top-12 left-1/2 -translate-x-1/2 z-30 bg-[#2b180d]/95 border-2 border-amber-400 text-amber-100 text-[11px] font-bold px-3 py-1 rounded-full shadow-2xl flex items-center space-x-2 select-none animate-bounce">
-                    <span>🎨 โหมดจัดตำแหน่ง: แตะ '+' เพื่อวาง หรือแตะของเดิมเพื่อเปลี่ยน/เก็บ</span>
-                    <button
-                      onClick={handleClearAllSlots}
-                      className="ml-2 px-2.5 py-0.5 bg-rose-700 hover:bg-rose-600 text-white text-[9px] rounded-lg font-black cursor-pointer"
-                      title="นำของออกทั้งหมดเหลือเฉพาะลานคอกและทุ่งหญ้าโล่ง 100%"
-                    >
-                      🧹 คอกโล่ง 100%
-                    </button>
-                  </div>
-                )}
               </div>
 
               {/* ================= IN-GAME MAIN MENU ACTION DOCK (HUD QUICK ACCESS) ================= */}
@@ -6481,135 +6197,6 @@ export default function HappyHogView() {
         </div>
       )}
 
-
-      {/* ================= MODAL: DESIGNATED DECOR SLOT CHOOSER ================= */}
-      {activeSlotForModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 animate-in zoom-in-95">
-          <div className="bg-[#fffbeb] border-4 border-amber-800 rounded-3xl max-w-lg w-full max-h-[85vh] shadow-2xl flex flex-col overflow-hidden select-none">
-            {/* Modal Header */}
-            <div className="bg-gradient-to-r from-amber-800 via-amber-900 to-amber-950 p-3.5 text-amber-100 flex items-center justify-between">
-              <div className="flex items-center space-x-2 font-black text-sm">
-                <span className="text-2xl">{activeSlotForModal.icon}</span>
-                <div>
-                  <div className="leading-tight text-white">{activeSlotForModal.name}</div>
-                  <div className="text-[10px] text-amber-300 font-normal">{activeSlotForModal.desc}</div>
-                </div>
-              </div>
-              <button
-                onClick={() => setActiveSlotForModal(null)}
-                className="w-8 h-8 rounded-full bg-amber-950/80 hover:bg-rose-800 text-amber-200 flex items-center justify-center font-bold cursor-pointer transition-colors"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="p-4 overflow-y-auto space-y-4">
-              {/* Currently Equipped Item on this Slot */}
-              {(() => {
-                const currentId = slotDecors[activeSlotForModal.id];
-                const currentItem = currentId ? BARN_DECORS[currentId] : null;
-
-                return (
-                  <div className="bg-amber-100/70 p-3 rounded-2xl border-2 border-amber-300 flex items-center justify-between gap-3 shadow-xs">
-                    <div className="flex items-center space-x-3 truncate">
-                      <div className="w-12 h-12 rounded-xl bg-white border border-amber-300 flex items-center justify-center shrink-0 shadow-xs">
-                        {currentItem ? (
-                          currentItem.id in DECOR_PNG_MAP ? (
-                            <img src={DECOR_PNG_MAP[currentItem.id].src} alt="" className="w-10 h-10 object-contain" />
-                          ) : (
-                            <span className="text-2xl">{currentItem.icon}</span>
-                          )
-                        ) : (
-                          <span className="text-xl opacity-40">📭</span>
-                        )}
-                      </div>
-                      <div className="truncate">
-                        <div className="text-[10px] text-amber-800 font-bold">ของที่วางอยู่ในตำแหน่งนี้:</div>
-                        <div className="font-black text-slate-900 text-sm truncate">{currentItem ? currentItem.name : '(ยังไม่มีของวาง)'}</div>
-                        {currentItem && <div className="text-[10px] text-emerald-700 font-bold truncate">{currentItem.perk}</div>}
-                      </div>
-                    </div>
-                    {currentItem && (
-                      <button
-                        onClick={() => handleRemoveDecorFromSlot(activeSlotForModal.id)}
-                        className="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-black text-xs rounded-xl shadow-xs cursor-pointer active:scale-95 shrink-0 flex items-center space-x-1"
-                      >
-                        <span>📦</span>
-                        <span>เก็บของ</span>
-                      </button>
-                    )}
-                  </div>
-                );
-              })()}
-
-              {/* Owned items matching this slot category */}
-              <div className="space-y-2">
-                <div className="text-xs font-black text-amber-950 flex items-center justify-between">
-                  <span>🎒 ของตกแต่งในกระเป๋าที่วางตรงนี้ได้:</span>
-                  <button
-                    onClick={() => {
-                      setActiveSlotForModal(null);
-                      setShopCategoryTab('decors');
-                      setInGameModal('shop');
-                    }}
-                    className="text-[11px] font-bold text-amber-800 hover:text-amber-950 underline cursor-pointer"
-                  >
-                    + ซื้อของเพิ่มจากร้านค้า
-                  </button>
-                </div>
-
-                {(() => {
-                  const currentId = slotDecors[activeSlotForModal.id];
-                  const matchingOwned = unlockedDecors
-                    .map((id) => BARN_DECORS[id])
-                    .filter(Boolean)
-                    .filter((d) => d.id !== currentId && (activeSlotForModal.allowedCategories.includes(d.category) || d.slotId === activeSlotForModal.id));
-
-                  if (matchingOwned.length === 0) {
-                    return (
-                      <div className="p-4 text-center rounded-2xl bg-amber-50 border border-dashed border-amber-300 text-xs text-amber-800">
-                        ไม่มีของตกแต่งประเภทนี้ในกระเป๋า สามารถไปเลือกซื้อได้ที่ร้านค้าครับ 🛒
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[35vh] overflow-y-auto pr-1">
-                      {matchingOwned.map((item) => (
-                        <div
-                          key={item.id}
-                          className="p-2.5 rounded-2xl bg-white border-2 border-amber-300 hover:border-amber-500 flex items-center justify-between gap-2 shadow-xs transition-all"
-                        >
-                          <div className="flex items-center space-x-2.5 truncate">
-                            <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
-                              {item.id in DECOR_PNG_MAP ? (
-                                <img src={DECOR_PNG_MAP[item.id].src} alt="" className="w-8 h-8 object-contain" />
-                              ) : (
-                                <span className="text-xl">{item.icon}</span>
-                              )}
-                            </div>
-                            <div className="truncate">
-                              <div className="font-black text-slate-900 text-xs truncate">{item.name}</div>
-                              <div className="text-[10px] text-amber-800 line-clamp-1">{item.perk}</div>
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => handlePlaceDecorInSlot(activeSlotForModal.id, item.id)}
-                            className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-xs cursor-pointer active:scale-95 shrink-0"
-                          >
-                            วางที่นี่
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })()}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ================= MODAL 3: BARN THEMES SELECTOR ================= */}
       {showThemeModal && (
