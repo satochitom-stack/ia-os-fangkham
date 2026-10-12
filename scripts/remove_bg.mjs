@@ -38,6 +38,7 @@ const FILES = [
   { src: `${BRAIN}/decor_ancient_oak_1791809089939.jpg`,        dst: `${PUBLIC}/decor_ancient_oak.png` },
   { src: `${BRAIN}/decor_sakura_tree_1791809101463.jpg`,        dst: `${PUBLIC}/decor_sakura_tree.png` },
   { src: `${BRAIN}/decor_cyber_pylon_1791809113053.jpg`,        dst: `${PUBLIC}/decor_cyber_pylon.png` },
+  { src: `${BRAIN}/decor_cozy_cottage_1791813900558.jpg`,       dst: `${PUBLIC}/decor_pasture_cottage.png` },
 ];
 
 const WHITE_THRESHOLD = 230;
