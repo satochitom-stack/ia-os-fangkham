@@ -668,7 +668,13 @@ const BARN_THEMES = {
     cost: 0,
     unlockedByDefault: true,
     atmosphere: 'butterflies',
-    bounds: { minX: 32, maxX: 61, minY: 48, maxY: 66 }
+    // Clockwise isometric diamond vertices: [Top, Right, Bottom, Left]
+    poly: [
+      { x: 51, y: 37 },
+      { x: 75, y: 52 },
+      { x: 54, y: 74 },
+      { x: 28, y: 50 }
+    ]
   },
   cozy_wood: {
     id: 'cozy_wood',
@@ -683,7 +689,12 @@ const BARN_THEMES = {
     cost: 0,
     unlockedByDefault: true,
     atmosphere: 'leaves',
-    bounds: { minX: 32, maxX: 61, minY: 48, maxY: 66 }
+    poly: [
+      { x: 52, y: 37 },
+      { x: 76, y: 53 },
+      { x: 50, y: 78 },
+      { x: 25, y: 55 }
+    ]
   },
   onsen_mud: {
     id: 'onsen_mud',
@@ -698,7 +709,12 @@ const BARN_THEMES = {
     cost: 400,
     unlockDesc: 'อาบน้ำหมูสะสมครบ 8 ครั้ง หรือใช้ 400 เหรียญ',
     atmosphere: 'steam',
-    bounds: { minX: 32, maxX: 61, minY: 48, maxY: 66 }
+    poly: [
+      { x: 48, y: 40 },
+      { x: 75, y: 58 },
+      { x: 50, y: 80 },
+      { x: 25, y: 58 }
+    ]
   },
   lanna: {
     id: 'lanna',
@@ -713,7 +729,12 @@ const BARN_THEMES = {
     cost: 800,
     unlockDesc: 'มีหมูน้ำหนัก 90 kg ขึ้นไป หรือใช้ 800 เหรียญ',
     atmosphere: 'lanterns',
-    bounds: { minX: 32, maxX: 61, minY: 48, maxY: 66 }
+    poly: [
+      { x: 51, y: 38 },
+      { x: 76, y: 58 },
+      { x: 48, y: 80 },
+      { x: 25, y: 60 }
+    ]
   },
   golden_palace: {
     id: 'golden_palace',
@@ -727,7 +748,12 @@ const BARN_THEMES = {
     cost: 1500,
     unlockDesc: 'ครอบครองหมูทองคำ หรือใช้ 1,500 เหรียญ',
     atmosphere: 'sparkles',
-    bounds: { minX: 32, maxX: 61, minY: 48, maxY: 66 }
+    poly: [
+      { x: 48, y: 33 },
+      { x: 78, y: 53 },
+      { x: 49, y: 80 },
+      { x: 20, y: 53 }
+    ]
   },
   cyber_space: {
     id: 'cyber_space',
@@ -742,47 +768,129 @@ const BARN_THEMES = {
     cost: 2200,
     unlockDesc: 'ผสมพันธุ์สำเร็จ 3 ครั้ง หรือใช้ 2,200 เหรียญ',
     atmosphere: 'cyber',
-    bounds: { minX: 32, maxX: 61, minY: 48, maxY: 66 }
+    poly: [
+      { x: 55, y: 46 },
+      { x: 76, y: 66 },
+      { x: 52, y: 83 },
+      { x: 29, y: 66 }
+    ]
   }
 };
 
-// Helper functions to ensure pigs and items are STRICTLY inside the wooden fence (isometric boundary)
-const isInsideFence = (x, y) => {
-  if (x < 32 || x > 61 || y < 48 || y > 66) return false;
-  const topLimit = x <= 48 
-    ? (53 - 0.421 * (x - 29) + 2.5) 
-    : (45 + 0.5 * (x - 48) + 2.5);
-  if (y < topLimit) return false;
-  const bottomLimit = x <= 44
-    ? (53 + 1.133 * (x - 29) - 3.0)
-    : (70 - 0.85 * (x - 44) - 3.0);
-  if (y > bottomLimit) return false;
+const getThemePoly = (themeId) => {
+  return BARN_THEMES[themeId]?.poly || BARN_THEMES.pasture.poly;
+};
+
+// Helper functions to ensure pigs and items stay inside the theme's fence while using the full garden/pen space
+const isInsideFence = (x, y, themeId = 'pasture') => {
+  const poly = getThemePoly(themeId);
+  for (let i = 0; i < poly.length; i++) {
+    const a = poly[i];
+    const b = poly[(i + 1) % poly.length];
+    // For clockwise polygon in screen coords (+x right, +y down), interior points have cross >= 0
+    const cross = (b.x - a.x) * (y - a.y) - (b.y - a.y) * (x - a.x);
+    if (cross < 0) return false;
+  }
   return true;
 };
 
-const clampPigToFence = (x, y) => {
-  if (isInsideFence(x, y)) return { x: Math.round(x), y: Math.round(y) };
-  const targetX = 46;
-  const targetY = 57;
-  for (let t = 0.05; t <= 1.0; t += 0.05) {
-    const testX = x + (targetX - x) * t;
-    const testY = y + (targetY - y) * t;
-    if (isInsideFence(testX, testY)) {
-      return { x: Math.round(testX), y: Math.round(testY) };
+const clampPigToFence = (x, y, themeId = 'pasture') => {
+  const round1 = (n) => Math.round(n * 10) / 10;
+  if (isInsideFence(x, y, themeId)) {
+    return { x: round1(x), y: round1(y) };
+  }
+  const poly = getThemePoly(themeId);
+  const cx = (poly[0].x + poly[1].x + poly[2].x + poly[3].x) / 4;
+  const cy = (poly[0].y + poly[1].y + poly[2].y + poly[3].y) / 4;
+
+  // Find the nearest point on the 4 polygon fence edges so pigs don't get sucked into the center
+  let bestPt = { x: cx, y: cy };
+  let minDistSq = Infinity;
+
+  for (let i = 0; i < poly.length; i++) {
+    const a = poly[i];
+    const b = poly[(i + 1) % poly.length];
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const lenSq = dx * dx + dy * dy;
+    const t = lenSq > 0 ? Math.max(0, Math.min(1, ((x - a.x) * dx + (y - a.y) * dy) / lenSq)) : 0;
+    const projX = a.x + t * dx;
+    const projY = a.y + t * dy;
+    const dSq = (x - projX) * (x - projX) + (y - projY) * (y - projY);
+    if (dSq < minDistSq) {
+      minDistSq = dSq;
+      bestPt = { x: projX, y: projY };
     }
   }
-  return { x: targetX, y: targetY };
+
+  // Nudge 6% inward from the nearest fence edge toward the centroid so the pig is comfortably inside
+  const finalX = bestPt.x + (cx - bestPt.x) * 0.06;
+  const finalY = bestPt.y + (cy - bestPt.y) * 0.06;
+  return { x: round1(finalX), y: round1(finalY) };
 };
 
-const getRandomCoordInBarn = (themeId) => {
-  for (let attempts = 0; attempts < 60; attempts++) {
-    const rx = Math.round(33 + Math.random() * (60 - 33));
-    const ry = Math.round(49 + Math.random() * (65 - 49));
-    if (isInsideFence(rx, ry)) {
-      return { x: rx, y: ry };
+const sampleBilinearInPoly = (poly) => {
+  // Bilinear interpolation across the convex quad [Top, Right, Bottom, Left]
+  const u = 0.08 + Math.random() * 0.84;
+  const v = 0.08 + Math.random() * 0.84;
+  const [v0, v1, v2, v3] = poly;
+  const x = (1 - u) * (1 - v) * v0.x + u * (1 - v) * v1.x + u * v * v2.x + (1 - u) * v * v3.x;
+  const y = (1 - u) * (1 - v) * v0.y + u * (1 - v) * v1.y + u * v * v2.y + (1 - u) * v * v3.y;
+  return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 };
+};
+
+const getRandomCoordInBarn = (themeId = 'pasture', existingPigs = []) => {
+  const poly = getThemePoly(themeId);
+  if (!Array.isArray(existingPigs) || existingPigs.length === 0) {
+    return sampleBilinearInPoly(poly);
+  }
+
+  // Farthest-point candidate sampling so new/redistributed pigs spread across the whole garden
+  let bestCandidate = sampleBilinearInPoly(poly);
+  let bestMinDistSq = -1;
+
+  for (let i = 0; i < 28; i++) {
+    const cand = sampleBilinearInPoly(poly);
+    if (!isInsideFence(cand.x, cand.y, themeId)) continue;
+    let minDistSq = Infinity;
+    for (let j = 0; j < existingPigs.length; j++) {
+      const other = existingPigs[j];
+      const dx = cand.x - other.x;
+      const dy = cand.y - other.y;
+      const dSq = dx * dx + dy * dy;
+      if (dSq < minDistSq) minDistSq = dSq;
+    }
+    if (minDistSq > bestMinDistSq) {
+      bestMinDistSq = minDistSq;
+      bestCandidate = cand;
     }
   }
-  return { x: 46, y: 57 };
+  return bestCandidate;
+};
+
+const spreadAndClampPigs = (pigList, themeId = 'pasture') => {
+  if (!Array.isArray(pigList) || pigList.length === 0) return pigList;
+  const placed = [];
+  const minDist = pigList.length > 14 ? 7.5 : pigList.length > 9 ? 9.5 : 11.5;
+  const minDistSq = minDist * minDist;
+
+  return pigList.map((p) => {
+    const inside = isInsideFence(p.x, p.y, themeId);
+    const clamped = clampPigToFence(p.x, p.y, themeId);
+    const tooClose = placed.some((other) => {
+      const dx = clamped.x - other.x;
+      const dy = clamped.y - other.y;
+      return dx * dx + dy * dy < minDistSq;
+    });
+
+    const finalCoord = (!inside || tooClose) ? getRandomCoordInBarn(themeId, placed) : clamped;
+    placed.push(finalCoord);
+    return {
+      ...p,
+      x: finalCoord.x,
+      y: finalCoord.y
+    };
+  });
 };
 
 const FOODS = [
@@ -1762,15 +1870,13 @@ export default function HappyHogView() {
   });
 
   const [pigs, setPigs] = useState(() => {
+    const initTheme = localStorage.getItem('happy_hog_active_theme') || 'pasture';
     const saved = localStorage.getItem('happy_hog_pigs');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((p) => {
-            const clamped = clampPigToFence(p.x, p.y);
-            return { ...p, x: clamped.x, y: clamped.y };
-          });
+          return spreadAndClampPigs(parsed, initTheme);
         }
       } catch (e) {}
     }
@@ -1783,8 +1889,8 @@ export default function HappyHogView() {
         hunger: 40,
         cleanliness: 70,
         health: 100,
-        x: 44,
-        y: 54,
+        x: 39,
+        y: 53,
         direction: 1
       },
       {
@@ -1795,8 +1901,8 @@ export default function HappyHogView() {
         hunger: 80,
         cleanliness: 35,
         health: 100,
-        x: 52,
-        y: 56,
+        x: 60,
+        y: 57,
         direction: -1
       }
     ];
@@ -1827,14 +1933,9 @@ export default function HappyHogView() {
     return localStorage.getItem('happy_hog_active_theme') || 'pasture';
   });
 
-  // Ensure all pigs immediately snap inside the fence on load or theme change
+  // Ensure all pigs immediately spread across the garden & stay inside the fence on load or theme change
   useEffect(() => {
-    setPigs((prev) =>
-      prev.map((p) => {
-        const clamped = clampPigToFence(p.x, p.y);
-        return { ...p, x: clamped.x, y: clamped.y };
-      })
-    );
+    setPigs((prev) => spreadAndClampPigs(prev, activeThemeId));
   }, [activeThemeId]);
 
   const [unlockedThemes, setUnlockedThemes] = useState(() => {
@@ -2259,10 +2360,10 @@ export default function HappyHogView() {
           // Individual metabolism modifier based on pig id so they don't decay in lockstep
           const rateModifier = 0.85 + ((p.id % 5) * 0.07);
 
-          const isOutside = !isInsideFence(p.x, p.y);
+          const isOutside = !isInsideFence(p.x, p.y, activeThemeId);
 
-          if (Math.random() < 0.65 || isOutside) {
-            // Crowd repulsion: steer away gently if another pig is close to disperse across the pen
+          if (Math.random() < 0.7 || isOutside) {
+            // Crowd repulsion: steer away smoothly if another pig is within 12% screen distance so pigs disperse across the garden
             let repelX = 0;
             let repelY = 0;
             prevPigs.forEach((other, oIdx) => {
@@ -2270,23 +2371,24 @@ export default function HappyHogView() {
                 const dx = p.x - other.x;
                 const dy = p.y - other.y;
                 const distSq = dx * dx + dy * dy;
-                if (distSq < 36 && distSq > 0.01) {
+                if (distSq < 144 && distSq > 0.01) {
                   const dist = Math.sqrt(distSq);
-                  repelX += (dx / dist) * 2.2;
-                  repelY += (dy / dist) * 1.6;
+                  const strength = ((12 - dist) / 12) * 3.2;
+                  repelX += (dx / dist) * strength;
+                  repelY += (dy / dist) * strength * 0.85;
                 }
               }
             });
 
             let nextX, nextY;
             if (isOutside) {
-              const clamped = clampPigToFence(p.x, p.y);
+              const clamped = clampPigToFence(p.x, p.y, activeThemeId);
               nextX = clamped.x;
               nextY = clamped.y;
             } else {
-              const stepX = (Math.random() * 5 - 2.5) + repelX;
-              const stepY = (Math.random() * 4 - 2.0) + repelY;
-              const clamped = clampPigToFence(p.x + stepX, p.y + stepY);
+              const stepX = (Math.random() * 7 - 3.5) + repelX;
+              const stepY = (Math.random() * 5.6 - 2.8) + repelY;
+              const clamped = clampPigToFence(p.x + stepX, p.y + stepY, activeThemeId);
               nextX = clamped.x;
               nextY = clamped.y;
             }
@@ -2787,7 +2889,7 @@ export default function HappyHogView() {
 
     const names = ['น้องนำโชค', 'น้องมั่งมี', 'น้องเงินล้าน', 'น้องเบิกจ่าย', 'น้องไร้ใบเตือน', 'น้องทองแท้'];
     const randomName = names[Math.floor(Math.random() * names.length)];
-    const coord = getRandomCoordInBarn(activeThemeId);
+    const coord = getRandomCoordInBarn(activeThemeId, pigs);
 
     const newPig = {
       id: Date.now(),
@@ -2825,7 +2927,7 @@ export default function HappyHogView() {
 
     const names = ['มังกรหยกประทานพร', 'วิหคเพลิงนำโชค', 'เทวาจักรวาลเรืองแสง', 'ซาโตชิตัวตึง', 'ราชาอสูรไททัน', 'เทพธิดาจันทราเพชร'];
     const randomName = names[Math.floor(Math.random() * names.length)];
-    const coord = getRandomCoordInBarn(activeThemeId);
+    const coord = getRandomCoordInBarn(activeThemeId, pigs);
 
     const newPig = {
       id: Date.now(),
@@ -2929,7 +3031,7 @@ export default function HappyHogView() {
       else if (roll > 0.1) resultBreed = 'auditor';
     }
 
-    const coord = getRandomCoordInBarn(activeThemeId);
+    const coord = getRandomCoordInBarn(activeThemeId, pigs);
     const babyId = Date.now();
     const baby = {
       id: babyId,
@@ -3309,7 +3411,7 @@ export default function HappyHogView() {
           setUnlockedBreeds((prev) => [...prev, won.pigBreed]);
         }
         // Spawn pig in farm
-        const coord = getRandomCoordInBarn(activeThemeId);
+        const coord = getRandomCoordInBarn(activeThemeId, pigs);
         const wonPig = {
           id: Date.now(),
           name: won.pigMeta.name,
@@ -3388,7 +3490,7 @@ export default function HappyHogView() {
     if (roll < 0.8) {
       playSound('steal', isMuted);
       const targetPig = neighbor.pigs[Math.floor(Math.random() * neighbor.pigs.length)];
-      const coord = getRandomCoordInBarn(activeThemeId);
+      const coord = getRandomCoordInBarn(activeThemeId, pigs);
       const stolenBaby = {
         id: Date.now(),
         name: `หมูอุ้มจาก${neighbor.name}`,
