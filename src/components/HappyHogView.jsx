@@ -1802,16 +1802,6 @@ export default function HappyHogView() {
     ];
   });
 
-  // Ensure all pigs immediately snap inside the fence on load or theme change
-  useEffect(() => {
-    setPigs((prev) =>
-      prev.map((p) => {
-        const clamped = clampPigToFence(p.x, p.y);
-        return { ...p, x: clamped.x, y: clamped.y };
-      })
-    );
-  }, [activeThemeId]);
-
   const [selectedPigId, setSelectedPigId] = useState(1);
   const [tappedPigId, setTappedPigId] = useState(null);
   const [isLocked, setIsLocked] = useState(() => {
@@ -1836,6 +1826,16 @@ export default function HappyHogView() {
   const [activeThemeId, setActiveThemeId] = useState(() => {
     return localStorage.getItem('happy_hog_active_theme') || 'pasture';
   });
+
+  // Ensure all pigs immediately snap inside the fence on load or theme change
+  useEffect(() => {
+    setPigs((prev) =>
+      prev.map((p) => {
+        const clamped = clampPigToFence(p.x, p.y);
+        return { ...p, x: clamped.x, y: clamped.y };
+      })
+    );
+  }, [activeThemeId]);
 
   const [unlockedThemes, setUnlockedThemes] = useState(() => {
     try {
