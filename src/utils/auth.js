@@ -1047,7 +1047,7 @@ export async function addUser({ username, displayName, position, department, rol
     role: role || 'user',
     salt,
     hash,
-    passwordText: password, // For easy admin viewing/recovery in local system
+    passwordText: '', // Do not persist plaintext password in storage (use salted SHA-256 hash)
     permissions: permissions || [...DEFAULT_DEPT_PERMISSIONS],
     canManageUsers: role === 'admin',
     createdAt: Date.now()

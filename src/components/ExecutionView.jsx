@@ -29,7 +29,12 @@ export default function ExecutionView({
   selectedWp,
   setSelectedWp,
   orgProfile,
-  selectedYear = '2569'
+  selectedYear = '2569',
+  annualPlans = [],
+  setAnnualPlans,
+  capaFindings = [],
+  setCapaFindings,
+  setCurrentTab
 }) {
   const currentWp = workingPapers.find((w) => w.id === selectedWp) || workingPapers[0] || {
     id: 'WP-EMPTY',
@@ -644,20 +649,84 @@ export default function ExecutionView({
           </div>
         </div>
 
-        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
           <span className="text-[11px] text-slate-400 dark:text-slate-500">
             * ข้อมูลข้อตรวจพบนี้จะถูกดึงไปจัดทำรายงานผลการตรวจสอบอัตโนมัติในโมดูลถัดไป
           </span>
-          <button
-            type="button"
-            onClick={() => {
-              setAutoFindingToast('✓ บันทึกข้อมูลกระดาษทำการเรียบร้อยแล้ว');
-              setTimeout(() => setAutoFindingToast(''), 3000);
-            }}
-            className="no-print bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2 rounded-xl cursor-pointer transition-colors shadow-xs"
-          >
-            บันทึกกระดาษทำการ
-          </button>
+          <div className="flex items-center gap-2">
+            {setCapaFindings && (
+              <button
+                type="button"
+                onClick={() => {
+                  const f = currentWp.finding || {};
+                  if (!f.condition?.trim() && !f.recommendation?.trim()) {
+                    setAutoFindingToast('กรุณากรอกสภาพที่พบหรือข้อเสนอแนะก่อนส่งเข้าทะเบียน CAPA');
+                    setTimeout(() => setAutoFindingToast(''), 3500);
+                    return;
+                  }
+                  const alreadyExists = capaFindings.some((c) => c.sourceWpId === currentWp.id);
+                  if (alreadyExists) {
+                    setAutoFindingToast('✓ ข้อตรวจพบจากกระดาษทำการนี้ถูกส่งเข้าทะเบียน CAPA แล้ว');
+                    setTimeout(() => setAutoFindingToast(''), 3500);
+                    return;
+                  }
+                  const yrSuffix = String(selectedYear || '2569').slice(-2);
+                  const nextNum = String(capaFindings.length + 1).padStart(2, '0');
+                  const newCapa = {
+                    id: `CAPA-${Date.now()}`,
+                    code: `IA-${yrSuffix}-${nextNum}`,
+                    sourceWpId: currentWp.id,
+                    source: 'หน่วยตรวจสอบภายใน',
+                    topic: currentWp.topic || 'ข้อตรวจพบจากกระดาษทำการ',
+                    department: currentWp.department || 'สำนักปลัด',
+                    severity: 'สูง',
+                    status: 'open',
+                    condition: f.condition || '',
+                    cause: f.cause || '',
+                    effect: f.effect || '',
+                    recommendation: f.recommendation || '',
+                    findingDate: new Date().toISOString().slice(0, 10),
+                    dueDate: '',
+                    actionTaken: ''
+                  };
+                  setCapaFindings((prev) => [newCapa, ...(prev || [])]);
+                  if (setAnnualPlans && currentWp.auditPlanId) {
+                    setAnnualPlans((prev) =>
+                      (prev || []).map((p) =>
+                        p.id === currentWp.auditPlanId && p.status === 'pending'
+                          ? { ...p, status: 'in_progress' }
+                          : p
+                      )
+                    );
+                  }
+                  setAutoFindingToast(`✓ ส่งข้อตรวจพบเข้าทะเบียน CAPA (${newCapa.code}) เรียบร้อยแล้ว`);
+                  setTimeout(() => setAutoFindingToast(''), 4000);
+                }}
+                className="no-print bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl cursor-pointer transition-colors shadow-xs"
+              >
+                ส่งเข้าทะเบียน CAPA
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                if (setAnnualPlans && currentWp.auditPlanId) {
+                  setAnnualPlans((prev) =>
+                    (prev || []).map((p) =>
+                      p.id === currentWp.auditPlanId && p.status === 'pending'
+                        ? { ...p, status: 'in_progress' }
+                        : p
+                    )
+                  );
+                }
+                setAutoFindingToast('✓ บันทึกข้อมูลกระดาษทำการเรียบร้อยแล้ว');
+                setTimeout(() => setAutoFindingToast(''), 3000);
+              }}
+              className="no-print bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2 rounded-xl cursor-pointer transition-colors shadow-xs"
+            >
+              บันทึกกระดาษทำการ
+            </button>
+          </div>
         </div>
       </div>
 

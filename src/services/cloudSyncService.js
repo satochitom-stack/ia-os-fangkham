@@ -53,7 +53,7 @@ class CloudSyncService {
    * @param {Function} options.onDepartmentPermissionsUpdate - Callback when permissions change
    * @param {Function} options.onPublicOverviewUpdate - Callback when public overview/slogan changes
    */
-  async initRealtimeSync({ onRiskManagementUpdate, onDepartmentPermissionsUpdate, onPublicOverviewUpdate } = {}) {
+  async initRealtimeSync({ onRiskManagementUpdate, onDepartmentPermissionsUpdate, onPublicOverviewUpdate, onAppStateUpdate } = {}) {
     if (!isSupabaseConfigured()) {
       this.status = 'disconnected';
       this.notifyStatus();
@@ -94,6 +94,13 @@ class CloudSyncService {
             console.log('⚡ [Cloud Realtime] Received risk_management_data event:', payload.eventType, payload.new);
             this.lastSyncTime = new Date().toLocaleTimeString('th-TH');
             this.notifyStatus();
+
+            if (payload.new && payload.new.department === 'app_full_state') {
+              if (onAppStateUpdate && payload.new.data) {
+                onAppStateUpdate(payload.new.data);
+              }
+              return;
+            }
 
             if (payload.new && (payload.new.department === 'public_overview' || payload.new.fiscal_year === 'global')) {
               window.dispatchEvent(new CustomEvent('ia-public-overview-updated', { detail: payload.new.data }));
@@ -199,11 +206,12 @@ class CloudSyncService {
       };
 
       data.forEach((row) => {
-        // Skip duplicate container row or public overview row if any exists
+        // Skip duplicate container row or global system rows if any exist
         if (
           row.department === 'หน่วยตรวจสอบภายใน' ||
           row.department === 'ส่วนกลาง' ||
           row.department === 'public_overview' ||
+          row.department === 'app_full_state' ||
           row.fiscal_year === 'global'
         ) return;
 
@@ -503,6 +511,78 @@ class CloudSyncService {
       return true;
     } catch (err) {
       console.error('Failed to push public overview to Supabase:', err);
+      this.status = 'error';
+      this.lastError = err.message;
+      this.notifyStatus();
+      return false;
+    } finally {
+      setTimeout(() => {
+        this.isPushing = false;
+      }, 500);
+    }
+  }
+
+  /**
+   * Pull full application state (plans, audit universe, working papers, CAPA, LPA, controls, etc.)
+   */
+  async pullFullAppState() {
+    if (!isSupabaseConfigured()) return null;
+    const client = getSupabaseClient();
+    if (!client) return null;
+
+    try {
+      const { data, error } = await client
+        .from('risk_management_data')
+        .select('data, updated_at')
+        .eq('fiscal_year', 'global')
+        .eq('department', 'app_full_state')
+        .maybeSingle();
+
+      if (error) throw error;
+      return data?.data || null;
+    } catch (err) {
+      console.warn('Failed to pull full app state from Supabase:', err);
+      return null;
+    }
+  }
+
+  /**
+   * Push full application state to Supabase (works with existing risk_management_data table)
+   */
+  async pushFullAppState(appStatePayload) {
+    if (!isSupabaseConfigured() || !appStatePayload) return false;
+    const client = getSupabaseClient();
+    if (!client) return false;
+
+    this.isPushing = true;
+    try {
+      this.status = 'syncing';
+      this.notifyStatus();
+
+      const { error } = await client
+        .from('risk_management_data')
+        .upsert(
+          {
+            fiscal_year: 'global',
+            department: 'app_full_state',
+            data: {
+              ...appStatePayload,
+              syncedAt: new Date().toISOString()
+            },
+            updated_at: new Date().toISOString()
+          },
+          { onConflict: 'fiscal_year,department' }
+        );
+
+      if (error) throw error;
+
+      this.status = 'connected';
+      this.lastSyncTime = new Date().toLocaleTimeString('th-TH');
+      this.lastError = null;
+      this.notifyStatus();
+      return true;
+    } catch (err) {
+      console.error('Failed to push full app state to Supabase:', err);
       this.status = 'error';
       this.lastError = err.message;
       this.notifyStatus();

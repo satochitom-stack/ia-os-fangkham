@@ -1,0 +1,21 @@
+name: Supabase Keep-Alive Ping
+
+on:
+  schedule:
+    # Ping every 3 days at 02:00 UTC (09:00 Thailand time) to prevent 7-day Free Tier auto-pause
+    - cron: '0 2 */3 * *'
+  workflow_dispatch:
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        run: |
+          SUPABASE_URL="${{ secrets.VITE_SUPABASE_URL || 'https://kdpxnmtblaminyffdwfe.supabase.co' }}"
+          SUPABASE_KEY="${{ secrets.VITE_SUPABASE_ANON_KEY || 'sb_publishable_nsrWU0VBRgI5tlHYYvzy8g_658gwW70' }}"
+          echo "Pinging $SUPABASE_URL ..."
+          curl -fsS "${SUPABASE_URL}/rest/v1/risk_management_data?select=fiscal_year&limit=1" \
+            -H "apikey: ${SUPABASE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_KEY}" \
+            || echo "Ping completed with warning (check if project is paused)"

@@ -1,33 +1,33 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Cloud, X, UserCheck } from 'lucide-react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import DashboardView from './components/DashboardView';
-import PlanningView from './components/PlanningView';
-import ExecutionView from './components/ExecutionView';
-import ReportingView from './components/ReportingView';
-import InternalControlView from './components/InternalControlView';
-import RiskManagementView from './components/RiskManagementView';
-import LpaView from './components/LpaView';
-import KnowledgeView from './components/KnowledgeView';
-import FormsView from './components/FormsView';
-import LoginView from './components/LoginView';
-import WelcomeView from './components/WelcomeView';
 import ChangePasswordModal from './components/ChangePasswordModal';
 import ProfileSettingsModal from './components/ProfileSettingsModal';
 import CloudSyncModal from './components/CloudSyncModal';
 import AuditRiskView, { defaultAuditUniverse } from './components/AuditRiskView';
-import EngagementPlanView from './components/EngagementPlanView';
-import UserManagementView from './components/UserManagementView';
-import TechnicalToolkitsView from './components/TechnicalToolkitsView';
-import DepartmentWorkspaceView from './components/DepartmentWorkspaceView';
-import ExecutiveDashboardView from './components/ExecutiveDashboardView';
-import CentralCalendarView from './components/CentralCalendarView';
-import PublicOverviewView from './components/PublicOverviewView';
-import HappyHogView from './components/HappyHogView';
-import CozyOffice3DView from './components/CozyOffice3DView';
-import CardSortPuzzleView from './components/CardSortPuzzleView';
 import ErrorBoundary from './components/ErrorBoundary';
+
+// Lazy-loaded heavy modules for faster initial load (Code Splitting)
+const PlanningView = lazy(() => import('./components/PlanningView'));
+const HappyHogView = lazy(() => import('./components/HappyHogView'));
+const CardSortPuzzleView = lazy(() => import('./components/CardSortPuzzleView'));
+const ExecutionView = lazy(() => import('./components/ExecutionView'));
+const ReportingView = lazy(() => import('./components/ReportingView'));
+const InternalControlView = lazy(() => import('./components/InternalControlView'));
+const RiskManagementView = lazy(() => import('./components/RiskManagementView'));
+const LpaView = lazy(() => import('./components/LpaView'));
+const KnowledgeView = lazy(() => import('./components/KnowledgeView'));
+const FormsView = lazy(() => import('./components/FormsView'));
+const WelcomeView = lazy(() => import('./components/WelcomeView'));
+const EngagementPlanView = lazy(() => import('./components/EngagementPlanView'));
+const UserManagementView = lazy(() => import('./components/UserManagementView'));
+const TechnicalToolkitsView = lazy(() => import('./components/TechnicalToolkitsView'));
+const DepartmentWorkspaceView = lazy(() => import('./components/DepartmentWorkspaceView'));
+const ExecutiveDashboardView = lazy(() => import('./components/ExecutiveDashboardView'));
+const CentralCalendarView = lazy(() => import('./components/CentralCalendarView'));
+const PublicOverviewView = lazy(() => import('./components/PublicOverviewView'));
 import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
 import { getSession, loginAsGuest, logout as authLogout, switchSessionTo, autoRepairDataLinkages, getUsers, saveUsers, getDepartments, saveDepartments, getPendingUsers, pullPendingUsersFromCloud } from './utils/auth';
 import { cloudSyncService, mergeRiskManagement } from './services/cloudSyncService';
@@ -589,6 +589,84 @@ export default function App() {
     localStorage.setItem('ia_risk_management_by_year', JSON.stringify(riskManagementByYear));
   }, [riskManagementByYear]);
 
+  // Helper: Build full application state snapshot for Cloud Sync & Backup
+  const buildFullAppStatePayload = () => {
+    const readSafeJson = (key, fallback = null) => {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch {
+        return fallback;
+      }
+    };
+    const deptWorkspaceKeys = [
+      'ia_dept_office_data',
+      'ia_dept_finance_data',
+      'ia_dept_tech_data',
+      'ia_dept_education_data',
+      'ia_dept_welfare_data',
+      'ia_dept_public_health_data',
+      'ia_dept_cdc_charoen_data',
+      'ia_dept_cdc_fangthoeng_data'
+    ];
+    const departmentWorkspaces = {};
+    deptWorkspaceKeys.forEach((k) => {
+      const val = readSafeJson(k, null);
+      if (val) departmentWorkspaces[k] = val;
+    });
+    return {
+      orgProfile,
+      fiscalYears,
+      auditUniverseByYear,
+      engagementPlansByYear,
+      annualPlansByYear,
+      workingPapersByYear,
+      riskAssessmentsByYear,
+      internalControlsByYear,
+      lpaIndicatorsByYear,
+      auditCharterByYear,
+      strategicPlan,
+      capaFindingsByYear,
+      knowledgeBase,
+      formsBase,
+      centralCalendarEvents: readSafeJson('ia_central_calendar_events', []),
+      executiveDirectives: readSafeJson('ia_executive_directives', []),
+      departmentWorkspaces
+    };
+  };
+
+  // Helper: Apply incoming cloud full application state safely
+  const applyFullAppState = (data) => {
+    if (!data || typeof data !== 'object') return;
+    if (data.orgProfile) setOrgProfile(data.orgProfile);
+    if (Array.isArray(data.fiscalYears) && data.fiscalYears.length > 0) setFiscalYears(data.fiscalYears);
+    if (data.auditUniverseByYear) setAuditUniverseByYear((prev) => ({ ...prev, ...data.auditUniverseByYear }));
+    if (data.engagementPlansByYear) setEngagementPlansByYear((prev) => ({ ...prev, ...data.engagementPlansByYear }));
+    if (data.annualPlansByYear) setAnnualPlansByYear((prev) => ({ ...prev, ...data.annualPlansByYear }));
+    if (data.workingPapersByYear) setWorkingPapersByYear((prev) => ({ ...prev, ...data.workingPapersByYear }));
+    if (data.riskAssessmentsByYear) setRiskAssessmentsByYear((prev) => ({ ...prev, ...data.riskAssessmentsByYear }));
+    if (data.internalControlsByYear) setInternalControlsByYear((prev) => ({ ...prev, ...data.internalControlsByYear }));
+    if (data.lpaIndicatorsByYear) setLpaIndicatorsByYear((prev) => ({ ...prev, ...data.lpaIndicatorsByYear }));
+    if (data.auditCharterByYear) setAuditCharterByYear((prev) => ({ ...prev, ...data.auditCharterByYear }));
+    if (Array.isArray(data.strategicPlan) && data.strategicPlan.length > 0) setStrategicPlan(data.strategicPlan);
+    if (data.capaFindingsByYear) setCapaFindingsByYear((prev) => ({ ...prev, ...data.capaFindingsByYear }));
+    if (Array.isArray(data.knowledgeBase) && data.knowledgeBase.length > 0) setKnowledgeBase(data.knowledgeBase);
+    if (Array.isArray(data.formsBase) && data.formsBase.length > 0) setFormsBase(data.formsBase);
+    if (Array.isArray(data.centralCalendarEvents) && data.centralCalendarEvents.length > 0) {
+      localStorage.setItem('ia_central_calendar_events', JSON.stringify(data.centralCalendarEvents));
+    }
+    if (Array.isArray(data.executiveDirectives) && data.executiveDirectives.length > 0) {
+      localStorage.setItem('ia_executive_directives', JSON.stringify(data.executiveDirectives));
+    }
+    if (data.departmentWorkspaces && typeof data.departmentWorkspaces === 'object') {
+      Object.entries(data.departmentWorkspaces).forEach(([k, v]) => {
+        if (k.startsWith('ia_dept_') && v) {
+          localStorage.setItem(k, JSON.stringify(v));
+        }
+      });
+    }
+  };
+
   // Initialize Cloud Realtime Synchronization (Supabase)
   useEffect(() => {
     let isSubscribed = true;
@@ -596,9 +674,15 @@ export default function App() {
     const setupSync = async () => {
       if (!isSupabaseConfigured()) return;
 
-      // 1. Initial Pull from Cloud
+      // 1. Initial Pull from Cloud (Risk Management + Full App State)
       try {
-        const cloudData = await cloudSyncService.pullAllRiskManagement();
+        const [cloudData, cloudFullState] = await Promise.all([
+          cloudSyncService.pullAllRiskManagement(),
+          cloudSyncService.pullFullAppState()
+        ]);
+        if (isSubscribed && cloudFullState) {
+          applyFullAppState(cloudFullState);
+        }
         if (isSubscribed && cloudData && Object.keys(cloudData).length > 0) {
           setRiskManagementByYear((prev) => {
             const next = { ...prev };
@@ -634,6 +718,11 @@ export default function App() {
 
       // 2. Realtime Subscription
       cloudSyncService.initRealtimeSync({
+        onAppStateUpdate: (cloudState) => {
+          if (isSubscribed && cloudState) {
+            applyFullAppState(cloudState);
+          }
+        },
         onRiskManagementUpdate: ({ fiscalYear, department, data }) => {
           if (!fiscalYear || !department || !data) return;
           if (department === 'หน่วยตรวจสอบภายใน' || department === 'ส่วนกลาง') return;
@@ -825,10 +914,14 @@ export default function App() {
       if (isSupabaseConfigured()) {
         const userDept = session?.department || 'สำนักปลัด';
         if (session?.role === 'admin') {
-          // Admin pushes all departments properly partitioned into their own individual rows
-          cloudSyncService.pushAllRiskManagement({ [selectedYear]: updated }, [
-            'สำนักปลัด', 'กองคลัง', 'กองช่าง', 'กองการศึกษา', 'กองสวัสดิการสังคม'
-          ]).catch((e) => console.warn('Auto cloud push notice:', e));
+          // Admin pushes all departments dynamically from getDepartments()
+          const dynamicDepts = getDepartments().filter(
+            (d) => d && d !== 'หน่วยตรวจสอบภายใน' && d !== 'ส่วนกลาง'
+          );
+          cloudSyncService.pushAllRiskManagement(
+            { [selectedYear]: updated },
+            dynamicDepts.length > 0 ? dynamicDepts : ['สำนักปลัด', 'กองคลัง', 'กองช่าง', 'กองการศึกษา', 'กองสวัสดิการสังคม']
+          ).catch((e) => console.warn('Auto cloud push notice:', e));
         } else {
           // Regular user pushes only their own department's payload
           const filterFn = (i) => i && i.department === userDept;
@@ -951,10 +1044,34 @@ export default function App() {
     localStorage.removeItem('ia_lpa_indicators');
   };
 
-  // Export JSON Backup
+  // Export JSON Backup (Complete across ALL modules)
   const handleExportBackup = () => {
+    const readSafeJson = (key, fallback = null) => {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch {
+        return fallback;
+      }
+    };
+    const deptWorkspaceKeys = [
+      'ia_dept_office_data',
+      'ia_dept_finance_data',
+      'ia_dept_tech_data',
+      'ia_dept_education_data',
+      'ia_dept_welfare_data',
+      'ia_dept_public_health_data',
+      'ia_dept_cdc_charoen_data',
+      'ia_dept_cdc_fangthoeng_data'
+    ];
+    const departmentWorkspaces = {};
+    deptWorkspaceKeys.forEach((k) => {
+      const val = readSafeJson(k, null);
+      if (val) departmentWorkspaces[k] = val;
+    });
+
     const data = {
-      version: '2.4',
+      version: '3.0',
       exportedAt: new Date().toISOString(),
       users: getUsers(),
       departments: getDepartments(),
@@ -971,7 +1088,12 @@ export default function App() {
       lpaIndicatorsByYear,
       auditCharterByYear,
       strategicPlan,
-      capaFindingsByYear
+      capaFindingsByYear,
+      knowledgeBase,
+      formsBase,
+      centralCalendarEvents: readSafeJson('ia_central_calendar_events', []),
+      executiveDirectives: readSafeJson('ia_executive_directives', []),
+      departmentWorkspaces
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -982,7 +1104,7 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
-  // Import JSON Backup
+  // Import JSON Backup (Complete across ALL modules)
   const handleImportBackup = (data) => {
     if (data.users && Array.isArray(data.users)) saveUsers(data.users);
     if (data.departments && Array.isArray(data.departments)) saveDepartments(data.departments);
@@ -1009,6 +1131,21 @@ export default function App() {
     if (data.strategicPlan && Array.isArray(data.strategicPlan)) setStrategicPlan(data.strategicPlan);
     if (data.capaFindingsByYear) setCapaFindingsByYear(data.capaFindingsByYear);
     else if (data.capaFindings) setCapaFindingsByYear({ [selectedYear]: data.capaFindings });
+    if (data.knowledgeBase && Array.isArray(data.knowledgeBase)) setKnowledgeBase(data.knowledgeBase);
+    if (data.formsBase && Array.isArray(data.formsBase)) setFormsBase(data.formsBase);
+    if (Array.isArray(data.centralCalendarEvents)) {
+      localStorage.setItem('ia_central_calendar_events', JSON.stringify(data.centralCalendarEvents));
+    }
+    if (Array.isArray(data.executiveDirectives)) {
+      localStorage.setItem('ia_executive_directives', JSON.stringify(data.executiveDirectives));
+    }
+    if (data.departmentWorkspaces && typeof data.departmentWorkspaces === 'object') {
+      Object.entries(data.departmentWorkspaces).forEach(([k, v]) => {
+        if (k.startsWith('ia_dept_') && v) {
+          localStorage.setItem(k, JSON.stringify(v));
+        }
+      });
+    }
   };
 
   // Helper: Default landing tab based on role and department
@@ -1042,47 +1179,58 @@ export default function App() {
     }
   }, [session, currentTab]);
 
+  const viewFallback = (
+    <div className="flex flex-col items-center justify-center min-h-[50vh] text-slate-500 dark:text-slate-400 gap-3">
+      <div className="w-8 h-8 rounded-full border-3 border-blue-600 border-t-transparent animate-spin" />
+      <span className="text-xs font-semibold">กำลังโหลดโมดูล...</span>
+    </div>
+  );
+
   if (!session) {
     return (
-      <WelcomeView
-        session={null}
-        onLogin={(sess) => {
-          const s = sess || getSession();
-          setSession(s);
-          setCurrentTab(getDefaultTabForUser(s));
-        }}
-        onGuestLogin={() => {
-          const s = loginAsGuest();
-          setSession(s);
-          setCurrentTab(getDefaultTabForUser(s));
-        }}
-        onEnterDashboard={() => {
-          const s = getSession() || loginAsGuest();
-          setSession(s);
-          setCurrentTab(getDefaultTabForUser(s));
-        }}
-      />
+      <Suspense fallback={viewFallback}>
+        <WelcomeView
+          session={null}
+          onLogin={(sess) => {
+            const s = sess || getSession();
+            setSession(s);
+            setCurrentTab(getDefaultTabForUser(s));
+          }}
+          onGuestLogin={() => {
+            const s = loginAsGuest();
+            setSession(s);
+            setCurrentTab(getDefaultTabForUser(s));
+          }}
+          onEnterDashboard={() => {
+            const s = getSession() || loginAsGuest();
+            setSession(s);
+            setCurrentTab(getDefaultTabForUser(s));
+          }}
+        />
+      </Suspense>
     );
   }
 
   if (currentTab === 'welcome') {
     return (
-      <WelcomeView
-        session={session}
-        onLogin={(sess) => {
-          const s = sess || getSession();
-          setSession(s);
-          setCurrentTab(getDefaultTabForUser(s));
-        }}
-        onGuestLogin={() => {
-          const s = loginAsGuest();
-          setSession(s);
-          setCurrentTab(getDefaultTabForUser(s));
-        }}
-        onEnterDashboard={() => {
-          setCurrentTab(getDefaultTabForUser(session));
-        }}
-      />
+      <Suspense fallback={viewFallback}>
+        <WelcomeView
+          session={session}
+          onLogin={(sess) => {
+            const s = sess || getSession();
+            setSession(s);
+            setCurrentTab(getDefaultTabForUser(s));
+          }}
+          onGuestLogin={() => {
+            const s = loginAsGuest();
+            setSession(s);
+            setCurrentTab(getDefaultTabForUser(s));
+          }}
+          onEnterDashboard={() => {
+            setCurrentTab(getDefaultTabForUser(session));
+          }}
+        />
+      </Suspense>
     );
   }
 
@@ -1156,7 +1304,8 @@ export default function App() {
           onClose={() => setShowCloudSyncModal(false)}
           riskManagementByYear={riskManagementByYear}
           setRiskManagementByYear={setRiskManagementByYear}
-          selectedYear={selectedYear}
+          onPullFullState={applyFullAppState}
+          onPushFullState={() => cloudSyncService.pushFullAppState(buildFullAppStatePayload())}
           isAdmin={session?.role === 'admin'}
         />
       )}
@@ -1212,6 +1361,7 @@ export default function App() {
         <main ref={mainContentRef} className="flex-1 overflow-y-auto min-h-0 p-4 sm:p-6 lg:p-8 bg-slate-100/80 dark:bg-slate-950 custom-scrollbar print:p-0 print:m-0 print:bg-white print:overflow-visible">
           <div className="max-w-7xl mx-auto print:max-w-none print:w-full print:m-0 print:p-0">
             <ErrorBoundary key={currentTab} onReset={() => setCurrentTab('dashboard')}>
+            <Suspense fallback={viewFallback}>
             {currentTab === 'dashboard' && (
               <DashboardView
                 key={`dashboard-${selectedYear}`}
@@ -1221,6 +1371,8 @@ export default function App() {
                 workingPapers={workingPapers}
                 lpaIndicators={lpaIndicators}
                 riskAssessments={riskAssessments}
+                auditUniverse={auditUniverse}
+                riskManagement={riskManagement}
                 setCurrentTab={setCurrentTab}
                 setSelectedWp={setSelectedWp}
                 onOpenSettings={() => setShowSettings(true)}
@@ -1247,6 +1399,7 @@ export default function App() {
                 key={`planning-${selectedYear}`}
                 selectedYear={selectedYear}
                 auditCharter={auditCharter}
+                setAuditCharter={setAuditCharter}
                 annualPlans={annualPlans}
                 setAnnualPlans={setAnnualPlans}
                 riskAssessments={riskAssessments}
@@ -1283,6 +1436,11 @@ export default function App() {
                 selectedWp={selectedWp}
                 setSelectedWp={setSelectedWp}
                 orgProfile={orgProfile}
+                annualPlans={annualPlans}
+                setAnnualPlans={setAnnualPlans}
+                capaFindings={capaFindings}
+                setCapaFindings={setCapaFindings}
+                setCurrentTab={setCurrentTab}
               />
             )}
 
@@ -1418,6 +1576,7 @@ export default function App() {
                 key={`lpa-${selectedYear}`}
                 selectedYear={selectedYear}
                 lpaIndicators={lpaIndicators}
+                setLpaIndicators={setLpaIndicators}
                 orgProfile={orgProfile}
               />
             )}
@@ -1462,7 +1621,6 @@ export default function App() {
                 }}
               />
             )}
-
             {currentTab === 'card-sort' && (
               <CardSortPuzzleView />
             )}
@@ -1474,6 +1632,7 @@ export default function App() {
             {currentTab === 'cozy-office-3d' && (
               <CardSortPuzzleView />
             )}
+            </Suspense>
             </ErrorBoundary>
           </div>
         </main>

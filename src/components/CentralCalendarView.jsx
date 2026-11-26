@@ -22,6 +22,8 @@ import { initialCentralCalendarEvents } from '../data/initialData';
 export default function CentralCalendarView({
   session,
   orgProfile = {},
+  selectedYear = '2569',
+  annualPlans = [],
   setCurrentTab
 }) {
   const [events, setEvents] = useState(() => {
@@ -36,6 +38,37 @@ export default function CentralCalendarView({
     }
     return initialCentralCalendarEvents || [];
   });
+
+  // Auto-derive calendar events from Annual Audit Plans for the selected fiscal year
+  const planDerivedEvents = useMemo(() => {
+    const adYear = (Number(selectedYear) || 2569) - 543;
+    const quarterDateMap = {
+      Q1: `${adYear - 1}-11-15`,
+      'ไตรมาส 1': `${adYear - 1}-11-15`,
+      Q2: `${adYear}-02-15`,
+      'ไตรมาส 2': `${adYear}-02-15`,
+      Q3: `${adYear}-05-15`,
+      'ไตรมาส 3': `${adYear}-05-15`,
+      Q4: `${adYear}-08-15`,
+      'ไตรมาส 4': `${adYear}-08-15`
+    };
+    return (annualPlans || []).map((plan, idx) => {
+      const qKey = Object.keys(quarterDateMap).find((k) => String(plan.quarter || '').includes(k));
+      const derivedDate = plan.startDate || plan.scheduledDate || (qKey ? quarterDateMap[qKey] : `${adYear}-01-15`);
+      return {
+        id: `PLAN-SYNC-${plan.id || idx}`,
+        title: `[แผนตรวจสอบ ${selectedYear}] ${plan.topic || plan.title || plan.activity || 'โครงการตรวจสอบ'}`,
+        date: derivedDate,
+        department: plan.department || 'หน่วยตรวจสอบภายใน',
+        category: 'audit',
+        categoryName: 'แผนการตรวจสอบประจำปี (ซิงค์อัตโนมัติ)',
+        standardRef: plan.quarter ? `กำหนดการ ${plan.quarter} ปีงบ ${selectedYear}` : `แผนตรวจสอบปีงบ ${selectedYear}`,
+        desc: plan.scope || plan.objective || 'เชื่อมโยงอัตโนมัติจากโมดูลแผนการตรวจสอบประจำปี',
+        status: plan.status === 'completed' ? 'completed' : 'pending',
+        isFromPlan: true
+      };
+    });
+  }, [annualPlans, selectedYear]);
 
   const [viewMode, setViewMode] = useState('list'); // 'list' or 'grid'
   const [selectedDept, setSelectedDept] = useState('all');
@@ -116,23 +149,23 @@ export default function CentralCalendarView({
     }
   };
 
-  // Filtered & Sorted events
+  // Filtered & Sorted events (Manual + Auto-synced Annual Plans)
   const filteredEvents = useMemo(() => {
-    return events
+    return [...planDerivedEvents, ...events]
       .filter((ev) => {
         if (selectedDept !== 'all' && ev.department !== selectedDept) return false;
         if (selectedCategory !== 'all' && ev.category !== selectedCategory) return false;
         if (searchQuery) {
           const q = searchQuery.toLowerCase();
-          const matchTitle = ev.title.toLowerCase().includes(q);
-          const matchDept = ev.department.toLowerCase().includes(q);
+          const matchTitle = (ev.title || '').toLowerCase().includes(q);
+          const matchDept = (ev.department || '').toLowerCase().includes(q);
           const matchRef = ev.standardRef?.toLowerCase().includes(q);
           if (!matchTitle && !matchDept && !matchRef) return false;
         }
         return true;
       })
       .sort((a, b) => new Date(a.date) - new Date(b.date));
-  }, [events, selectedDept, selectedCategory, searchQuery]);
+  }, [planDerivedEvents, events, selectedDept, selectedCategory, searchQuery]);
 
   const getCategoryBadge = (category) => {
     switch (category) {

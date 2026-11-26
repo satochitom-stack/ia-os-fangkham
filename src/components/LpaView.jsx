@@ -12,23 +12,48 @@ import {
 } from 'lucide-react';
 
 export default function LpaView({
-  lpaIndicators,
+  lpaIndicators = [],
+  setLpaIndicators,
   orgProfile,
   selectedYear = '2569'
 }) {
-  const [checkedEvidence, setCheckedEvidence] = useState({});
   const [expandedId, setExpandedId] = useState(4); // Default expand Indicator 4 (Internal Audit)
 
   const toggleEvidence = (indicatorId, evidenceIdx) => {
-    const key = `${indicatorId}-${evidenceIdx}`;
-    setCheckedEvidence((prev) => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
+    if (!setLpaIndicators) return;
+    setLpaIndicators((prev) =>
+      (prev || []).map((ind) => {
+        if (ind.id !== indicatorId) return ind;
+        const totalItems = ind.evidenceList?.length || 1;
+        const currentMap = ind.checkedEvidence || {};
+        const nextChecked = !currentMap[evidenceIdx];
+        const nextMap = { ...currentMap, [evidenceIdx]: nextChecked };
+        const checkedCount = (ind.evidenceList || []).reduce(
+          (acc, _, idx) => acc + (nextMap[idx] ? 1 : 0),
+          0
+        );
+        const maxS = Number(ind.maxScore) || 5;
+        const nextScore = Math.round((checkedCount / totalItems) * maxS);
+        return {
+          ...ind,
+          checkedEvidence: nextMap,
+          score: nextScore
+        };
+      })
+    );
   };
 
-  const totalScore = lpaIndicators.reduce((acc, curr) => acc + curr.score, 0);
-  const maxScore = lpaIndicators.reduce((acc, curr) => acc + curr.maxScore, 0);
+  const totalScore = lpaIndicators.reduce((acc, curr) => acc + (Number(curr.score) || 0), 0);
+  const maxScore = lpaIndicators.reduce((acc, curr) => acc + (Number(curr.maxScore) || 5), 0) || 25;
+  const scorePercent = Math.round((totalScore / maxScore) * 100) || 0;
+  const gradeLabel =
+    scorePercent >= 85
+      ? 'ระดับยอดเยี่ยม'
+      : scorePercent >= 70
+      ? 'ระดับดี'
+      : scorePercent >= 50
+      ? 'ระดับปานกลาง'
+      : 'อยู่ระหว่างเตรียมเอกสาร';
 
   return (
     <div className="space-y-6">
@@ -53,7 +78,7 @@ export default function LpaView({
             {totalScore} / {maxScore}
           </div>
           <div className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
-            ระดับยอดเยี่ยม (100%)
+            {gradeLabel} ({scorePercent}%)
           </div>
         </div>
       </div>
@@ -112,8 +137,7 @@ export default function LpaView({
                     </h4>
                     <div className="space-y-2">
                       {ind.evidenceList?.map((item, idx) => {
-                        const key = `${ind.id}-${idx}`;
-                        const isChecked = checkedEvidence[key] !== false; // default true for complete preparation
+                        const isChecked = Boolean(ind.checkedEvidence?.[idx]);
                         return (
                           <div
                             key={idx}
@@ -155,7 +179,7 @@ export default function LpaView({
                   <div className="pt-2 flex justify-between items-center text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-700">
                     <span className="flex items-center text-blue-700 dark:text-blue-400 font-medium">
                       <FolderOpen className="w-3.5 h-3.5 mr-1" />
-                      แฟ้มเอกสารอ้างอิง: D:\งานตรวจสอบภายใน\LPA\LPA ปี 68 ตรวจของ ปี 67\ตัวชี้วัดที่ {ind.id}.docx
+                      แฟ้มเอกสารหลักฐาน LPA ปีงบประมาณ พ.ศ. {selectedYear} — ตัวชี้วัดที่ {ind.id}
                     </span>
                     <button
                       onClick={() => window.print()}

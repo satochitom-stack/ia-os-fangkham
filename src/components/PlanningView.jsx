@@ -33,6 +33,7 @@ import { AUDIT_DIMENSIONS, generateEngagementPlanWithAI } from '../data/engageme
 
 export default function PlanningView({
   auditCharter,
+  setAuditCharter,
   annualPlans = [],
   setAnnualPlans,
   riskAssessments = [],
@@ -1081,8 +1082,20 @@ export default function PlanningView({
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
               {orgProfile?.name || 'องค์การบริหารส่วนตำบลฝางคำ'} {orgProfile?.district || 'อำเภอสิรินธร'} {orgProfile?.province || 'จังหวัดอุบลราชธานี'}
             </p>
-            <div className="inline-block mt-2 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs px-3.5 py-1 rounded-full font-bold border border-blue-200 dark:border-blue-800">
-              อนุมัติและประกาศใช้เมื่อ: {auditCharter?.approvedDate || '1 ตุลาคม 2568'} โดย {orgProfile?.approverName || 'นายก อปท.'}
+            <div className="inline-flex items-center gap-2 mt-2 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs px-3.5 py-1 rounded-full font-bold border border-blue-200 dark:border-blue-800">
+              <span>อนุมัติและประกาศใช้เมื่อ:</span>
+              {setAuditCharter ? (
+                <input
+                  type="text"
+                  value={auditCharter?.approvedDate || ''}
+                  placeholder="เช่น 1 ตุลาคม 2568"
+                  onChange={(e) => setAuditCharter((prev) => ({ ...prev, approvedDate: e.target.value }))}
+                  className="bg-white/80 dark:bg-slate-900/80 border border-blue-200 dark:border-blue-700 rounded-md px-2 py-0.5 text-xs font-bold text-blue-800 dark:text-blue-200 w-36 outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              ) : (
+                <span>{auditCharter?.approvedDate || '1 ตุลาคม 2568'}</span>
+              )}
+              <span>โดย {orgProfile?.approverName || 'นายก อปท.'}</span>
             </div>
           </div>
 

@@ -13,7 +13,6 @@ import {
   ChevronRight,
   Plus,
   Settings,
-  UserCheck,
   Wrench
 } from 'lucide-react';
 
@@ -24,6 +23,8 @@ export default function DashboardView({
   workingPapers = [],
   lpaIndicators = [],
   riskAssessments = [],
+  auditUniverse = [],
+  riskManagement = null,
   setCurrentTab,
   setSelectedWp,
   onOpenSettings,
@@ -34,13 +35,27 @@ export default function DashboardView({
   const inProgressPlans = annualPlans.filter((p) => p.status === 'in_progress').length;
   const pendingPlans = annualPlans.filter((p) => p.status === 'pending').length;
 
-  const totalLpaScore = lpaIndicators.reduce((acc, curr) => acc + curr.score, 0);
-  const maxLpaScore = lpaIndicators.reduce((acc, curr) => acc + curr.maxScore, 0) || 25;
+  const totalLpaScore = lpaIndicators.reduce((acc, curr) => acc + (Number(curr.score) || 0), 0);
+  const maxLpaScore = lpaIndicators.reduce((acc, curr) => acc + (Number(curr.maxScore) || 5), 0) || 25;
   const lpaPercent = Math.round((totalLpaScore / maxLpaScore) * 100) || 0;
 
-  const highRisks = riskAssessments.filter(
+  // Link directly to AuditRiskView (SOFCK auditUniverse) with fallback to legacy riskAssessments
+  const sofckHighRisks = auditUniverse.filter((u) => {
+    const total =
+      (Number(u.sScore) || 0) +
+      (Number(u.oScore) || 0) +
+      (Number(u.fScore) || 0) +
+      (Number(u.cScore) || 0) +
+      (Number(u.kScore) || 0);
+    return total >= 13 || u.level === 'สูงมาก' || u.level === 'สูง';
+  }).length;
+
+  const legacyHighRisks = riskAssessments.filter(
     (r) => r.level === 'สูงมาก' || r.level === 'สูง'
   ).length;
+
+  const highRisks = sofckHighRisks > 0 ? sofckHighRisks : legacyHighRisks;
+  const totalBs1Count = Array.isArray(riskManagement?.bs1) ? riskManagement.bs1.length : 0;
 
   const hasAuditorName = Boolean(orgProfile.auditorName?.trim());
   const orgDisplayName = orgProfile.name || 'องค์กรปกครองส่วนท้องถิ่น';
@@ -217,7 +232,7 @@ export default function DashboardView({
             <span className="text-xs text-slate-500 dark:text-slate-400">กิจกรรมเสี่ยงสูง</span>
           </div>
           <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex justify-between items-center">
-            <span>เกณฑ์ SOFCK เพื่อจัดทำแผน</span>
+            <span>SOFCK ({auditUniverse.length}) • บส. ({totalBs1Count})</span>
             <button
               onClick={() => setCurrentTab('audit-risk')}
               className="text-blue-600 dark:text-blue-400 font-medium hover:underline flex items-center cursor-pointer"

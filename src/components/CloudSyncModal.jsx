@@ -10,8 +10,6 @@ import {
   AlertCircle,
   X,
   Upload,
-  Download,
-  ShieldCheck,
   CheckCircle2,
   Sparkles,
   Zap,
@@ -31,12 +29,12 @@ export default function CloudSyncModal({
   onClose,
   riskManagementByYear,
   setRiskManagementByYear,
-  selectedYear,
+  onPullFullState,
+  onPushFullState,
   isAdmin = false
 }) {
-  const [config, setConfig] = useState(() => getSupabaseConfig());
-  const [url, setUrl] = useState(config.url || '');
-  const [anonKey, setAnonKey] = useState(config.anonKey || '');
+  const [url, setUrl] = useState(() => getSupabaseConfig().url || '');
+  const [anonKey, setAnonKey] = useState(() => getSupabaseConfig().anonKey || '');
   const [syncStatus, setSyncStatus] = useState(() => cloudSyncService.getSyncStatus());
   const [isTesting, setIsTesting] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
@@ -50,12 +48,6 @@ export default function CloudSyncModal({
     });
     return unsub;
   }, []);
-
-  useEffect(() => {
-    const current = getSupabaseConfig();
-    setUrl(current.url || '');
-    setAnonKey(current.anonKey || '');
-  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -101,12 +93,17 @@ export default function CloudSyncModal({
     setFeedback({ type: 'info', message: 'ตัดการเชื่อมต่อ Cloud แล้ว กลับสู่โหมด LocalStorage ในเครื่อง' });
   };
 
-  // Sync Now: Pull latest from Cloud and merge
+  // Sync Now: Pull latest from Cloud (Risk Management + Full App State)
   const handleSyncNow = async () => {
     setIsBusy(true);
     setFeedback(null);
     try {
-      const cloudData = await cloudSyncService.pullAllRiskManagement();
+      const [cloudData, fullState] = await Promise.all([
+        cloudSyncService.pullAllRiskManagement(),
+        cloudSyncService.pullFullAppState()
+      ]);
+
+      let syncedAny = false;
       if (cloudData && Object.keys(cloudData).length > 0 && setRiskManagementByYear) {
         setRiskManagementByYear((prev) => {
           const next = { ...prev };
@@ -117,9 +114,18 @@ export default function CloudSyncModal({
           });
           return next;
         });
+        syncedAny = true;
+      }
+
+      if (fullState && onPullFullState) {
+        onPullFullState(fullState);
+        syncedAny = true;
+      }
+
+      if (syncedAny) {
         setFeedback({
           type: 'success',
-          message: '✓ ดึงและผสานรวมข้อมูลล่าสุดจาก Cloud เรียบร้อยแล้ว!'
+          message: '✓ ดึงและผสานรวมข้อมูลล่าสุดครบทุกโมดูล (บส.1-5, แผนตรวจสอบ, กระดาษทำการ, CAPA, ปค., LPA) เรียบร้อยแล้ว!'
         });
       } else {
         setFeedback({
@@ -134,16 +140,22 @@ export default function CloudSyncModal({
     }
   };
 
-  // Upload All Local Data to Cloud (Initial Seed)
+  // Upload All Local Data to Cloud (Risk Management + Full App State)
   const handleUploadAllToCloud = async () => {
     if (!riskManagementByYear) return;
     setIsBusy(true);
     setFeedback(null);
     try {
       const res = await cloudSyncService.pushAllRiskManagement(riskManagementByYear);
+      let fullOk = false;
+      if (onPushFullState) {
+        fullOk = await onPushFullState();
+      }
       setFeedback({
         type: 'success',
-        message: `✓ อัปโหลดข้อมูลแบบ บส. ทุกกองขึ้น Supabase สำเร็จเรียบร้อยแล้ว (${res.count} รายการ)! ทุกเครื่องจะเห็นข้อมูลนี้ทันที`
+        message: fullOk
+          ? `✓ อัปโหลดข้อมูลครบทุกโมดูล (บส. ${res.count} กอง + แผน/กระดาษทำการ/CAPA/ปค./LPA) ขึ้น Supabase สำเร็จแล้ว! ทุกเครื่องจะเห็นข้อมูลตรงกันทันที`
+          : `✓ อัปโหลดข้อมูลแบบ บส. ทุกกองขึ้น Supabase สำเร็จเรียบร้อยแล้ว (${res.count} รายการ)!`
       });
     } catch (err) {
       setFeedback({ type: 'error', message: `อัปโหลดไม่สำเร็จ: ${err.message}` });
