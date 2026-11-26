@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   FileText,
   AlertTriangle,
@@ -13,7 +13,10 @@ import {
   ChevronRight,
   Plus,
   Settings,
-  Wrench
+  Wrench,
+  RefreshCw,
+  Bell,
+  Copy
 } from 'lucide-react';
 
 export default function DashboardView({
@@ -25,12 +28,108 @@ export default function DashboardView({
   riskAssessments = [],
   auditUniverse = [],
   riskManagement = null,
+  capaFindings = [],
+  onOpenRollover,
   setCurrentTab,
   setSelectedWp,
   onOpenSettings,
   session,
   onLogout
 }) {
+  const [copiedDeadline, setCopiedDeadline] = useState(false);
+
+  // Smart Compliance Deadline Radar (Legal & CAPA deadlines for selected Thai fiscal year)
+  const complianceDeadlines = useMemo(() => {
+    const adYr = (Number(selectedYear) || 2570) - 543;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const legalItems = [
+      {
+        id: 'dl-bs3',
+        title: `จัดทำแผนบริหารความเสี่ยง (แบบ บส.3) ปีงบ ${selectedYear}`,
+        dueDate: `${adYr - 1}-10-31`,
+        thaiDate: `31 ต.ค. ${Number(selectedYear) - 1}`,
+        law: 'มท 0805.2/ว 3482',
+        targetTab: 'risk-management'
+      },
+      {
+        id: 'dl-pk5',
+        title: `ส่งรายงานประเมินผลการควบคุมภายใน (ปค.4 / ปค.5)`,
+        dueDate: `${adYr - 1}-11-30`,
+        thaiDate: `30 พ.ย. ${Number(selectedYear) - 1}`,
+        law: 'หลักเกณฑ์การควบคุมภายใน กรมบัญชีกลาง',
+        targetTab: 'internal-control'
+      },
+      {
+        id: 'dl-bs4-6m',
+        title: `ติดตามแผนบริหารความเสี่ยงรอบ 6 เดือน (แบบ บส.4)`,
+        dueDate: `${adYr}-04-30`,
+        thaiDate: `30 เม.ย. ${selectedYear}`,
+        law: 'มท 0805.2/ว 3482',
+        targetTab: 'risk-management'
+      },
+      {
+        id: 'dl-plan-next',
+        title: `เสนอแผนการตรวจสอบประจำปี พ.ศ. ${Number(selectedYear) + 1} ขออนุมัติ`,
+        dueDate: `${adYr}-09-30`,
+        thaiDate: `30 ก.ย. ${selectedYear}`,
+        law: 'ระเบียบกระทรวงการคลังฯ 2561',
+        targetTab: 'planning'
+      },
+      {
+        id: 'dl-bs5',
+        title: `รายงานผลและทบทวนแผนบริหารความเสี่ยงรอบ 12 เดือน (บส.5)`,
+        dueDate: `${adYr}-09-30`,
+        thaiDate: `30 ก.ย. ${selectedYear}`,
+        law: 'มท 0805.2/ว 3482',
+        targetTab: 'risk-management'
+      }
+    ];
+
+    const capaItems = (capaFindings || [])
+      .filter((c) => c.dueDate && c.status !== 'verified_closed' && c.status !== 'closed')
+      .map((c) => ({
+        id: `dl-capa-${c.id}`,
+        title: `[CAPA ${c.code || ''}] ${c.topic} (${c.department})`,
+        dueDate: c.dueDate,
+        thaiDate: c.dueDate,
+        law: 'ติดตามข้อทักท้วง/ข้อเสนอแนะ',
+        targetTab: 'reporting'
+      }));
+
+    return [...legalItems, ...capaItems]
+      .map((item) => {
+        const d = new Date(item.dueDate);
+        const daysLeft = isNaN(d) ? 999 : Math.ceil((d - today) / 86400000);
+        return { ...item, daysLeft };
+      })
+      .filter((item) => item.daysLeft >= -30)
+      .sort((a, b) => a.daysLeft - b.daysLeft)
+      .slice(0, 5);
+  }, [selectedYear, capaFindings]);
+
+  const handleCopyDeadlineAlert = () => {
+    const lines = [
+      `⏰ [แจ้งเตือนกำหนดส่งงานตามระเบียบ - ปีงบ ${selectedYear}]`,
+      `หน่วยงาน: ${orgProfile.name || 'องค์การบริหารส่วนตำบลฝางคำ'}`,
+      '',
+      ...complianceDeadlines.map((d, idx) => {
+        const badge =
+          d.daysLeft < 0
+            ? `🔴 เลยกำหนด ${Math.abs(d.daysLeft)} วัน`
+            : d.daysLeft <= 15
+            ? `🟠 เหลืออีก ${d.daysLeft} วัน`
+            : `🟢 เหลืออีก ${d.daysLeft} วัน`;
+        return `${idx + 1}. ${d.title} (กำหนด: ${d.thaiDate}) — ${badge}`;
+      }),
+      '',
+      `ส่งจากระบบ IA-OS หน่วยตรวจสอบภายใน`
+    ];
+    navigator.clipboard.writeText(lines.join('\n'));
+    setCopiedDeadline(true);
+    setTimeout(() => setCopiedDeadline(false), 3000);
+  };
   const completedPlans = annualPlans.filter((p) => p.status === 'completed').length;
   const inProgressPlans = annualPlans.filter((p) => p.status === 'in_progress').length;
   const pendingPlans = annualPlans.filter((p) => p.status === 'pending').length;
@@ -126,6 +225,16 @@ export default function DashboardView({
               >
                 <Settings className="w-4 h-4" />
                 <span>ตั้งชื่อผู้ตรวจสอบ</span>
+              </button>
+            )}
+            {onOpenRollover && session?.role === 'admin' && (
+              <button
+                onClick={onOpenRollover}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95"
+                title="ยกยอดความเสี่ยงคงเหลือ บส.5, CAPA ค้างปิด และ SOFCK ขึ้นปีงบใหม่ใน 1 คลิก"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>ยกยอดปีงบใหม่</span>
               </button>
             )}
             <button
@@ -242,6 +351,68 @@ export default function DashboardView({
           </div>
         </div>
       </div>
+
+      {/* Smart Compliance Deadline Radar */}
+      {complianceDeadlines.length > 0 && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-amber-200/80 dark:border-amber-900/40 shadow-xs space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 flex items-center justify-center">
+                <Bell className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-sm font-black text-slate-900 dark:text-slate-100">
+                  ศูนย์แจ้งเตือนกำหนดส่งตามกฎหมาย & CAPA (Deadline Radar ปีงบ {selectedYear})
+                </h3>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  นับถอยหลังเส้นตาย ปค.5, บส.3-บส.5, แผนตรวจสอบประจำปี และข้อทักท้วงใกล้ครบกำหนด
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleCopyDeadlineAlert}
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs font-bold cursor-pointer transition-colors"
+            >
+              <Copy className="w-3.5 h-3.5" />
+              <span>{copiedDeadline ? '✓ คัดลอกแล้ว วางส่ง LINE ได้เลย!' : 'คัดลอกแจ้งเตือนส่ง LINE'}</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
+            {complianceDeadlines.map((dl) => {
+              const isOverdue = dl.daysLeft < 0;
+              const isUrgent = dl.daysLeft >= 0 && dl.daysLeft <= 15;
+              const badgeCls = isOverdue
+                ? 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200'
+                : isUrgent
+                ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200'
+                : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200';
+              return (
+                <button
+                  key={dl.id}
+                  type="button"
+                  onClick={() => setCurrentTab(dl.targetTab)}
+                  className="text-left p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 bg-slate-50/60 dark:bg-slate-950/40 transition-all cursor-pointer flex flex-col justify-between gap-2"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-100 leading-snug line-clamp-2">
+                      {dl.title}
+                    </span>
+                    <span className={`shrink-0 px-2 py-0.5 rounded-full text-[10px] font-black whitespace-nowrap ${badgeCls}`}>
+                      {isOverdue ? `เลย ${Math.abs(dl.daysLeft)} วัน` : `อีก ${dl.daysLeft} วัน`}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] text-slate-500">
+                    <span>กำหนด: {dl.thaiDate}</span>
+                    <span className="text-blue-600 dark:text-blue-400 font-semibold">{dl.law}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Main Content Grid: Audit Projects & Quick Access */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

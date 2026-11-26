@@ -99,7 +99,7 @@ export const LOCAL_GOV_SYSTEM_PROMPT = `
 /**
  * Call Google Generative Language API
  */
-async function callGeminiApi({ prompt, systemInstruction = LOCAL_GOV_SYSTEM_PROMPT, modelOverride, apiKeyOverride }) {
+export async function callGeminiApi({ prompt, systemInstruction = LOCAL_GOV_SYSTEM_PROMPT, modelOverride, apiKeyOverride }) {
   const { apiKey: savedKey, model: savedModel } = getGeminiConfig();
   const apiKey = apiKeyOverride || savedKey;
   const model = modelOverride || savedModel || DEFAULT_GEMINI_MODEL;

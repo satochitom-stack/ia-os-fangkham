@@ -28,6 +28,11 @@ const DepartmentWorkspaceView = lazy(() => import('./components/DepartmentWorksp
 const ExecutiveDashboardView = lazy(() => import('./components/ExecutiveDashboardView'));
 const CentralCalendarView = lazy(() => import('./components/CentralCalendarView'));
 const PublicOverviewView = lazy(() => import('./components/PublicOverviewView'));
+const YearEndRolloverModal = lazy(() => import('./components/YearEndRolloverModal'));
+const ElaasRedFlagScannerView = lazy(() => import('./components/ElaasRedFlagScannerView'));
+const PbcChecklistView = lazy(() => import('./components/PbcChecklistView'));
+const AutoSarabanView = lazy(() => import('./components/AutoSarabanView'));
+const MultiYearTrendView = lazy(() => import('./components/MultiYearTrendView'));
 import { INITIAL_ENGAGEMENT_PLANS } from './data/engagementPlanTemplates';
 import { getSession, loginAsGuest, logout as authLogout, switchSessionTo, autoRepairDataLinkages, getUsers, saveUsers, getDepartments, saveDepartments, getPendingUsers, pullPendingUsersFromCloud } from './utils/auth';
 import { cloudSyncService, mergeRiskManagement } from './services/cloudSyncService';
@@ -73,6 +78,7 @@ export default function App() {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showCloudSyncModal, setShowCloudSyncModal] = useState(false);
+  const [showRolloverModal, setShowRolloverModal] = useState(false);
   const [cloudToast, setCloudToast] = useState(null);
   const [pendingCount, setPendingCount] = useState(() => getPendingUsers().length);
 
@@ -605,6 +611,127 @@ export default function App() {
     localStorage.setItem('ia_risk_management_by_year', JSON.stringify(riskManagementByYear));
   }, [riskManagementByYear]);
 
+  // PBC Document Request Checklist state by year
+  const [pbcRequestsByYear, setPbcRequestsByYear] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ia_pbc_requests_by_year');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return {};
+  });
+
+  useEffect(() => {
+    localStorage.setItem('ia_pbc_requests_by_year', JSON.stringify(pbcRequestsByYear));
+  }, [pbcRequestsByYear]);
+
+  const pbcRequests = pbcRequestsByYear[selectedYear] || [];
+  const setPbcRequests = (updaterOrValue) => {
+    setPbcRequestsByYear((prev) => {
+      const current = prev[selectedYear] || [];
+      const updated = typeof updaterOrValue === 'function' ? updaterOrValue(current) : updaterOrValue;
+      return { ...prev, [selectedYear]: updated };
+    });
+  };
+
+  // Year-End Rollover Handler (Carry over residual risks from BS5, Open CAPA, and Audit Universe)
+  const handleExecuteRollover = ({ sourceYear, targetYear, includeResidualRisks, includeOpenCapa, includeAuditUniverse }) => {
+    let risksAdded = 0;
+    let capaAdded = 0;
+    let universeAdded = 0;
+
+    if (!fiscalYears.includes(targetYear)) {
+      setFiscalYears((prev) => [...prev, targetYear].sort());
+    }
+
+    if (includeResidualRisks) {
+      const srcRm = riskManagementByYear[sourceYear] || {};
+      const bs5Items = Array.isArray(srcRm.bs5)
+        ? srcRm.bs5
+        : Array.isArray(srcRm.bs5?.items)
+        ? srcRm.bs5.items
+        : [];
+      const bs1Source = bs5Items.length > 0 ? bs5Items : (Array.isArray(srcRm.bs1) ? srcRm.bs1 : []);
+
+      setRiskManagementByYear((prev) => {
+        const tgt = prev[targetYear] || createEmptyRiskManagement();
+        const existingBs1 = Array.isArray(tgt.bs1) ? tgt.bs1 : [];
+        const existingKeys = new Set(existingBs1.map((i) => `${i.department}::${i.activity}`));
+        const incoming = bs1Source
+          .filter((i) => i && !existingKeys.has(`${i.department}::${i.activity}`))
+          .map((i, idx) => ({
+            id: `BS1-ROLL-${targetYear}-${Date.now()}-${idx}`,
+            riskCode: i.riskCode || `RSK-${String(existingBs1.length + idx + 1).padStart(2, '0')}`,
+            department: i.department || 'สำนักปลัด',
+            strategy: i.strategy || 'ยุทธศาสตร์การบริหารจัดการบ้านเมืองที่ดี',
+            activity: i.activity || '',
+            budget: i.budget || 0,
+            objective: i.objective || '',
+            kpi: i.kpi || '',
+            target: i.target || '',
+            riskEvent: i.residualRisk && i.residualRisk !== '-' ? i.residualRisk : (i.riskEvent || ''),
+            cause: i.nextYearMeasures ? `แนวทางต่อเนื่องจากปี ${sourceYear}: ${i.nextYearMeasures}` : (i.cause || ''),
+            riskCategory: i.riskCategory || 'ด้านการดำเนินงาน (Operation Risks)'
+          }));
+        risksAdded = incoming.length;
+        return {
+          ...prev,
+          [targetYear]: {
+            ...tgt,
+            bs1: [...existingBs1, ...incoming]
+          }
+        };
+      });
+    }
+
+    if (includeOpenCapa) {
+      const srcCapas = Array.isArray(capaFindingsByYear[sourceYear]) ? capaFindingsByYear[sourceYear] : [];
+      const openList = srcCapas.filter(
+        (c) => c && c.status !== 'verified_closed' && c.status !== 'closed' && c.status !== 'completed'
+      );
+      setCapaFindingsByYear((prev) => {
+        const existing = Array.isArray(prev[targetYear]) ? prev[targetYear] : [];
+        const existingTopics = new Set(existing.map((c) => `${c.department}::${c.topic}`));
+        const incoming = openList
+          .filter((c) => !existingTopics.has(`${c.department}::${c.topic}`))
+          .map((c, idx) => ({
+            ...c,
+            id: `CAPA-ROLL-${targetYear}-${Date.now()}-${idx}`,
+            topic: c.topic?.includes('ยกยอด') ? c.topic : `[ยกยอดจากปี ${sourceYear}] ${c.topic}`
+          }));
+        capaAdded = incoming.length;
+        return {
+          ...prev,
+          [targetYear]: [...existing, ...incoming]
+        };
+      });
+    }
+
+    if (includeAuditUniverse) {
+      const srcAu = Array.isArray(auditUniverseByYear[sourceYear]) ? auditUniverseByYear[sourceYear] : [];
+      setAuditUniverseByYear((prev) => {
+        const existing = Array.isArray(prev[targetYear]) ? prev[targetYear] : [];
+        const existingActs = new Set(existing.map((u) => `${u.department}::${u.activity}`));
+        const incoming = srcAu
+          .filter((u) => u && !existingActs.has(`${u.department}::${u.activity}`))
+          .map((u, idx) => ({
+            ...u,
+            id: `AU-ROLL-${targetYear}-${idx + 1}`,
+            includedInPlan: false
+          }));
+        universeAdded = incoming.length;
+        return {
+          ...prev,
+          [targetYear]: [...existing, ...incoming]
+        };
+      });
+    }
+
+    setSelectedYear(targetYear);
+    return { risksAdded, capaAdded, universeAdded };
+  };
+
   // Helper: Build full application state snapshot for Cloud Sync & Backup
   const buildFullAppStatePayload = () => {
     const readSafeJson = (key, fallback = null) => {
@@ -645,6 +772,7 @@ export default function App() {
       capaFindingsByYear,
       knowledgeBase,
       formsBase,
+      pbcRequestsByYear,
       centralCalendarEvents: readSafeJson('ia_central_calendar_events', []),
       executiveDirectives: readSafeJson('ia_executive_directives', []),
       departmentWorkspaces
@@ -668,6 +796,7 @@ export default function App() {
     if (data.capaFindingsByYear) setCapaFindingsByYear((prev) => ({ ...prev, ...data.capaFindingsByYear }));
     if (Array.isArray(data.knowledgeBase) && data.knowledgeBase.length > 0) setKnowledgeBase(data.knowledgeBase);
     if (Array.isArray(data.formsBase) && data.formsBase.length > 0) setFormsBase(data.formsBase);
+    if (data.pbcRequestsByYear) setPbcRequestsByYear((prev) => ({ ...prev, ...data.pbcRequestsByYear }));
     if (Array.isArray(data.centralCalendarEvents) && data.centralCalendarEvents.length > 0) {
       localStorage.setItem('ia_central_calendar_events', JSON.stringify(data.centralCalendarEvents));
     }
@@ -1107,6 +1236,7 @@ export default function App() {
       capaFindingsByYear,
       knowledgeBase,
       formsBase,
+      pbcRequestsByYear,
       centralCalendarEvents: readSafeJson('ia_central_calendar_events', []),
       executiveDirectives: readSafeJson('ia_executive_directives', []),
       departmentWorkspaces
@@ -1149,6 +1279,7 @@ export default function App() {
     else if (data.capaFindings) setCapaFindingsByYear({ [selectedYear]: data.capaFindings });
     if (data.knowledgeBase && Array.isArray(data.knowledgeBase)) setKnowledgeBase(data.knowledgeBase);
     if (data.formsBase && Array.isArray(data.formsBase)) setFormsBase(data.formsBase);
+    if (data.pbcRequestsByYear) setPbcRequestsByYear(data.pbcRequestsByYear);
     if (Array.isArray(data.centralCalendarEvents)) {
       localStorage.setItem('ia_central_calendar_events', JSON.stringify(data.centralCalendarEvents));
     }
@@ -1187,8 +1318,8 @@ export default function App() {
     }
 
     const allowed = Array.isArray(session.permissions) && session.permissions.length > 0
-      ? [...session.permissions, 'public-overview']
-      : ['public-overview', 'risk-management', 'knowledge', 'forms'];
+      ? [...session.permissions, 'public-overview', 'pbc-checklist']
+      : ['public-overview', 'risk-management', 'pbc-checklist', 'knowledge', 'forms'];
 
     if (!allowed.includes(currentTab)) {
       setCurrentTab('public-overview');
@@ -1326,6 +1457,21 @@ export default function App() {
         />
       )}
 
+      {showRolloverModal && (
+        <Suspense fallback={null}>
+          <YearEndRolloverModal
+            isOpen={showRolloverModal}
+            onClose={() => setShowRolloverModal(false)}
+            fiscalYears={fiscalYears}
+            selectedYear={selectedYear}
+            riskManagementByYear={riskManagementByYear}
+            capaFindingsByYear={capaFindingsByYear}
+            auditUniverseByYear={auditUniverseByYear}
+            onExecuteRollover={handleExecuteRollover}
+          />
+        </Suspense>
+      )}
+
       {/* Cloud Sync / Registration Toast Notification */}
       {cloudToast && (
         <div
@@ -1389,11 +1535,58 @@ export default function App() {
                 riskAssessments={riskAssessments}
                 auditUniverse={auditUniverse}
                 riskManagement={riskManagement}
+                capaFindings={capaFindings}
+                onOpenRollover={() => setShowRolloverModal(true)}
                 setCurrentTab={setCurrentTab}
                 setSelectedWp={setSelectedWp}
                 onOpenSettings={() => setShowSettings(true)}
                 session={session}
                 onLogout={handleLogout}
+              />
+            )}
+
+            {currentTab === 'multi-year-trend' && (
+              <MultiYearTrendView
+                orgProfile={orgProfile}
+                fiscalYears={fiscalYears}
+                annualPlansByYear={annualPlansByYear}
+                capaFindingsByYear={capaFindingsByYear}
+                riskManagementByYear={riskManagementByYear}
+                lpaIndicatorsByYear={lpaIndicatorsByYear}
+                auditUniverseByYear={auditUniverseByYear}
+              />
+            )}
+
+            {currentTab === 'pbc-checklist' && (
+              <PbcChecklistView
+                key={`pbc-${selectedYear}`}
+                selectedYear={selectedYear}
+                orgProfile={orgProfile}
+                session={session}
+                annualPlans={annualPlans}
+                pbcRequests={pbcRequests}
+                setPbcRequests={setPbcRequests}
+              />
+            )}
+
+            {currentTab === 'elaas-scanner' && (
+              <ElaasRedFlagScannerView
+                key={`elaas-${selectedYear}`}
+                selectedYear={selectedYear}
+                capaFindings={capaFindings}
+                setCapaFindings={setCapaFindings}
+              />
+            )}
+
+            {currentTab === 'auto-saraban' && (
+              <AutoSarabanView
+                key={`saraban-${selectedYear}`}
+                selectedYear={selectedYear}
+                orgProfile={orgProfile}
+                annualPlans={annualPlans}
+                capaFindings={capaFindings}
+                riskManagement={riskManagement}
+                pbcRequests={pbcRequests}
               />
             )}
 

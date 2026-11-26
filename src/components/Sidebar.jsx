@@ -27,7 +27,11 @@ import {
   CalendarDays,
   Globe,
   Baby,
-  Coffee
+  Coffee,
+  TrendingUp,
+  SearchCheck,
+  FileSignature,
+  ClipboardList
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -56,6 +60,7 @@ export default function Sidebar({
       items: [
         { id: 'executive-dashboard', label: 'แดชบอร์ดผู้บริหาร', icon: LayoutDashboard },
         { id: 'dashboard', label: 'แดชบอร์ดตรวจสอบภายใน', icon: ShieldAlert },
+        { id: 'multi-year-trend', label: 'เปรียบเทียบความเสี่ยงข้ามปี', icon: TrendingUp },
         { id: 'central-calendar', label: 'ปฏิทินปฏิบัติงานส่วนกลาง', icon: CalendarDays },
         { id: 'audit-risk', label: 'การประเมินความเสี่ยงแผน', icon: ShieldAlert },
         { id: 'planning', label: 'แผนการตรวจสอบประจำปี', icon: FileText },
@@ -71,7 +76,9 @@ export default function Sidebar({
       hoverClass: 'hover:bg-amber-50/80 hover:text-amber-800 dark:hover:bg-slate-800/80 dark:hover:text-amber-300',
       iconInactive: 'text-amber-600 dark:text-amber-400',
       items: [
+        { id: 'pbc-checklist', label: 'ใบขอเอกสารก่อนตรวจ (PBC)', icon: ClipboardList },
         { id: 'execution', label: 'กระดาษทำการตรวจสอบ', icon: ClipboardCheck },
+        { id: 'elaas-scanner', label: 'สแกนจุดเสี่ยง e-LAAS (Red Flag)', icon: SearchCheck },
         {
           id: 'audit-toolkits',
           label: 'เครื่องมือช่วยตรวจเชิงเทคนิค',
@@ -95,7 +102,8 @@ export default function Sidebar({
       hoverClass: 'hover:bg-emerald-50/80 hover:text-emerald-800 dark:hover:bg-slate-800/80 dark:hover:text-emerald-300',
       iconInactive: 'text-emerald-600 dark:text-emerald-400',
       items: [
-        { id: 'reporting', label: 'รายงานผล & ติดตามข้อทักท้วง (CAPA)', icon: FileSpreadsheet }
+        { id: 'reporting', label: 'รายงานผล & ติดตามข้อทักท้วง (CAPA)', icon: FileSpreadsheet },
+        { id: 'auto-saraban', label: 'ร่างหนังสือราชการ (Auto Saraban)', icon: FileSignature }
       ]
     },
     {
@@ -160,8 +168,9 @@ export default function Sidebar({
   ];
 
   const canAccessItem = (item) => {
-    // 0. โซนผ่อนคลาย (Breakroom Games): เปิดให้ทุกคนเข้าเล่นได้เพื่อคลายเครียด
+    // 0. โซนผ่อนคลาย & ใบขอเอกสาร PBC (กองรับตรวจดูของกองตนเองได้)
     if (item.id === 'happy-hog' || item.id === 'card-sort' || item.id === 'cozy-office-3d') return true;
+    if (item.id === 'pbc-checklist' && session?.role && session.role !== 'guest') return true;
 
     // 1. ผู้ดูแลระบบ (ADMIN): เข้าถึงได้ทุกเมนู
     if (isAdmin) return true;
