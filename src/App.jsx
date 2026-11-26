@@ -52,6 +52,14 @@ import {
   initialCapaFindings
 } from './data/initialData';
 
+// คำนวณปีงบประมาณไทยปัจจุบันอัตโนมัติ (เริ่ม 1 ต.ค. - 30 ก.ย.)
+function getCurrentThaiFiscalYear() {
+  const now = new Date();
+  const adYear = now.getFullYear();
+  const month = now.getMonth() + 1;
+  return String(month >= 10 ? adYear + 544 : adYear + 543);
+}
+
 // Run auto-repair of department linkages and user accounts synchronously before state initialization
 try {
   autoRepairDataLinkages();
@@ -136,37 +144,45 @@ export default function App() {
     localStorage.setItem('ia_dark_mode', darkMode ? '1' : '0');
   }, [darkMode]);
 
+  const currentThaiFiscalYear = getCurrentThaiFiscalYear();
+
   // Migration: Synchronously ensure sample data from D:\ drive is completely purged
+  // and always include the current Thai fiscal year automatically
   const [fiscalYears, setFiscalYears] = useState(() => {
+    let list = [...initialFiscalYears];
     try {
       const saved = localStorage.getItem('ia_fiscal_years');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // If stored fiscal years contain 2567 or only 2568, migrate to default ['2569', '2570']
           if (
-            parsed.includes('2567') ||
-            (parsed.length === 2 && parsed.includes('2567') && parsed.includes('2568')) ||
-            (parsed.length === 1 && parsed[0] === '2568') ||
-            (parsed.length === 4 && parsed.includes('2569') && parsed.includes('2570'))
+            !(
+              parsed.includes('2567') ||
+              (parsed.length === 2 && parsed.includes('2567') && parsed.includes('2568')) ||
+              (parsed.length === 1 && parsed[0] === '2568') ||
+              (parsed.length === 4 && parsed.includes('2569') && parsed.includes('2570'))
+            )
           ) {
-            return initialFiscalYears;
+            list = [...parsed];
           }
-          return parsed;
         }
       }
-      return initialFiscalYears;
     } catch {
-      return initialFiscalYears;
+      list = [...initialFiscalYears];
     }
+    if (!list.includes(currentThaiFiscalYear)) {
+      list.push(currentThaiFiscalYear);
+      list.sort();
+    }
+    return list;
   });
 
   useEffect(() => {
     localStorage.setItem('ia_fiscal_years', JSON.stringify(fiscalYears));
   }, [fiscalYears]);
 
-  // Navigation & Fiscal Year State
-  const [selectedYear, setSelectedYear] = useState('2569');
+  // Navigation & Fiscal Year State (defaults automatically to current Thai fiscal year)
+  const [selectedYear, setSelectedYear] = useState(() => currentThaiFiscalYear);
   const [currentTab, setCurrentTab] = useState('welcome');
   const [selectedWp, setSelectedWp] = useState('WP-KTB-01');
   const [activeToolkitTab, setActiveToolkitTab] = useState('factor-f');
